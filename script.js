@@ -391,7 +391,6 @@ function loadMap() {
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
   });
 
-  loadReports(); // Load existing reports on the map
 }
 
 // Auto-detect user location
@@ -978,30 +977,4 @@ function hasValidCoordinates(report) {
   if (reportLat === 0 && reportLng === 0) return false;
 
   return true;
-}
-
-// Load existing reports
-async function loadReports() {
-  try {
-    const reports = Array.isArray(cachedReports) && cachedReports.length > 0
-      ? cachedReports
-      : await fetchReports();
-    renderReportStatistics(reports);
-
-    reports.forEach(r => {
-      if (!hasValidCoordinates(r)) return;
-
-      L.marker([parseFloat(r.lat), parseFloat(r.lng)])
-        .addTo(map)
-        .bindPopup("<b>" + r.issue + "</b><br>" + r.location + "<br>Status: " + normalizeStatus(r.status));
-    });
-  } catch (err) {
-    console.log("Error loading reports", err);
-    renderReportStatisticsError(err);
-
-    const feedback = document.getElementById("trackingSearchFeedback");
-    if (feedback) {
-      feedback.textContent = toUserFacingLoadErrorMessage(err);
-    }
-  }
 }
