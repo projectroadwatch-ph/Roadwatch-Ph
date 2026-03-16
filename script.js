@@ -531,6 +531,16 @@ function submitReport() {
 
   const submitEndpoints = [API_URL];
 
+  const submitWithNoCorsFallback = async (endpoint) => {
+    await fetch(endpoint, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
+    });
+
+    return "Submitted with no-cors fallback";
+  };
+
   const trySubmit = async () => {
     let lastError;
     let corsBlocked = false;
@@ -551,9 +561,17 @@ function submitReport() {
         return response.text();
       } catch (error) {
         if (isLikelyCorsBlockedRequest(endpoint, error)) {
-          corsBlocked = true;
-          corsBlockedEndpoint = endpoint;
-          break;
+          try {
+            const fallbackResult = await submitWithNoCorsFallback(endpoint);
+            console.warn("Submit succeeded with no-cors fallback due to CORS restriction.");
+            reportCorsTroubleshootingContext();
+            return fallbackResult;
+          } catch (fallbackError) {
+            corsBlocked = true;
+            corsBlockedEndpoint = endpoint;
+            lastError = fallbackError;
+            break;
+          }
         }
         lastError = error;
       }
