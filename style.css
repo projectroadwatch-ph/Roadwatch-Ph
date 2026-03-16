@@ -571,38 +571,45 @@ section.active {
 
 .track-result-wrapper {
   margin-top: 14px;
-  overflow-x: auto;
 }
 
-.track-result-table {
-  width: 100%;
-  min-width: 620px;
-  border-collapse: collapse;
+.track-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
   border: 1px solid rgba(149, 208, 255, 0.28);
   border-radius: 12px;
-  overflow: hidden;
+  padding: 12px;
   background: rgba(9, 33, 55, 0.66);
 }
 
-.track-result-table th,
-.track-result-table td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid rgba(149, 208, 255, 0.18);
-  color: #e9f4ff;
-  font-size: 0.92rem;
+.track-result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(149, 208, 255, 0.16);
+  background: rgba(13, 41, 67, 0.6);
 }
 
-.track-result-table th {
-  background: rgba(12, 44, 72, 0.8);
+.track-result-item-status {
+  border-color: rgba(121, 255, 212, 0.32);
+}
+
+.track-result-label {
   color: #93deff;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  font-weight: 700;
 }
 
-.track-result-table tr:last-child td {
-  border-bottom: none;
+.track-result-value {
+  color: #e9f4ff;
+  font-size: 0.93rem;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .status-pill {
