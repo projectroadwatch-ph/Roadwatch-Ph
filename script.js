@@ -5,7 +5,7 @@ let lng = 0;
 let cachedReports = [];
 let corsFailureAlreadyLogged = false;
 
-const API_URL = "https://script.google.com/macros/s/AKfycbybTZKnfALDQxq0dtcyDZip518-CzvORnoDT9AABlBJBSeazD2SfeSSKxs35sCmarwS/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyuNCE_arUN97dsvk2YPnnGv1kDP-nnY1RlyipC4206kQIUHsZTH62-hAXWjn9GigjW/exec";
 
 
 function getReportEndpoints() {
