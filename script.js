@@ -14,7 +14,18 @@ function getReportEndpoints() {
 }
 
 function buildCorsErrorMessage() {
-  return "Request blocked by CORS. The Google Apps Script web app must be deployed for public access and include Access-Control-Allow-Origin (for https://philippine-roadwatch.github.io or *) in GET/POST responses and OPTIONS preflight handling.";
+  return "Request blocked by CORS. Redeploy the Google Apps Script web app with access set to Anyone, and return Access-Control-Allow-Origin for https://philippine-roadwatch.github.io (or *) on GET/POST and OPTIONS responses.";
+}
+
+function isLikelyCorsBlockedRequest(endpoint, error) {
+  if (!(error instanceof TypeError)) return false;
+
+  try {
+    const endpointOrigin = new URL(endpoint).origin;
+    return endpointOrigin !== window.location.origin;
+  } catch {
+    return false;
+  }
 }
 
 function normalizeKey(key) {
@@ -113,7 +124,7 @@ async function fetchReports() {
         return cachedReports;
       }
     } catch (error) {
-      if (error instanceof TypeError) {
+      if (isLikelyCorsBlockedRequest(endpoint, error)) {
         corsBlocked = true;
         break;
       }
