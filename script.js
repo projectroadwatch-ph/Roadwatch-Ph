@@ -14,7 +14,7 @@ function getReportEndpoints() {
 }
 
 function buildCorsErrorMessage() {
-  return "Request blocked by CORS. Redeploy the Google Apps Script web app with access set to Anyone, and return Access-Control-Allow-Origin for https://philippine-roadwatch.github.io (or *) on GET/POST and OPTIONS responses.";
+  return "Tracking API request failed. Your current Apps Script only defines doPost(), but tracking search calls GET /exec?action=getReports from https://philippine-roadwatch.github.io. Add a doGet(e) that returns report JSON, then redeploy the Web App (Execute as: Me, Who has access: Anyone).";
 }
 
 function isLikelyCorsBlockedRequest(endpoint, error) {
