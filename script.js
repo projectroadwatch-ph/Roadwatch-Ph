@@ -8,6 +8,7 @@ let corsRetryBlockedUntil = 0;
 let isSubmittingReport = false;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
+const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwT3P78qomQHC05cLjUz-ITj7EOWH148BSc7U_3770_GpUL7dpeFZNw195xrtV21AMa/exec";
 
@@ -16,6 +17,70 @@ function getReportEndpoints() {
   // Keep a short endpoint list to avoid spamming repeated browser CORS errors
   // when the Apps Script deployment is not configured for cross-origin access.
   return [API_URL, `${API_URL}?action=getReports`];
+}
+
+function getLocalReports() {
+  try {
+    const raw = localStorage.getItem(LOCAL_REPORTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(toReportModel);
+  } catch (error) {
+    console.warn("Unable to read local reports cache", error);
+    return [];
+  }
+}
+
+function saveLocalReports(reports) {
+  try {
+    localStorage.setItem(LOCAL_REPORTS_KEY, JSON.stringify(reports));
+  } catch (error) {
+    console.warn("Unable to persist local reports cache", error);
+  }
+}
+
+function mergeReportsByTracking(primaryReports, secondaryReports) {
+  const merged = [];
+  const indexByTracking = new Map();
+
+  const append = (report) => {
+    const normalizedReport = toReportModel(report);
+    const trackingKey = (normalizedReport.tracking || "").toString().trim().toLowerCase();
+
+    if (!trackingKey) {
+      merged.push(normalizedReport);
+      return;
+    }
+
+    if (indexByTracking.has(trackingKey)) {
+      merged[indexByTracking.get(trackingKey)] = {
+        ...merged[indexByTracking.get(trackingKey)],
+        ...normalizedReport
+      };
+      return;
+    }
+
+    indexByTracking.set(trackingKey, merged.length);
+    merged.push(normalizedReport);
+  };
+
+  (Array.isArray(primaryReports) ? primaryReports : []).forEach(append);
+  (Array.isArray(secondaryReports) ? secondaryReports : []).forEach(append);
+
+  return merged;
+}
+
+function cacheLocalSubmission(reportPayload) {
+  const localReports = getLocalReports();
+  const cachedEntry = {
+    ...reportPayload,
+    status: "Pending",
+    timestamp: new Date().toISOString()
+  };
+
+  const mergedReports = mergeReportsByTracking([cachedEntry], localReports);
+  saveLocalReports(mergedReports);
 }
 
 function getCurrentOrigin() {
@@ -171,7 +236,10 @@ function parseReportsFromApi(payload) {
 }
 
 async function fetchReports() {
+  const localReports = getLocalReports();
+
   if (isCorsRetryCooldownActive()) {
+    if (localReports.length > 0) return localReports;
     throw new Error(buildCorsErrorMessage(API_URL));
   }
 
@@ -201,7 +269,7 @@ async function fetchReports() {
       const parsedReports = parseReportsFromApi(payload);
 
       if (parsedReports.length > 0) {
-        cachedReports = parsedReports;
+        cachedReports = mergeReportsByTracking(parsedReports, localReports);
         return cachedReports;
       }
     } catch (error) {
@@ -216,13 +284,24 @@ async function fetchReports() {
 
   cachedReports = [];
   if (corsBlocked) {
+    if (localReports.length > 0) {
+      cachedReports = localReports;
+      return cachedReports;
+    }
     activateCorsRetryCooldown();
     const corsError = new Error(buildCorsErrorMessage(corsBlockedEndpoint));
     reportCorsTroubleshootingContext();
     throw corsError;
   }
-  if (lastError instanceof TypeError) throw new Error(buildNetworkErrorMessage());
+  if (lastError instanceof TypeError) {
+    if (localReports.length > 0) {
+      cachedReports = localReports;
+      return cachedReports;
+    }
+    throw new Error(buildNetworkErrorMessage());
+  }
   if (lastError) throw lastError;
+  cachedReports = localReports;
   return cachedReports;
 }
 
@@ -777,6 +856,7 @@ async function submitReport() {
     }
 
     document.getElementById("trackInfo").innerText = "Tracking Number: " + tracking;
+    cacheLocalSubmission(reportPayload);
     cachedReports = [];
     loadStatistics();
     document.getElementById("popup").classList.add("show");
