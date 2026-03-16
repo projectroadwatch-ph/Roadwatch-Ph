@@ -347,6 +347,17 @@ function submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded) {
   });
 }
 
+async function submitCrossOriginViaNoCors(endpoint, formUrlEncoded) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    mode: "no-cors",
+    body: formUrlEncoded,
+    redirect: "follow"
+  });
+
+  return response;
+}
+
 function toUserFacingLoadErrorMessage(error) {
   if (!error?.message) return "Unable to load reports right now.";
   if (isCorsConfigurationIssue(error)) {
@@ -1185,7 +1196,7 @@ async function submitReport() {
     for (const endpoint of submitEndpoints) {
       try {
         if (isCrossOriginEndpoint(endpoint)) {
-          await submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded);
+          await submitCrossOriginViaNoCors(endpoint, formUrlEncoded);
           return "";
         }
 
@@ -1202,8 +1213,13 @@ async function submitReport() {
         return response.text();
       } catch (error) {
         if (isLikelyCorsBlockedRequest(endpoint, error)) {
-          await submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded);
-          return "";
+          try {
+            await submitCrossOriginViaNoCors(endpoint, formUrlEncoded);
+            return "";
+          } catch (noCorsError) {
+            await submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded);
+            return "";
+          }
         }
 
         lastError = error;
