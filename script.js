@@ -527,15 +527,6 @@ function submitReport() {
     lng: lng || ""
   };
 
-  const formData = new FormData();
-  Object.entries(reportPayload).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
-
-  if (document.getElementById("photo").files[0]) {
-    formData.append("photo", document.getElementById("photo").files[0]);
-  }
-
   const formUrlEncoded = new URLSearchParams(reportPayload);
 
   const submitEndpoints = [API_URL];
@@ -549,7 +540,7 @@ function submitReport() {
       try {
         const response = await fetch(endpoint, {
           method: "POST",
-          body: formData,
+          body: formUrlEncoded,
           redirect: "follow"
         });
 
@@ -560,15 +551,9 @@ function submitReport() {
         return response.text();
       } catch (error) {
         if (isLikelyCorsBlockedRequest(endpoint, error)) {
-          // Fallback to a simple no-cors request which is accepted by Apps Script
-          // even when the current origin is not allowed to read the response.
-          await fetch(endpoint, {
-            method: "POST",
-            mode: "no-cors",
-            body: formUrlEncoded,
-            redirect: "follow"
-          });
-          return "submitted-no-cors";
+          corsBlocked = true;
+          corsBlockedEndpoint = endpoint;
+          break;
         }
         lastError = error;
       }
@@ -585,6 +570,17 @@ function submitReport() {
 
   trySubmit()
     .then(res => {
+      if (res && res !== "submitted-no-cors") {
+        try {
+          const payload = JSON.parse(res);
+          if (payload && payload.success === false) {
+            throw new Error(payload.error || "Submission failed.");
+          }
+        } catch (error) {
+          // Ignore parse errors because older deployments can return a plain text body.
+        }
+      }
+
       // Show the popup correctly
 document.getElementById("trackInfo").innerText = "Tracking Number: " + tracking;
       document.getElementById("popup").classList.add("show"); // use class for fade-in
