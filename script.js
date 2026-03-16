@@ -630,13 +630,15 @@ async function submitReport() {
   try {
     const res = await trySubmit();
     if (res) {
+      let payload;
       try {
-        const payload = JSON.parse(res);
-        if (payload && payload.success === false) {
-          throw new Error(payload.error || "Submission failed.");
-        }
+        payload = JSON.parse(res);
       } catch (error) {
-        // Ignore parse errors because older deployments can return a plain text body.
+        payload = null;
+      }
+
+      if (payload && payload.success === false) {
+        throw new Error(payload.error || "Submission failed.");
       }
     }
 

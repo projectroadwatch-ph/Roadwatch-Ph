@@ -28,8 +28,13 @@ function doPost(e) {
     status: params.status || 'Pending'
   };
 
-  appendReport_(row);
-  return buildJsonResponse_({ success: true, tracking: row.tracking, allowedOrigin: ALLOWED_ORIGIN });
+  const appendResult = appendReport_(row);
+  return buildJsonResponse_({
+    success: true,
+    duplicate: appendResult.duplicate,
+    tracking: row.tracking,
+    allowedOrigin: ALLOWED_ORIGIN
+  });
 }
 
 function buildJsonResponse_(payload) {
@@ -69,6 +74,20 @@ function getSheet_() {
 
 function appendReport_(row) {
   const sheet = getSheet_();
+  const trackingValue = String(row.tracking || '').trim();
+
+  if (trackingValue) {
+    const existingTrackings = sheet
+      .getRange(2, 2, Math.max(sheet.getLastRow() - 1, 0), 1)
+      .getValues()
+      .flat()
+      .map(function (value) { return String(value || '').trim(); });
+
+    if (existingTrackings.includes(trackingValue)) {
+      return { duplicate: true };
+    }
+  }
+
   sheet.appendRow([
     row.timestamp,
     row.tracking,
@@ -84,6 +103,8 @@ function appendReport_(row) {
     row.photo,
     row.status
   ]);
+
+  return { duplicate: false };
 }
 
 function readReports_() {
