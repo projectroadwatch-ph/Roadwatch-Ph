@@ -1,20 +1,16 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
 
 function doGet(e) {
-  if (isPreflight_(e)) return buildCorsResponse_({ ok: true });
-
   const action = (e && e.parameter && e.parameter.action) || '';
   if (action === 'getReports' || action === '') {
     const reports = readReports_();
-    return buildCorsResponse_({ reports: reports });
+    return buildJsonResponse_({ reports: reports, allowedOrigin: ALLOWED_ORIGIN });
   }
 
-  return buildCorsResponse_({ error: 'Unknown action.' }, 400);
+  return buildJsonResponse_({ error: 'Unknown action.', allowedOrigin: ALLOWED_ORIGIN });
 }
 
 function doPost(e) {
-  if (isPreflight_(e)) return buildCorsResponse_({ ok: true });
-
   const params = (e && e.parameter) || {};
   const row = {
     timestamp: new Date().toISOString(),
@@ -31,38 +27,13 @@ function doPost(e) {
   };
 
   appendReport_(row);
-  return buildCorsResponse_({ success: true, tracking: row.tracking });
+  return buildJsonResponse_({ success: true, tracking: row.tracking, allowedOrigin: ALLOWED_ORIGIN });
 }
 
-// Google Apps Script web apps do not route OPTIONS to a dedicated handler.
-// Check for preflight markers in doGet/doPost so preflight requests get CORS headers.
-function isPreflight_(e) {
-  if (!e) return false;
-
-  const method =
-    (e.parameter && e.parameter._method) ||
-    (e.headers && (e.headers['X-HTTP-Method-Override'] || e.headers['x-http-method-override'])) ||
-    '';
-
-  return String(method).toUpperCase() === 'OPTIONS';
-}
-
-function buildCorsResponse_(payload, statusCode) {
-  const output = ContentService
+function buildJsonResponse_(payload) {
+  return ContentService
     .createTextOutput(JSON.stringify(payload || {}))
     .setMimeType(ContentService.MimeType.JSON);
-
-  // Set CORS headers for browser calls from the published site.
-  output.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
-  output.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  output.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  output.setHeader('Access-Control-Max-Age', '3600');
-
-  if (statusCode) {
-    output.setHeader('X-Status-Code', String(statusCode));
-  }
-
-  return output;
 }
 
 function getSheet_() {

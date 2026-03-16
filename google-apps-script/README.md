@@ -8,9 +8,13 @@
    - **Execute as**: Me
    - **Who has access**: Anyone
 4. After deployment, copy the new `/exec` URL and update `API_URL` in `script.js` if the deployment ID changed.
-5. Validate from `https://philippine-roadwatch.github.io`:
-   - `GET /exec?action=getReports`
-   - `POST /exec`
-   - `OPTIONS /exec` (preflight should include CORS headers)
 
-`Code.gs` sets `Access-Control-Allow-Origin` to `https://philippine-roadwatch.github.io`. If you need wider access, change `ALLOWED_ORIGIN` to `*`.
+## Verification from your deployed site
+
+From `https://philippine-roadwatch.github.io`, verify:
+- `GET /exec?action=getReports`
+- `POST /exec` (form submission)
+
+Google Apps Script web app responses are served by Google infrastructure. In practice, CORS works when the web app is deployed with **Who has access: Anyone** and requests are made as simple GET/POST calls. `ContentService` does not provide a supported custom response-header API, so this template returns JSON and avoids unsupported header-setting code.
+
+If you need broad origin access, keep client requests simple and avoid custom request headers that can force a preflight requirement.
