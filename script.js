@@ -35,9 +35,11 @@ function reportCorsTroubleshootingContext() {
       "Google Apps Script CORS troubleshooting:",
       "1) Open Apps Script > Deploy > Manage deployments.",
       "2) Ensure the Web app is deployed with 'Who has access' set to 'Anyone'.",
+      "   Also set 'Execute as' to your script owner account.",
       `   Current requesting origin: ${getCurrentOrigin()}.`,
-      "3) Deploy the web app as 'Anyone' and keep requests as simple GET/POST calls (avoid custom headers that trigger preflight).",
-      "4) Verify calls use the latest /exec deployment URL."
+      "3) Create a new Web app version after every Code.gs change, then update script.js with that latest /exec URL.",
+      "4) Keep requests as simple GET/POST calls (avoid custom headers that trigger preflight).",
+      "5) If there is still no Access-Control-Allow-Origin header, the issue is deployment-side (Apps Script), not this static frontend."
     ].join("\n")
   );
 
@@ -46,6 +48,14 @@ function reportCorsTroubleshootingContext() {
 
 function buildNetworkErrorMessage() {
   return "Unable to reach the report API. Check your internet connection and verify the Google Apps Script /exec URL is still active.";
+}
+
+function toUserFacingLoadErrorMessage(error) {
+  if (!error?.message) return "Unable to load reports right now.";
+  if (isCorsConfigurationIssue(error)) {
+    return "Reports are temporarily unavailable because the Google Apps Script deployment is not allowing this website origin (CORS).";
+  }
+  return error.message;
 }
 
 function isLikelyCorsBlockedRequest(endpoint, error) {
@@ -630,7 +640,7 @@ async function loadReports() {
 
     const feedback = document.getElementById("trackingSearchFeedback");
     if (feedback) {
-      feedback.textContent = err?.message || "Unable to load reports right now.";
+      feedback.textContent = toUserFacingLoadErrorMessage(err);
     }
   }
 }
