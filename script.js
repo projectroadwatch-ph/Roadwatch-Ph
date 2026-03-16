@@ -353,35 +353,75 @@ function findReportByTracking(reports, trackingNumber) {
   });
 }
 
-function renderTrackingResult(report) {
-  const wrapper = document.getElementById("trackingResultWrapper");
-  const tbody = document.getElementById("trackingResultBody");
-  if (!wrapper || !tbody) return;
+function escapeHtml(value) {
+  const text = (value ?? "").toString();
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
 
-  const lastname = (report.lastname || "").trim();
-  const firstname = (report.firstname || "").trim();
-  const middleInitial = (report.mi || report.middleinitial || report.middleInitial || "").trim();
-  let fullName = (report.name || "").trim() || "Not available";
+function toDisplayText(value) {
+  const text = (value ?? "").toString().trim();
+  return text || "Not available";
+}
+
+function buildReporterFullName(report) {
+  const lastname = (report.lastname || "").toString().trim();
+  const firstname = (report.firstname || "").toString().trim();
+  const middleInitial = (report.mi || report.middleinitial || report.middleInitial || "").toString().trim();
 
   if (lastname || firstname || middleInitial) {
     const baseName = [lastname, firstname].filter(Boolean).join(", ");
-    fullName = `${baseName}${middleInitial ? ` ${middleInitial}.` : ""}`.trim();
+    return `${baseName}${middleInitial ? ` ${middleInitial}.` : ""}`.trim();
   }
 
-  const trackingNumber = getFieldValue(report, ["tracking", "trackingNumber", "tracking_no", "track", "Tracking Number", "Tracking #", "Reference Number"]).toString().trim() || "Not available";
-  const location = (report.location || report.address || "Not available").toString().trim() || "Not available";
-  const issueDetails = getFieldValue(report, ["issue", "problem", "details", "description", "Issue", "Details", "Report Details"]).toString().trim() || "Not available";
+  return (report.name || "").toString().trim() || "Not available";
+}
 
-  tbody.innerHTML = `
-    <tr>
-      <td>${trackingNumber}</td>
-      <td>${formatSubmissionTime(report)}</td>
-      <td>${fullName}</td>
-      <td>${location}</td>
-      <td>${issueDetails}</td>
-      <td><span class="status-pill">${normalizeStatus(report.status)}</span></td>
-    </tr>
-  `;
+function renderTrackingResult(report) {
+  const wrapper = document.getElementById("trackingResultWrapper");
+  const body = document.getElementById("trackingResultBody");
+  if (!wrapper || !body) return;
+
+  const trackingNumber = toDisplayText(getFieldValue(report, ["tracking", "trackingNumber", "tracking_no", "track", "Tracking Number", "Tracking #", "Reference Number"]));
+  const fullName = toDisplayText(buildReporterFullName(report));
+  const email = toDisplayText(getFieldValue(report, ["email", "Email", "Reporter Email"]));
+  const phone = toDisplayText(getFieldValue(report, ["phone", "contact", "mobile", "Phone", "Mobile Number"]));
+  const location = toDisplayText(getFieldValue(report, ["location", "address", "road", "Road Location"]));
+  const issueDetails = toDisplayText(getFieldValue(report, ["issue", "problem", "details", "description", "Issue", "Details", "Report Details"]));
+  const latitude = toDisplayText(getFieldValue(report, ["lat", "latitude", "Latitude"]));
+  const longitude = toDisplayText(getFieldValue(report, ["lng", "lon", "longitude", "Longitude"]));
+  const submittedAt = toDisplayText(formatSubmissionTime(report));
+  const status = normalizeStatus(report.status);
+
+  const details = [
+    ["Tracking #", trackingNumber],
+    ["Submission Time", submittedAt],
+    ["Reporter Name", fullName],
+    ["Email", email],
+    ["Mobile Number", phone],
+    ["Location", location],
+    ["Issue Details", issueDetails],
+    ["Latitude", latitude],
+    ["Longitude", longitude]
+  ];
+
+  body.innerHTML = details
+    .map(([label, value]) => `
+      <div class="track-result-item">
+        <span class="track-result-label">${escapeHtml(label)}</span>
+        <span class="track-result-value">${escapeHtml(value)}</span>
+      </div>
+    `)
+    .join("") + `
+      <div class="track-result-item track-result-item-status">
+        <span class="track-result-label">Status</span>
+        <span class="track-result-value"><span class="status-pill">${escapeHtml(status)}</span></span>
+      </div>
+    `;
 
   wrapper.hidden = false;
 }
@@ -392,24 +432,31 @@ async function handleTrackingSearch(event) {
   const feedback = document.getElementById("trackingSearchFeedback");
   const input = document.getElementById("trackingSearchInput");
   const wrapper = document.getElementById("trackingResultWrapper");
-  const tbody = document.getElementById("trackingResultBody");
+  const resultBody = document.getElementById("trackingResultBody");
 
-  if (!input || !feedback || !wrapper || !tbody) return;
+  if (!input || !feedback || !wrapper || !resultBody) return;
 
   const trackingNumber = input.value.trim();
   if (!trackingNumber) {
     feedback.textContent = "Please enter a valid tracking number.";
     wrapper.hidden = true;
-    tbody.innerHTML = "";
+    resultBody.innerHTML = "";
     return;
   }
 
   feedback.textContent = "Searching report...";
 
   try {
-    let reports = cachedReports;
-    if (!Array.isArray(reports) || reports.length === 0) {
+    let reports = [];
+
+    try {
       reports = await fetchReports();
+    } catch (loadError) {
+      if (Array.isArray(cachedReports) && cachedReports.length > 0) {
+        reports = cachedReports;
+      } else {
+        throw loadError;
+      }
     }
 
     const matchedReport = findReportByTracking(reports, trackingNumber);
@@ -417,7 +464,7 @@ async function handleTrackingSearch(event) {
     if (!matchedReport) {
       feedback.textContent = "No report found for this tracking number.";
       wrapper.hidden = true;
-      tbody.innerHTML = "";
+      resultBody.innerHTML = "";
       return;
     }
 
@@ -430,7 +477,7 @@ async function handleTrackingSearch(event) {
     }
     feedback.textContent = error?.message || "Unable to search right now. Please try again later.";
     wrapper.hidden = true;
-    tbody.innerHTML = "";
+    resultBody.innerHTML = "";
   }
 }
 
