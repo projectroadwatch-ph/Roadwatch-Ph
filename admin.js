@@ -274,9 +274,20 @@ function applyLocalStatusOverrides(report) {
 
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+
   loginPanel.classList.toggle("hidden", isAuthed);
   dashboard.classList.toggle("hidden", !isAuthed);
+
+  loginPanel.style.display = isAuthed ? "none" : "grid";
+  dashboard.style.display = isAuthed ? "block" : "none";
+
+  loginPanel.setAttribute("aria-hidden", String(isAuthed));
+  dashboard.setAttribute("aria-hidden", String(!isAuthed));
+
+  document.body.classList.toggle("admin-authenticated", isAuthed);
+
   if (isAuthed) {
+    document.getElementById("adminPassword").value = "";
     loadReports();
   }
 }

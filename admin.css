@@ -18,6 +18,7 @@ body {
   font-family: Inter, Arial, sans-serif;
 }
 .wrap { width: min(1150px, 95%); margin: 28px auto; }
+.admin-authenticated .wrap { width: min(1240px, 96%); }
 .card {
   background: linear-gradient(180deg, rgba(16, 44, 74, 0.94), rgba(10, 33, 60, 0.96));
   border: 1px solid var(--line);
@@ -65,6 +66,12 @@ body {
 }
 .dashboard-header h2 { margin: 0; }
 .dashboard-header .small { margin: 6px 0 0; max-width: 640px; }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
 label { display: block; margin-top: 12px; color: var(--muted); font-size: 0.92rem; }
 input, textarea, select, button {
   width: 100%;
@@ -82,6 +89,14 @@ button.secondary { background: rgba(115, 162, 207, 0.35); }
 button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .panel { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.analytics-panel,
+.chart-stretch {
+  margin-top: 14px;
+  border: 1px solid rgba(165, 213, 255, 0.22);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(6, 23, 42, 0.45);
+}
 .feedback { min-height: 1.2rem; color: #9ce9ab; margin-top: 8px; font-size: 0.9rem; }
 .small { color: var(--muted); font-size: 0.9rem; }
 .link { color: #9ad4ff; display: inline-block; margin-top: 10px; }
@@ -110,10 +125,11 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .analyticsCard {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(165, 213, 255, 0.25);
   border-radius: 12px;
-  padding: 12px;
-  background: rgba(255,255,255,0.04);
+  padding: 14px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(41, 158, 255, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
 }
 
 .analyticsLabel {
@@ -123,9 +139,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-bottom: 6px;
 }
 
-.analyticsCard strong {
-  font-size: 1.3rem;
-}
+.analyticsCard strong { font-size: 1.45rem; }
 
 .reportPhotoThumb {
   width: 72px;
@@ -145,6 +159,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     flex-direction: column;
     align-items: stretch;
   }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -160,10 +178,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .chart-panel {
   margin-top: 10px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(165, 213, 255, 0.25);
   border-radius: 12px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
+  background: radial-gradient(circle at top, rgba(41, 158, 255, 0.18), rgba(255, 255, 255, 0.02) 58%);
 }
 
 #statusChart {

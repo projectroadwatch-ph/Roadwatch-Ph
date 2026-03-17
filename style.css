@@ -1330,8 +1330,8 @@ textarea {
 #popup {
   position: fixed;
   inset: 0;
-  backdrop-filter: blur(6px);
-  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(7px);
+  background-color: rgba(0, 9, 20, 0.62);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -1339,6 +1339,7 @@ textarea {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  padding: 16px;
 }
 
 #popup.show {
@@ -1347,37 +1348,66 @@ textarea {
 }
 
 .popup-card {
-  background: rgba(255, 255, 255, 0.96);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.98), rgba(238, 248, 255, 0.98));
   color: #0a2142;
-  padding: 25px;
-  border-radius: 12px;
+  padding: 26px;
+  border-radius: 18px;
   text-align: center;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  transform: translateY(-14px);
+  max-width: 460px;
+  width: min(100%, 460px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+  transform: translateY(-14px) scale(0.98);
   transition: transform 0.3s ease;
+  border: 1px solid rgba(29, 108, 178, 0.18);
 }
 
 #popup.show .popup-card {
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+}
+
+.popup-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #1aa2ff, #19c896);
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.popup-subtitle {
+  margin: 8px 0 6px;
+  color: #35587f;
+  font-size: 0.93rem;
 }
 
 .popup-meta {
-  margin: 8px 0;
+  margin: 8px 0 12px;
   color: #35587f;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .tracking-wrap {
   border: 1px solid rgba(23, 77, 126, 0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(12, 84, 150, 0.08);
-  padding: 12px;
+  padding: 14px;
+}
+
+.tracking-label {
+  margin: 0;
+  color: #4a678a;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .track-info {
-  margin: 0 0 10px;
+  margin: 6px 0 10px;
   font-weight: 800;
   font-size: 1.1rem;
   letter-spacing: 0.03em;
@@ -1390,7 +1420,7 @@ textarea {
   background: #e4f2ff;
   color: #0a3f6f;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 9px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1403,20 +1433,37 @@ textarea {
 }
 
 .popup-actions {
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  margin-top:14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.popup-action {
+  margin-top: 0;
+}
+
+.popup-action.ghost {
+  background: #e6f3ff;
+  color: #0a3f6f;
 }
 
 #popup button {
-  background: var(--accent-strong);
-  color: white;
   border: none;
   padding: 12px;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 9px;
+}
+
+@media (max-width: 560px) {
+  .popup-card {
+    padding: 22px 18px;
+  }
+
+  .popup-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 .reveal-target {
