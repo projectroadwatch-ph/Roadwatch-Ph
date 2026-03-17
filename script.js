@@ -41,9 +41,31 @@ function setHomepageQrCode() {
   if (!qrImage) return;
 
   const homepageUrl = buildHomepageUrl();
-  const qrSource = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(homepageUrl)}`;
+  const encodedHomepageUrl = encodeURIComponent(homepageUrl);
+  const qrSources = [
+    `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodedHomepageUrl}`,
+    `https://quickchart.io/qr?size=220&text=${encodedHomepageUrl}`,
+    `https://chart.googleapis.com/chart?cht=qr&chs=220x220&chl=${encodedHomepageUrl}`
+  ];
 
-  qrImage.src = qrSource;
+  let sourceIndex = 0;
+  const tryLoadQrSource = () => {
+    const nextSource = qrSources[sourceIndex];
+    if (!nextSource) {
+      qrImage.alt = "QR code failed to load. Please refresh or open this page directly.";
+      return;
+    }
+
+    qrImage.src = nextSource;
+    sourceIndex += 1;
+  };
+
+  qrImage.onerror = tryLoadQrSource;
+  qrImage.onload = () => {
+    qrImage.onerror = null;
+  };
+
+  tryLoadQrSource();
   qrImage.setAttribute("data-homepage-url", homepageUrl);
 }
 
