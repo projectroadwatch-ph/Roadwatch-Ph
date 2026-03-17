@@ -1555,6 +1555,14 @@ async function submitReport() {
   isSubmittingReport = true;
   setSubmitButtonLoading(true);
 
+  const reporterEmail = document.getElementById("email").value.trim();
+  if (!reporterEmail) {
+    alert("Please provide your email so we can send your confirmation.");
+    isSubmittingReport = false;
+    setSubmitButtonLoading(false);
+    return;
+  }
+
   let tracking = "RW" + Date.now();
 
   let photoData = "";
@@ -1572,7 +1580,7 @@ async function submitReport() {
     lastname: document.getElementById("lastname").value,
     firstname: document.getElementById("firstname").value,
     mi: document.getElementById("mi").value,
-    email: document.getElementById("email").value,
+    email: reporterEmail,
     phone: document.getElementById("phone").value,
     location: document.getElementById("locationText").value,
     issue: document.getElementById("issue").value,
