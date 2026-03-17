@@ -6,16 +6,227 @@ let cachedReports = [];
 let corsFailureAlreadyLogged = false;
 let corsRetryBlockedUntil = 0;
 let isSubmittingReport = false;
+let locationSuggestionAbortController = null;
+let locationSuggestionDebounceTimer = null;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
+const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
+const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
+const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzUFdMFjG20ndhjVOP848SMIXp4RFlqHrhhxodUdBIbgDOLw03-AC_vpjAwZPd5lfUy/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 
+
+
+function getAdminStatusOverrides() {
+  try {
+    const raw = localStorage.getItem(ADMIN_STATUS_OVERRIDES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    console.warn("Unable to read admin status overrides", error);
+    return {};
+  }
+}
+
+function applyAdminStatusOverride(report) {
+  const normalizedReport = toReportModel(report);
+  const trackingKey = (normalizedReport.tracking || "").toString().trim();
+  if (!trackingKey) return normalizedReport;
+
+  const override = getStatusOverrideByTracking(trackingKey, getAdminStatusOverrides());
+  if (!override) return normalizedReport;
+
+  return {
+    ...normalizedReport,
+    status: override
+  };
+}
+
+function getStatusOverrideByTracking(tracking, overrides) {
+  const target = (tracking || "").toString().trim().toLowerCase();
+  if (!target || !overrides || typeof overrides !== "object") return "";
+
+  const direct = overrides[tracking];
+  if (direct) return direct;
+
+  const matchedKey = Object.keys(overrides).find((key) => key.trim().toLowerCase() === target);
+  return matchedKey ? overrides[matchedKey] : "";
+}
+
+function getSiteSettings() {
+  try {
+    const raw = localStorage.getItem(SITE_SETTINGS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    console.warn("Unable to read site settings", error);
+    return {};
+  }
+}
+
+function applyAdminWebsiteSettings() {
+  const settings = getSiteSettings();
+
+  const subheader = document.getElementById("heroSubheader");
+  if (subheader && settings.heroSubheader) subheader.textContent = settings.heroSubheader;
+
+  const heroPurpose = document.getElementById("heroPurpose");
+  if (heroPurpose && settings.heroPurpose) heroPurpose.textContent = settings.heroPurpose;
+
+  return Array.isArray(settings.liveStatuses) && settings.liveStatuses.length > 0
+    ? settings.liveStatuses.filter(Boolean)
+    : null;
+}
 
 function getReportEndpoints() {
   // Keep a short endpoint list to avoid spamming repeated browser CORS errors
   // when the Apps Script deployment is not configured for cross-origin access.
   return [API_URL, `${API_URL}?action=getReports`];
+}
+
+function buildTrackingLookupEndpoints(trackingNumber) {
+  const tracking = encodeURIComponent((trackingNumber || "").trim());
+  return [
+    `${API_URL}?action=getReportByTracking&tracking=${tracking}`,
+    `${API_URL}?action=getReports`
+  ];
+}
+
+function buildJsonpEndpoint(endpoint, callbackName) {
+  const separator = endpoint.includes("?") ? "&" : "?";
+  return `${endpoint}${separator}callback=${encodeURIComponent(callbackName)}`;
+}
+
+function loadJsonp(endpoint) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `roadwatchJsonpCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const scriptId = `${callbackName}_script`;
+    const cleanup = () => {
+      const script = document.getElementById(scriptId);
+      if (script) script.remove();
+      delete window[callbackName];
+    };
+
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("JSONP request timed out."));
+    }, 10000);
+
+    window[callbackName] = (payload) => {
+      window.clearTimeout(timeout);
+      cleanup();
+      resolve(payload || {});
+    };
+
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = buildJsonpEndpoint(endpoint, callbackName);
+    script.onerror = () => {
+      window.clearTimeout(timeout);
+      cleanup();
+      reject(new Error("JSONP request failed."));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+async function fetchApiPayload(endpoint) {
+  try {
+    const response = await fetch(endpoint, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const responseText = await response.text();
+    if (!responseText) return {};
+
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return responseText;
+    }
+  } catch (error) {
+    if (!isLikelyCorsBlockedRequest(endpoint, error)) throw error;
+
+    // Cross-origin requests can still work through standard fetch when the Apps Script
+    // deployment sends the right CORS headers. Only fall back to JSONP when fetch is
+    // blocked by the browser's CORS policy.
+    return loadJsonp(endpoint);
+  }
+}
+
+function isCrossOriginEndpoint(endpoint) {
+  try {
+    return new URL(endpoint).origin !== window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
+function getLocalReports() {
+  try {
+    const raw = localStorage.getItem(LOCAL_REPORTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(toReportModel);
+  } catch (error) {
+    console.warn("Unable to read local reports cache", error);
+    return [];
+  }
+}
+
+function saveLocalReports(reports) {
+  try {
+    localStorage.setItem(LOCAL_REPORTS_KEY, JSON.stringify(reports));
+  } catch (error) {
+    console.warn("Unable to persist local reports cache", error);
+  }
+}
+
+function mergeReportsByTracking(primaryReports, secondaryReports) {
+  const merged = [];
+  const indexByTracking = new Map();
+
+  const append = (report) => {
+    const normalizedReport = applyAdminStatusOverride(report);
+    const trackingKey = (normalizedReport.tracking || "").toString().trim().toLowerCase();
+
+    if (!trackingKey) {
+      merged.push(normalizedReport);
+      return;
+    }
+
+    if (indexByTracking.has(trackingKey)) {
+      merged[indexByTracking.get(trackingKey)] = {
+        ...merged[indexByTracking.get(trackingKey)],
+        ...normalizedReport
+      };
+      return;
+    }
+
+    indexByTracking.set(trackingKey, merged.length);
+    merged.push(normalizedReport);
+  };
+
+  (Array.isArray(primaryReports) ? primaryReports : []).forEach(append);
+  (Array.isArray(secondaryReports) ? secondaryReports : []).forEach(append);
+
+  return merged;
+}
+
+function cacheLocalSubmission(reportPayload) {
+  const localReports = getLocalReports();
+  const cachedEntry = {
+    ...reportPayload,
+    status: "Pending",
+    timestamp: new Date().toISOString()
+  };
+
+  const mergedReports = mergeReportsByTracking([cachedEntry], localReports);
+  saveLocalReports(mergedReports);
 }
 
 function getCurrentOrigin() {
@@ -76,27 +287,141 @@ function readPhotoAsDataUrl() {
   });
 }
 
+function submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded) {
+  return new Promise((resolve, reject) => {
+    const iframeName = `roadwatch_submit_iframe_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.style.display = "none";
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = endpoint;
+    form.target = iframeName;
+    form.style.display = "none";
+
+    const params = new URLSearchParams(formUrlEncoded);
+    params.forEach((value, key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    let hasSettled = false;
+    const cleanup = () => {
+      window.clearTimeout(timeoutId);
+      iframe.onload = null;
+      form.remove();
+      iframe.remove();
+    };
+
+    const resolveOnce = () => {
+      if (hasSettled) return;
+      hasSettled = true;
+      cleanup();
+      resolve("");
+    };
+
+    const rejectOnce = (error) => {
+      if (hasSettled) return;
+      hasSettled = true;
+      cleanup();
+      reject(error);
+    };
+
+    iframe.onload = resolveOnce;
+
+    const timeoutId = window.setTimeout(() => {
+      rejectOnce(new Error("Cross-origin form submit timed out."));
+    }, 12000);
+
+    try {
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+      form.submit();
+    } catch (error) {
+      rejectOnce(error instanceof Error ? error : new Error("Cross-origin form submit failed."));
+    }
+  });
+}
+
+async function submitCrossOriginViaNoCors(endpoint, formUrlEncoded) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    mode: "no-cors",
+    body: formUrlEncoded,
+    redirect: "follow"
+  });
+
+  return response;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+async function verifySubmittedReport(trackingNumber) {
+  const maxAttempts = 4;
+  let encounteredLookupError = false;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const matchedReport = await fetchReportByTracking(trackingNumber);
+      if (matchedReport && (matchedReport.tracking || "").toString().trim()) {
+        return true;
+      }
+    } catch (error) {
+      encounteredLookupError = true;
+      if (isJsonpTransportError(error)) {
+        return null;
+      }
+      console.warn("Unable to verify submitted report yet", error);
+    }
+
+    if (attempt < maxAttempts) {
+      await wait(1200);
+    }
+  }
+
+  return encounteredLookupError ? null : false;
+}
+
+function isJsonpTransportError(error) {
+  const message = (error?.message || "").toString().toLowerCase();
+  return message.includes("jsonp request failed") || message.includes("jsonp request timed out");
+}
+
 function toUserFacingLoadErrorMessage(error) {
   if (!error?.message) return "Unable to load reports right now.";
   if (isCorsConfigurationIssue(error)) {
     return "Reports are temporarily unavailable because the Google Apps Script deployment is not allowing this website origin (CORS).";
+  }
+  if (isJsonpTransportError(error)) {
+    return "Reports are temporarily unavailable because Google Apps Script is not returning JSONP yet. Please verify your deployment URL and callback support.";
   }
   return error.message;
 }
 
 function isLikelyCorsBlockedRequest(endpoint, error) {
   if (!(error instanceof TypeError)) return false;
-
-  try {
-    const endpointOrigin = new URL(endpoint).origin;
-    return endpointOrigin !== window.location.origin;
-  } catch {
-    return false;
-  }
+  return isCrossOriginEndpoint(endpoint);
 }
 
 function normalizeKey(key) {
   return (key || "").toString().trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function escapeHtml(value) {
+  return (value || "").toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function getFieldValue(record, aliases) {
@@ -129,7 +454,26 @@ function toReportModel(report) {
     firstname: getFieldValue(report, ["firstname", "firstName", "givenName", "First Name"]),
     mi: getFieldValue(report, ["mi", "middleinitial", "middleInitial", "Middle Initial"]),
     location: getFieldValue(report, ["location", "address", "road", "Road Location"]),
-    issue: getFieldValue(report, ["issue", "problem", "details", "description", "Issue", "Details", "Report Details"]),
+    issue: getFieldValue(report, [
+      "issue",
+      "issueDetail",
+      "issueDetails",
+      "issue_detail",
+      "issue_details",
+      "issueType",
+      "issue_type",
+      "problem",
+      "details",
+      "description",
+      "concern",
+      "Issue",
+      "Issue Detail",
+      "Issue Details",
+      "Issue Type",
+      "Details",
+      "Report Detail",
+      "Report Details"
+    ]),
     status: getFieldValue(report, ["status", "reportStatus", "Status"]),
     lat: getFieldValue(report, ["lat", "latitude", "Latitude"]),
     lng: getFieldValue(report, ["lng", "lon", "longitude", "Longitude"]),
@@ -162,7 +506,10 @@ function parseReportsFromApi(payload) {
 }
 
 async function fetchReports() {
+  const localReports = getLocalReports();
+
   if (isCorsRetryCooldownActive()) {
+    if (localReports.length > 0) return localReports;
     throw new Error(buildCorsErrorMessage(API_URL));
   }
 
@@ -174,25 +521,12 @@ async function fetchReports() {
 
   for (const endpoint of sheetEndpoints) {
     try {
-      const response = await fetch(endpoint, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const responseText = await response.text();
-      let payload = [];
-
-      if (responseText) {
-        try {
-          payload = JSON.parse(responseText);
-        } catch (parseError) {
-          // Some Apps Script deployments return JSON as a serialized string.
-          payload = responseText;
-        }
-      }
+      const payload = await fetchApiPayload(endpoint);
 
       const parsedReports = parseReportsFromApi(payload);
 
       if (parsedReports.length > 0) {
-        cachedReports = parsedReports;
+        cachedReports = mergeReportsByTracking(parsedReports, localReports);
         return cachedReports;
       }
     } catch (error) {
@@ -207,13 +541,28 @@ async function fetchReports() {
 
   cachedReports = [];
   if (corsBlocked) {
+    if (localReports.length > 0) {
+      cachedReports = localReports;
+      return cachedReports;
+    }
     activateCorsRetryCooldown();
     const corsError = new Error(buildCorsErrorMessage(corsBlockedEndpoint));
     reportCorsTroubleshootingContext();
     throw corsError;
   }
-  if (lastError instanceof TypeError) throw new Error(buildNetworkErrorMessage());
+  if (lastError instanceof TypeError) {
+    if (localReports.length > 0) {
+      cachedReports = localReports;
+      return cachedReports;
+    }
+    throw new Error(buildNetworkErrorMessage());
+  }
+  if (isJsonpTransportError(lastError)) {
+    cachedReports = localReports;
+    return cachedReports;
+  }
   if (lastError) throw lastError;
+  cachedReports = localReports;
   return cachedReports;
 }
 
@@ -293,9 +642,24 @@ function loadMap() {
 
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+
+    autofillRoadLocationFromCoordinates(lat, lng);
   });
 
-  loadReports(); // Load existing reports on the map
+}
+
+async function autofillRoadLocationFromCoordinates(latitude, longitude) {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+    const data = await response.json();
+    const road = data.address?.road || data.address?.neighbourhood || data.display_name;
+    const locationInput = document.getElementById("locationText");
+    if (locationInput && road) {
+      locationInput.value = road;
+    }
+  } catch (error) {
+    console.log("Reverse geocoding failed", error);
+  }
 }
 
 // Auto-detect user location
@@ -321,19 +685,94 @@ async function detectLocation() {
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
 
-    try {
-      let response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      let data = await response.json();
-      let road = data.address?.road || data.display_name;
-      const locationInput = document.getElementById("locationText");
-      if (locationInput) {
-        locationInput.value = road || "";
-      }
-    } catch (error) {
-      console.log("Reverse geocoding failed", error);
-    }
+    await autofillRoadLocationFromCoordinates(lat, lng);
   }, function () {
     alert("Unable to detect location. Please allow GPS permission or place a pin manually.");
+  });
+}
+
+async function fetchLocationSuggestions(query) {
+  if (locationSuggestionAbortController) {
+    locationSuggestionAbortController.abort();
+  }
+
+  locationSuggestionAbortController = new AbortController();
+  const endpoint = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=ph&addressdetails=1&limit=6&q=${encodeURIComponent(query)}`;
+  const response = await fetch(endpoint, {
+    signal: locationSuggestionAbortController.signal,
+    headers: {
+      Accept: "application/json"
+    }
+  });
+
+  if (!response.ok) throw new Error(`Suggestion lookup failed (${response.status})`);
+
+  return response.json();
+}
+
+function renderLocationSuggestions(results) {
+  const datalist = document.getElementById("locationSuggestions");
+  if (!datalist) return;
+
+  datalist.innerHTML = "";
+
+  (Array.isArray(results) ? results : []).forEach((item) => {
+    const option = document.createElement("option");
+    const road = item?.address?.road || item?.name || item?.display_name || "";
+    option.value = road;
+    option.label = item?.display_name || road;
+    option.dataset.lat = item?.lat || "";
+    option.dataset.lon = item?.lon || "";
+    datalist.appendChild(option);
+  });
+}
+
+function attachLocationAutocomplete() {
+  const input = document.getElementById("locationText");
+  const datalist = document.getElementById("locationSuggestions");
+  if (!input || !datalist) return;
+
+  input.addEventListener("input", () => {
+    const query = input.value.trim();
+
+    if (locationSuggestionDebounceTimer) {
+      clearTimeout(locationSuggestionDebounceTimer);
+    }
+
+    if (query.length < 3) {
+      datalist.innerHTML = "";
+      return;
+    }
+
+    locationSuggestionDebounceTimer = setTimeout(async () => {
+      try {
+        const results = await fetchLocationSuggestions(query);
+        renderLocationSuggestions(results);
+      } catch (error) {
+        if (error?.name !== "AbortError") {
+          console.log("Location suggestion lookup failed", error);
+        }
+      }
+    }, 280);
+  });
+
+  input.addEventListener("change", () => {
+    const selectedOption = Array.from(datalist.options).find((option) => option.value === input.value);
+    if (!selectedOption) return;
+
+    const optionLat = parseFloat(selectedOption.dataset.lat);
+    const optionLng = parseFloat(selectedOption.dataset.lon);
+    if (!Number.isFinite(optionLat) || !Number.isFinite(optionLng)) return;
+
+    lat = optionLat;
+    lng = optionLng;
+
+    if (!map) loadMap();
+    map.setView([lat, lng], 16);
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+    document.getElementById("selectedLocation").innerText =
+      "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
   });
 }
 
@@ -362,12 +801,201 @@ function formatSubmissionTime(report) {
   });
 }
 
+function getIssueCategory(issueText) {
+  const issue = (issueText || "").toString().trim().toLowerCase();
+  if (!issue) return "Unspecified";
+
+  const issueMatchers = [
+    { label: "Road Surface", patterns: ["pothole", "crack", "lane", "marking", "surface", "asphalt"] },
+    { label: "Flooding & Drainage", patterns: ["flood", "drain", "water", "clog", "rain"] },
+    { label: "Road Safety", patterns: ["traffic light", "sign", "guardrail", "crossing", "safety"] },
+    { label: "Street Infrastructure", patterns: ["streetlight", "sidewalk", "manhole", "reflector", "pavement"] },
+    { label: "Road Obstruction", patterns: ["obstruction", "fallen tree", "debris", "construction", "illegal parking", "blocked"] }
+  ];
+
+  const matched = issueMatchers.find(item => item.patterns.some(pattern => issue.includes(pattern)));
+  if (matched) return matched.label;
+
+  return "Other Concerns";
+}
+
+function computeReportStatistics(reports) {
+  const safeReports = Array.isArray(reports) ? reports : [];
+
+  const statusCounts = {
+    pending: 0,
+    inProgress: 0,
+    repaired: 0
+  };
+
+  const issueTypeCounts = {};
+  let thisMonthCount = 0;
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  safeReports.forEach((report) => {
+    const status = normalizeStatus(report.status).toLowerCase();
+    if (status === "pending") statusCounts.pending += 1;
+    if (status === "in progress") statusCounts.inProgress += 1;
+    if (status === "repaired") statusCounts.repaired += 1;
+
+    const issueType = getIssueCategory(report.issue);
+    issueTypeCounts[issueType] = (issueTypeCounts[issueType] || 0) + 1;
+
+    const rawDate = getFieldValue(report, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"]);
+    const parsedDate = new Date(rawDate);
+    if (!Number.isNaN(parsedDate.getTime()) && parsedDate.getMonth() === currentMonth && parsedDate.getFullYear() === currentYear) {
+      thisMonthCount += 1;
+    }
+  });
+
+  const topIssue = Object.entries(issueTypeCounts)
+    .sort((a, b) => b[1] - a[1])[0] || ["None yet", 0];
+
+  return {
+    total: safeReports.length,
+    statusCounts,
+    issueTypeCounts,
+    topIssue,
+    thisMonthCount
+  };
+}
+
+function buildDisplayNameForFixedRoad(report) {
+  const location = (report.location || "").toString().trim() || "Location not provided";
+  const issue = (report.issue || "").toString().trim() || "Issue repaired";
+  return `${location} – ${issue}`;
+}
+
+function renderReportStatistics(reports) {
+  const totalEl = document.getElementById("statsTotalReports");
+  const pendingEl = document.getElementById("statsPending");
+  const inProgressEl = document.getElementById("statsInProgress");
+  const repairedEl = document.getElementById("statsRepaired");
+  const recentFixedEl = document.getElementById("recentlyFixedRoads");
+  const feedbackEl = document.getElementById("statsFeedback");
+
+  if (!totalEl || !pendingEl || !inProgressEl || !repairedEl || !recentFixedEl || !feedbackEl) return;
+
+  const stats = computeReportStatistics(reports);
+
+  totalEl.textContent = stats.total.toLocaleString("en-PH");
+  pendingEl.textContent = stats.statusCounts.pending.toLocaleString("en-PH");
+  inProgressEl.textContent = stats.statusCounts.inProgress.toLocaleString("en-PH");
+  repairedEl.textContent = stats.statusCounts.repaired.toLocaleString("en-PH");
+
+  const recentlyFixed = [...(Array.isArray(reports) ? reports : [])]
+    .filter((report) => normalizeStatus(report.status).toLowerCase() === "repaired")
+    .sort((a, b) => {
+      const timeA = new Date(getFieldValue(a, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"]))?.getTime() || 0;
+      const timeB = new Date(getFieldValue(b, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"]))?.getTime() || 0;
+      return timeB - timeA;
+    })
+    .slice(0, 3);
+
+  if (recentlyFixed.length === 0) {
+    recentFixedEl.innerHTML = "<li>No repaired reports yet.</li>";
+  } else {
+    recentFixedEl.innerHTML = recentlyFixed
+      .map((report) => `<li>${escapeHtml(buildDisplayNameForFixedRoad(report))}</li>`)
+      .join("");
+  }
+
+  feedbackEl.textContent = stats.total > 0
+    ? `Updated with ${stats.total.toLocaleString("en-PH")} report${stats.total === 1 ? "" : "s"} from the connected Google Sheet.`
+    : "No report data is available yet from the connected Google Sheet.";
+}
+
+function renderReportStatisticsError(error) {
+  const feedbackEl = document.getElementById("statsFeedback");
+  if (!feedbackEl) return;
+  feedbackEl.textContent = toUserFacingLoadErrorMessage(error);
+}
+
+async function loadStatistics() {
+  try {
+    const reports = Array.isArray(cachedReports) && cachedReports.length > 0
+      ? cachedReports
+      : await fetchReports();
+    renderReportStatistics(reports);
+  } catch (error) {
+    console.warn("Error loading statistics", error);
+    renderReportStatisticsError(error);
+  }
+}
+
 function findReportByTracking(reports, trackingNumber) {
   const target = trackingNumber.trim().toLowerCase();
   return reports.find(report => {
     const tracking = getFieldValue(report, ["tracking", "trackingNumber", "track", "Tracking Number", "Tracking #", "Reference Number"]).toString().trim().toLowerCase();
     return tracking === target;
   });
+}
+
+async function fetchReportByTracking(trackingNumber) {
+  const localReports = getLocalReports();
+  const localMatch = findReportByTracking(localReports, trackingNumber);
+
+  if (isCorsRetryCooldownActive()) {
+    return localMatch || null;
+  }
+
+  const endpoints = buildTrackingLookupEndpoints(trackingNumber);
+
+  let lastError;
+  let corsBlocked = false;
+  let corsBlockedEndpoint = "";
+
+  for (const endpoint of endpoints) {
+    try {
+      const payload = await fetchApiPayload(endpoint);
+
+      if (endpoint.includes("action=getReportByTracking")) {
+        const matchedReport = payload && typeof payload === "object"
+          ? toReportModel(payload.report || {})
+          : null;
+
+        if (matchedReport && matchedReport.tracking) {
+          cachedReports = mergeReportsByTracking([matchedReport], localReports);
+          return applyAdminStatusOverride(matchedReport);
+        }
+      }
+
+      const reports = parseReportsFromApi(payload);
+      const matchedReport = findReportByTracking(reports, trackingNumber);
+      if (matchedReport) {
+        cachedReports = mergeReportsByTracking(reports, localReports);
+        return applyAdminStatusOverride(matchedReport);
+      }
+    } catch (error) {
+      if (isLikelyCorsBlockedRequest(endpoint, error)) {
+        corsBlocked = true;
+        corsBlockedEndpoint = endpoint;
+        break;
+      }
+      lastError = error;
+    }
+  }
+
+  if (corsBlocked) {
+    activateCorsRetryCooldown();
+    if (localMatch) return localMatch;
+    const corsError = new Error(buildCorsErrorMessage(corsBlockedEndpoint));
+    reportCorsTroubleshootingContext();
+    throw corsError;
+  }
+
+  if (lastError instanceof TypeError) {
+    if (localMatch) return localMatch;
+    throw new Error(buildNetworkErrorMessage());
+  }
+  if (isJsonpTransportError(lastError)) {
+    return localMatch || null;
+  }
+
+  if (lastError) throw lastError;
+  return localMatch || null;
 }
 
 function renderTrackingResult(report) {
@@ -387,15 +1015,34 @@ function renderTrackingResult(report) {
 
   const trackingNumber = getFieldValue(report, ["tracking", "trackingNumber", "tracking_no", "track", "Tracking Number", "Tracking #", "Reference Number"]).toString().trim() || "Not available";
   const location = (report.location || report.address || "Not available").toString().trim() || "Not available";
-  const issueDetails = getFieldValue(report, ["issue", "problem", "details", "description", "Issue", "Details", "Report Details"]).toString().trim() || "Not available";
+  const issueDetails = getFieldValue(report, [
+    "issue",
+    "issueDetail",
+    "issueDetails",
+    "issue_detail",
+    "issue_details",
+    "issueType",
+    "issue_type",
+    "problem",
+    "details",
+    "description",
+    "concern",
+    "Issue",
+    "Issue Detail",
+    "Issue Details",
+    "Issue Type",
+    "Details",
+    "Report Detail",
+    "Report Details"
+  ]).toString().trim() || "Not available";
 
   tbody.innerHTML = `
     <tr>
-      <td>${trackingNumber}</td>
+      <td>${escapeHtml(trackingNumber)}</td>
       <td>${formatSubmissionTime(report)}</td>
-      <td>${fullName}</td>
-      <td>${location}</td>
-      <td>${issueDetails}</td>
+      <td>${escapeHtml(fullName)}</td>
+      <td>${escapeHtml(location)}</td>
+      <td>${escapeHtml(issueDetails)}</td>
       <td><span class="status-pill">${normalizeStatus(report.status)}</span></td>
     </tr>
   `;
@@ -424,12 +1071,7 @@ async function handleTrackingSearch(event) {
   feedback.textContent = "Searching report...";
 
   try {
-    let reports = cachedReports;
-    if (!Array.isArray(reports) || reports.length === 0) {
-      reports = await fetchReports();
-    }
-
-    const matchedReport = findReportByTracking(reports, trackingNumber);
+    const matchedReport = await fetchReportByTracking(trackingNumber);
 
     if (!matchedReport) {
       feedback.textContent = "No report found for this tracking number.";
@@ -475,6 +1117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initialPage = resolveInitialPage();
   showPage(initialPage);
+  loadStatistics();
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");
   revealTargets.forEach((el) => el.classList.add("reveal-target"));
@@ -534,8 +1177,10 @@ document.addEventListener("DOMContentLoaded", () => {
     trackSearchForm.addEventListener("submit", handleTrackingSearch);
   }
 
+  attachLocationAutocomplete();
+
   const liveStatus = document.getElementById("liveStatus");
-  const statuses = [
+  const statuses = applyAdminWebsiteSettings() || [
     "Live updates active across Metro Manila",
     "Citizens are reporting hazards in real-time",
     "Safer roads start with your report"
@@ -568,6 +1213,7 @@ async function submitReport() {
     photoData = await readPhotoAsDataUrl();
   } catch (error) {
     alert(error.message || "Unable to read photo before submitting.");
+    isSubmittingReport = false;
     return;
   }
 
@@ -593,9 +1239,16 @@ async function submitReport() {
     let lastError;
     let corsBlocked = false;
     let corsBlockedEndpoint = "";
+    let requiresVerification = false;
 
     for (const endpoint of submitEndpoints) {
       try {
+        if (isCrossOriginEndpoint(endpoint)) {
+          await submitCrossOriginViaNoCors(endpoint, formUrlEncoded);
+          requiresVerification = true;
+          return { body: "", requiresVerification };
+        }
+
         const response = await fetch(endpoint, {
           method: "POST",
           body: formUrlEncoded,
@@ -606,7 +1259,28 @@ async function submitReport() {
           throw new Error(`HTTP ${response.status}`);
         }
 
-        return response.text();
+        return { body: await response.text(), requiresVerification };
+      } catch (error) {
+        if (isLikelyCorsBlockedRequest(endpoint, error)) {
+          try {
+            await submitCrossOriginViaNoCors(endpoint, formUrlEncoded);
+            requiresVerification = true;
+            return { body: "", requiresVerification };
+          } catch (noCorsError) {
+            await submitCrossOriginViaHiddenForm(endpoint, formUrlEncoded);
+            requiresVerification = true;
+            return { body: "", requiresVerification };
+          }
+        }
+
+        lastError = error;
+      }
+
+      try {
+        const submitViaGetEndpoint = `${API_URL}?${formUrlEncoded.toString()}`;
+        await loadJsonp(submitViaGetEndpoint);
+        requiresVerification = true;
+        return { body: "", requiresVerification };
       } catch (error) {
         if (isLikelyCorsBlockedRequest(endpoint, error)) {
           corsBlocked = true;
@@ -628,7 +1302,8 @@ async function submitReport() {
   };
 
   try {
-    const res = await trySubmit();
+    const result = await trySubmit();
+    const res = result?.body || "";
     if (res) {
       let payload;
       try {
@@ -642,7 +1317,20 @@ async function submitReport() {
       }
     }
 
+    if (result?.requiresVerification) {
+      const isVerified = await verifySubmittedReport(tracking);
+      if (isVerified === false) {
+        throw new Error("Report submission could not be confirmed in Google Sheets yet. Please check your Apps Script deployment and try again.");
+      }
+      if (isVerified === null) {
+        console.warn("Skipping strict submission verification because report lookup is temporarily unavailable.");
+      }
+    }
+
     document.getElementById("trackInfo").innerText = "Tracking Number: " + tracking;
+    cacheLocalSubmission(reportPayload);
+    cachedReports = [];
+    loadStatistics();
     document.getElementById("popup").classList.add("show");
   } catch (err) {
     console.error(err);
@@ -674,24 +1362,14 @@ function resetForm() {
   document.getElementById("photoPreview").style.display = "none";
 }
 
-// Load existing reports
-async function loadReports() {
-  try {
-    await fetchReports();
+function hasValidCoordinates(report) {
+  const reportLat = parseFloat(report?.lat);
+  const reportLng = parseFloat(report?.lng);
 
-    cachedReports.forEach(r => {
-      if (!r.lat || !r.lng) return;
+  if (!Number.isFinite(reportLat) || !Number.isFinite(reportLng)) return false;
+  if (reportLat < -90 || reportLat > 90) return false;
+  if (reportLng < -180 || reportLng > 180) return false;
+  if (reportLat === 0 && reportLng === 0) return false;
 
-      L.marker([parseFloat(r.lat), parseFloat(r.lng)])
-        .addTo(map)
-        .bindPopup("<b>" + r.issue + "</b><br>" + r.location + "<br>Status: " + normalizeStatus(r.status));
-    });
-  } catch (err) {
-    console.log("Error loading reports", err);
-
-    const feedback = document.getElementById("trackingSearchFeedback");
-    if (feedback) {
-      feedback.textContent = toUserFacingLoadErrorMessage(err);
-    }
-  }
+  return true;
 }
