@@ -469,7 +469,40 @@ function getFieldValue(record, aliases) {
   return "";
 }
 
+function toFiniteCoordinate(value) {
+  const parsed = Number.parseFloat(String(value ?? "").replace(/,/g, "").trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getCoordinatePair(report) {
+  const latCandidate = getFieldValue(report, ["lat", "latitude", "Latitude", "pinLat", "pin_lat", "y"]);
+  const lngCandidate = getFieldValue(report, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng", "x"]);
+
+  let latValue = toFiniteCoordinate(latCandidate);
+  let lngValue = toFiniteCoordinate(lngCandidate);
+
+  if (latValue !== null && lngValue !== null) {
+    return { lat: latValue, lng: lngValue };
+  }
+
+  const composite = getFieldValue(report, ["coordinates", "coordinate", "latlng", "LatLng", "pin", "locationCoords", "Location Coords"]);
+  if (composite) {
+    const match = String(composite).match(/(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)/);
+    if (match) {
+      latValue = toFiniteCoordinate(match[1]);
+      lngValue = toFiniteCoordinate(match[2]);
+      if (latValue !== null && lngValue !== null) {
+        return { lat: latValue, lng: lngValue };
+      }
+    }
+  }
+
+  return { lat: "", lng: "" };
+}
+
 function toReportModel(report) {
+  const coordinates = getCoordinatePair(report);
+
   return {
     tracking: getFieldValue(report, ["tracking", "trackingNumber", "tracking_no", "Tracking Number", "Tracking #", "Reference Number"]),
     name: getFieldValue(report, ["name", "fullName", "Full Name", "Reporter Name"]),
@@ -498,8 +531,8 @@ function toReportModel(report) {
       "Report Details"
     ]),
     status: getFieldValue(report, ["status", "reportStatus", "Status"]),
-    lat: getFieldValue(report, ["lat", "latitude", "Latitude"]),
-    lng: getFieldValue(report, ["lng", "lon", "longitude", "Longitude"]),
+    lat: coordinates.lat,
+    lng: coordinates.lng,
     timestamp: getFieldValue(report, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"])
   };
 }
@@ -976,17 +1009,14 @@ function renderCitizenReportsMap(reports) {
     window.citizenReportsLayer = L.layerGroup().addTo(window.citizenReportsMapInstance);
   }
 
-  const validReports = (Array.isArray(reports) ? reports : []).filter((report) => {
-    const latValue = Number.parseFloat(report.lat);
-    const lngValue = Number.parseFloat(report.lng);
-    return Number.isFinite(latValue) && Number.isFinite(lngValue);
-  });
+  const validReports = (Array.isArray(reports) ? reports : []).filter(hasValidCoordinates);
 
   const bounds = [];
 
   validReports.forEach((report) => {
     const latValue = Number.parseFloat(report.lat);
     const lngValue = Number.parseFloat(report.lng);
+    if (!Number.isFinite(latValue) || !Number.isFinite(lngValue)) return;
     const markerConfig = getMarkerConfigForStatus(report.status);
 
     const marker = L.marker([latValue, lngValue], { icon: createStatusMapIcon(markerConfig.color) });
@@ -1466,8 +1496,21 @@ async function submitReport() {
       }
     }
 
-    document.getElementById("trackInfo").innerText = "Tracking Number: " + tracking;
-    cacheLocalSubmission(reportPayload);
+    const submittedAt = new Date();
+    const submittedDateTime = submittedAt.toLocaleString("en-PH", {
+      month: "long",
+      day: "2-digit",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+
+    document.getElementById("trackInfo").innerText = tracking;
+    document.getElementById("submissionTimeInfo").innerText = `Submitted on ${submittedDateTime}`;
+    document.getElementById("copyFeedback").innerText = "";
+    cacheLocalSubmission({ ...reportPayload, timestamp: submittedAt.toISOString() });
     cachedReports = [];
     loadStatistics();
     document.getElementById("popup").classList.add("show");
@@ -1477,6 +1520,25 @@ async function submitReport() {
   } finally {
     isSubmittingReport = false;
   }
+}
+
+function copyTrackingNumber() {
+  const trackInfo = document.getElementById("trackInfo");
+  const copyFeedback = document.getElementById("copyFeedback");
+  const trackingNumber = trackInfo?.innerText?.trim() || "";
+
+  if (!trackingNumber) {
+    if (copyFeedback) copyFeedback.innerText = "No reference number to copy yet.";
+    return;
+  }
+
+  navigator.clipboard.writeText(trackingNumber)
+    .then(() => {
+      if (copyFeedback) copyFeedback.innerText = "Reference number copied.";
+    })
+    .catch(() => {
+      if (copyFeedback) copyFeedback.innerText = "Copy failed. Please copy it manually.";
+    });
 }
 
 // Hide popup
@@ -1495,6 +1557,12 @@ function newReport() {
 function resetForm() {
   document.querySelectorAll("#submit input,#submit textarea").forEach(el => el.value = "");
   document.getElementById("selectedLocation").innerText = "No location selected";
+  const trackInfo = document.getElementById("trackInfo");
+  const submissionTimeInfo = document.getElementById("submissionTimeInfo");
+  const copyFeedback = document.getElementById("copyFeedback");
+  if (trackInfo) trackInfo.innerText = "";
+  if (submissionTimeInfo) submissionTimeInfo.innerText = "";
+  if (copyFeedback) copyFeedback.innerText = "";
   lat = 0;
   lng = 0;
   if (marker) map.removeLayer(marker);
