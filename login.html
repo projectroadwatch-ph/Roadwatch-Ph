@@ -32,15 +32,25 @@
     }
 
     .loginCard {
-      width: min(420px, 100%);
+      width: min(460px, 100%);
       background: var(--panel);
       border: 1px solid rgba(169, 208, 255, 0.28);
       border-radius: 18px;
-      padding: 24px;
+      padding: 26px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
     }
 
-    h2 { margin: 0 0 16px; }
+    h2 { margin: 0 0 12px; }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #8ecbff;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
 
     p {
       margin: 0 0 16px;
@@ -96,8 +106,9 @@
 </head>
 <body>
   <div class="loginCard">
+    <p class="eyebrow">Welcome Back</p>
     <h2>RoadWatch PH Login</h2>
-    <p>Sign in to continue to the enhanced RoadWatch PH homepage.</p>
+    <p>Sign in to submit reports faster, track your road issue history, and stay updated on fixes.</p>
 
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">

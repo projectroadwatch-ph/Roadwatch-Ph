@@ -462,8 +462,13 @@
 <div id="popup">
   <div class="popup-card">
     <h3>Report Submitted Successfully!</h3>
-    <p id="trackInfo" style="font-weight:bold; font-size:18px; margin:15px 0;"></p>
-    <div style="display:flex; justify-content:space-between; gap:15px; margin-top:10px;">
+    <p id="submissionTimeInfo" class="popup-meta"></p>
+    <div class="tracking-wrap">
+      <p id="trackInfo" class="track-info"></p>
+      <button id="copyTrackingBtn" type="button" class="copy-btn" onclick="copyTrackingNumber()">Copy Reference #</button>
+    </div>
+    <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
+    <div class="popup-actions">
       <button class="submit" onclick="closePopup()" style="flex:1;">Done</button>
       <button class="submit" onclick="newReport()" style="flex:1;">Submit Another</button>
     </div>

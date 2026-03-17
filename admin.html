@@ -8,23 +8,32 @@
 </head>
 <body>
   <main class="wrap">
-    <section id="loginPanel" class="card">
-      <h1>RoadWatch PH Admin Portal</h1>
-      <p>Log in to access website controls.</p>
-      <label>Username
-        <input id="adminUsername" type="text" autocomplete="username">
-      </label>
-      <label>Password
-        <input id="adminPassword" type="password" autocomplete="current-password">
-      </label>
-      <button id="loginBtn" type="button">Log In</button>
-      <p id="loginFeedback" class="feedback"></p>
-      <a href="index.html" class="link">← Back to homepage</a>
+    <section id="loginPanel" class="card login-card">
+      <div class="login-hero">
+        <p class="eyebrow">Secure Access</p>
+        <h1>RoadWatch PH Admin Portal</h1>
+        <p>Log in to monitor reports, update road issue statuses, and keep citizens informed in real time.</p>
+      </div>
+      <div class="login-form">
+        <label>Username
+          <input id="adminUsername" type="text" autocomplete="username" placeholder="Enter admin username">
+        </label>
+        <label>Password
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+        </label>
+        <button id="loginBtn" type="button">Log In to Dashboard</button>
+        <p id="loginFeedback" class="feedback"></p>
+        <a href="index.html" class="link">← Back to homepage</a>
+      </div>
     </section>
 
-    <section id="dashboard" class="card hidden">
-      <div class="row">
-        <h2>Admin Dashboard</h2>
+    <section id="dashboard" class="card hidden dashboard-shell">
+      <div class="dashboard-header">
+        <div>
+          <p class="eyebrow">Operations Center</p>
+          <h2>Admin Dashboard</h2>
+          <p class="small">Manage submissions, verify road issues, and update the map's public status indicators.</p>
+        </div>
         <button id="logoutBtn" type="button" class="secondary">Log out</button>
       </div>
 
