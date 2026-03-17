@@ -161,6 +161,28 @@ function getFieldValue(record, aliases) {
   return "";
 }
 
+function formatDateTime(record) {
+  const dateValue = getFieldValue(record, ["date", "Date", "reportDate", "reportedDate", "createdDate"]);
+  const timeValue = getFieldValue(record, ["time", "Time", "reportTime", "reportedTime", "createdTime"]);
+
+  if (dateValue && timeValue) return `${dateValue} ${timeValue}`.trim();
+
+  const timestampValue = getFieldValue(record, [
+    "timestamp",
+    "Timestamp",
+    "submittedAt",
+    "createdAt",
+    "datetime",
+    "dateTime",
+    "Date Time"
+  ]);
+
+  if (timestampValue) return String(timestampValue).trim();
+  if (dateValue) return String(dateValue).trim();
+  if (timeValue) return String(timeValue).trim();
+  return "-";
+}
+
 function normalizeStatus(status) {
   const raw = String(status || "").trim().toLowerCase();
   if (raw === "verified") return "Verified";
@@ -171,6 +193,7 @@ function normalizeStatus(status) {
 
 function normalizeReport(record = {}) {
   return {
+    dateTime: formatDateTime(record),
     tracking: getFieldValue(record, ["tracking", "trackingNumber", "tracking_no", "Tracking #", "Tracking Number"]),
     name: [
       getFieldValue(record, ["firstname", "firstName", "First Name"]),
@@ -323,14 +346,14 @@ function getFilteredReports() {
     if (!statusPass) return false;
 
     if (!query) return true;
-    const haystack = [report.tracking, report.name, report.location, report.issue].join(" ").toLowerCase();
+    const haystack = [report.dateTime, report.tracking, report.name, report.location, report.issue].join(" ").toLowerCase();
     return haystack.includes(query);
   });
 }
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="6">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="7">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -341,6 +364,7 @@ function renderRows(reports) {
     const effectiveStatus = normalizeStatus(report.status);
 
     tr.innerHTML = `
+      <td>${report.dateTime || "-"}</td>
       <td>${report.tracking || "-"}</td>
       <td>${report.name}</td>
       <td>${report.location}</td>
@@ -351,12 +375,12 @@ function renderRows(reports) {
 
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[4].textContent = photoElement;
+      tr.children[5].textContent = photoElement;
     } else {
-      tr.children[4].appendChild(photoElement);
+      tr.children[5].appendChild(photoElement);
     }
 
-    tr.children[5].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[6].appendChild(statusSelect(effectiveStatus, report.tracking));
     reportsBody.appendChild(tr);
   });
 }
@@ -369,14 +393,14 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="6">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="7">Loading reports...</td></tr>';
 
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
 
     allReports = parseReports(payload).map(normalizeReport);
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="6">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="7">No reports found.</td></tr>';
       renderAnalytics([]);
       filterSummary.textContent = "No records to filter.";
       return;
@@ -385,7 +409,7 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="6">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="7">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);

@@ -41,7 +41,7 @@ button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 .small { color: var(--muted); font-size: 0.9rem; }
 .link { color: #9ad4ff; display: inline-block; margin-top: 10px; }
 .tableWrap { overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
-table { width: 100%; border-collapse: collapse; min-width: 940px; }
+table { width: 100%; border-collapse: collapse; min-width: 1040px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
 
 .toolbar {
