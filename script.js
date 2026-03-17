@@ -1627,7 +1627,9 @@ async function submitReport() {
       }
 
       try {
-        const submitViaGetEndpoint = `${API_URL}?${formUrlEncoded.toString()}`;
+        const submitViaGetParams = new URLSearchParams(formUrlEncoded);
+        submitViaGetParams.set("action", "submit");
+        const submitViaGetEndpoint = `${endpoint}?${submitViaGetParams.toString()}`;
         await loadJsonp(submitViaGetEndpoint);
         requiresVerification = true;
         return { body: "", requiresVerification };
