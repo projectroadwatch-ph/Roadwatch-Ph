@@ -1,14 +1,15 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
 
 function doGet(e) {
-  const action = (e && e.parameter && e.parameter.action) || '';
+  const params = extractRequestParams_(e);
+  const action = params.action || '';
 
   if (action === 'submit') {
-    return handleSubmission_((e && e.parameter) || {}, e);
+    return handleSubmission_(params, e);
   }
 
-  if (action !== 'getReports' && hasSubmissionPayload_((e && e.parameter) || {})) {
-    return handleSubmission_((e && e.parameter) || {}, e);
+  if (action !== 'getReports' && hasSubmissionPayload_(params)) {
+    return handleSubmission_(params, e);
   }
 
   if (action === 'getReports' || action === '') {
@@ -17,14 +18,14 @@ function doGet(e) {
   }
 
   if (action === 'getReportByTracking') {
-    const tracking = (e && e.parameter && e.parameter.tracking) || '';
+    const tracking = params.tracking || '';
     const report = readReportByTracking_(tracking);
     return buildJsonResponse_({ report: report, allowedOrigin: ALLOWED_ORIGIN }, e);
   }
 
   if (action === 'updateStatus') {
-    const tracking = (e && e.parameter && e.parameter.tracking) || '';
-    const status = (e && e.parameter && e.parameter.status) || '';
+    const tracking = params.tracking || '';
+    const status = params.status || '';
     const result = updateReportStatusByTracking_(tracking, status);
 
     return buildJsonResponse_({
@@ -41,7 +42,7 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  const params = (e && e.parameter) || {};
+  const params = extractRequestParams_(e);
 
   if (params.action === 'updateStatus') {
     const tracking = params.tracking || '';
@@ -61,6 +62,79 @@ function doPost(e) {
   return handleSubmission_(params, e);
 }
 
+
+function extractRequestParams_(e) {
+  const queryParams = (e && e.parameter) || {};
+  const postData = (e && e.postData && e.postData.contents) || '';
+
+  if (!postData) {
+    return sanitizeParams_(queryParams);
+  }
+
+  const parsedBody = parseBodyParams_(postData);
+  const merged = Object.assign({}, parsedBody, queryParams);
+  return sanitizeParams_(merged);
+}
+
+function sanitizeParams_(params) {
+  const sanitized = {};
+  Object.keys(params || {}).forEach(function (key) {
+    const value = params[key];
+    if (typeof value === 'string') {
+      sanitized[key] = value.trim();
+      return;
+    }
+
+    if (value === null || value === undefined) {
+      sanitized[key] = '';
+      return;
+    }
+
+    sanitized[key] = String(value).trim();
+  });
+
+  return sanitized;
+}
+
+function parseBodyParams_(rawBody) {
+  const body = String(rawBody || '').trim();
+  if (!body) return {};
+
+  try {
+    const parsedJson = JSON.parse(body);
+    if (parsedJson && typeof parsedJson === 'object') {
+      return parsedJson;
+    }
+  } catch (error) {
+    // Ignore JSON parse errors and continue with URL-encoded parsing.
+  }
+
+  try {
+    return parseUrlEncodedBody_(body);
+  } catch (error) {
+    return {};
+  }
+}
+
+function parseUrlEncodedBody_(body) {
+  const params = {};
+  const pairs = String(body || '').split('&');
+
+  pairs.forEach(function (pair) {
+    if (!pair) return;
+    const separatorIndex = pair.indexOf('=');
+    const rawKey = separatorIndex === -1 ? pair : pair.slice(0, separatorIndex);
+    const rawValue = separatorIndex === -1 ? '' : pair.slice(separatorIndex + 1);
+    const key = decodeURIComponent(String(rawKey || '').replace(/\+/g, ' '));
+    const value = decodeURIComponent(String(rawValue || '').replace(/\+/g, ' '));
+
+    if (!key) return;
+    params[key] = value;
+  });
+
+  return params;
+}
+
 function handleSubmission_(params, e) {
   const row = {
     timestamp: new Date().toISOString(),
@@ -68,7 +142,7 @@ function handleSubmission_(params, e) {
     lastname: params.lastname || '',
     firstname: params.firstname || '',
     mi: params.mi || '',
-    email: params.email || '',
+    email: normalizeEmail_(params.email || ''),
     phone: params.phone || '',
     location: params.location || '',
     issue: params.issue || '',
@@ -98,6 +172,10 @@ function hasSubmissionPayload_(params) {
   const email = String(params.email || '').trim();
   const issue = String(params.issue || '').trim();
   return Boolean(tracking || email || issue);
+}
+
+function normalizeEmail_(emailValue) {
+  return String(emailValue || '').trim().toLowerCase();
 }
 
 function sendSubmissionReceiptEmail_(row, appendResult) {
