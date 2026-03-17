@@ -19,6 +19,9 @@ const verificationFilter = document.getElementById("verificationFilter");
 const selectAllReports = document.getElementById("selectAllReports");
 const bulkStatusSelect = document.getElementById("bulkStatusSelect");
 const bulkSummary = document.getElementById("bulkSummary");
+const reportingRange = document.getElementById("reportingRange");
+const reportingSummary = document.getElementById("reportingSummary");
+const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -713,6 +716,223 @@ async function bulkDeleteReports(reports) {
   }
 }
 
+function bucketLabelForDate(date, range) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
+
+  if (range === "weekly") {
+    return `${date.getFullYear()}-W${String(getWeekNumber(date)).padStart(2, "0")}`;
+  }
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function getWeekNumber(date) {
+  const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = utcDate.getUTCDay() || 7;
+  utcDate.setUTCDate(utcDate.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+  return Math.ceil((((utcDate - yearStart) / 86400000) + 1) / 7);
+}
+
+function aggregateReportsByRange(reports, range = "monthly") {
+  const counts = new Map();
+
+  reports.forEach((report) => {
+    const parsed = parseReportDate(report);
+    if (!parsed) return;
+
+    const label = bucketLabelForDate(parsed, range);
+    if (!label) return;
+    counts.set(label, (counts.get(label) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([label, value]) => ({ label, value }));
+}
+
+function drawTrendChart(reports) {
+  const canvas = document.getElementById("trendChart");
+  if (!canvas) return;
+
+  const range = reportingRange?.value || "monthly";
+  const points = aggregateReportsByRange(reports, range);
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const cssWidth = canvas.clientWidth || 960;
+  const cssHeight = 280;
+
+  canvas.width = Math.floor(cssWidth * dpr);
+  canvas.height = Math.floor(cssHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+  if (points.length === 0) {
+    ctx.fillStyle = "#bdd9f8";
+    ctx.font = "600 13px Inter";
+    ctx.fillText("No dated reports available for trend analysis.", 24, cssHeight / 2);
+    return;
+  }
+
+  const max = Math.max(...points.map((item) => item.value), 1);
+  const padding = { top: 22, right: 18, bottom: 56, left: 30 };
+  const chartWidth = cssWidth - padding.left - padding.right;
+  const chartHeight = cssHeight - padding.top - padding.bottom;
+  const stepX = points.length > 1 ? chartWidth / (points.length - 1) : 0;
+
+  ctx.strokeStyle = "rgba(189, 217, 248, 0.3)";
+  ctx.beginPath();
+  ctx.moveTo(padding.left, padding.top + chartHeight);
+  ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#4fc3f7";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+
+  points.forEach((point, index) => {
+    const x = padding.left + (stepX * index);
+    const y = padding.top + chartHeight - ((point.value / max) * chartHeight);
+    if (index === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = "#9ad4ff";
+  ctx.font = "600 11px Inter";
+  ctx.textAlign = "center";
+
+  points.forEach((point, index) => {
+    const x = padding.left + (stepX * index);
+    const y = padding.top + chartHeight - ((point.value / max) * chartHeight);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#63e6be";
+    ctx.fill();
+
+    ctx.fillStyle = "#e9f4ff";
+    ctx.fillText(String(point.value), x, y - 10);
+
+    ctx.fillStyle = "#bdd9f8";
+    if (points.length <= 8 || index % Math.ceil(points.length / 8) === 0 || index === points.length - 1) {
+      ctx.fillText(point.label, x, cssHeight - 20);
+    }
+  });
+}
+
+function getTopHotspots(reports) {
+  const counts = new Map();
+
+  reports.forEach((report) => {
+    const location = String(report?.location || "").trim();
+    if (!location || location === "-") return;
+    const normalized = location.toLowerCase();
+    const existing = counts.get(normalized) || { label: location, count: 0 };
+    existing.count += 1;
+    counts.set(normalized, existing);
+  });
+
+  return Array.from(counts.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderHotspotHeatmap(reports) {
+  if (!hotspotHeatmap) return;
+
+  const hotspots = getTopHotspots(reports);
+  if (hotspots.length === 0) {
+    hotspotHeatmap.innerHTML = '<p class="small">No location data available for hotspot mapping.</p>';
+    return;
+  }
+
+  const maxCount = hotspots[0].count || 1;
+  hotspotHeatmap.innerHTML = hotspots.map((spot) => {
+    const intensity = Math.max(0.2, spot.count / maxCount);
+    return `
+      <div class="heatRow">
+        <span>${escapeHtml(spot.label)}</span>
+        <div class="heatTrack"><div class="heatBar" style="width:${Math.max(8, intensity * 100)}%; opacity:${0.25 + (intensity * 0.75)}"></div></div>
+        <strong>${spot.count}</strong>
+      </div>
+    `;
+  }).join("");
+}
+
+function updateReportingSummary(reports) {
+  if (!reportingSummary) return;
+
+  const range = reportingRange?.value || "monthly";
+  const hotspots = getTopHotspots(reports);
+  const topLabel = hotspots[0]?.label || "N/A";
+  const topCount = hotspots[0]?.count || 0;
+  const periodText = range === "weekly" ? "weekly" : "monthly";
+
+  reportingSummary.textContent = `${periodText.toUpperCase()} analytics: ${reports.length} total report(s). Top hotspot: ${topLabel} (${topCount} report(s)).`; 
+}
+
+function refreshReportingSection(reports) {
+  drawTrendChart(reports);
+  renderHotspotHeatmap(reports);
+  updateReportingSummary(reports);
+}
+
+function exportReportsToCsv(reports) {
+  const headers = ["Submission Time", "Tracking #", "Name", "Location", "Issue", "Status", "Verification"];
+  const rows = reports.map((report) => [
+    report.dateTime,
+    report.tracking,
+    report.name,
+    report.location,
+    report.issue,
+    normalizeStatus(report.status),
+    getVerificationState(report)
+  ]);
+
+  const csv = [headers, ...rows]
+    .map((row) => row.map((value) => `"${String(value || "").replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `roadwatch-report-${new Date().toISOString().slice(0, 10)}.csv`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportReportsToPdf(reports) {
+  const range = reportingRange?.value || "monthly";
+  const hotspots = getTopHotspots(reports);
+  const topRows = hotspots.slice(0, 5)
+    .map((spot, index) => `<tr><td>${index + 1}</td><td>${escapeHtml(spot.label)}</td><td>${spot.count}</td></tr>`)
+    .join("");
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>RoadWatch Report</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#1b2c3b}h1,h2{margin:0 0 10px}p{margin:0 0 12px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #c9d4dd;padding:8px;text-align:left}th{background:#eef4f9}</style></head><body><h1>RoadWatch PH Analytics Report</h1><p>Coverage: ${range === "weekly" ? "Weekly" : "Monthly"}</p><p>Total reports: ${reports.length}</p><h2>Top Hotspots</h2><table><thead><tr><th>#</th><th>Location</th><th>Reports</th></tr></thead><tbody>${topRows || "<tr><td colspan='3'>No hotspot data available.</td></tr>"}</tbody></table></body></html>`;
+
+  const printWindow = window.open("", "_blank", "width=900,height=700");
+  if (!printWindow) {
+    setFeedback("reportsFeedback", "Please allow pop-ups to export PDF.", true);
+    return;
+  }
+
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
 function renderAnalytics(reports) {
   const counts = {
     total: reports.length,
@@ -842,6 +1062,7 @@ function applyFiltersAndRender() {
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
   renderVerificationQueue(allReports);
+  refreshReportingSection(allReports);
   updateSelectAllState(filtered);
   filterSummary.textContent = `Showing ${filtered.length} of ${allReports.length} report(s).`;
 }
@@ -865,6 +1086,7 @@ async function loadReports() {
       reportsBody.innerHTML = '<tr><td colspan="10">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
+      refreshReportingSection([]);
       filterSummary.textContent = "No records to filter.";
       setTableLoadingState(false);
       return;
@@ -876,6 +1098,7 @@ async function loadReports() {
     reportsBody.innerHTML = '<tr><td colspan="10">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
+    refreshReportingSection([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
   } finally {
@@ -973,6 +1196,20 @@ document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => 
   } finally {
     setTableLoadingState(false);
   }
+});
+
+
+
+reportingRange?.addEventListener("change", () => refreshReportingSection(allReports));
+
+document.getElementById("exportCsvBtn")?.addEventListener("click", () => {
+  exportReportsToCsv(getFilteredReports());
+  setFeedback("reportsFeedback", "CSV report exported for local government review.");
+});
+
+document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
+  exportReportsToPdf(getFilteredReports());
+  setFeedback("reportsFeedback", "PDF report prepared for print/export.");
 });
 
 applyAuthUI();
