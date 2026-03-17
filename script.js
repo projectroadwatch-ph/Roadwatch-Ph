@@ -636,6 +636,12 @@ function showPage(page) {
   if (page === "submit") {
     setTimeout(loadMap, 300);
   }
+
+  if (page === "home" && window.citizenReportsMapInstance) {
+    setTimeout(() => {
+      window.citizenReportsMapInstance.invalidateSize(true);
+    }, 220);
+  }
 }
 
 
@@ -991,6 +997,10 @@ function renderCitizenReportsMap(reports) {
   if (bounds.length > 0) {
     window.citizenReportsMapInstance.fitBounds(bounds, { padding: [24, 24], maxZoom: 15 });
   }
+
+  window.setTimeout(() => {
+    window.citizenReportsMapInstance?.invalidateSize(true);
+  }, 0);
 }
 
 function renderReportStatisticsError(error) {
@@ -999,9 +1009,11 @@ function renderReportStatisticsError(error) {
   feedbackEl.textContent = toUserFacingLoadErrorMessage(error);
 }
 
-async function loadStatistics() {
+async function loadStatistics(options = {}) {
+  const forceRefresh = Boolean(options.forceRefresh);
+
   try {
-    const reports = Array.isArray(cachedReports) && cachedReports.length > 0
+    const reports = (!forceRefresh && Array.isArray(cachedReports) && cachedReports.length > 0)
       ? cachedReports
       : await fetchReports();
     renderReportStatistics(reports);
@@ -1135,6 +1147,25 @@ function renderTrackingResult(report) {
   `;
 
   wrapper.hidden = false;
+}
+
+
+async function refreshVisibleTrackingResult() {
+  const wrapper = document.getElementById("trackingResultWrapper");
+  const input = document.getElementById("trackingSearchInput");
+  if (!wrapper || wrapper.hidden || !input) return;
+
+  const trackingNumber = input.value.trim();
+  if (!trackingNumber) return;
+
+  try {
+    const matchedReport = await fetchReportByTracking(trackingNumber);
+    if (matchedReport) {
+      renderTrackingResult(matchedReport);
+    }
+  } catch {
+    // Keep existing UI when refresh fails.
+  }
 }
 
 async function handleTrackingSearch(event) {
@@ -1280,6 +1311,17 @@ document.addEventListener("DOMContentLoaded", () => {
       liveStatus.textContent = statuses[statusIndex];
     }, 3200);
   }
+
+  window.addEventListener("storage", (event) => {
+    if (![ADMIN_STATUS_OVERRIDES_KEY, ADMIN_DELETED_REPORTS_KEY, LOCAL_REPORTS_KEY].includes(event.key)) return;
+    loadStatistics({ forceRefresh: true });
+    refreshVisibleTrackingResult();
+  });
+
+  setInterval(() => {
+    loadStatistics({ forceRefresh: true });
+    refreshVisibleTrackingResult();
+  }, 15000);
 });
 
 // Submit report
