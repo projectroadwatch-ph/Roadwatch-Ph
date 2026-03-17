@@ -328,6 +328,22 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   opacity: 0.75;
 }
 
+
+.status-cell,
+.action-cell {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.status-cell .status-select,
+.action-cell button {
+  margin-top: 0;
+}
+
+.status-cell .status-select {
+  min-width: 132px;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

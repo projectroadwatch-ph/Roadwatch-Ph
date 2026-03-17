@@ -803,6 +803,7 @@ function renderRows(reports) {
       tr.children[7].appendChild(photoElement);
     }
 
+    tr.children[8].classList.add("status-cell");
     tr.children[8].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
@@ -828,6 +829,7 @@ function renderRows(reports) {
         deleteBtn.disabled = false;
       }
     });
+    tr.children[9].classList.add("action-cell");
     tr.children[9].appendChild(deleteBtn);
 
     reportsBody.appendChild(tr);
