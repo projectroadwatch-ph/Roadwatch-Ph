@@ -1518,3 +1518,45 @@ textarea {
     padding: 14px 16px;
   }
 }
+
+.reports-map-card {
+  border: 1px solid rgba(124, 227, 255, 0.35);
+  background: rgba(7, 33, 58, 0.74);
+}
+
+.reports-map-legend {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #cbe7ff;
+  font-size: 0.9rem;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.legend-dot.red { background: #ef4444; }
+.legend-dot.yellow { background: #facc15; }
+.legend-dot.green { background: #22c55e; }
+
+.citizen-reports-map {
+  height: 360px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(149, 208, 255, 0.28);
+}
+
+.status-map-marker span {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}

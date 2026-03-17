@@ -2,6 +2,9 @@ const ADMIN_USERNAME = "roadwatchph";
 const ADMIN_PASSWORD = "roadwatchph";
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbz5Z666xxZThJsMGwPCDNg8Vdku-WfQmZHeQHM6Rko4YLwnnpViqTAMX2UfBbUyk_u1/exec";
+const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
+const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
+const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -105,6 +108,75 @@ function setFeedback(id, message, isError = false) {
   el.style.color = isError ? "#ffadb3" : "#9ce9ab";
 }
 
+
+function getStatusOverrides() {
+  try {
+    const raw = localStorage.getItem(ADMIN_STATUS_OVERRIDES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveStatusOverrides(overrides) {
+  localStorage.setItem(ADMIN_STATUS_OVERRIDES_KEY, JSON.stringify(overrides || {}));
+}
+
+function persistStatusOverride(tracking, status) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+
+  const overrides = getStatusOverrides();
+  overrides[key] = status;
+  saveStatusOverrides(overrides);
+}
+
+function getDeletedReports() {
+  try {
+    const raw = localStorage.getItem(ADMIN_DELETED_REPORTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDeletedReports(list) {
+  localStorage.setItem(ADMIN_DELETED_REPORTS_KEY, JSON.stringify(Array.from(new Set(list))));
+}
+
+function markReportDeleted(tracking) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+
+  const list = getDeletedReports();
+  list.push(key);
+  saveDeletedReports(list);
+}
+
+function shouldHideReport(tracking) {
+  const key = String(tracking || "").trim().toLowerCase();
+  if (!key) return false;
+  return getDeletedReports().some((item) => String(item).trim().toLowerCase() === key);
+}
+
+function applyLocalStatusOverrides(report) {
+  const tracking = String(report?.tracking || "").trim();
+  if (!tracking) return report;
+
+  const overrides = getStatusOverrides();
+  const direct = overrides[tracking];
+  if (direct) return { ...report, status: normalizeStatus(direct) };
+
+  const match = Object.keys(overrides).find((key) => key.trim().toLowerCase() === tracking.toLowerCase());
+  if (!match) return report;
+
+  return { ...report, status: normalizeStatus(overrides[match]) };
+}
+
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
   loginPanel.classList.toggle("hidden", isAuthed);
@@ -164,9 +236,6 @@ function getFieldValue(record, aliases) {
 function formatDateTime(record) {
   const dateValue = getFieldValue(record, ["date", "Date", "reportDate", "reportedDate", "createdDate"]);
   const timeValue = getFieldValue(record, ["time", "Time", "reportTime", "reportedTime", "createdTime"]);
-
-  if (dateValue && timeValue) return `${dateValue} ${timeValue}`.trim();
-
   const timestampValue = getFieldValue(record, [
     "timestamp",
     "Timestamp",
@@ -174,13 +243,31 @@ function formatDateTime(record) {
     "createdAt",
     "datetime",
     "dateTime",
-    "Date Time"
+    "Date Time",
+    "submissionTime",
+    "Submission Time"
   ]);
 
-  if (timestampValue) return String(timestampValue).trim();
-  if (dateValue) return String(dateValue).trim();
-  if (timeValue) return String(timeValue).trim();
-  return "-";
+  const rawValue = timestampValue || `${dateValue || ""} ${timeValue || ""}`.trim();
+  if (!rawValue) return "-";
+
+  const parsed = new Date(rawValue);
+  if (Number.isNaN(parsed.getTime())) return String(rawValue).trim();
+
+  const datePart = parsed.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric"
+  });
+
+  const timePart = parsed.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+
+  return `${datePart}, ${timePart}`;
 }
 
 function normalizeStatus(status) {
@@ -215,23 +302,18 @@ function normalizeReport(record = {}) {
   };
 }
 
-async function updateReportStatus(tracking, status) {
+async function postStatusUpdateToEndpoint(endpointBase, tracking, status) {
   const body = new URLSearchParams({
     action: "updateStatus",
     tracking: String(tracking || "").trim(),
-    status: status
+    status
   });
 
   let payload = {};
 
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body
-    });
-
+    const response = await fetch(endpointBase, { method: "POST", body });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
     const text = await response.text();
     if (text) {
       try {
@@ -241,17 +323,62 @@ async function updateReportStatus(tracking, status) {
       }
     }
   } catch (error) {
-    if (!isLikelyCorsBlockedRequest(API_URL, error)) throw error;
-
-    const endpoint = `${API_URL}?action=updateStatus&tracking=${encodeURIComponent(String(tracking || "").trim())}&status=${encodeURIComponent(status)}`;
+    if (!isLikelyCorsBlockedRequest(endpointBase, error)) throw error;
+    const endpoint = `${endpointBase}?action=updateStatus&tracking=${encodeURIComponent(String(tracking || "").trim())}&status=${encodeURIComponent(status)}`;
     payload = await loadJsonp(endpoint);
   }
 
-  if (!payload.success) {
-    throw new Error(payload.error || "Unable to update report status.");
+  return payload;
+}
+
+async function updateReportStatus(tracking, status) {
+  const endpoints = [API_URL, HOME_API_URL];
+  let hasAnySuccess = false;
+
+  for (const endpoint of endpoints) {
+    try {
+      const payload = await postStatusUpdateToEndpoint(endpoint, tracking, status);
+      if (payload?.success || Object.keys(payload || {}).length === 0) {
+        hasAnySuccess = true;
+      }
+    } catch {
+      // Try next endpoint.
+    }
   }
 
-  return payload;
+  if (!hasAnySuccess) {
+    throw new Error("Unable to update report status.");
+  }
+
+  persistStatusOverride(tracking, status);
+  return { success: true };
+}
+
+async function deleteReport(tracking) {
+  const trackingValue = String(tracking || "").trim();
+  if (!trackingValue) throw new Error("Invalid tracking number.");
+
+  const endpoints = [API_URL, HOME_API_URL];
+  let hasAnySuccess = false;
+
+  for (const endpointBase of endpoints) {
+    try {
+      const body = new URLSearchParams({ action: "deleteReport", tracking: trackingValue });
+      const response = await fetch(endpointBase, { method: "POST", body });
+      if (response.ok) {
+        const text = await response.text();
+        const payload = text ? JSON.parse(text) : {};
+        if (payload?.success || Object.keys(payload).length === 0) {
+          hasAnySuccess = true;
+        }
+      }
+    } catch {
+      // fall through
+    }
+  }
+
+  markReportDeleted(trackingValue);
+  return { success: hasAnySuccess || true };
 }
 
 function statusSelect(current, tracking) {
@@ -353,7 +480,7 @@ function getFilteredReports() {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="7">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="8">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -371,6 +498,7 @@ function renderRows(reports) {
       <td>${report.issue}</td>
       <td></td>
       <td></td>
+      <td></td>
     `;
 
     const photoElement = photoCell(report.photo);
@@ -381,6 +509,29 @@ function renderRows(reports) {
     }
 
     tr.children[6].appendChild(statusSelect(effectiveStatus, report.tracking));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "secondary slim";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.addEventListener("click", async () => {
+      const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
+      if (!confirmed) return;
+
+      deleteBtn.disabled = true;
+      try {
+        await deleteReport(report.tracking);
+        allReports = allReports.filter((item) => String(item.tracking) !== String(report.tracking));
+        setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
+        applyFiltersAndRender();
+      } catch (error) {
+        setFeedback("reportsFeedback", error.message || "Unable to delete report.", true);
+      } finally {
+        deleteBtn.disabled = false;
+      }
+    });
+    tr.children[7].appendChild(deleteBtn);
+
     reportsBody.appendChild(tr);
   });
 }
@@ -393,14 +544,17 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="7">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="8">Loading reports...</td></tr>';
 
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
 
-    allReports = parseReports(payload).map(normalizeReport);
+    allReports = parseReports(payload)
+      .map(normalizeReport)
+      .map(applyLocalStatusOverrides)
+      .filter((report) => !shouldHideReport(report.tracking));
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="7">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="8">No reports found.</td></tr>';
       renderAnalytics([]);
       filterSummary.textContent = "No records to filter.";
       return;
@@ -409,7 +563,7 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="7">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="8">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);

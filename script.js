@@ -12,6 +12,7 @@ let locationSuggestionDebounceTimer = null;
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
 const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
+const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
@@ -53,6 +54,25 @@ function getStatusOverrideByTracking(tracking, overrides) {
 
   const matchedKey = Object.keys(overrides).find((key) => key.trim().toLowerCase() === target);
   return matchedKey ? overrides[matchedKey] : "";
+}
+
+
+function getDeletedReports() {
+  try {
+    const raw = localStorage.getItem(ADMIN_DELETED_REPORTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("Unable to read deleted reports", error);
+    return [];
+  }
+}
+
+function isDeletedByTracking(tracking) {
+  const target = (tracking || "").toString().trim().toLowerCase();
+  if (!target) return false;
+  return getDeletedReports().some((value) => String(value || "").trim().toLowerCase() === target);
 }
 
 function getSiteSettings() {
@@ -171,7 +191,7 @@ function getLocalReports() {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.map(toReportModel);
+    return parsed.map(toReportModel).filter((report) => !isDeletedByTracking(report.tracking));
   } catch (error) {
     console.warn("Unable to read local reports cache", error);
     return [];
@@ -193,6 +213,8 @@ function mergeReportsByTracking(primaryReports, secondaryReports) {
   const append = (report) => {
     const normalizedReport = applyAdminStatusOverride(report);
     const trackingKey = (normalizedReport.tracking || "").toString().trim().toLowerCase();
+
+    if (trackingKey && isDeletedByTracking(trackingKey)) return;
 
     if (!trackingKey) {
       merged.push(normalizedReport);
@@ -792,13 +814,20 @@ function formatSubmissionTime(report) {
   const parsed = new Date(rawTime);
   if (Number.isNaN(parsed.getTime())) return String(rawTime);
 
-  return parsed.toLocaleString("en-PH", {
-    year: "numeric",
-    month: "short",
+  const datePart = parsed.toLocaleDateString("en-US", {
+    month: "2-digit",
     day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
+    year: "numeric"
   });
+
+  const timePart = parsed.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+
+  return `${datePart}, ${timePart}`;
 }
 
 function getIssueCategory(issueText) {
@@ -907,6 +936,63 @@ function renderReportStatistics(reports) {
     : "No report data is available yet from the connected Google Sheet.";
 }
 
+
+function createStatusMapIcon(color) {
+  return L.divIcon({
+    className: "status-map-marker",
+    html: `<span style="background:${color}"></span>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+}
+
+function getMarkerConfigForStatus(status) {
+  const normalized = normalizeStatus(status).toLowerCase();
+  if (normalized === "verified") return { color: "#ef4444", label: "Reported (Verified)" };
+  if (normalized === "in progress") return { color: "#facc15", label: "Being Repaired" };
+  if (normalized === "repaired") return { color: "#22c55e", label: "Fixed" };
+  return { color: "#60a5fa", label: "Pending" };
+}
+
+function renderCitizenReportsMap(reports) {
+  const mapEl = document.getElementById("citizenReportsMap");
+  if (!mapEl || typeof L === "undefined") return;
+
+  if (!window.citizenReportsMapInstance) {
+    window.citizenReportsMapInstance = L.map("citizenReportsMap").setView([14.5995, 120.9842], 11);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(window.citizenReportsMapInstance);
+  }
+
+  if (window.citizenReportsLayer) {
+    window.citizenReportsLayer.clearLayers();
+  } else {
+    window.citizenReportsLayer = L.layerGroup().addTo(window.citizenReportsMapInstance);
+  }
+
+  const validReports = (Array.isArray(reports) ? reports : []).filter((report) => {
+    const latValue = Number.parseFloat(report.lat);
+    const lngValue = Number.parseFloat(report.lng);
+    return Number.isFinite(latValue) && Number.isFinite(lngValue);
+  });
+
+  const bounds = [];
+
+  validReports.forEach((report) => {
+    const latValue = Number.parseFloat(report.lat);
+    const lngValue = Number.parseFloat(report.lng);
+    const markerConfig = getMarkerConfigForStatus(report.status);
+
+    const marker = L.marker([latValue, lngValue], { icon: createStatusMapIcon(markerConfig.color) });
+    marker.bindPopup(`<strong>${escapeHtml(report.location || "Location not available")}</strong><br>${escapeHtml(report.issue || "Issue not available")}<br>Status: ${escapeHtml(normalizeStatus(report.status))}`);
+    marker.addTo(window.citizenReportsLayer);
+    bounds.push([latValue, lngValue]);
+  });
+
+  if (bounds.length > 0) {
+    window.citizenReportsMapInstance.fitBounds(bounds, { padding: [24, 24], maxZoom: 15 });
+  }
+}
+
 function renderReportStatisticsError(error) {
   const feedbackEl = document.getElementById("statsFeedback");
   if (!feedbackEl) return;
@@ -919,6 +1005,7 @@ async function loadStatistics() {
       ? cachedReports
       : await fetchReports();
     renderReportStatistics(reports);
+    renderCitizenReportsMap(reports);
   } catch (error) {
     console.warn("Error loading statistics", error);
     renderReportStatisticsError(error);
