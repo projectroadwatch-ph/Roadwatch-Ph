@@ -1052,6 +1052,10 @@ async function loadStatistics(options = {}) {
     renderCitizenReportsMap(reports);
   } catch (error) {
     console.warn("Error loading statistics", error);
+    // Keep the homepage map visible even when the remote report API is
+    // temporarily unavailable (e.g., CORS or network issues).
+    const localReports = getLocalReports();
+    renderCitizenReportsMap(localReports);
     renderReportStatisticsError(error);
   }
 }
