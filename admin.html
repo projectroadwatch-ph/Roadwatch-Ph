@@ -105,6 +105,30 @@
           <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
         </div>
       </article>
+
+      <article class="panel chart-stretch">
+        <div class="row">
+          <h3>Data Analytics & Reporting</h3>
+          <label class="inlineControl compact">Report range
+            <select id="reportingRange">
+              <option value="weekly">Weekly</option>
+              <option value="monthly" selected>Monthly</option>
+            </select>
+          </label>
+        </div>
+        <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
+        <div class="chart-panel">
+          <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
+        </div>
+        <div class="heatmapWrap">
+          <h4>Problem Area Heat Map</h4>
+          <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
+        </div>
+        <div class="row export-row">
+          <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
+          <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
+        </div>
+      </article>
       </section>
 
       <article class="panel">
