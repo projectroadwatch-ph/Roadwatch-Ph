@@ -291,8 +291,8 @@ function applyLocalStatusOverrides(report) {
 function setDashboardView(view) {
   const showOverview = view !== "management";
 
-  overviewView?.toggleAttribute("hidden", !showOverview);
-  managementView?.toggleAttribute("hidden", showOverview);
+  if (overviewView) overviewView.hidden = !showOverview;
+  if (managementView) managementView.hidden = showOverview;
 
   showOverviewBtn?.classList.toggle("is-active", showOverview);
   showManagementBtn?.classList.toggle("is-active", !showOverview);
