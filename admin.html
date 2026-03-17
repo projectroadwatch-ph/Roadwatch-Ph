@@ -27,7 +27,7 @@
       </div>
     </section>
 
-    <section id="dashboard" class="card hidden dashboard-shell">
+    <section id="dashboard" class="card hidden dashboard-shell" hidden>
       <div class="dashboard-header">
         <div>
           <p class="eyebrow">Operations Center</p>
@@ -37,7 +37,8 @@
         <button id="logoutBtn" type="button" class="secondary">Log out</button>
       </div>
 
-      <article class="panel">
+      <section class="dashboard-grid">
+      <article class="panel analytics-panel">
         <h3>Operational Snapshot</h3>
         <div id="analyticsGrid" class="analyticsGrid">
           <div class="analyticsCard">
@@ -64,7 +65,7 @@
       </article>
 
 
-      <article class="panel">
+      <article class="panel chart-stretch">
         <div class="row">
           <h3>Status Distribution</h3>
           <p class="small">Visual summary of current report statuses.</p>
@@ -73,6 +74,7 @@
           <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
         </div>
       </article>
+      </section>
 
       <article class="panel">
         <div class="row">
