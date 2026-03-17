@@ -276,7 +276,13 @@ function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
   loginPanel.classList.toggle("hidden", isAuthed);
   dashboard.classList.toggle("hidden", !isAuthed);
+  loginPanel.hidden = isAuthed;
+  dashboard.hidden = !isAuthed;
+
+  document.body.classList.toggle("admin-authenticated", isAuthed);
+
   if (isAuthed) {
+    document.getElementById("adminPassword").value = "";
     loadReports();
   }
 }
