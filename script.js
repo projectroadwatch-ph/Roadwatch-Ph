@@ -14,6 +14,7 @@ const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
+const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 
@@ -1168,6 +1169,11 @@ async function refreshVisibleTrackingResult() {
   }
 }
 
+function syncHomeReportViews(options = {}) {
+  loadStatistics(options);
+  refreshVisibleTrackingResult();
+}
+
 async function handleTrackingSearch(event) {
   event.preventDefault();
 
@@ -1235,7 +1241,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initialPage = resolveInitialPage();
   showPage(initialPage);
-  loadStatistics();
+  syncHomeReportViews();
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");
   revealTargets.forEach((el) => el.classList.add("reveal-target"));
@@ -1314,14 +1320,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("storage", (event) => {
     if (![ADMIN_STATUS_OVERRIDES_KEY, ADMIN_DELETED_REPORTS_KEY, LOCAL_REPORTS_KEY].includes(event.key)) return;
-    loadStatistics({ forceRefresh: true });
-    refreshVisibleTrackingResult();
+    syncHomeReportViews({ forceRefresh: true });
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      syncHomeReportViews({ forceRefresh: true });
+    }
   });
 
   setInterval(() => {
-    loadStatistics({ forceRefresh: true });
-    refreshVisibleTrackingResult();
-  }, 15000);
+    syncHomeReportViews({ forceRefresh: true });
+  }, HOME_REPORTS_SYNC_INTERVAL_MS);
 });
 
 // Submit report
