@@ -27,7 +27,7 @@ const LEAFLET_STYLE_SOURCES = [
   "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 ];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbx_jvX7ih_ZgDNpG7vQ6afonarXeL76dE0TPmMnk-6WRhJ7WOgg86D1zUpWkowsErad/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzQLZBJfuHnTzrAtfgURmglvJcTGGspQL8KkH-C7ztN7PWyha49o8298CKkNse-PL3_/exec";
 
 
 function buildHomepageUrl() {
