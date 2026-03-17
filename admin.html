@@ -64,6 +64,22 @@
         </div>
       </article>
 
+      <article class="panel analytics-panel">
+        <div class="row">
+          <h3>Priority Queue</h3>
+          <label class="inlineControl compact">Urgent if open for
+            <select id="urgencyThresholdDays">
+              <option value="3">3+ days</option>
+              <option value="5">5+ days</option>
+              <option value="7" selected>7+ days</option>
+              <option value="14">14+ days</option>
+            </select>
+          </label>
+        </div>
+        <p class="small">Shows unresolved reports that may need escalation based on report age.</p>
+        <ul id="priorityQueueList" class="priorityQueueList"></ul>
+      </article>
+
 
       <article class="panel chart-stretch">
         <div class="row">

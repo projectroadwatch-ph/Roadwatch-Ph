@@ -12,6 +12,8 @@ const reportsBody = document.getElementById("reportsBody");
 const reportSearch = document.getElementById("reportSearch");
 const statusFilter = document.getElementById("statusFilter");
 const filterSummary = document.getElementById("filterSummary");
+const urgencyThresholdDays = document.getElementById("urgencyThresholdDays");
+const priorityQueueList = document.getElementById("priorityQueueList");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -556,6 +558,64 @@ function photoCell(photo) {
   return anchor;
 }
 
+
+function parseReportDate(report) {
+  const raw = String(report?.dateTime || "").trim();
+  if (!raw || raw === "-") return null;
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed;
+}
+
+function getUrgencyThresholdDays() {
+  const parsed = Number.parseInt(urgencyThresholdDays?.value || "7", 10);
+  return Number.isFinite(parsed) ? parsed : 7;
+}
+
+function renderPriorityQueue(reports) {
+  if (!priorityQueueList) return;
+
+  const thresholdDays = getUrgencyThresholdDays();
+  const now = Date.now();
+
+  const unresolved = reports
+    .filter((report) => normalizeStatus(report.status) !== "Repaired")
+    .map((report) => {
+      const date = parseReportDate(report);
+      if (!date) return null;
+
+      const ageDays = Math.floor((now - date.getTime()) / (1000 * 60 * 60 * 24));
+      return { report, ageDays };
+    })
+    .filter((entry) => entry && entry.ageDays >= thresholdDays)
+    .sort((a, b) => b.ageDays - a.ageDays)
+    .slice(0, 6);
+
+  if (unresolved.length === 0) {
+    priorityQueueList.innerHTML = `<li class="priorityItem empty">No unresolved reports older than ${thresholdDays} day(s).</li>`;
+    return;
+  }
+
+  priorityQueueList.innerHTML = "";
+
+  unresolved.forEach(({ report, ageDays }) => {
+    const item = document.createElement("li");
+    item.className = "priorityItem";
+    item.innerHTML = `
+      <div>
+        <strong>${report.tracking || "No Tracking #"}</strong>
+        <p>${report.location || "Location unavailable"}</p>
+      </div>
+      <div class="priorityMeta">
+        <span>${normalizeStatus(report.status)}</span>
+        <span>${ageDays} day(s) open</span>
+      </div>
+    `;
+    priorityQueueList.appendChild(item);
+  });
+}
+
 function renderAnalytics(reports) {
   const counts = {
     total: reports.length,
@@ -657,6 +717,7 @@ function applyFiltersAndRender() {
   const filtered = getFilteredReports();
   renderRows(filtered);
   renderAnalytics(allReports);
+  renderPriorityQueue(allReports);
   filterSummary.textContent = `Showing ${filtered.length} of ${allReports.length} report(s).`;
 }
 
@@ -676,6 +737,7 @@ async function loadReports() {
     if (allReports.length === 0) {
       reportsBody.innerHTML = '<tr><td colspan="8">No reports found.</td></tr>';
       renderAnalytics([]);
+      renderPriorityQueue([]);
       filterSummary.textContent = "No records to filter.";
       setTableLoadingState(false);
       return;
@@ -686,6 +748,7 @@ async function loadReports() {
   } catch (error) {
     reportsBody.innerHTML = '<tr><td colspan="8">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
+    renderPriorityQueue([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
   } finally {
@@ -704,6 +767,7 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
 });
 reportSearch.addEventListener("input", applyFiltersAndRender);
 statusFilter.addEventListener("change", applyFiltersAndRender);
+urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allReports));
 window.addEventListener("resize", () => renderAnalytics(allReports));
 
 applyAuthUI();
