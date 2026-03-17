@@ -362,7 +362,7 @@ function getFieldValue(record, aliases) {
   return "";
 }
 
-function formatDateTime(record) {
+function getRecordDate(record) {
   const dateValue = getFieldValue(record, ["date", "Date", "reportDate", "reportedDate", "createdDate"]);
   const timeValue = getFieldValue(record, ["time", "Time", "reportTime", "reportedTime", "createdTime"]);
   const timestampValue = getFieldValue(record, [
@@ -378,10 +378,33 @@ function formatDateTime(record) {
   ]);
 
   const rawValue = timestampValue || `${dateValue || ""} ${timeValue || ""}`.trim();
-  if (!rawValue) return "-";
+  if (!rawValue) return null;
 
   const parsed = new Date(rawValue);
-  if (Number.isNaN(parsed.getTime())) return String(rawValue).trim();
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return parsed;
+}
+
+function formatDateTime(record) {
+  const parsed = getRecordDate(record);
+  if (!parsed) {
+    const rawDate = getFieldValue(record, ["date", "Date", "reportDate", "reportedDate", "createdDate"]);
+    const rawTime = getFieldValue(record, ["time", "Time", "reportTime", "reportedTime", "createdTime"]);
+    const rawTimestamp = getFieldValue(record, [
+      "timestamp",
+      "Timestamp",
+      "submittedAt",
+      "createdAt",
+      "datetime",
+      "dateTime",
+      "Date Time",
+      "submissionTime",
+      "Submission Time"
+    ]);
+    const fallback = rawTimestamp || `${rawDate || ""} ${rawTime || ""}`.trim();
+    return fallback || "-";
+  }
 
   const datePart = parsed.toLocaleDateString("en-US", {
     month: "2-digit",
@@ -408,8 +431,11 @@ function normalizeStatus(status) {
 }
 
 function normalizeReport(record = {}) {
+  const reportedAt = getRecordDate(record);
+
   return {
     dateTime: formatDateTime(record),
+    reportedAt: reportedAt ? reportedAt.toISOString() : "",
     tracking: getFieldValue(record, ["tracking", "trackingNumber", "tracking_no", "Tracking #", "Tracking Number"]),
     name: [
       getFieldValue(record, ["firstname", "firstName", "First Name"]),
@@ -585,6 +611,12 @@ function photoCell(photo) {
 
 
 function parseReportDate(report) {
+  const isoDate = String(report?.reportedAt || "").trim();
+  if (isoDate) {
+    const parsedIso = new Date(isoDate);
+    if (!Number.isNaN(parsedIso.getTime())) return parsedIso;
+  }
+
   const raw = String(report?.dateTime || "").trim();
   if (!raw || raw === "-") return null;
 
