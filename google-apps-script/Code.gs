@@ -66,12 +66,69 @@ function doPost(e) {
   };
 
   const appendResult = appendReport_(row);
+  const emailResult = sendSubmissionReceiptEmail_(row, appendResult);
+
   return buildJsonResponse_({
     success: true,
     duplicate: appendResult.duplicate,
     tracking: row.tracking,
+    emailSent: emailResult.sent,
+    emailError: emailResult.error || '',
     allowedOrigin: ALLOWED_ORIGIN
   }, e);
+}
+
+function sendSubmissionReceiptEmail_(row, appendResult) {
+  const recipientEmail = String((row && row.email) || '').trim();
+  if (!recipientEmail) {
+    return { sent: false, error: 'No recipient email was provided.' };
+  }
+
+  if (appendResult && appendResult.duplicate) {
+    return { sent: false, error: 'Skipped sending receipt for duplicate tracking.' };
+  }
+
+  const recipientName = buildRecipientName_(row);
+  const submittedDate = new Date((row && row.timestamp) || new Date());
+  const submissionTime = Utilities.formatDate(submittedDate, 'Asia/Manila', 'MMMM dd, yyyy hh:mm:ss a');
+  const trackingNumber = String((row && row.tracking) || '').trim() || 'N/A';
+
+  const subject = 'RoadWATCH PH Report Submission Confirmation';
+  const body = [
+    'Dear ' + recipientName + ',',
+    '',
+    'Thank you for using RoadWATCH PH and for taking the time to submit your report. Your effort is greatly appreciated and will be a big help in improving road safety and addressing concerns in the community.',
+    '',
+    'Please find below the details of your submission:',
+    '',
+    'Time of Submission: ' + submissionTime,
+    '',
+    'Reference/Tracking Number: ' + trackingNumber,
+    '',
+    'Kindly keep this information for your records and future follow-ups.',
+    '',
+    'Thank you once again for your support and cooperation.',
+    '',
+    'Sincerely,',
+    'RoadWATCH PH Team'
+  ].join('\n');
+
+  try {
+    MailApp.sendEmail(recipientEmail, subject, body);
+    return { sent: true, error: '' };
+  } catch (error) {
+    return {
+      sent: false,
+      error: error && error.message ? String(error.message) : 'Unable to send receipt email.'
+    };
+  }
+}
+
+function buildRecipientName_(row) {
+  const firstName = String((row && row.firstname) || '').trim();
+  const lastName = String((row && row.lastname) || '').trim();
+  const fullName = [firstName, lastName].filter(function (namePart) { return namePart !== ''; }).join(' ');
+  return fullName || 'RoadWATCH PH User';
 }
 
 function updateReportStatusByTracking_(tracking, status) {
