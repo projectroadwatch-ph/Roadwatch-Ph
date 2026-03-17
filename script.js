@@ -1364,6 +1364,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }, HOME_REPORTS_SYNC_INTERVAL_MS);
 });
 
+
+function setSubmitButtonLoading(isLoading) {
+  const submitBtn = document.getElementById("submitReportBtn");
+  if (!submitBtn) return;
+
+  submitBtn.disabled = isLoading;
+  submitBtn.classList.toggle("is-loading", isLoading);
+  submitBtn.textContent = isLoading ? "Submitting Report..." : "Submit Report";
+}
+
 // Submit report
 async function submitReport() {
   if (isSubmittingReport) return;
@@ -1374,6 +1384,7 @@ async function submitReport() {
   }
 
   isSubmittingReport = true;
+  setSubmitButtonLoading(true);
 
   let tracking = "RW" + Date.now();
 
@@ -1383,6 +1394,7 @@ async function submitReport() {
   } catch (error) {
     alert(error.message || "Unable to read photo before submitting.");
     isSubmittingReport = false;
+    setSubmitButtonLoading(false);
     return;
   }
 
@@ -1519,6 +1531,7 @@ async function submitReport() {
     alert(err.message || "Submission failed. Check your API or internet connection.");
   } finally {
     isSubmittingReport = false;
+    setSubmitButtonLoading(false);
   }
 }
 
