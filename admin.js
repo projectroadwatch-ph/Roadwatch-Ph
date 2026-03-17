@@ -277,12 +277,8 @@ function applyAuthUI() {
 
   loginPanel.classList.toggle("hidden", isAuthed);
   dashboard.classList.toggle("hidden", !isAuthed);
-
-  loginPanel.style.display = isAuthed ? "none" : "grid";
-  dashboard.style.display = isAuthed ? "block" : "none";
-
-  loginPanel.setAttribute("aria-hidden", String(isAuthed));
-  dashboard.setAttribute("aria-hidden", String(!isAuthed));
+  loginPanel.hidden = isAuthed;
+  dashboard.hidden = !isAuthed;
 
   document.body.classList.toggle("admin-authenticated", isAuthed);
 
