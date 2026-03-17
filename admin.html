@@ -59,11 +59,28 @@
           <h3>Report Status Controls</h3>
           <button id="refreshReportsBtn" type="button" class="secondary">Refresh</button>
         </div>
+        <div class="toolbar">
+          <label class="inlineControl">Search
+            <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
+          </label>
+          <label class="inlineControl">Status Filter
+            <select id="statusFilter">
+              <option value="all">All statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Repaired">Repaired</option>
+            </select>
+          </label>
+          <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
+        </div>
+        <p id="filterSummary" class="small"></p>
         <p class="small">Set status per tracking number. Changes are saved to Google Sheets and reflected on the homepage.</p>
         <div class="tableWrap">
           <table>
             <thead>
               <tr>
+                <th>Date &amp; Time</th>
                 <th>Tracking #</th>
                 <th>Name</th>
                 <th>Location</th>
