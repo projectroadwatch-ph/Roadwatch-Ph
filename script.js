@@ -8,6 +8,7 @@ let corsRetryBlockedUntil = 0;
 let isSubmittingReport = false;
 let locationSuggestionAbortController = null;
 let locationSuggestionDebounceTimer = null;
+let leafletReadyPromise = null;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
 const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
@@ -16,7 +17,87 @@ const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 
+const LEAFLET_SCRIPT_SOURCES = [
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+];
+
+const LEAFLET_STYLE_SOURCES = [
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+  "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+];
+
 const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
+
+function injectLeafletStylesheet() {
+  if (document.querySelector('link[data-leaflet-style="true"]')) return;
+
+  const styleHref = LEAFLET_STYLE_SOURCES.find(Boolean);
+  if (!styleHref) return;
+
+  const linkEl = document.createElement("link");
+  linkEl.rel = "stylesheet";
+  linkEl.href = styleHref;
+  linkEl.dataset.leafletStyle = "true";
+  document.head.appendChild(linkEl);
+}
+
+function loadScriptSequentially(sources, index = 0) {
+  return new Promise((resolve) => {
+    if (typeof window.L !== "undefined") {
+      resolve(true);
+      return;
+    }
+
+    const source = sources[index];
+    if (!source) {
+      resolve(false);
+      return;
+    }
+
+    const existingTag = document.querySelector(`script[src="${source}"]`);
+    if (existingTag) {
+      if (existingTag.dataset.loaded === "true") {
+        resolve(typeof window.L !== "undefined");
+        return;
+      }
+
+      existingTag.addEventListener("load", () => resolve(typeof window.L !== "undefined"), { once: true });
+      existingTag.addEventListener("error", () => {
+        loadScriptSequentially(sources, index + 1).then(resolve);
+      }, { once: true });
+      return;
+    }
+
+    const scriptEl = document.createElement("script");
+    scriptEl.src = source;
+    scriptEl.async = true;
+    scriptEl.addEventListener("load", () => {
+      scriptEl.dataset.loaded = "true";
+      resolve(typeof window.L !== "undefined");
+    }, { once: true });
+    scriptEl.addEventListener("error", () => {
+      scriptEl.remove();
+      loadScriptSequentially(sources, index + 1).then(resolve);
+    }, { once: true });
+    document.head.appendChild(scriptEl);
+  });
+}
+
+function ensureLeafletReady() {
+  if (typeof window.L !== "undefined") return Promise.resolve(true);
+  if (leafletReadyPromise) return leafletReadyPromise;
+
+  injectLeafletStylesheet();
+  leafletReadyPromise = loadScriptSequentially(LEAFLET_SCRIPT_SOURCES).then((isReady) => {
+    if (!isReady) {
+      console.warn("Leaflet failed to load from all configured CDNs.");
+    }
+    return isReady;
+  });
+
+  return leafletReadyPromise;
+}
 
 
 
@@ -668,7 +749,9 @@ function showPage(page) {
   closeMenu();
 
   if (page === "submit") {
-    setTimeout(loadMap, 300);
+    setTimeout(() => {
+      loadMap();
+    }, 300);
   }
 
   if (page === "home" && window.citizenReportsMapInstance) {
@@ -688,12 +771,18 @@ function resolveInitialPage() {
 }
 
 // Initialize the map
-function loadMap() {
-  if (map) return;
+async function loadMap() {
+  if (map) return map;
 
-  map = L.map('reportMap').setView([14.5995, 120.9842], 13);
+  const mapElement = document.getElementById("reportMap");
+  if (!mapElement) return null;
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  const hasLeaflet = await ensureLeafletReady();
+  if (!hasLeaflet || typeof L === "undefined") return null;
+
+  map = L.map("reportMap").setView([14.5995, 120.9842], 13);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
 
   map.on("click", function (e) {
     lat = e.latlng.lat;
@@ -708,6 +797,7 @@ function loadMap() {
     autofillRoadLocationFromCoordinates(lat, lng);
   });
 
+  return map;
 }
 
 async function autofillRoadLocationFromCoordinates(latitude, longitude) {
@@ -732,7 +822,12 @@ async function detectLocation() {
   }
 
   if (!map) {
-    loadMap();
+    await loadMap();
+  }
+
+  if (!map) {
+    alert("Map is still loading. Please try again in a moment.");
+    return;
   }
 
   navigator.geolocation.getCurrentPosition(async function (pos) {
@@ -829,7 +924,18 @@ function attachLocationAutocomplete() {
     lat = optionLat;
     lng = optionLng;
 
-    if (!map) loadMap();
+    if (!map) {
+      loadMap().then((loadedMap) => {
+        if (!loadedMap) return;
+        loadedMap.setView([lat, lng], 16);
+        if (marker) loadedMap.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(loadedMap);
+        document.getElementById("selectedLocation").innerText =
+          "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+      });
+      return;
+    }
+
     map.setView([lat, lng], 16);
     if (marker) map.removeLayer(marker);
     marker = L.marker([lat, lng]).addTo(map);
@@ -995,9 +1101,12 @@ function getMarkerConfigForStatus(status) {
   return { color: "#60a5fa", label: "Pending" };
 }
 
-function renderCitizenReportsMap(reports) {
+async function renderCitizenReportsMap(reports) {
   const mapEl = document.getElementById("citizenReportsMap");
-  if (!mapEl || typeof L === "undefined") return;
+  if (!mapEl) return;
+
+  const hasLeaflet = await ensureLeafletReady();
+  if (!hasLeaflet || typeof L === "undefined") return;
 
   if (!window.citizenReportsMapInstance) {
     window.citizenReportsMapInstance = L.map("citizenReportsMap").setView([14.5995, 120.9842], 11);
@@ -1049,13 +1158,13 @@ async function loadStatistics(options = {}) {
       ? cachedReports
       : await fetchReports();
     renderReportStatistics(reports);
-    renderCitizenReportsMap(reports);
+    await renderCitizenReportsMap(reports);
   } catch (error) {
     console.warn("Error loading statistics", error);
     // Keep the homepage map visible even when the remote report API is
     // temporarily unavailable (e.g., CORS or network issues).
     const localReports = getLocalReports();
-    renderCitizenReportsMap(localReports);
+    await renderCitizenReportsMap(localReports);
     renderReportStatisticsError(error);
   }
 }
