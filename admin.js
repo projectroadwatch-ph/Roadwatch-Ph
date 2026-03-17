@@ -194,6 +194,22 @@ function persistStatusOverride(tracking, status) {
   saveStatusOverrides(overrides);
 }
 
+function clearStatusOverride(tracking) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+
+  const overrides = getStatusOverrides();
+  delete overrides[key];
+
+  Object.keys(overrides).forEach((overrideKey) => {
+    if (overrideKey.trim().toLowerCase() === key.toLowerCase()) {
+      delete overrides[overrideKey];
+    }
+  });
+
+  saveStatusOverrides(overrides);
+}
+
 function getDeletedReports() {
   try {
     const raw = localStorage.getItem(ADMIN_DELETED_REPORTS_KEY);
@@ -222,6 +238,24 @@ function shouldHideReport(tracking) {
   const key = String(tracking || "").trim().toLowerCase();
   if (!key) return false;
   return getDeletedReports().some((item) => String(item).trim().toLowerCase() === key);
+}
+
+function dedupeReports(reports) {
+  const seen = new Set();
+  const deduped = [];
+
+  reports.forEach((report, index) => {
+    const tracking = String(report?.tracking || "").trim();
+    const key = tracking
+      ? `tracking:${tracking.toLowerCase()}`
+      : `fallback:${String(report?.dateTime || "").trim().toLowerCase()}|${String(report?.name || "").trim().toLowerCase()}|${String(report?.location || "").trim().toLowerCase()}|${String(report?.issue || "").trim().toLowerCase()}|${index}`;
+
+    if (seen.has(key)) return;
+    seen.add(key);
+    deduped.push(report);
+  });
+
+  return deduped;
 }
 
 function applyLocalStatusOverrides(report) {
@@ -438,8 +472,13 @@ async function deleteReport(tracking) {
     }
   }
 
+  if (!hasAnySuccess) {
+    throw new Error("Unable to delete report.");
+  }
+
   markReportDeleted(trackingValue);
-  return { success: hasAnySuccess || true };
+  clearStatusOverride(trackingValue);
+  return { success: true };
 }
 
 function statusSelect(current, tracking) {
@@ -619,10 +658,12 @@ async function loadReports() {
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
 
-    allReports = parseReports(payload)
+    allReports = dedupeReports(
+      parseReports(payload)
       .map(normalizeReport)
       .map(applyLocalStatusOverrides)
-      .filter((report) => !shouldHideReport(report.tracking));
+      .filter((report) => !shouldHideReport(report.tracking))
+    );
     if (allReports.length === 0) {
       reportsBody.innerHTML = '<tr><td colspan="8">No reports found.</td></tr>';
       renderAnalytics([]);
