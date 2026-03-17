@@ -80,6 +80,21 @@
         <ul id="priorityQueueList" class="priorityQueueList"></ul>
       </article>
 
+      <article class="panel analytics-panel">
+        <div class="row">
+          <h3>Verification & Moderation Queue</h3>
+          <label class="inlineControl compact">Show
+            <select id="verificationFilter">
+              <option value="all">All reports</option>
+              <option value="verification">Needs verification</option>
+              <option value="flagged">Spam/abuse flagged</option>
+            </select>
+          </label>
+        </div>
+        <p class="small">Review pending submissions and resolve suspected spam or abuse content before status updates are published.</p>
+        <ul id="verificationQueueList" class="priorityQueueList"></ul>
+      </article>
+
 
       <article class="panel chart-stretch">
         <div class="row">
@@ -94,9 +109,28 @@
 
       <article class="panel">
         <div class="row">
-          <h3>Report Status Management</h3>
+          <h3>Bulk Report Management Dashboard</h3>
           <button id="refreshReportsBtn" type="button" class="secondary">Refresh</button>
         </div>
+        <div class="toolbar bulk-toolbar">
+          <label class="inlineControl compact check-inline">
+            <input id="selectAllReports" type="checkbox">
+            Select all visible reports
+          </label>
+          <label class="inlineControl">Bulk Status
+            <select id="bulkStatusSelect">
+              <option value="">Choose status</option>
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Repaired">Repaired</option>
+            </select>
+          </label>
+          <button id="bulkUpdateBtn" type="button" class="secondary slim">Apply status</button>
+          <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
+          <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
+        </div>
+        <p id="bulkSummary" class="small">No reports selected.</p>
         <div class="toolbar">
           <label class="inlineControl">Search
             <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
@@ -119,11 +153,13 @@
           <table>
             <thead>
               <tr>
+                <th>Select</th>
                 <th>Submission Time</th>
                 <th>Tracking #</th>
                 <th>Name</th>
                 <th>Location</th>
                 <th>Issue</th>
+                <th>Verification</th>
                 <th>Photo</th>
                 <th>Status</th>
                 <th>Action</th>
