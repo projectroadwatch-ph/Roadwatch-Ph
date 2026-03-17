@@ -274,6 +274,7 @@ function applyLocalStatusOverrides(report) {
 
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+
   loginPanel.classList.toggle("hidden", isAuthed);
   dashboard.classList.toggle("hidden", !isAuthed);
   loginPanel.hidden = isAuthed;
