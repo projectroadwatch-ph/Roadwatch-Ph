@@ -2,6 +2,15 @@ const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
 
 function doGet(e) {
   const action = (e && e.parameter && e.parameter.action) || '';
+
+  if (action === 'submit') {
+    return handleSubmission_((e && e.parameter) || {}, e);
+  }
+
+  if (action !== 'getReports' && hasSubmissionPayload_((e && e.parameter) || {})) {
+    return handleSubmission_((e && e.parameter) || {}, e);
+  }
+
   if (action === 'getReports' || action === '') {
     const reports = readReports_();
     return buildJsonResponse_({ reports: reports, allowedOrigin: ALLOWED_ORIGIN }, e);
@@ -49,6 +58,10 @@ function doPost(e) {
     }, e);
   }
 
+  return handleSubmission_(params, e);
+}
+
+function handleSubmission_(params, e) {
   const row = {
     timestamp: new Date().toISOString(),
     tracking: params.tracking || '',
@@ -76,6 +89,15 @@ function doPost(e) {
     emailError: emailResult.error || '',
     allowedOrigin: ALLOWED_ORIGIN
   }, e);
+}
+
+function hasSubmissionPayload_(params) {
+  if (!params) return false;
+
+  const tracking = String(params.tracking || '').trim();
+  const email = String(params.email || '').trim();
+  const issue = String(params.issue || '').trim();
+  return Boolean(tracking || email || issue);
 }
 
 function sendSubmissionReceiptEmail_(row, appendResult) {
