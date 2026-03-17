@@ -468,13 +468,23 @@ async function deleteReport(tracking) {
     try {
       const body = new URLSearchParams({ action: "deleteReport", tracking: trackingValue });
       const response = await fetch(endpointBase, { method: "POST", body });
-      if (response.ok) {
-        const text = await response.text();
-        const payload = text ? JSON.parse(text) : {};
-        if (payload?.success || Object.keys(payload).length === 0) {
-          hasAnySuccess = true;
-          break;
+      if (!response.ok) continue;
+
+      const text = await response.text();
+      let payload = {};
+
+      if (text) {
+        try {
+          payload = JSON.parse(text);
+        } catch {
+          // Some Apps Script deployments respond with plain text after successful POST.
+          payload = {};
         }
+      }
+
+      if (payload?.success || Object.keys(payload).length === 0) {
+        hasAnySuccess = true;
+        break;
       }
     } catch {
       // fall through
