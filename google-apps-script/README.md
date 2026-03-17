@@ -32,3 +32,10 @@ Examples:
 - `GET /exec?action=updateStatus&tracking=RW123&status=Verified&callback=myFn`
 
 > Note: Use POST for normal report submission. The frontend can use `mode: "no-cors"` fallback when the browser blocks reading the response.
+
+## Submission receipt emails
+
+On successful `POST /exec` report submissions, the script now sends a confirmation email to the reporter's `email` address using `MailApp`.
+
+- Make sure the deploying Google account authorizes **Send email as you** when prompted by Apps Script.
+- Duplicate tracking submissions are ignored and will not trigger another receipt email.
