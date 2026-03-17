@@ -34,6 +34,7 @@ input, textarea, select, button {
 }
 button { cursor: pointer; background: var(--accent); border: none; font-weight: 600; }
 button.secondary { background: rgba(115, 162, 207, 0.35); }
+button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .panel { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
 .feedback { min-height: 1.2rem; color: #9ce9ab; margin-top: 8px; font-size: 0.9rem; }
@@ -42,6 +43,18 @@ button.secondary { background: rgba(115, 162, 207, 0.35); }
 .tableWrap { overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
 table { width: 100%; border-collapse: collapse; min-width: 940px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
+
+.toolbar {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.inlineControl {
+  margin-top: 0;
+}
 
 .analyticsGrid {
   margin-top: 10px;
@@ -75,4 +88,14 @@ th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-al
   border-radius: 8px;
   border: 1px solid var(--line);
   display: block;
+}
+
+@media (max-width: 760px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  button.slim {
+    width: 100%;
+  }
 }

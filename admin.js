@@ -5,6 +5,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz5Z666xxZThJsMGwPCDNg8
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
+const reportsBody = document.getElementById("reportsBody");
+const reportSearch = document.getElementById("reportSearch");
+const statusFilter = document.getElementById("statusFilter");
+const filterSummary = document.getElementById("filterSummary");
+
+let allReports = [];
 
 function buildJsonpEndpoint(endpoint) {
   const separator = endpoint.includes("?") ? "&" : "?";
@@ -243,8 +249,12 @@ function statusSelect(current, tracking) {
     try {
       await updateReportStatus(tracking, nextStatus);
       select.dataset.previous = nextStatus;
+
+      const report = allReports.find((item) => String(item.tracking) === String(tracking));
+      if (report) report.status = nextStatus;
+
       setFeedback("reportsFeedback", `Updated ${tracking} to ${nextStatus}.`);
-      updateAnalyticsFromRows();
+      applyFiltersAndRender();
     } catch (error) {
       select.value = previousStatus;
       setFeedback("reportsFeedback", error.message || "Unable to save status update.", true);
@@ -304,59 +314,80 @@ function renderAnalytics(reports) {
   document.getElementById("repairedReportsCount").textContent = counts.repaired;
 }
 
-function updateAnalyticsFromRows() {
-  const selects = Array.from(document.querySelectorAll("#reportsBody select"));
-  const reports = selects.map((select) => ({ status: select.value }));
-  renderAnalytics(reports);
+function getFilteredReports() {
+  const query = reportSearch.value.trim().toLowerCase();
+  const selectedStatus = statusFilter.value;
+
+  return allReports.filter((report) => {
+    const statusPass = selectedStatus === "all" || normalizeStatus(report.status) === selectedStatus;
+    if (!statusPass) return false;
+
+    if (!query) return true;
+    const haystack = [report.tracking, report.name, report.location, report.issue].join(" ").toLowerCase();
+    return haystack.includes(query);
+  });
+}
+
+function renderRows(reports) {
+  if (reports.length === 0) {
+    reportsBody.innerHTML = '<tr><td colspan="6">No reports match your current filters.</td></tr>';
+    return;
+  }
+
+  reportsBody.innerHTML = "";
+
+  reports.forEach((report) => {
+    const tr = document.createElement("tr");
+    const effectiveStatus = normalizeStatus(report.status);
+
+    tr.innerHTML = `
+      <td>${report.tracking || "-"}</td>
+      <td>${report.name}</td>
+      <td>${report.location}</td>
+      <td>${report.issue}</td>
+      <td></td>
+      <td></td>
+    `;
+
+    const photoElement = photoCell(report.photo);
+    if (typeof photoElement === "string") {
+      tr.children[4].textContent = photoElement;
+    } else {
+      tr.children[4].appendChild(photoElement);
+    }
+
+    tr.children[5].appendChild(statusSelect(effectiveStatus, report.tracking));
+    reportsBody.appendChild(tr);
+  });
+}
+
+function applyFiltersAndRender() {
+  const filtered = getFilteredReports();
+  renderRows(filtered);
+  renderAnalytics(allReports);
+  filterSummary.textContent = `Showing ${filtered.length} of ${allReports.length} report(s).`;
 }
 
 async function loadReports() {
-  const tbody = document.getElementById("reportsBody");
-  tbody.innerHTML = '<tr><td colspan="6">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="6">Loading reports...</td></tr>';
 
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
 
-    const reports = parseReports(payload).map(normalizeReport);
-    if (reports.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6">No reports found.</td></tr>';
+    allReports = parseReports(payload).map(normalizeReport);
+    if (allReports.length === 0) {
+      reportsBody.innerHTML = '<tr><td colspan="6">No reports found.</td></tr>';
       renderAnalytics([]);
+      filterSummary.textContent = "No records to filter.";
       return;
     }
 
-    tbody.innerHTML = "";
-    const renderedReports = [];
-
-    reports.forEach((report) => {
-      const tr = document.createElement("tr");
-      const effectiveStatus = normalizeStatus(report.status);
-      renderedReports.push({ ...report, status: effectiveStatus });
-
-      tr.innerHTML = `
-        <td>${report.tracking || "-"}</td>
-        <td>${report.name}</td>
-        <td>${report.location}</td>
-        <td>${report.issue}</td>
-        <td></td>
-        <td></td>
-      `;
-
-      const photoElement = photoCell(report.photo);
-      if (typeof photoElement === "string") {
-        tr.children[4].textContent = photoElement;
-      } else {
-        tr.children[4].appendChild(photoElement);
-      }
-
-      tr.children[5].appendChild(statusSelect(effectiveStatus, report.tracking));
-      tbody.appendChild(tr);
-    });
-
-    renderAnalytics(renderedReports);
-    setFeedback("reportsFeedback", `Loaded ${reports.length} report(s).`);
+    applyFiltersAndRender();
+    setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    tbody.innerHTML = '<tr><td colspan="6">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="6">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
+    filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
   }
 }
@@ -364,5 +395,12 @@ async function loadReports() {
 document.getElementById("loginBtn").addEventListener("click", login);
 document.getElementById("logoutBtn").addEventListener("click", logout);
 document.getElementById("refreshReportsBtn").addEventListener("click", loadReports);
+document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+  reportSearch.value = "";
+  statusFilter.value = "all";
+  applyFiltersAndRender();
+});
+reportSearch.addEventListener("input", applyFiltersAndRender);
+statusFilter.addEventListener("change", applyFiltersAndRender);
 
 applyAuthUI();
