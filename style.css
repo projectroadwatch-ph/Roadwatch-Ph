@@ -1,10 +1,10 @@
 :root {
-  --bg: #010814;
-  --bg-soft: #0b1f35;
-  --panel: rgba(5, 25, 46, 0.92);
-  --panel-strong: #081a2f;
-  --text: #f8fbff;
-  --muted: #d3e6ff;
+  --bg: #020b17;
+  --bg-soft: #0d2239;
+  --panel: rgba(8, 30, 54, 0.83);
+  --panel-strong: #0a1f36;
+  --text: #f5f9ff;
+  --muted: #bfd7f6;
   --accent: #66d9ff;
   --accent-strong: #2a9dff;
   --success: #79ffd4;
@@ -24,12 +24,11 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    radial-gradient(circle at 10% 15%, rgba(36, 120, 196, 0.19), transparent 35%),
-    radial-gradient(circle at 90% 80%, rgba(67, 168, 255, 0.17), transparent 40%),
-    linear-gradient(145deg, #02070f 0%, #06162a 45%, #041224 100%);
+    radial-gradient(circle at 10% 15%, rgba(36, 120, 196, 0.25), transparent 35%),
+    radial-gradient(circle at 90% 80%, rgba(67, 168, 255, 0.22), transparent 40%),
+    linear-gradient(145deg, #030a14 0%, #071b31 45%, #051529 100%);
   min-height: 100vh;
   overflow-x: hidden;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
 }
 
 
@@ -235,7 +234,7 @@ section.active {
 
 .section-heading-block p {
   margin: 0;
-  color: #d4e9ff;
+  color: #b9dbff;
   max-width: 900px;
   line-height: 1.55;
   font-size: clamp(0.96rem, 1.8vw, 1.05rem);
@@ -265,7 +264,7 @@ section.active {
 
 .quick-alert-banner p {
   margin: 0;
-  color: #d7ecff;
+  color: #c4e7ff;
 }
 
 .map-load-error {
@@ -373,7 +372,7 @@ section.active {
   font-family: "Poppins", "Inter", sans-serif;
   font-size: clamp(1.2rem, 2.7vw, 1.8rem);
   line-height: 1.35;
-  color: #e5f2ff;
+  color: #d9ecff;
   text-wrap: balance;
 }
 
@@ -417,7 +416,7 @@ section.active {
 
 .hero-purpose {
   margin: 0;
-  color: #e3f1ff;
+  color: #d9ecff;
   line-height: 1.75;
   font-size: clamp(1rem, 1.9vw, 1.12rem);
   text-wrap: pretty;
@@ -462,7 +461,7 @@ section.active {
 
 .hero-note {
   margin: 12px auto 0;
-  color: #c7e7ff;
+  color: #9fdbff;
   font-size: 0.95rem;
   font-weight: 600;
   text-align: center;
@@ -1878,128 +1877,4 @@ textarea {
   .quick-alert-banner img {
     height: 170px;
   }
-}
-
-
-/* --- Campaign poster theme override --- */
-:root {
-  --bg: #f4f4ef;
-  --panel: #fffdf5;
-  --panel-strong: #fff7d6;
-  --text: #1a1a1a;
-  --muted: #464646;
-  --accent: #f2ba00;
-  --accent-strong: #d99a00;
-}
-
-body {
-  color: var(--text);
-  background:
-    repeating-linear-gradient(-45deg, #101010 0 18px, #f2ba00 18px 36px),
-    linear-gradient(#efefeb, #efefeb);
-  background-size: 100% 18px, 100% 100%;
-  background-repeat: no-repeat;
-  background-position: top, center;
-  padding-top: 18px;
-}
-
-.bg-orb,
-.hero-card::before,
-.hero-card::after {
-  display: none;
-}
-
-header {
-  background: #fffbe8;
-  border-bottom: 3px solid #101010;
-  color: #101010;
-  box-shadow: 0 4px 0 #f2ba00;
-}
-
-.brand-lockup p {
-  color: #2a2a2a;
-  font-weight: 600;
-}
-
-.menuBtn,
-.sidebar button {
-  color: #101010;
-}
-
-.sidebar {
-  background: #fffbe8;
-  border-right: 3px solid #101010;
-}
-
-.sidebar button:hover {
-  background: #ffe081;
-}
-
-.card,
-.hero-card,
-.reports-map-card {
-  background: #fffef9;
-  border: 3px solid #101010;
-  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.16);
-}
-
-.highlighted-hero {
-  border-color: #101010;
-  box-shadow: 10px 10px 0 #f2ba00;
-}
-
-.hero-tag,
-.journey-eyebrow,
-.stats-eyebrow {
-  color: #7c5b00;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-}
-
-.hero-card h1 {
-  color: #111;
-  text-transform: uppercase;
-  text-shadow: 2px 2px 0 #f2ba00;
-}
-
-.subheader {
-  color: #111;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.live-chip {
-  background: #fff1bf;
-  border: 2px solid #101010;
-  color: #1b1b1b;
-}
-
-.live-chip span:first-child {
-  background: #f2ba00;
-}
-
-.hero-purpose-wrap {
-  border: 2px solid #101010;
-  background: #fff7d6;
-}
-
-.hero-purpose,
-.section-heading-block p,
-.track-report-copy,
-.report-stats-subtitle,
-.reports-map-legend {
-  color: #2f2f2f;
-}
-
-.journey-cta-btn,
-.track-search-form button {
-  background: #f2ba00;
-  border: 2px solid #101010;
-  color: #101010;
-  font-weight: 800;
-}
-
-.journey-cta-btn:hover,
-.track-search-form button:hover {
-  background: #ffd84f;
 }
