@@ -742,22 +742,28 @@ function toggleMenu() {
 
 // Show specific page/section
 function showPage(page) {
-  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+  document.querySelectorAll("section").forEach((sec) => sec.classList.remove("active"));
   const selectedPage = document.getElementById(page);
   if (!selectedPage) return;
+
   selectedPage.classList.add("active");
   closeMenu();
 
+  requestAnimationFrame(() => {
+    selectedPage.scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+
   if (page === "submit") {
-    setTimeout(() => {
-      loadMap();
-    }, 300);
+    setTimeout(async () => {
+      const loadedMap = await loadMap();
+      loadedMap?.invalidateSize(true);
+    }, 320);
   }
 
   if (page === "home" && window.citizenReportsMapInstance) {
     setTimeout(() => {
       window.citizenReportsMapInstance.invalidateSize(true);
-    }, 220);
+    }, 260);
   }
 }
 
@@ -772,15 +778,21 @@ function resolveInitialPage() {
 
 // Initialize the map
 async function loadMap() {
-  if (map) return map;
-
   const mapElement = document.getElementById("reportMap");
   if (!mapElement) return null;
 
-  const hasLeaflet = await ensureLeafletReady();
-  if (!hasLeaflet || typeof L === "undefined") return null;
+  if (map) {
+    map.invalidateSize(true);
+    return map;
+  }
 
-  map = L.map("reportMap").setView([14.5995, 120.9842], 13);
+  const hasLeaflet = await ensureLeafletReady();
+  if (!hasLeaflet || typeof L === "undefined") {
+    mapElement.innerHTML = '<p class="map-load-error">Map failed to load. Please check internet connection and try again.</p>';
+    return null;
+  }
+
+  map = L.map("reportMap", { zoomControl: true }).setView([14.5995, 120.9842], 13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
 
@@ -1109,9 +1121,11 @@ async function renderCitizenReportsMap(reports) {
   if (!hasLeaflet || typeof L === "undefined") return;
 
   if (!window.citizenReportsMapInstance) {
-    window.citizenReportsMapInstance = L.map("citizenReportsMap").setView([14.5995, 120.9842], 11);
+    window.citizenReportsMapInstance = L.map("citizenReportsMap", { zoomControl: true }).setView([14.5995, 120.9842], 11);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(window.citizenReportsMapInstance);
   }
+
+  window.citizenReportsMapInstance.invalidateSize(true);
 
   if (window.citizenReportsLayer) {
     window.citizenReportsLayer.clearLayers();
