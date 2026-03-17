@@ -37,6 +37,12 @@
         <button id="logoutBtn" type="button" class="secondary">Log out</button>
       </div>
 
+      <nav class="dashboard-nav" aria-label="Dashboard sections">
+        <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
+        <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
+      </nav>
+
+      <section id="overviewView" class="dashboard-view">
       <section class="dashboard-grid">
       <article class="panel analytics-panel">
         <h3>Operational Snapshot</h3>
@@ -131,6 +137,9 @@
       </article>
       </section>
 
+      </section>
+
+      <section id="managementView" class="dashboard-view" hidden>
       <article class="panel">
         <div class="row">
           <h3>Bulk Report Management Dashboard</h3>
@@ -194,6 +203,7 @@
         </div>
         <p id="reportsFeedback" class="feedback"></p>
       </article>
+      </section>
     </section>
   </main>
 
