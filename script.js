@@ -980,9 +980,10 @@ function renderReportStatistics(reports) {
 function createStatusMapIcon(color) {
   return L.divIcon({
     className: "status-map-marker",
-    html: `<span style="background:${color}"></span>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
+    html: `<span class="status-map-pin" style="--status-color:${color}"></span>`,
+    iconSize: [24, 32],
+    iconAnchor: [12, 32],
+    popupAnchor: [0, -28]
   });
 }
 
@@ -1020,7 +1021,7 @@ function renderCitizenReportsMap(reports) {
     const markerConfig = getMarkerConfigForStatus(report.status);
 
     const marker = L.marker([latValue, lngValue], { icon: createStatusMapIcon(markerConfig.color) });
-    marker.bindPopup(`<strong>${escapeHtml(report.location || "Location not available")}</strong><br>${escapeHtml(report.issue || "Issue not available")}<br>Status: ${escapeHtml(normalizeStatus(report.status))}`);
+    marker.bindPopup(`<strong>${escapeHtml(report.location || "Location not available")}</strong><br>${escapeHtml(report.issue || "Issue not available")}<br>Status: ${escapeHtml(markerConfig.label)}`);
     marker.addTo(window.citizenReportsLayer);
     bounds.push([latValue, lngValue]);
   });
