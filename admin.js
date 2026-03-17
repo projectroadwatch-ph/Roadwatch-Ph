@@ -14,9 +14,16 @@ const statusFilter = document.getElementById("statusFilter");
 const filterSummary = document.getElementById("filterSummary");
 const urgencyThresholdDays = document.getElementById("urgencyThresholdDays");
 const priorityQueueList = document.getElementById("priorityQueueList");
+const verificationQueueList = document.getElementById("verificationQueueList");
+const verificationFilter = document.getElementById("verificationFilter");
+const selectAllReports = document.getElementById("selectAllReports");
+const bulkStatusSelect = document.getElementById("bulkStatusSelect");
+const bulkSummary = document.getElementById("bulkSummary");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
+const selectedReports = new Set();
+const flaggedReports = new Set();
 
 
 function buildJsonpEndpoint(endpoint) {
@@ -616,6 +623,96 @@ function renderPriorityQueue(reports) {
   });
 }
 
+function getVerificationState(report) {
+  const tracking = String(report?.tracking || "").trim();
+  if (tracking && flaggedReports.has(tracking)) return "Flagged";
+  return normalizeStatus(report?.status) === "Pending" ? "Needs Verification" : "Verified";
+}
+
+function renderVerificationQueue(reports) {
+  if (!verificationQueueList) return;
+
+  const filterValue = verificationFilter?.value || "all";
+  const queue = reports
+    .map((report) => ({ report, state: getVerificationState(report) }))
+    .filter((entry) => {
+      if (filterValue === "verification") return entry.state === "Needs Verification";
+      if (filterValue === "flagged") return entry.state === "Flagged";
+      return true;
+    })
+    .sort((a, b) => {
+      const weight = (state) => (state === "Flagged" ? 0 : state === "Needs Verification" ? 1 : 2);
+      return weight(a.state) - weight(b.state);
+    })
+    .slice(0, 8);
+
+  if (queue.length === 0) {
+    verificationQueueList.innerHTML = '<li class="priorityItem empty">No reports match the selected verification filter.</li>';
+    return;
+  }
+
+  verificationQueueList.innerHTML = "";
+  queue.forEach(({ report, state }) => {
+    const item = document.createElement("li");
+    item.className = `priorityItem ${state === "Flagged" ? "is-flagged" : ""}`;
+    item.innerHTML = `
+      <div>
+        <strong>${report.tracking || "No Tracking #"}</strong>
+        <p>${report.issue || "Issue details unavailable"}</p>
+      </div>
+      <div class="priorityMeta">
+        <span>${state}</span>
+        <span>${report.name || "Anonymous"}</span>
+      </div>
+    `;
+    verificationQueueList.appendChild(item);
+  });
+}
+
+function updateBulkSummary(totalVisible) {
+  if (!bulkSummary) return;
+  const selectedCount = selectedReports.size;
+  bulkSummary.textContent = `${selectedCount} selected${totalVisible ? ` out of ${totalVisible} visible report(s).` : "."}`;
+}
+
+function updateSelectAllState(visibleReports) {
+  if (!selectAllReports) return;
+  const visibleIds = visibleReports.map((report) => String(report.tracking || "").trim()).filter(Boolean);
+  if (visibleIds.length === 0) {
+    selectAllReports.checked = false;
+    selectAllReports.indeterminate = false;
+    updateBulkSummary(0);
+    return;
+  }
+
+  const selectedVisible = visibleIds.filter((id) => selectedReports.has(id)).length;
+  selectAllReports.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+  selectAllReports.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+  updateBulkSummary(visibleIds.length);
+}
+
+async function bulkUpdateStatus(reports, status) {
+  for (const report of reports) {
+    if (!report?.tracking) continue;
+    await updateReportStatus(report.tracking, status);
+    report.status = status;
+  }
+}
+
+function markReportsFlagged(reports) {
+  reports.forEach((report) => {
+    const tracking = String(report?.tracking || "").trim();
+    if (tracking) flaggedReports.add(tracking);
+  });
+}
+
+async function bulkDeleteReports(reports) {
+  for (const report of reports) {
+    if (!report?.tracking) continue;
+    await deleteReport(report.tracking);
+  }
+}
+
 function renderAnalytics(reports) {
   const counts = {
     total: reports.length,
@@ -657,7 +754,7 @@ function getFilteredReports() {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="8">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="10">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -667,25 +764,46 @@ function renderRows(reports) {
     const tr = document.createElement("tr");
     const effectiveStatus = normalizeStatus(report.status);
 
+    const trackingValue = String(report.tracking || "").trim();
+    const verificationState = getVerificationState(report);
+
     tr.innerHTML = `
+      <td></td>
       <td>${report.dateTime || "-"}</td>
       <td>${report.tracking || "-"}</td>
       <td>${report.name}</td>
       <td>${report.location}</td>
       <td>${report.issue}</td>
+      <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
       <td></td>
       <td></td>
       <td></td>
     `;
 
+    const selector = document.createElement("input");
+    selector.type = "checkbox";
+    selector.className = "row-select";
+    selector.checked = trackingValue ? selectedReports.has(trackingValue) : false;
+    selector.disabled = !trackingValue;
+    selector.addEventListener("change", () => {
+      if (!trackingValue) return;
+      if (selector.checked) {
+        selectedReports.add(trackingValue);
+      } else {
+        selectedReports.delete(trackingValue);
+      }
+      updateSelectAllState(getFilteredReports());
+    });
+    tr.children[0].appendChild(selector);
+
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[5].textContent = photoElement;
+      tr.children[7].textContent = photoElement;
     } else {
-      tr.children[5].appendChild(photoElement);
+      tr.children[7].appendChild(photoElement);
     }
 
-    tr.children[6].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[8].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -699,6 +817,9 @@ function renderRows(reports) {
       try {
         await deleteReport(report.tracking);
         allReports = allReports.filter((item) => String(item.tracking) !== String(report.tracking));
+        const trackingValue = String(report.tracking || "").trim();
+        selectedReports.delete(trackingValue);
+        flaggedReports.delete(trackingValue);
         setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
         applyFiltersAndRender();
       } catch (error) {
@@ -707,7 +828,7 @@ function renderRows(reports) {
         deleteBtn.disabled = false;
       }
     });
-    tr.children[7].appendChild(deleteBtn);
+    tr.children[9].appendChild(deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -718,15 +839,19 @@ function applyFiltersAndRender() {
   renderRows(filtered);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
+  renderVerificationQueue(allReports);
+  updateSelectAllState(filtered);
   filterSummary.textContent = `Showing ${filtered.length} of ${allReports.length} report(s).`;
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="8">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="10">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
 
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
+
+    selectedReports.clear();
 
     allReports = dedupeReports(
       parseReports(payload)
@@ -735,7 +860,7 @@ async function loadReports() {
       .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="8">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="10">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
       filterSummary.textContent = "No records to filter.";
@@ -746,7 +871,7 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="8">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="10">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
     filterSummary.textContent = "";
@@ -769,5 +894,83 @@ reportSearch.addEventListener("input", applyFiltersAndRender);
 statusFilter.addEventListener("change", applyFiltersAndRender);
 urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allReports));
 window.addEventListener("resize", () => renderAnalytics(allReports));
+
+verificationFilter?.addEventListener("change", () => renderVerificationQueue(allReports));
+
+selectAllReports?.addEventListener("change", () => {
+  const filtered = getFilteredReports();
+  filtered.forEach((report) => {
+    const tracking = String(report?.tracking || "").trim();
+    if (!tracking) return;
+    if (selectAllReports.checked) {
+      selectedReports.add(tracking);
+    } else {
+      selectedReports.delete(tracking);
+    }
+  });
+  applyFiltersAndRender();
+});
+
+document.getElementById("bulkUpdateBtn")?.addEventListener("click", async () => {
+  const selectedStatus = bulkStatusSelect?.value;
+  if (!selectedStatus) {
+    setFeedback("reportsFeedback", "Choose a bulk status before applying updates.", true);
+    return;
+  }
+
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report for bulk status update.", true);
+    return;
+  }
+
+  setTableLoadingState(true, `Applying ${selectedStatus} to ${selected.length} report(s)...`);
+  try {
+    await bulkUpdateStatus(selected, selectedStatus);
+    setFeedback("reportsFeedback", `Bulk updated ${selected.length} report(s) to ${selectedStatus}.`);
+    applyFiltersAndRender();
+  } catch (error) {
+    setFeedback("reportsFeedback", error.message || "Unable to complete bulk status update.", true);
+  } finally {
+    setTableLoadingState(false);
+  }
+});
+
+document.getElementById("bulkFlagBtn")?.addEventListener("click", () => {
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report to flag for spam/abuse review.", true);
+    return;
+  }
+
+  markReportsFlagged(selected);
+  setFeedback("reportsFeedback", `Flagged ${selected.length} report(s) for spam/abuse review.`);
+  applyFiltersAndRender();
+});
+
+document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => {
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report to delete.", true);
+    return;
+  }
+
+  const confirmed = window.confirm(`Delete ${selected.length} selected report(s)? This cannot be undone.`);
+  if (!confirmed) return;
+
+  setTableLoadingState(true, `Deleting ${selected.length} report(s)...`);
+  try {
+    await bulkDeleteReports(selected);
+    const selectedKeys = new Set(selected.map((report) => String(report.tracking || "").trim()));
+    allReports = allReports.filter((report) => !selectedKeys.has(String(report.tracking || "").trim()));
+    selectedReports.clear();
+    setFeedback("reportsFeedback", `Deleted ${selected.length} report(s).`);
+    applyFiltersAndRender();
+  } catch (error) {
+    setFeedback("reportsFeedback", error.message || "Unable to delete selected reports.", true);
+  } finally {
+    setTableLoadingState(false);
+  }
+});
 
 applyAuthUI();

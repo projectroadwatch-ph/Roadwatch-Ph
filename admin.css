@@ -217,6 +217,53 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   justify-content: flex-start;
 }
 
+.bulk-toolbar {
+  margin-top: 12px;
+  grid-template-columns: minmax(180px, 1.1fr) minmax(160px, 1fr) repeat(3, auto);
+}
+
+.check-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-inline input,
+.row-select {
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+}
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.verification-badge.is-pending {
+  background: rgba(255, 209, 102, 0.16);
+  border-color: rgba(255, 209, 102, 0.5);
+  color: #ffe5a4;
+}
+
+.verification-badge.is-verified {
+  background: rgba(99, 230, 190, 0.14);
+  border-color: rgba(99, 230, 190, 0.45);
+  color: #9ff2d7;
+}
+
+.verification-badge.is-flagged,
+.priorityItem.is-flagged {
+  background: rgba(255, 107, 107, 0.13);
+  border-color: rgba(255, 107, 107, 0.4);
+  color: #ffc2c2;
+}
+
+
 @media (max-width: 900px) {
   .login-card {
     grid-template-columns: 1fr;
@@ -233,7 +280,8 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 @media (max-width: 760px) {
-  .toolbar {
+  .toolbar,
+  .bulk-toolbar {
     grid-template-columns: 1fr;
   }
 
