@@ -1099,8 +1099,82 @@ section.active {
 }
 
 .about-card h2,
-.faq-card h2 {
+.faq-card h2,
+.team-card h2 {
   text-align: center;
+}
+
+.team-subcopy {
+  margin-top: -4px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.team-hierarchy {
+  display: grid;
+  gap: 14px;
+}
+
+.role-head {
+  border: 1px solid rgba(134, 208, 255, 0.4);
+  border-radius: 14px;
+  background: rgba(6, 34, 61, 0.72);
+  padding: 14px;
+}
+
+.role-head h3 {
+  margin: 0 0 10px;
+  text-align: center;
+  color: #9ddcff;
+}
+
+.role-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.role-level {
+  border: 1px solid rgba(134, 208, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(7, 33, 58, 0.6);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.role-level h4 {
+  margin: 0;
+  color: #a4e0ff;
+}
+
+.member-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-profile img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(173, 224, 255, 0.7);
+  object-fit: cover;
+}
+
+.member-profile strong {
+  display: block;
+}
+
+.member-profile p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+@media (min-width: 860px) {
+  .role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .faq-list {
