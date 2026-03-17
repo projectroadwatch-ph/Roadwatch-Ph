@@ -1105,32 +1105,21 @@ section.active {
 }
 
 .team-subcopy {
-  margin: -4px 0 0;
+  margin: -4px auto 0;
   text-align: center;
   color: var(--muted);
-}
-
-.team-photo-note {
-  margin: 10px auto 0;
   max-width: 680px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #b7d4ee;
-  background: rgba(8, 38, 68, 0.58);
-  border: 1px solid rgba(134, 208, 255, 0.26);
-  border-radius: 10px;
-  padding: 10px 12px;
 }
 
-.team-photo-note code {
-  color: #e5f4ff;
-  font-family: "JetBrains Mono", Consolas, monospace;
+.team-card {
+  background: linear-gradient(180deg, rgba(9, 38, 68, 0.88), rgba(6, 28, 50, 0.82));
 }
+
 
 .team-hierarchy {
   display: grid;
   gap: 16px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .role-head {
@@ -1150,6 +1139,7 @@ section.active {
 .role-grid {
   display: grid;
   gap: 14px;
+  align-items: stretch;
 }
 
 .role-level {
