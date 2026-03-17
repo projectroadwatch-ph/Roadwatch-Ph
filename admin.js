@@ -22,6 +22,10 @@ const bulkSummary = document.getElementById("bulkSummary");
 const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
+const overviewView = document.getElementById("overviewView");
+const managementView = document.getElementById("managementView");
+const showOverviewBtn = document.getElementById("showOverviewBtn");
+const showManagementBtn = document.getElementById("showManagementBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -284,6 +288,16 @@ function applyLocalStatusOverrides(report) {
   return { ...report, status: normalizeStatus(overrides[match]) };
 }
 
+function setDashboardView(view) {
+  const showOverview = view !== "management";
+
+  overviewView?.toggleAttribute("hidden", !showOverview);
+  managementView?.toggleAttribute("hidden", showOverview);
+
+  showOverviewBtn?.classList.toggle("is-active", showOverview);
+  showManagementBtn?.classList.toggle("is-active", !showOverview);
+}
+
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
 
@@ -307,6 +321,7 @@ function login() {
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
     setFeedback("loginFeedback", "Login successful.");
+    setDashboardView("overview");
     applyAuthUI();
     return;
   }
@@ -1122,6 +1137,9 @@ window.addEventListener("resize", () => renderAnalytics(allReports));
 
 verificationFilter?.addEventListener("change", () => renderVerificationQueue(allReports));
 
+showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
+showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+
 selectAllReports?.addEventListener("change", () => {
   const filtered = getFilteredReports();
   filtered.forEach((report) => {
@@ -1212,4 +1230,5 @@ document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
   setFeedback("reportsFeedback", "PDF report prepared for print/export.");
 });
 
+setDashboardView("overview");
 applyAuthUI();
