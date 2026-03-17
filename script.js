@@ -32,10 +32,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M
 
 function buildHomepageUrl() {
   const { origin, pathname } = window.location;
-  const normalizedPath = pathname.endsWith("/index.html")
-    ? pathname.slice(0, -"index.html".length)
-    : pathname;
-  return `${origin}${normalizedPath || "/"}`;
+  const normalizedPath = pathname && pathname !== "/" ? pathname : "/";
+  return `${origin}${normalizedPath}`;
 }
 
 function setHomepageQrCode() {
