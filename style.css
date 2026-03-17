@@ -1,10 +1,10 @@
 :root {
-  --bg: #020b17;
-  --bg-soft: #0d2239;
-  --panel: rgba(8, 30, 54, 0.83);
-  --panel-strong: #0a1f36;
-  --text: #f5f9ff;
-  --muted: #bfd7f6;
+  --bg: #010814;
+  --bg-soft: #0b1f35;
+  --panel: rgba(5, 25, 46, 0.92);
+  --panel-strong: #081a2f;
+  --text: #f8fbff;
+  --muted: #d3e6ff;
   --accent: #66d9ff;
   --accent-strong: #2a9dff;
   --success: #79ffd4;
@@ -24,11 +24,12 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    radial-gradient(circle at 10% 15%, rgba(36, 120, 196, 0.25), transparent 35%),
-    radial-gradient(circle at 90% 80%, rgba(67, 168, 255, 0.22), transparent 40%),
-    linear-gradient(145deg, #030a14 0%, #071b31 45%, #051529 100%);
+    radial-gradient(circle at 10% 15%, rgba(36, 120, 196, 0.19), transparent 35%),
+    radial-gradient(circle at 90% 80%, rgba(67, 168, 255, 0.17), transparent 40%),
+    linear-gradient(145deg, #02070f 0%, #06162a 45%, #041224 100%);
   min-height: 100vh;
   overflow-x: hidden;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
 }
 
 
@@ -234,7 +235,7 @@ section.active {
 
 .section-heading-block p {
   margin: 0;
-  color: #b9dbff;
+  color: #d4e9ff;
   max-width: 900px;
   line-height: 1.55;
   font-size: clamp(0.96rem, 1.8vw, 1.05rem);
@@ -264,7 +265,7 @@ section.active {
 
 .quick-alert-banner p {
   margin: 0;
-  color: #c4e7ff;
+  color: #d7ecff;
 }
 
 .map-load-error {
@@ -372,7 +373,7 @@ section.active {
   font-family: "Poppins", "Inter", sans-serif;
   font-size: clamp(1.2rem, 2.7vw, 1.8rem);
   line-height: 1.35;
-  color: #d9ecff;
+  color: #e5f2ff;
   text-wrap: balance;
 }
 
@@ -416,7 +417,7 @@ section.active {
 
 .hero-purpose {
   margin: 0;
-  color: #d9ecff;
+  color: #e3f1ff;
   line-height: 1.75;
   font-size: clamp(1rem, 1.9vw, 1.12rem);
   text-wrap: pretty;
@@ -461,7 +462,7 @@ section.active {
 
 .hero-note {
   margin: 12px auto 0;
-  color: #9fdbff;
+  color: #c7e7ff;
   font-size: 0.95rem;
   font-weight: 600;
   text-align: center;
