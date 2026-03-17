@@ -29,6 +29,26 @@ const LEAFLET_STYLE_SOURCES = [
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 
+
+function buildHomepageUrl() {
+  const { origin, pathname } = window.location;
+  const normalizedPath = pathname.endsWith("/index.html")
+    ? pathname.slice(0, -"index.html".length)
+    : pathname;
+  return `${origin}${normalizedPath || "/"}`;
+}
+
+function setHomepageQrCode() {
+  const qrImage = document.getElementById("homepageQrCode");
+  if (!qrImage) return;
+
+  const homepageUrl = buildHomepageUrl();
+  const qrSource = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(homepageUrl)}`;
+
+  qrImage.src = qrSource;
+  qrImage.setAttribute("data-homepage-url", homepageUrl);
+}
+
 function injectLeafletStylesheet() {
   if (document.querySelector('link[data-leaflet-style="true"]')) return;
 
@@ -1399,6 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initialPage = resolveInitialPage();
   showPage(initialPage);
+  setHomepageQrCode();
   syncHomeReportViews();
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");
