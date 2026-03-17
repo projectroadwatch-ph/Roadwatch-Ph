@@ -1878,3 +1878,127 @@ textarea {
     height: 170px;
   }
 }
+
+
+/* --- Campaign poster theme override --- */
+:root {
+  --bg: #f4f4ef;
+  --panel: #fffdf5;
+  --panel-strong: #fff7d6;
+  --text: #1a1a1a;
+  --muted: #464646;
+  --accent: #f2ba00;
+  --accent-strong: #d99a00;
+}
+
+body {
+  color: var(--text);
+  background:
+    repeating-linear-gradient(-45deg, #101010 0 18px, #f2ba00 18px 36px),
+    linear-gradient(#efefeb, #efefeb);
+  background-size: 100% 18px, 100% 100%;
+  background-repeat: no-repeat;
+  background-position: top, center;
+  padding-top: 18px;
+}
+
+.bg-orb,
+.hero-card::before,
+.hero-card::after {
+  display: none;
+}
+
+header {
+  background: #fffbe8;
+  border-bottom: 3px solid #101010;
+  color: #101010;
+  box-shadow: 0 4px 0 #f2ba00;
+}
+
+.brand-lockup p {
+  color: #2a2a2a;
+  font-weight: 600;
+}
+
+.menuBtn,
+.sidebar button {
+  color: #101010;
+}
+
+.sidebar {
+  background: #fffbe8;
+  border-right: 3px solid #101010;
+}
+
+.sidebar button:hover {
+  background: #ffe081;
+}
+
+.card,
+.hero-card,
+.reports-map-card {
+  background: #fffef9;
+  border: 3px solid #101010;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.16);
+}
+
+.highlighted-hero {
+  border-color: #101010;
+  box-shadow: 10px 10px 0 #f2ba00;
+}
+
+.hero-tag,
+.journey-eyebrow,
+.stats-eyebrow {
+  color: #7c5b00;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.hero-card h1 {
+  color: #111;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 #f2ba00;
+}
+
+.subheader {
+  color: #111;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.live-chip {
+  background: #fff1bf;
+  border: 2px solid #101010;
+  color: #1b1b1b;
+}
+
+.live-chip span:first-child {
+  background: #f2ba00;
+}
+
+.hero-purpose-wrap {
+  border: 2px solid #101010;
+  background: #fff7d6;
+}
+
+.hero-purpose,
+.section-heading-block p,
+.track-report-copy,
+.report-stats-subtitle,
+.reports-map-legend {
+  color: #2f2f2f;
+}
+
+.journey-cta-btn,
+.track-search-form button {
+  background: #f2ba00;
+  border: 2px solid #101010;
+  color: #101010;
+  font-weight: 800;
+}
+
+.journey-cta-btn:hover,
+.track-search-form button:hover {
+  background: #ffd84f;
+}
