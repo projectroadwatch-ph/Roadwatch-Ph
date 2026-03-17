@@ -14,6 +14,8 @@ const statusFilter = document.getElementById("statusFilter");
 const filterSummary = document.getElementById("filterSummary");
 
 let allReports = [];
+let pendingStatusUpdates = 0;
+
 
 function buildJsonpEndpoint(endpoint) {
   const separator = endpoint.includes("?") ? "&" : "?";
@@ -108,6 +110,65 @@ function setFeedback(id, message, isError = false) {
   el.style.color = isError ? "#ffadb3" : "#9ce9ab";
 }
 
+
+
+function setTableLoadingState(isLoading, message = "") {
+  const el = document.getElementById("tableLoadingState");
+  if (!el) return;
+  el.hidden = !isLoading;
+  el.textContent = message || "Saving update...";
+}
+
+function drawStatusChart(counts) {
+  const canvas = document.getElementById("statusChart");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const cssWidth = canvas.clientWidth || 960;
+  const cssHeight = 280;
+
+  canvas.width = Math.floor(cssWidth * dpr);
+  canvas.height = Math.floor(cssHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+  const bars = [
+    { label: "Pending", value: counts.pending, color: "#ffd166" },
+    { label: "Verified", value: counts.verified, color: "#4fc3f7" },
+    { label: "In Progress", value: counts.inProgress, color: "#b388ff" },
+    { label: "Repaired", value: counts.repaired, color: "#63e6be" }
+  ];
+
+  const max = Math.max(...bars.map((b) => b.value), 1);
+  const padding = { top: 24, right: 20, bottom: 52, left: 24 };
+  const chartWidth = cssWidth - padding.left - padding.right;
+  const chartHeight = cssHeight - padding.top - padding.bottom;
+  const barWidth = Math.min(92, chartWidth / bars.length - 24);
+  const gap = (chartWidth - barWidth * bars.length) / (bars.length + 1);
+
+  ctx.fillStyle = "rgba(189, 217, 248, 0.2)";
+  ctx.fillRect(padding.left, padding.top + chartHeight, chartWidth, 1);
+
+  ctx.font = "600 12px Inter";
+  ctx.textAlign = "center";
+
+  bars.forEach((bar, index) => {
+    const x = padding.left + gap + index * (barWidth + gap);
+    const barHeight = Math.round((bar.value / max) * (chartHeight - 8));
+    const y = padding.top + chartHeight - barHeight;
+
+    ctx.fillStyle = bar.color;
+    ctx.fillRect(x, y, barWidth, barHeight);
+
+    ctx.fillStyle = "#e9f4ff";
+    ctx.fillText(String(bar.value), x + barWidth / 2, y - 8);
+
+    ctx.fillStyle = "#bdd9f8";
+    ctx.fillText(bar.label, x + barWidth / 2, cssHeight - 22);
+  });
+}
 
 function getStatusOverrides() {
   try {
@@ -383,6 +444,7 @@ async function deleteReport(tracking) {
 
 function statusSelect(current, tracking) {
   const select = document.createElement("select");
+  select.className = "status-select";
   ["Pending", "Verified", "In Progress", "Repaired"].forEach((label) => {
     const option = document.createElement("option");
     option.value = label;
@@ -395,6 +457,9 @@ function statusSelect(current, tracking) {
     const nextStatus = select.value;
     const previousStatus = select.dataset.previous || current;
     select.disabled = true;
+    select.classList.add("is-updating");
+    pendingStatusUpdates += 1;
+    setTableLoadingState(true, `Saving status update for ${tracking}...`);
 
     try {
       await updateReportStatus(tracking, nextStatus);
@@ -410,6 +475,9 @@ function statusSelect(current, tracking) {
       setFeedback("reportsFeedback", error.message || "Unable to save status update.", true);
     } finally {
       select.disabled = false;
+      select.classList.remove("is-updating");
+      pendingStatusUpdates = Math.max(0, pendingStatusUpdates - 1);
+      if (pendingStatusUpdates === 0) setTableLoadingState(false);
     }
   });
 
@@ -462,6 +530,7 @@ function renderAnalytics(reports) {
   document.getElementById("verifiedReportsCount").textContent = counts.verified;
   document.getElementById("inProgressReportsCount").textContent = counts.inProgress;
   document.getElementById("repairedReportsCount").textContent = counts.repaired;
+  drawStatusChart(counts);
 }
 
 function getFilteredReports() {
@@ -545,6 +614,7 @@ function applyFiltersAndRender() {
 
 async function loadReports() {
   reportsBody.innerHTML = '<tr><td colspan="8">Loading reports...</td></tr>';
+  setTableLoadingState(true, "Loading latest reports...");
 
   try {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
@@ -557,6 +627,7 @@ async function loadReports() {
       reportsBody.innerHTML = '<tr><td colspan="8">No reports found.</td></tr>';
       renderAnalytics([]);
       filterSummary.textContent = "No records to filter.";
+      setTableLoadingState(false);
       return;
     }
 
@@ -567,8 +638,11 @@ async function loadReports() {
     renderAnalytics([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
+  } finally {
+    if (pendingStatusUpdates === 0) setTableLoadingState(false);
   }
 }
+
 
 document.getElementById("loginBtn").addEventListener("click", login);
 document.getElementById("logoutBtn").addEventListener("click", logout);
@@ -580,5 +654,6 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
 });
 reportSearch.addEventListener("input", applyFiltersAndRender);
 statusFilter.addEventListener("change", applyFiltersAndRender);
+window.addEventListener("resize", () => renderAnalytics(allReports));
 
 applyAuthUI();

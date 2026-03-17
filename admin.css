@@ -156,3 +156,47 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     width: 100%;
   }
 }
+
+
+.chart-panel {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+#statusChart {
+  width: 100%;
+  height: 280px;
+  display: block;
+}
+
+.table-loading {
+  margin: 10px 0 0;
+  color: #9ad4ff;
+  font-size: 0.9rem;
+}
+
+.table-loading::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(154, 212, 255, 0.35);
+  border-top-color: #9ad4ff;
+  animation: spin 0.8s linear infinite;
+  vertical-align: -1px;
+}
+
+.status-select.is-updating {
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

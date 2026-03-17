@@ -32,13 +32,13 @@
         <div>
           <p class="eyebrow">Operations Center</p>
           <h2>Admin Dashboard</h2>
-          <p class="small">Manage submissions, verify road issues, and update the map's public status indicators.</p>
+          <p class="small">Track report flow, prioritize urgent road concerns, and publish accurate status updates for citizens.</p>
         </div>
         <button id="logoutBtn" type="button" class="secondary">Log out</button>
       </div>
 
       <article class="panel">
-        <h3>Report Analytics</h3>
+        <h3>Operational Snapshot</h3>
         <div id="analyticsGrid" class="analyticsGrid">
           <div class="analyticsCard">
             <span class="analyticsLabel">Total Reports</span>
@@ -63,9 +63,20 @@
         </div>
       </article>
 
+
       <article class="panel">
         <div class="row">
-          <h3>Report Status Controls</h3>
+          <h3>Status Distribution</h3>
+          <p class="small">Visual summary of current report statuses.</p>
+        </div>
+        <div class="chart-panel">
+          <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="row">
+          <h3>Report Status Management</h3>
           <button id="refreshReportsBtn" type="button" class="secondary">Refresh</button>
         </div>
         <div class="toolbar">
@@ -84,7 +95,8 @@
           <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
         </div>
         <p id="filterSummary" class="small"></p>
-        <p class="small">Set status per tracking number. Changes are saved to Google Sheets and reflected on the homepage.</p>
+        <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
+        <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
         <div class="tableWrap">
           <table>
             <thead>
