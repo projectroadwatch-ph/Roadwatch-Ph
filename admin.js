@@ -11,6 +11,10 @@ const dashboard = document.getElementById("dashboard");
 const reportsBody = document.getElementById("reportsBody");
 const reportSearch = document.getElementById("reportSearch");
 const statusFilter = document.getElementById("statusFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const barangayFilter = document.getElementById("barangayFilter");
+const qualityFilter = document.getElementById("qualityFilter");
+const triagePreset = document.getElementById("triagePreset");
 const filterSummary = document.getElementById("filterSummary");
 const urgencyThresholdDays = document.getElementById("urgencyThresholdDays");
 const priorityQueueList = document.getElementById("priorityQueueList");
@@ -437,6 +441,7 @@ function normalizeStatus(status) {
 
 function normalizeReport(record = {}) {
   const reportedAt = getRecordDate(record);
+  const issueType = getFieldValue(record, ["issueType", "issue_type", "Issue Type", "type", "issue"]);
 
   return {
     dateTime: formatDateTime(record),
@@ -457,9 +462,47 @@ function normalizeReport(record = {}) {
       "description",
       "details"
     ]) || "-",
+    issueCategory: getFieldValue(record, ["issueCategory", "issue_category", "Issue Category", "category"]) || "-",
+    issueType: issueType || "-",
+    barangay: getFieldValue(record, ["barangay", "Barangay", "reporterBarangay", "Reporter Barangay"]) || "-",
+    city: getFieldValue(record, ["city", "City", "municipality", "cityMunicipality", "City / Municipality"]) || "-",
+    nearestLandmark: getFieldValue(record, ["nearestLandmark", "nearest_landmark", "Nearest Landmark"]) || "-",
+    lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
+    lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
     status: normalizeStatus(getFieldValue(record, ["status", "reportStatus", "Status"]))
   };
+}
+
+function toNumberOrNull(value) {
+  const parsed = Number.parseFloat(String(value ?? "").trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getDataQualityScore(report) {
+  let score = 0;
+
+  if (String(report?.photo || "").trim()) score += 20;
+  if (String(report?.location || "").trim() && report.location !== "-") score += 20;
+  if (String(report?.barangay || "").trim() && report.barangay !== "-") score += 15;
+  if (String(report?.city || "").trim() && report.city !== "-") score += 10;
+  if (String(report?.issueCategory || "").trim() && report.issueCategory !== "-") score += 10;
+
+  const descriptionLength = String(report?.issue || "").trim().length;
+  if (descriptionLength >= 25) score += 15;
+  else if (descriptionLength >= 10) score += 8;
+
+  const lat = toNumberOrNull(report?.lat);
+  const lng = toNumberOrNull(report?.lng);
+  if (lat !== null && lng !== null) score += 10;
+
+  return Math.min(100, score);
+}
+
+function getQualityBand(score) {
+  if (score >= 80) return "high";
+  if (score >= 50) return "medium";
+  return "low";
 }
 
 async function postStatusUpdateToEndpoint(endpointBase, tracking, status) {
@@ -940,13 +983,16 @@ function refreshReportingSection(reports) {
 }
 
 function exportReportsToCsv(reports) {
-  const headers = ["Submission Time", "Tracking #", "Name", "Location", "Issue", "Status", "Verification"];
+  const headers = ["Submission Time", "Tracking #", "Reporter", "Location", "Category", "Issue Type", "Issue", "Data Quality", "Status", "Verification"];
   const rows = reports.map((report) => [
     report.dateTime,
     report.tracking,
     report.name,
     report.location,
+    report.issueCategory,
+    report.issueType,
     report.issue,
+    `${getDataQualityScore(report)}%`,
     normalizeStatus(report.status),
     getVerificationState(report)
   ]);
@@ -991,7 +1037,10 @@ function renderAnalytics(reports) {
     pending: 0,
     verified: 0,
     inProgress: 0,
-    repaired: 0
+    repaired: 0,
+    needsVerification: 0,
+    flagged: 0,
+    qualityTotal: 0
   };
 
   reports.forEach((report) => {
@@ -1000,6 +1049,9 @@ function renderAnalytics(reports) {
     if (normalized === "verified") counts.verified += 1;
     if (normalized === "in progress") counts.inProgress += 1;
     if (normalized === "repaired") counts.repaired += 1;
+    if (getVerificationState(report) === "Needs Verification") counts.needsVerification += 1;
+    if (getVerificationState(report) === "Flagged") counts.flagged += 1;
+    counts.qualityTotal += getDataQualityScore(report);
   });
 
   document.getElementById("totalReportsCount").textContent = counts.total;
@@ -1007,19 +1059,83 @@ function renderAnalytics(reports) {
   document.getElementById("verifiedReportsCount").textContent = counts.verified;
   document.getElementById("inProgressReportsCount").textContent = counts.inProgress;
   document.getElementById("repairedReportsCount").textContent = counts.repaired;
+  document.getElementById("needsVerificationCount").textContent = counts.needsVerification;
+  document.getElementById("flaggedReportsCount").textContent = counts.flagged;
+  document.getElementById("avgQualityScore").textContent = `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`;
   drawStatusChart(counts);
+}
+
+function populateSelectFilter(select, values, allLabel) {
+  if (!select) return;
+  const previousValue = select.value || "all";
+  const uniqueValues = Array.from(new Set(values
+    .map((value) => String(value || "").trim())
+    .filter((value) => value && value !== "-")))
+    .sort((a, b) => a.localeCompare(b));
+
+  select.innerHTML = `<option value="all">${allLabel}</option>${uniqueValues
+    .map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
+    .join("")}`;
+
+  if (uniqueValues.includes(previousValue)) {
+    select.value = previousValue;
+  } else {
+    select.value = "all";
+  }
+}
+
+function syncDynamicFilters(reports) {
+  populateSelectFilter(categoryFilter, reports.map((report) => report.issueCategory), "All categories");
+  populateSelectFilter(barangayFilter, reports.map((report) => report.barangay), "All barangays");
 }
 
 function getFilteredReports() {
   const query = reportSearch.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
+  const selectedCategory = categoryFilter?.value || "all";
+  const selectedBarangay = barangayFilter?.value || "all";
+  const selectedQuality = qualityFilter?.value || "all";
+  const selectedPreset = triagePreset?.value || "all";
+  const thresholdDays = getUrgencyThresholdDays();
+  const now = Date.now();
 
   return allReports.filter((report) => {
     const statusPass = selectedStatus === "all" || normalizeStatus(report.status) === selectedStatus;
     if (!statusPass) return false;
 
+    const categoryPass = selectedCategory === "all" || report.issueCategory === selectedCategory;
+    if (!categoryPass) return false;
+
+    const barangayPass = selectedBarangay === "all" || report.barangay === selectedBarangay;
+    if (!barangayPass) return false;
+
+    const qualityScore = getDataQualityScore(report);
+    const qualityPass = selectedQuality === "all" || getQualityBand(qualityScore) === selectedQuality;
+    if (!qualityPass) return false;
+
+    if (selectedPreset !== "all") {
+      const verificationState = getVerificationState(report);
+      const isRepaired = normalizeStatus(report.status) === "Repaired";
+      const reportDate = parseReportDate(report);
+      const ageDays = reportDate ? Math.floor((now - reportDate.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+
+      if (selectedPreset === "highRisk" && (isRepaired || ageDays < thresholdDays)) return false;
+      if (selectedPreset === "needsVerification" && verificationState !== "Needs Verification") return false;
+      if (selectedPreset === "flagged" && verificationState !== "Flagged") return false;
+      if (selectedPreset === "lowQuality" && qualityScore >= 50) return false;
+    }
+
     if (!query) return true;
-    const haystack = [report.dateTime, report.tracking, report.name, report.location, report.issue].join(" ").toLowerCase();
+    const haystack = [
+      report.dateTime,
+      report.tracking,
+      report.name,
+      report.location,
+      report.issue,
+      report.issueCategory,
+      report.issueType,
+      report.barangay
+    ].join(" ").toLowerCase();
     return haystack.includes(query);
   });
 }
@@ -1049,7 +1165,7 @@ function renderPagination(totalItems) {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="10">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="12">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -1061,6 +1177,8 @@ function renderRows(reports) {
 
     const trackingValue = String(report.tracking || "").trim();
     const verificationState = getVerificationState(report);
+    const qualityScore = getDataQualityScore(report);
+    const qualityBand = getQualityBand(qualityScore);
 
     tr.innerHTML = `
       <td></td>
@@ -1068,7 +1186,9 @@ function renderRows(reports) {
       <td>${report.tracking || "-"}</td>
       <td>${report.name}</td>
       <td>${report.location}</td>
-      <td>${report.issue}</td>
+      <td>${report.issueCategory || "-"}</td>
+      <td>${report.issueType || report.issue || "-"}</td>
+      <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
       <td></td>
       <td></td>
@@ -1093,13 +1213,13 @@ function renderRows(reports) {
 
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[7].textContent = photoElement;
+      tr.children[9].textContent = photoElement;
     } else {
-      tr.children[7].appendChild(photoElement);
+      tr.children[9].appendChild(photoElement);
     }
 
-    tr.children[8].classList.add("status-cell");
-    tr.children[8].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[10].classList.add("status-cell");
+    tr.children[10].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -1124,14 +1244,15 @@ function renderRows(reports) {
         deleteBtn.disabled = false;
       }
     });
-    tr.children[9].classList.add("action-cell");
-    tr.children[9].appendChild(deleteBtn);
+    tr.children[11].classList.add("action-cell");
+    tr.children[11].appendChild(deleteBtn);
 
     reportsBody.appendChild(tr);
   });
 }
 
 function applyFiltersAndRender() {
+  syncDynamicFilters(allReports);
   const filtered = getFilteredReports();
   const paginated = getPaginatedReports(filtered);
   renderRows(paginated);
@@ -1147,7 +1268,7 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="10">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="12">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
 
   try {
@@ -1163,7 +1284,7 @@ async function loadReports() {
       .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="10">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="12">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
       refreshReportingSection([]);
@@ -1175,7 +1296,7 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="10">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="12">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
     refreshReportingSection([]);
@@ -1193,6 +1314,10 @@ document.getElementById("refreshReportsBtn").addEventListener("click", loadRepor
 document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   reportSearch.value = "";
   statusFilter.value = "all";
+  if (categoryFilter) categoryFilter.value = "all";
+  if (barangayFilter) barangayFilter.value = "all";
+  if (qualityFilter) qualityFilter.value = "all";
+  if (triagePreset) triagePreset.value = "all";
   currentPage = 1;
   applyFiltersAndRender();
 });
@@ -1201,6 +1326,22 @@ reportSearch.addEventListener("input", () => {
   applyFiltersAndRender();
 });
 statusFilter.addEventListener("change", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+categoryFilter?.addEventListener("change", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+barangayFilter?.addEventListener("change", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+qualityFilter?.addEventListener("change", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+triagePreset?.addEventListener("change", () => {
   currentPage = 1;
   applyFiltersAndRender();
 });

@@ -134,7 +134,7 @@ button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 .small { color: var(--muted); font-size: 0.9rem; }
 .link { color: #9ad4ff; display: inline-block; margin-top: 10px; }
 .tableWrap { overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
-table { width: 100%; border-collapse: collapse; min-width: 1040px; }
+table { width: 100%; border-collapse: collapse; min-width: 1220px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
 th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .paginationBar {
@@ -312,6 +312,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   grid-template-columns: minmax(180px, 1.1fr) minmax(160px, 1fr) repeat(3, auto);
 }
 
+.triage-toolbar {
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+}
+
 .check-inline {
   display: inline-flex;
   align-items: center;
@@ -348,6 +352,35 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .verification-badge.is-flagged,
 .priorityItem.is-flagged {
+  background: rgba(255, 107, 107, 0.13);
+  border-color: rgba(255, 107, 107, 0.4);
+  color: #ffc2c2;
+}
+
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  border: 1px solid transparent;
+}
+
+.quality-high {
+  background: rgba(99, 230, 190, 0.16);
+  border-color: rgba(99, 230, 190, 0.45);
+  color: #9ff2d7;
+}
+
+.quality-medium {
+  background: rgba(79, 195, 247, 0.14);
+  border-color: rgba(79, 195, 247, 0.45);
+  color: #bde9ff;
+}
+
+.quality-low {
   background: rgba(255, 107, 107, 0.13);
   border-color: rgba(255, 107, 107, 0.4);
   color: #ffc2c2;
