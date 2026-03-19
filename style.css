@@ -987,6 +987,24 @@ section.active {
   overflow: hidden;
 }
 
+
+.fillup-reminder {
+  margin-top: 8px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(149, 213, 255, 0.32);
+  background: linear-gradient(140deg, rgba(10, 44, 71, 0.92), rgba(9, 31, 54, 0.88));
+}
+
+.fillup-reminder h3 {
+  margin: 0;
+  font-family: "Poppins", "Inter", sans-serif;
+}
+
+.fillup-reminder p {
+  margin: 8px 0 0;
+  color: #c4e6ff;
+}
+
 .submit-form-card {
   border: 1px solid rgba(134, 208, 255, 0.34);
 }
