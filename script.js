@@ -1021,80 +1021,8 @@ function setCoordinateDisplay(latitude, longitude) {
   coordinatesInput.value = "";
 }
 
-function inferJurisdictionAuthority(roadTypeValue) {
-  const roadType = String(roadTypeValue || "").toLowerCase();
-  if (roadType.includes("national")) return "DPWH";
-  if (roadType.includes("barangay")) return "Barangay";
-  if (roadType.includes("provincial") || roadType.includes("municipal")) return "LGU";
-  return "";
-}
-
-function refreshJurisdictionAuthority() {
-  const roadTypeInput = document.getElementById("roadType");
-  const jurisdictionInput = document.getElementById("jurisdictionAuthority");
-  if (!jurisdictionInput || !roadTypeInput) return;
-  jurisdictionInput.value = inferJurisdictionAuthority(roadTypeInput.value);
-}
-
-function getInputValue(id) {
-  const element = document.getElementById(id);
-  return element ? element.value : "";
-}
-
 function collectEnhancedRoadInfo() {
-  return {
-    roadType: getInputValue("roadType"),
-    roadClass: getInputValue("roadClass"),
-    roadSurfaceMaterial: getInputValue("roadSurfaceMaterial"),
-    numberOfLanes: getInputValue("numberOfLanes"),
-    roadDirection: getInputValue("roadDirection"),
-    trafficVolume: getInputValue("trafficVolume"),
-    roadSpeedLimit: getInputValue("roadSpeedLimit"),
-    pedestrianActivity: getInputValue("pedestrianActivity"),
-    schoolZone: getInputValue("schoolZone"),
-    commercialArea: getInputValue("commercialArea"),
-    residentialArea: getInputValue("residentialArea"),
-    barangay: getInputValue("barangay"),
-    districtZone: getInputValue("districtZone"),
-    coordinatesDisplay: getInputValue("coordinatesDisplay"),
-    elevation: getInputValue("elevation"),
-    drainageStatus: getInputValue("drainageStatus"),
-    slopeGradient: getInputValue("slopeGradient"),
-    sidewalkCondition: getInputValue("sidewalkCondition"),
-    streetLighting: getInputValue("streetLighting"),
-    roadMarkings: getInputValue("roadMarkings"),
-    curbsGutters: getInputValue("curbsGutters"),
-    busStopNearby: getInputValue("busStopNearby"),
-    parkingSpaceAvailable: getInputValue("parkingSpaceAvailable"),
-    accidentProneArea: getInputValue("accidentProneArea"),
-    nearIntersection: getInputValue("nearIntersection"),
-    curveTurnSeverity: getInputValue("curveTurnSeverity"),
-    visibility: getInputValue("visibility"),
-    nighttimeLightingAdequate: getInputValue("nighttimeLightingAdequate"),
-    recentWeatherImpact: getInputValue("recentWeatherImpact"),
-    lastMaintenanceDate: getInputValue("lastMaintenanceDate"),
-    maintenanceFrequency: getInputValue("maintenanceFrequency"),
-    previousIssues: getInputValue("previousIssues"),
-    ongoingConstruction: getInputValue("ongoingConstruction"),
-    hospitalNearby: getInputValue("hospitalNearby"),
-    schoolNearby: getInputValue("schoolNearby"),
-    marketCommercialHub: getInputValue("marketCommercialHub"),
-    residentialComplex: getInputValue("residentialComplex"),
-    publicTransportRoute: getInputValue("publicTransportRoute"),
-    connectedRoadBridgeName: getInputValue("connectedRoadBridgeName"),
-    alternativeRouteAvailable: getInputValue("alternativeRouteAvailable"),
-    criticalRoute: getInputValue("criticalRoute"),
-    tourismRoute: getInputValue("tourismRoute"),
-    agriculturalAreaRoad: getInputValue("agriculturalAreaRoad"),
-    seasonalIssues: getInputValue("seasonalIssues"),
-    treeCoverage: getInputValue("treeCoverage"),
-    adjacentWaterBody: getInputValue("adjacentWaterBody"),
-    soilType: getInputValue("soilType"),
-    roadConditionIndex: getInputValue("roadConditionIndex"),
-    averageIssueResolutionTime: getInputValue("averageIssueResolutionTime"),
-    budgetCategory: getInputValue("budgetCategory"),
-    jurisdictionAuthority: getInputValue("jurisdictionAuthority")
-  };
+  return {};
 }
 
 
@@ -1603,12 +1531,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   attachLocationAutocomplete();
   setCoordinateDisplay(null, null);
-  refreshJurisdictionAuthority();
-
-  const roadTypeInput = document.getElementById("roadType");
-  if (roadTypeInput) {
-    roadTypeInput.addEventListener("change", refreshJurisdictionAuthority);
-  }
 
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
