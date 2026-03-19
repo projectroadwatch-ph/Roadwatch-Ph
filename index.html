@@ -271,15 +271,43 @@
       <p class="submit-form-intro">Provide accurate details so the right authority can validate and act on your report faster.</p>
 
       <h3 class="form-section-title">Reporter Information</h3>
-      <div class="row">
-        <input id="lastname" placeholder="Last Name">
-        <input id="firstname" placeholder="First Name">
-        <input id="mi" placeholder="M.I.">
-      </div>
-
-      <div class="row">
-        <input id="email" placeholder="Email">
-        <input id="phone" placeholder="Mobile Number">
+      <div class="road-info-grid reporter-info-grid">
+        <div class="field-group">
+          <label for="lastname">Last Name <span aria-hidden="true">*</span></label>
+          <input id="lastname" placeholder="Dela Cruz">
+        </div>
+        <div class="field-group">
+          <label for="firstname">First Name <span aria-hidden="true">*</span></label>
+          <input id="firstname" placeholder="Juan">
+        </div>
+        <div class="field-group">
+          <label for="mi">Middle Initial <span aria-hidden="true">*</span></label>
+          <input id="mi" placeholder="S.">
+        </div>
+        <div class="field-group">
+          <label for="email">Email Address <span aria-hidden="true">*</span></label>
+          <input id="email" placeholder="example@email.com">
+        </div>
+        <div class="field-group">
+          <label for="phone">Mobile Number <span aria-hidden="true">*</span></label>
+          <input id="phone" placeholder="09XX-XXX-XXXX">
+        </div>
+        <div class="field-group">
+          <label for="reporterProvince">Province <span aria-hidden="true">*</span></label>
+          <input id="reporterProvince" placeholder="Select Province">
+        </div>
+        <div class="field-group">
+          <label for="reporterCity">City / Municipality <span aria-hidden="true">*</span></label>
+          <input id="reporterCity" placeholder="Select City">
+        </div>
+        <div class="field-group">
+          <label for="reporterBarangay">Barangay <span aria-hidden="true">*</span></label>
+          <input id="reporterBarangay" placeholder="Select Barangay">
+        </div>
+        <div class="field-group">
+          <label for="reporterStreetAddress">Street / House No. <span aria-hidden="true">*</span></label>
+          <input id="reporterStreetAddress" placeholder="123 Sampaguita Street">
+        </div>
       </div>
 
       <h3 class="form-section-title">Road Location</h3>
