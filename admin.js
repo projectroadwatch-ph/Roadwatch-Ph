@@ -1436,8 +1436,11 @@ function renderPinMap(mapElement, mapSummaryElement, mapSummaryText, reports, cu
     return { map: currentMap, layer: currentLayer };
   }
 
+  const wasEmptyState = mapElement.classList.contains("is-empty");
   mapElement.classList.remove("is-empty");
-  mapElement.textContent = "";
+  if (wasEmptyState) {
+    mapElement.textContent = "";
+  }
 
   const map = ensurePinMapInstance(mapElement, currentMap);
   const markers = ensurePinMapLayer(map, currentLayer);
