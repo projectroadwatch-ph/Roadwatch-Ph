@@ -652,6 +652,10 @@ function toReportModel(report) {
       "Report Details"
     ]),
     status: getFieldValue(report, ["status", "reportStatus", "Status"]),
+    roadType: getFieldValue(report, ["roadType", "road_type", "Road Type"]),
+    roadClass: getFieldValue(report, ["roadClass", "road_class", "Road Class"]),
+    barangay: getFieldValue(report, ["barangay", "Barangay"]),
+    jurisdictionAuthority: getFieldValue(report, ["jurisdictionAuthority", "jurisdiction_authority", "Jurisdiction Authority"]),
     lat: coordinates.lat,
     lng: coordinates.lng,
     timestamp: getFieldValue(report, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"])
@@ -845,6 +849,7 @@ async function loadMap() {
 
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+    setCoordinateDisplay(lat, lng);
 
     autofillRoadLocationFromCoordinates(lat, lng);
   });
@@ -857,9 +862,14 @@ async function autofillRoadLocationFromCoordinates(latitude, longitude) {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
     const data = await response.json();
     const road = data.address?.road || data.address?.neighbourhood || data.display_name;
+    const barangay = data.address?.suburb || data.address?.quarter || data.address?.village || data.address?.hamlet || "";
     const locationInput = document.getElementById("locationText");
+    const barangayInput = document.getElementById("barangay");
     if (locationInput && road) {
       locationInput.value = road;
+    }
+    if (barangayInput) {
+      barangayInput.value = barangay;
     }
   } catch (error) {
     console.log("Reverse geocoding failed", error);
@@ -893,6 +903,7 @@ async function detectLocation() {
 
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+    setCoordinateDisplay(lat, lng);
 
     await autofillRoadLocationFromCoordinates(lat, lng);
   }, function () {
@@ -984,6 +995,7 @@ function attachLocationAutocomplete() {
         marker = L.marker([lat, lng]).addTo(loadedMap);
         document.getElementById("selectedLocation").innerText =
           "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+        setCoordinateDisplay(lat, lng);
       });
       return;
     }
@@ -993,7 +1005,96 @@ function attachLocationAutocomplete() {
     marker = L.marker([lat, lng]).addTo(map);
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
+    setCoordinateDisplay(lat, lng);
   });
+}
+
+function setCoordinateDisplay(latitude, longitude) {
+  const coordinatesInput = document.getElementById("coordinatesDisplay");
+  if (!coordinatesInput) return;
+
+  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+    coordinatesInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+    return;
+  }
+
+  coordinatesInput.value = "";
+}
+
+function inferJurisdictionAuthority(roadTypeValue) {
+  const roadType = String(roadTypeValue || "").toLowerCase();
+  if (roadType.includes("national")) return "DPWH";
+  if (roadType.includes("barangay")) return "Barangay";
+  if (roadType.includes("provincial") || roadType.includes("municipal")) return "LGU";
+  return "";
+}
+
+function refreshJurisdictionAuthority() {
+  const roadTypeInput = document.getElementById("roadType");
+  const jurisdictionInput = document.getElementById("jurisdictionAuthority");
+  if (!jurisdictionInput || !roadTypeInput) return;
+  jurisdictionInput.value = inferJurisdictionAuthority(roadTypeInput.value);
+}
+
+function getInputValue(id) {
+  const element = document.getElementById(id);
+  return element ? element.value : "";
+}
+
+function collectEnhancedRoadInfo() {
+  return {
+    roadType: getInputValue("roadType"),
+    roadClass: getInputValue("roadClass"),
+    roadSurfaceMaterial: getInputValue("roadSurfaceMaterial"),
+    numberOfLanes: getInputValue("numberOfLanes"),
+    roadDirection: getInputValue("roadDirection"),
+    trafficVolume: getInputValue("trafficVolume"),
+    roadSpeedLimit: getInputValue("roadSpeedLimit"),
+    pedestrianActivity: getInputValue("pedestrianActivity"),
+    schoolZone: getInputValue("schoolZone"),
+    commercialArea: getInputValue("commercialArea"),
+    residentialArea: getInputValue("residentialArea"),
+    barangay: getInputValue("barangay"),
+    districtZone: getInputValue("districtZone"),
+    coordinatesDisplay: getInputValue("coordinatesDisplay"),
+    elevation: getInputValue("elevation"),
+    drainageStatus: getInputValue("drainageStatus"),
+    slopeGradient: getInputValue("slopeGradient"),
+    sidewalkCondition: getInputValue("sidewalkCondition"),
+    streetLighting: getInputValue("streetLighting"),
+    roadMarkings: getInputValue("roadMarkings"),
+    curbsGutters: getInputValue("curbsGutters"),
+    busStopNearby: getInputValue("busStopNearby"),
+    parkingSpaceAvailable: getInputValue("parkingSpaceAvailable"),
+    accidentProneArea: getInputValue("accidentProneArea"),
+    nearIntersection: getInputValue("nearIntersection"),
+    curveTurnSeverity: getInputValue("curveTurnSeverity"),
+    visibility: getInputValue("visibility"),
+    nighttimeLightingAdequate: getInputValue("nighttimeLightingAdequate"),
+    recentWeatherImpact: getInputValue("recentWeatherImpact"),
+    lastMaintenanceDate: getInputValue("lastMaintenanceDate"),
+    maintenanceFrequency: getInputValue("maintenanceFrequency"),
+    previousIssues: getInputValue("previousIssues"),
+    ongoingConstruction: getInputValue("ongoingConstruction"),
+    hospitalNearby: getInputValue("hospitalNearby"),
+    schoolNearby: getInputValue("schoolNearby"),
+    marketCommercialHub: getInputValue("marketCommercialHub"),
+    residentialComplex: getInputValue("residentialComplex"),
+    publicTransportRoute: getInputValue("publicTransportRoute"),
+    connectedRoadBridgeName: getInputValue("connectedRoadBridgeName"),
+    alternativeRouteAvailable: getInputValue("alternativeRouteAvailable"),
+    criticalRoute: getInputValue("criticalRoute"),
+    tourismRoute: getInputValue("tourismRoute"),
+    agriculturalAreaRoad: getInputValue("agriculturalAreaRoad"),
+    seasonalIssues: getInputValue("seasonalIssues"),
+    treeCoverage: getInputValue("treeCoverage"),
+    adjacentWaterBody: getInputValue("adjacentWaterBody"),
+    soilType: getInputValue("soilType"),
+    roadConditionIndex: getInputValue("roadConditionIndex"),
+    averageIssueResolutionTime: getInputValue("averageIssueResolutionTime"),
+    budgetCategory: getInputValue("budgetCategory"),
+    jurisdictionAuthority: getInputValue("jurisdictionAuthority")
+  };
 }
 
 
@@ -1501,6 +1602,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   attachLocationAutocomplete();
+  setCoordinateDisplay(null, null);
+  refreshJurisdictionAuthority();
+
+  const roadTypeInput = document.getElementById("roadType");
+  if (roadTypeInput) {
+    roadTypeInput.addEventListener("change", refreshJurisdictionAuthority);
+  }
 
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
@@ -1586,7 +1694,8 @@ async function submitReport() {
     issue: document.getElementById("issue").value,
     lat: lat || "",
     lng: lng || "",
-    photo: photoData
+    photo: photoData,
+    ...collectEnhancedRoadInfo()
   };
 
   const formUrlEncoded = new URLSearchParams(reportPayload);
@@ -1747,7 +1856,7 @@ function newReport() {
 }
 // Reset the form
 function resetForm() {
-  document.querySelectorAll("#submit input,#submit textarea").forEach(el => el.value = "");
+  document.querySelectorAll("#submit input,#submit textarea,#submit select").forEach(el => el.value = "");
   document.getElementById("selectedLocation").innerText = "No location selected";
   const trackInfo = document.getElementById("trackInfo");
   const submissionTimeInfo = document.getElementById("submissionTimeInfo");
@@ -1757,6 +1866,7 @@ function resetForm() {
   if (copyFeedback) copyFeedback.innerText = "";
   lat = 0;
   lng = 0;
+  setCoordinateDisplay(null, null);
   if (marker) map.removeLayer(marker);
   document.getElementById("photoPreview").style.display = "none";
 }

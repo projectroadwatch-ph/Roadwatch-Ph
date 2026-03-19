@@ -1379,15 +1379,19 @@ section.active {
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-.row input {
+.row input,
+.row select {
   flex: 1;
+  min-width: 190px;
 }
 
 input,
+select,
 textarea {
   width: 100%;
   padding: 11px 12px;
