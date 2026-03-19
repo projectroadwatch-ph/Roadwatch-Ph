@@ -271,32 +271,53 @@
       <p class="submit-form-intro">Provide accurate details so the right authority can validate and act on your report faster.</p>
 
       <h3 class="form-section-title">Road Issue</h3>
+      <textarea id="issue" placeholder="Describe the issue"></textarea>
+
       <fieldset class="report-category-group">
         <legend>Report Category <span aria-hidden="true">*</span></legend>
         <div class="report-category-options">
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Road Surface">
-            <span>🛣️ Road Surface</span>
+            <span>
+              <img src="assets/issues/potholes.svg" alt="" aria-hidden="true">
+              <strong>Road Surface</strong>
+              <small>Potholes, Cracks</small>
+            </span>
           </label>
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Flooding / Drainage">
-            <span>🌧️ Flooding / Drainage</span>
+            <span>
+              <img src="assets/issues/flooded-street.svg" alt="" aria-hidden="true">
+              <strong>Flooding / Drainage</strong>
+              <small>Clogged, Flooded Road</small>
+            </span>
           </label>
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Road Safety">
-            <span>⚠️ Road Safety</span>
+            <span>
+              <img src="assets/issues/faded-lanes.svg" alt="" aria-hidden="true">
+              <strong>Road Safety</strong>
+              <small>Broken Signs, Lights</small>
+            </span>
           </label>
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Street Infrastructure">
-            <span>🏙️ Street Infrastructure</span>
+            <span>
+              <img src="assets/issues/rough-pavement.svg" alt="" aria-hidden="true">
+              <strong>Street Infrastructure</strong>
+              <small>Sidewalk, Manhole</small>
+            </span>
           </label>
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Road Obstruction">
-            <span>🚧 Road Obstruction</span>
+            <span>
+              <img src="assets/issues/construction-zone.svg" alt="" aria-hidden="true">
+              <strong>Road Obstruction</strong>
+              <small>Debris, Road Block</small>
+            </span>
           </label>
         </div>
       </fieldset>
-      <textarea id="issue" placeholder="Describe the issue"></textarea>
 
       <h3 class="form-section-title">Reporter Information</h3>
       <div class="road-info-grid reporter-info-grid">
