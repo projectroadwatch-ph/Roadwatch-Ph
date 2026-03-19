@@ -1674,7 +1674,6 @@ function validateSubmitFields() {
     { id: "reporterProvince", label: "Reporter Province" },
     { id: "reporterCity", label: "Reporter City/Municipality" },
     { id: "reporterBarangay", label: "Reporter Barangay" },
-    { id: "reporterStreetAddress", label: "Street / House No." },
     { id: "issue", label: "Road Issue Description" }
   ];
 
@@ -1767,7 +1766,7 @@ function updateIssueTypeOptionsByCategory(selectedCategory = "") {
 
   const options = ISSUE_TYPE_OPTIONS_BY_CATEGORY[selectedCategory] || [];
   const previousValue = issueTypeSelect.value;
-  issueTypeSelect.innerHTML = '<option value="">Select issue type</option>';
+  issueTypeSelect.innerHTML = '<option value="" selected disabled hidden>Select issue type</option>';
 
   options.forEach((optionValue) => {
     const option = document.createElement("option");
