@@ -27,7 +27,7 @@ const LEAFLET_STYLE_SOURCES = [
   "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 ];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzz19uQrKj0SLjoYmHtBEs_5DFm5AqGzOlPubb22aeyYFlRhUSgxk3lO4WUV6eXJ5GG/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzms-cuw08xum5VsEle-cwebZa7KwnG2mozdeeG18b0aFhwK8dazUxCdD88RCO8dz2x/exec";
 const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
   "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Other"],
   "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Other"],
