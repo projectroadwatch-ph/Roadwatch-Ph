@@ -137,6 +137,19 @@ button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 table { width: 100%; border-collapse: collapse; min-width: 1040px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
 th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
+.paginationBar {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.paginationControls {
+  display: flex;
+  gap: 8px;
+}
 
 .toolbar {
   margin-top: 12px;
