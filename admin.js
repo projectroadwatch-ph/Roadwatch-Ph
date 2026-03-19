@@ -625,16 +625,29 @@ function normalizeStatus(status) {
 function normalizeReport(record = {}) {
   const reportedAt = getRecordDate(record);
   const issueType = getFieldValue(record, ["issueType", "issue_type", "Issue Type", "type", "issue"]);
+  const firstname = getFieldValue(record, ["firstname", "firstName", "First Name"]);
+  const lastname = getFieldValue(record, ["lastname", "lastName", "Last Name"]);
+  const middleInitial = getFieldValue(record, ["mi", "middleInitial", "middleinitial", "Middle Initial"]);
+  const reporterName = [firstname, lastname].filter(Boolean).join(" ") || getFieldValue(record, ["name", "fullName", "Reporter Name"]) || "-";
 
   return {
     dateTime: formatDateTime(record),
     reportedAt: reportedAt ? reportedAt.toISOString() : "",
     tracking: getFieldValue(record, ["tracking", "trackingNumber", "tracking_no", "Tracking #", "Tracking Number"]),
-    name: [
-      getFieldValue(record, ["firstname", "firstName", "First Name"]),
-      getFieldValue(record, ["lastname", "lastName", "Last Name"])
-    ].filter(Boolean).join(" ") || getFieldValue(record, ["name", "fullName", "Reporter Name"]) || "-",
+    name: reporterName,
+    firstname: firstname || "-",
+    lastname: lastname || "-",
+    mi: middleInitial || "-",
+    email: getFieldValue(record, ["email", "Email", "emailAddress", "Email Address"]) || "-",
+    phone: getFieldValue(record, ["phone", "Phone", "mobile", "mobileNumber", "Mobile Number"]) || "-",
+    reporterProvince: getFieldValue(record, ["reporterProvince", "Reporter Province"]) || "-",
+    reporterCity: getFieldValue(record, ["reporterCity", "Reporter City", "Reporter City/Municipality"]) || "-",
+    reporterBarangay: getFieldValue(record, ["reporterBarangay", "Reporter Barangay"]) || "-",
+    reporterStreetAddress: getFieldValue(record, ["reporterStreetAddress", "Reporter Street Address", "streetAddress", "Street Address"]) || "-",
+    region: getFieldValue(record, ["region", "Region"]) || "-",
+    province: getFieldValue(record, ["province", "Province"]) || "-",
     location: getFieldValue(record, ["location", "address", "road", "Road Location"]) || "-",
+    roadName: getFieldValue(record, ["roadName", "Road Name"]) || "-",
     issue: getFieldValue(record, [
       "issue",
       "issueDetail",
@@ -647,6 +660,7 @@ function normalizeReport(record = {}) {
     ]) || "-",
     issueCategory: getFieldValue(record, ["issueCategory", "issue_category", "Issue Category", "category"]) || "-",
     issueType: issueType || "-",
+    issueTypeOption: getFieldValue(record, ["issueTypeOption", "issue_type_option", "Issue Type Option"]) || "-",
     barangay: getFieldValue(record, ["barangay", "Barangay", "reporterBarangay", "Reporter Barangay"]) || "-",
     city: getFieldValue(record, ["city", "City", "municipality", "cityMunicipality", "City / Municipality"]) || "-",
     nearestLandmark: getFieldValue(record, ["nearestLandmark", "nearest_landmark", "Nearest Landmark"]) || "-",
@@ -1559,12 +1573,25 @@ function openReportFormPreview(report) {
   const tracking = escapeHtml(report?.tracking || "N/A");
   const submissionTime = escapeHtml(report?.dateTime || "-");
   const reporter = escapeHtml(report?.name || "-");
+  const lastname = escapeHtml(report?.lastname || "-");
+  const firstname = escapeHtml(report?.firstname || "-");
+  const middleInitial = escapeHtml(report?.mi || "-");
+  const email = escapeHtml(report?.email || "-");
+  const phone = escapeHtml(report?.phone || "-");
+  const reporterProvince = escapeHtml(report?.reporterProvince || "-");
+  const reporterCity = escapeHtml(report?.reporterCity || "-");
+  const reporterBarangay = escapeHtml(report?.reporterBarangay || "-");
+  const reporterStreetAddress = escapeHtml(report?.reporterStreetAddress || "-");
+  const region = escapeHtml(report?.region || "-");
+  const province = escapeHtml(report?.province || "-");
   const location = escapeHtml(report?.location || "-");
+  const roadName = escapeHtml((report?.roadName && report.roadName !== "-") ? report.roadName : report?.location || "-");
   const barangay = escapeHtml(report?.barangay || "-");
   const city = escapeHtml(report?.city || "-");
   const landmark = escapeHtml(report?.nearestLandmark || "-");
   const category = escapeHtml(report?.issueCategory || "-");
-  const issueType = escapeHtml(report?.issueType || report?.issue || "-");
+  const issueType = escapeHtml(report?.issueType || report?.issueTypeOption || report?.issue || "-");
+  const issueTypeOption = escapeHtml(report?.issueTypeOption || report?.issueType || "-");
   const details = escapeHtml(report?.issue || "-");
   const status = escapeHtml(normalizeStatus(report?.status));
   const coordinates = (() => {
@@ -1620,9 +1647,22 @@ function openReportFormPreview(report) {
         <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
         <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
         <div class="item"><strong>Reporter</strong><span>${reporter}</span></div>
+        <div class="item"><strong>Last Name</strong><span>${lastname}</span></div>
+        <div class="item"><strong>First Name</strong><span>${firstname}</span></div>
+        <div class="item"><strong>Middle Initial</strong><span>${middleInitial}</span></div>
+        <div class="item"><strong>Email Address</strong><span>${email}</span></div>
+        <div class="item"><strong>Mobile Number</strong><span>${phone}</span></div>
+        <div class="item"><strong>Reporter Province</strong><span>${reporterProvince}</span></div>
+        <div class="item"><strong>Reporter City / Municipality</strong><span>${reporterCity}</span></div>
+        <div class="item"><strong>Reporter Barangay</strong><span>${reporterBarangay}</span></div>
+        <div class="item full"><strong>Reporter Street Address</strong><span>${reporterStreetAddress}</span></div>
         <div class="item"><strong>Status</strong><span>${status}</span></div>
         <div class="item"><strong>Issue Category</strong><span>${category}</span></div>
         <div class="item"><strong>Issue Type</strong><span>${issueType}</span></div>
+        <div class="item"><strong>Issue Type Option</strong><span>${issueTypeOption}</span></div>
+        <div class="item"><strong>Region</strong><span>${region}</span></div>
+        <div class="item"><strong>Province</strong><span>${province}</span></div>
+        <div class="item full"><strong>Road Name</strong><span>${roadName}</span></div>
         <div class="item full"><strong>Road Location</strong><span>${location}</span></div>
         <div class="item"><strong>Barangay</strong><span>${barangay}</span></div>
         <div class="item"><strong>City / Municipality</strong><span>${city}</span></div>
