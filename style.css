@@ -1686,6 +1686,19 @@ textarea {
   padding: 10px 12px;
 }
 
+
+.road-issue-block {
+  margin-top: 8px;
+}
+
+.road-issue-block .form-section-title {
+  margin-top: 0;
+}
+
+.road-issue-block textarea {
+  min-height: 86px;
+}
+
 #photoPreview {
   display: none;
   margin-top: 10px;
