@@ -1597,6 +1597,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const issueField = document.getElementById("issue");
+  if (issueField) {
+    issueField.addEventListener("input", updateIssueCharacterCount);
+    updateIssueCharacterCount();
+  }
+
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
     "Live updates active across Metro Manila",
@@ -1732,6 +1738,16 @@ function validateSubmitFields() {
     missingLabels,
     touchedFields
   };
+}
+
+function updateIssueCharacterCount() {
+  const issueField = document.getElementById("issue");
+  const counter = document.getElementById("issueCharacterCount");
+  if (!issueField || !counter) return;
+
+  const currentLength = issueField.value.length;
+  const maxLength = Number.parseInt(issueField.getAttribute("maxlength") || "500", 10) || 500;
+  counter.textContent = `${currentLength} / ${maxLength}`;
 }
 
 function setSubmitButtonLoading(isLoading) {
@@ -2016,6 +2032,7 @@ function resetForm() {
   setCoordinateDisplay(null, null);
   if (marker && map) map.removeLayer(marker);
   document.getElementById("photoPreview").style.display = "none";
+  updateIssueCharacterCount();
 }
 
 function hasValidCoordinates(report) {

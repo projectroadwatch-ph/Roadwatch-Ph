@@ -403,21 +403,22 @@
 
       <section class="road-issue-block" aria-labelledby="roadIssueTitle">
         <h3 id="roadIssueTitle" class="form-section-title">Report Details</h3>
-        <div class="road-info-grid report-details-grid">
-          <div class="field-group">
-            <label for="issueTypeSelect">Type <span aria-hidden="true">*</span></label>
-            <select id="issueTypeSelect">
-              <option value="">Select issue type</option>
-            </select>
-          </div>
-          <div class="field-group" id="customIssueTypeGroup" hidden>
-            <label for="customIssueType">Other Type <span aria-hidden="true">*</span></label>
-            <input id="customIssueType" placeholder="Enter specific issue type">
-          </div>
-        </div>
         <div class="field-group">
-          <label for="issue">Issue Description <span aria-hidden="true">*</span></label>
-          <textarea id="issue" placeholder="Describe the issue (include lane, direction, urgency, and visible hazards)"></textarea>
+          <label for="issueTypeSelect">Type <span aria-hidden="true">*</span></label>
+          <select id="issueTypeSelect">
+            <option value="">Select issue type</option>
+          </select>
+        </div>
+        <div class="field-group" id="customIssueTypeGroup" hidden>
+          <label for="customIssueType">Other Type <span aria-hidden="true">*</span></label>
+          <input id="customIssueType" placeholder="Enter specific issue type">
+        </div>
+        <div class="field-group issue-description-group">
+          <div class="issue-description-head">
+            <label for="issue">Issue Description <span aria-hidden="true">*</span></label>
+            <small id="issueCharacterCount" aria-live="polite">0 / 500</small>
+          </div>
+          <textarea id="issue" maxlength="500" placeholder="Describe the road problem..."></textarea>
         </div>
       </section>
 
