@@ -1618,25 +1618,34 @@ function openReportFormPreview(report) {
     <style>
       :root { color-scheme: light; }
       body { font-family: Arial, sans-serif; color: #1b2c3b; margin: 0; background: #eef3f9; }
-      .sheet { max-width: 920px; margin: 20px auto; background: #fff; border: 1px solid #d5e1ec; border-radius: 12px; padding: 20px; }
-      .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
-      .toolbar h1 { margin: 0; font-size: 24px; }
+      .sheet { max-width: 980px; margin: 20px auto; background: #fff; border: 1px solid #d5e1ec; border-radius: 14px; padding: 22px; }
+      .toolbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+      .toolbar h1 { margin: 0; font-size: 24px; line-height: 1.2; }
       .toolbar p { margin: 4px 0 0; color: #4c647b; font-size: 13px; }
-      .print-btn { background: #1f5f8b; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; }
+      .print-btn { background: #1f5f8b; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+      .overview { margin-bottom: 14px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 12px; }
       .section { border: 1px solid #dbe7f1; border-radius: 12px; padding: 12px; margin-bottom: 12px; background: #fdfefe; }
       .section h2 { margin: 0 0 10px; font-size: 15px; color: #204768; text-transform: uppercase; letter-spacing: .04em; }
-      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
       .item { border: 1px solid #dbe7f1; border-radius: 10px; padding: 10px 12px; background: #fbfdff; }
       .item strong { display: block; margin-bottom: 4px; font-size: 12px; color: #47617a; text-transform: uppercase; letter-spacing: .04em; }
       .item span { font-size: 14px; line-height: 1.45; word-break: break-word; }
       .item.full { grid-column: 1 / -1; }
-      .photo-wrap { margin-top: 12px; }
-      .form-photo { width: 100%; max-height: 420px; object-fit: contain; border: 1px solid #d5e1ec; border-radius: 10px; background: #f7fbff; }
-      .photo-placeholder { border: 1px dashed #bed0df; border-radius: 10px; padding: 24px; text-align: center; color: #607a93; background: #f8fbff; }
+      .photo-section { height: 100%; display: flex; flex-direction: column; }
+      .photo-wrap { margin-top: 0; height: 100%; display: flex; flex-direction: column; gap: 8px; }
+      .form-photo { width: 100%; min-height: 260px; max-height: 380px; object-fit: cover; border: 1px solid #d5e1ec; border-radius: 10px; background: #f7fbff; }
+      .photo-placeholder { border: 1px dashed #bed0df; border-radius: 10px; padding: 24px; text-align: center; color: #607a93; background: #f8fbff; min-height: 220px; display: grid; place-items: center; }
+      .photo-caption { margin: 0; font-size: 12px; color: #607a93; }
+      @media (max-width: 780px) {
+        .overview { grid-template-columns: 1fr; }
+        .grid { grid-template-columns: 1fr; }
+      }
       @media print {
         body { background: #fff; }
         .sheet { margin: 0; border: 0; border-radius: 0; max-width: 100%; padding: 0; }
         .print-btn { display: none; }
+        .overview { grid-template-columns: 1fr; }
+        .form-photo { max-height: 320px; }
       }
     </style>
   </head>
@@ -1649,17 +1658,26 @@ function openReportFormPreview(report) {
         </div>
         <button class="print-btn" type="button" onclick="window.print()">Print / Save as PDF</button>
       </div>
-      <section class="section">
-        <h2>Submission Summary</h2>
-        <div class="grid">
-          <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
-          <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
-          <div class="item"><strong>Status</strong><span>${status}</span></div>
-          <div class="item"><strong>Verification</strong><span>${verificationState}</span></div>
-          <div class="item"><strong>Data Quality</strong><span>${qualityScore}</span></div>
-          <div class="item"><strong>Reporter Name (Combined)</strong><span>${reporter}</span></div>
-        </div>
-      </section>
+      <div class="overview">
+        <section class="section">
+          <h2>Submission Summary</h2>
+          <div class="grid">
+            <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
+            <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
+            <div class="item"><strong>Status</strong><span>${status}</span></div>
+            <div class="item"><strong>Verification</strong><span>${verificationState}</span></div>
+            <div class="item"><strong>Data Quality</strong><span>${qualityScore}</span></div>
+            <div class="item"><strong>Reporter Name (Combined)</strong><span>${reporter}</span></div>
+          </div>
+        </section>
+        <section class="section photo-section">
+          <h2>Submitted Photo</h2>
+          <div class="photo-wrap">
+            ${safePhotoHtml}
+            <p class="photo-caption">Captured proof from the field submission.</p>
+          </div>
+        </section>
+      </div>
       <section class="section">
         <h2>Reporter Information</h2>
         <div class="grid">
@@ -1696,10 +1714,6 @@ function openReportFormPreview(report) {
           <div class="item"><strong>Issue Type Option</strong><span>${issueTypeOption}</span></div>
           <div class="item full"><strong>Issue Description</strong><span>${details}</span></div>
         </div>
-      </section>
-      <section class="photo-wrap">
-        <h2>Submitted Photo</h2>
-        ${safePhotoHtml}
       </section>
     </article>
   </body>
