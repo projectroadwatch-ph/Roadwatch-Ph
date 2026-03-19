@@ -1,0 +1,87 @@
+name: "Feature Request"
+description: "Suggest an enhancement or new capability for Roadwatch PH"
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to improve Roadwatch PH? Share details below.
+
+  - type: checkboxes
+    id: pre_submission
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and feature requests first.
+          required: true
+        - label: This request is specific and actionable.
+          required: true
+        - label: This is not a duplicate request.
+          required: true
+
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Feature Description
+      description: Detailed description of the requested feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem It Solves
+      description: What user pain point or workflow issue does this solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: How should this work in the product?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: Use Cases
+      description: Describe when and how users would benefit.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: What other approaches have you considered?
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: input
+    id: route
+    attributes:
+      label: Location / Route Relevance (if applicable)
+      placeholder: e.g., C5 Southbound, Taguig
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Mockups / References / Attachments
+      description: Attach screenshots, sketches, links, or examples.
+
+  - type: markdown
+    attributes:
+      value: |
+        See [CONTRIBUTING.md](../../CONTRIBUTING.md) for our collaboration workflow.

@@ -1,0 +1,32 @@
+name: "Question / Discussion"
+description: "Ask a question or start a project-related discussion"
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+body:
+  - type: checkboxes
+    id: pre_submission
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues/discussions for similar questions.
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question / Discussion Topic
+      description: Provide your question or discussion prompt.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Share background details to help others respond effectively.
+
+  - type: input
+    id: location_context
+    attributes:
+      label: Location Context (if applicable)
+      placeholder: e.g., Quezon City, Commonwealth Avenue
