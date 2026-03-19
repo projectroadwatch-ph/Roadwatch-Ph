@@ -144,6 +144,16 @@ body {
   gap: 16px;
   align-items: stretch;
 }
+
+.overview-layout .analytics-panel,
+.overview-layout .overview-map-panel {
+  margin-top: 14px;
+}
+
+.overview-map-panel {
+  grid-column: 2;
+  grid-row: span 2;
+}
 label { display: block; margin-top: 12px; color: var(--muted); font-size: 0.92rem; }
 input, textarea, select, button {
   width: 100%;
@@ -258,6 +268,32 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-top: 14px;
 }
 
+.mapLegend {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-pending { background: #63e6be; }
+.legend-verified { background: #ef4444; }
+.legend-progress { background: #facc15; }
+.legend-repaired { background: #4ade80; }
+
 .mapWrap h4 {
   margin: 0;
   font-size: 0.95rem;
@@ -271,6 +307,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   border: 1px solid rgba(165, 213, 255, 0.25);
   overflow: hidden;
   background: rgba(3, 16, 33, 0.55);
+}
+
+.pinMap--large {
+  min-height: 430px;
 }
 
 .pinMap.is-empty {
@@ -489,6 +529,11 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .overview-map-panel {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .command-center {

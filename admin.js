@@ -33,9 +33,7 @@ const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 const overviewPinMap = document.getElementById("overviewPinMap");
-const analyticsPinMap = document.getElementById("analyticsPinMap");
 const overviewMapSummary = document.getElementById("overviewMapSummary");
-const analyticsMapSummary = document.getElementById("analyticsMapSummary");
 const auditTrailList = document.getElementById("auditTrailList");
 const teamPerformanceBoard = document.getElementById("teamPerformanceBoard");
 const timelineTrackingSelect = document.getElementById("timelineTrackingSelect");
@@ -63,9 +61,7 @@ const flaggedReports = new Set();
 const REPORTS_PER_PAGE = 15;
 let currentPage = 1;
 let overviewMap = null;
-let analyticsMap = null;
 let overviewMarkers = null;
-let analyticsMarkers = null;
 
 
 function buildJsonpEndpoint(endpoint) {
@@ -479,7 +475,6 @@ function setDashboardView(view) {
 
   window.setTimeout(() => {
     overviewMap?.invalidateSize();
-    analyticsMap?.invalidateSize();
   }, 40);
 }
 
@@ -1378,18 +1373,6 @@ function getReportsWithCoordinates(reports) {
     .filter((report) => Math.abs(report.lat) <= 90 && Math.abs(report.lng) <= 180);
 }
 
-function getReportsWithinRange(reports, range) {
-  const now = new Date();
-  const rangeDays = range === "weekly" ? 7 : 30;
-  const cutoff = now.getTime() - (rangeDays * 24 * 60 * 60 * 1000);
-
-  return reports.filter((report) => {
-    const reportDate = parseReportDate(report);
-    if (!reportDate) return false;
-    return reportDate.getTime() >= cutoff;
-  });
-}
-
 function ensurePinMapInstance(mapElement, mapInstance) {
   if (!mapElement || typeof window.L === "undefined") return null;
   if (mapInstance) return mapInstance;
@@ -1421,6 +1404,21 @@ function clearPinMapView(mapElement, mapSummaryElement, mapSummaryText) {
   if (mapSummaryElement) mapSummaryElement.textContent = mapSummaryText;
 }
 
+function getPinStyleByStatus(status) {
+  const normalizedStatus = normalizeStatus(status);
+  if (normalizedStatus === "Verified") {
+    return { color: "#d62828", fillColor: "#ef4444" };
+  }
+  if (normalizedStatus === "In Progress") {
+    return { color: "#ca8a04", fillColor: "#facc15" };
+  }
+  if (normalizedStatus === "Repaired") {
+    return { color: "#15803d", fillColor: "#4ade80" };
+  }
+
+  return { color: "#4fc3f7", fillColor: "#63e6be" };
+}
+
 function renderPinMap(mapElement, mapSummaryElement, mapSummaryText, reports, currentMap, currentLayer) {
   if (!mapElement || !mapSummaryElement) return { map: currentMap, layer: currentLayer };
 
@@ -1448,10 +1446,11 @@ function renderPinMap(mapElement, mapSummaryElement, mapSummaryText, reports, cu
 
   const bounds = [];
   geoReports.forEach((report) => {
+    const pinStyle = getPinStyleByStatus(report.status);
     const marker = window.L.circleMarker([report.lat, report.lng], {
       radius: 6,
-      color: "#4fc3f7",
-      fillColor: "#63e6be",
+      color: pinStyle.color,
+      fillColor: pinStyle.fillColor,
       fillOpacity: 0.75,
       weight: 1.5
     });
@@ -1488,8 +1487,6 @@ function refreshReportingSection(reports) {
   drawTrendChart(reports);
   renderHotspotHeatmap(reports);
   updateReportingSummary(reports);
-  const range = reportingRange?.value || "monthly";
-  const rangeReports = getReportsWithinRange(reports, range);
 
   const overviewMapState = renderPinMap(
     overviewPinMap,
@@ -1501,17 +1498,6 @@ function refreshReportingSection(reports) {
   );
   overviewMap = overviewMapState.map;
   overviewMarkers = overviewMapState.layer;
-
-  const analyticsMapState = renderPinMap(
-    analyticsPinMap,
-    analyticsMapSummary,
-    `Showing {count} geotagged report pin(s) in the ${range} analytics range.`,
-    rangeReports,
-    analyticsMap,
-    analyticsMarkers
-  );
-  analyticsMap = analyticsMapState.map;
-  analyticsMarkers = analyticsMapState.layer;
 }
 
 function exportReportsToCsv(reports) {
