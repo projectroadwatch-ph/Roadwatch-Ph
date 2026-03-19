@@ -1415,6 +1415,68 @@ async function handleTrackingSearch(event) {
   }
 }
 
+const ISSUE_CATEGORY_CONFIG = {
+  "Road Surface": ["🕳️ Pothole", "🧩 Crack", "🛣️ Faded Markings", "🧱 Others"],
+  "Flooding/Drainage": ["🌊 Flooding", "🚰 Clogged Drain", "🕳️ Open Drain", "🧱 Others"],
+  "Street Infra": ["💡 Broken Streetlight", "🚸 Missing Signage", "🛑 Damaged Sidewalk", "🧱 Others"]
+};
+
+function setupSubmitCategoryIntegration() {
+  const categoryButtons = Array.from(document.querySelectorAll(".category-pill"));
+  const issueChipRow = document.querySelector(".issue-chip-row");
+  const issueTextarea = document.getElementById("issue");
+  const issueCategoryInput = document.getElementById("issueCategory");
+  const issueTypeInput = document.getElementById("issueType");
+
+  if (!categoryButtons.length || !issueChipRow || !issueTextarea || !issueCategoryInput || !issueTypeInput) return;
+
+  const selectIssueChip = (chipButton) => {
+    const chipButtons = Array.from(issueChipRow.querySelectorAll(".issue-chip"));
+    chipButtons.forEach((chip) => chip.classList.toggle("active", chip === chipButton));
+    const selectedChip = chipButton.textContent.trim();
+    issueTypeInput.value = selectedChip;
+    issueTextarea.placeholder = `Describe the road problem (${selectedChip})...`;
+  };
+
+  const renderIssueChips = (category) => {
+    const chipLabels = ISSUE_CATEGORY_CONFIG[category] || ISSUE_CATEGORY_CONFIG["Road Surface"];
+    issueChipRow.innerHTML = "";
+
+    chipLabels.forEach((label, index) => {
+      const chipButton = document.createElement("button");
+      chipButton.type = "button";
+      chipButton.className = `issue-chip${index === 0 ? " active" : ""}`;
+      chipButton.textContent = label;
+      chipButton.addEventListener("click", () => selectIssueChip(chipButton));
+      issueChipRow.appendChild(chipButton);
+    });
+
+    const firstChip = issueChipRow.querySelector(".issue-chip");
+    if (firstChip) selectIssueChip(firstChip);
+  };
+
+  const selectCategory = (categoryButton) => {
+    categoryButtons.forEach((button) => {
+      const isActive = button === categoryButton;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+
+    const selectedCategory = categoryButton.dataset.category || "Road Surface";
+    issueCategoryInput.value = selectedCategory;
+    renderIssueChips(selectedCategory);
+  };
+
+  categoryButtons.forEach((button, index) => {
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-selected", index === 0 ? "true" : "false");
+    button.addEventListener("click", () => selectCategory(button));
+  });
+
+  const initialCategory = categoryButtons.find((button) => button.classList.contains("active")) || categoryButtons[0];
+  if (initialCategory) selectCategory(initialCategory);
+}
+
 // Photo preview
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
@@ -1501,6 +1563,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   attachLocationAutocomplete();
+  setupSubmitCategoryIntegration();
 
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
@@ -1584,6 +1647,8 @@ async function submitReport() {
     phone: document.getElementById("phone").value,
     location: document.getElementById("locationText").value,
     issue: document.getElementById("issue").value,
+    issueCategory: document.getElementById("issueCategory")?.value || "Road Surface",
+    issueType: document.getElementById("issueType")?.value || "",
     lat: lat || "",
     lng: lng || "",
     photo: photoData
