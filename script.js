@@ -29,10 +29,10 @@ const LEAFLET_STYLE_SOURCES = [
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzQLZBJfuHnTzrAtfgURmglvJcTGGspQL8KkH-C7ztN7PWyha49o8298CKkNse-PL3_/exec";
 const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
-  "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Others"],
-  "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Others"],
-  "Road Safety": ["Malfunctioning traffic lights", "Missing or damaged traffic signs", "Lack of pedestrian crossings", "Broken or missing guardrails", "Others"],
-  "Street Infrastructure": ["Damaged sidewalk", "Broken streetlights", "Damaged road reflectors", "Open or uncovered manholes", "Others"]
+  "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Other"],
+  "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Other"],
+  "Road Safety": ["Malfunctioning traffic lights", "Missing or damaged traffic signs", "Lack of pedestrian crossings", "Broken or missing guardrails", "Other"],
+  "Street Infrastructure": ["Damaged sidewalk", "Broken streetlights", "Damaged road reflectors", "Open or uncovered manholes", "Other"]
 };
 
 
@@ -1589,7 +1589,7 @@ document.addEventListener("DOMContentLoaded", () => {
     issueTypeSelect.addEventListener("change", () => {
       const customIssueTypeGroup = document.getElementById("customIssueTypeGroup");
       const customIssueType = document.getElementById("customIssueType");
-      const showCustomType = issueTypeSelect.value === "Others";
+      const showCustomType = issueTypeSelect.value === "Other";
       if (customIssueTypeGroup) customIssueTypeGroup.hidden = !showCustomType;
       if (!showCustomType && customIssueType) customIssueType.value = "";
       clearFieldInvalidState(issueTypeSelect);
@@ -1715,7 +1715,7 @@ function validateSubmitFields() {
     clearFieldInvalidState(issueTypeSelect);
   }
 
-  if (issueTypeSelect?.value === "Others" && (!customIssueType || !customIssueType.value.trim())) {
+  if (issueTypeSelect?.value === "Other" && (!customIssueType || !customIssueType.value.trim())) {
     markFieldInvalid(customIssueType, "Please enter the issue type.");
     touchedFields.push(customIssueType);
     missingLabels.push("Other Type");
@@ -1778,9 +1778,11 @@ function updateIssueTypeOptionsByCategory(selectedCategory = "") {
 
   if (options.includes(previousValue)) {
     issueTypeSelect.value = previousValue;
+  } else if (options.length > 0) {
+    issueTypeSelect.value = options[0];
   }
 
-  const showCustomType = issueTypeSelect.value === "Others";
+  const showCustomType = issueTypeSelect.value === "Other";
   if (customIssueTypeGroup) customIssueTypeGroup.hidden = !showCustomType;
   if (!showCustomType && customIssueType) {
     customIssueType.value = "";
@@ -1803,7 +1805,7 @@ async function submitReport() {
   const issueCategory = selectedCategoryInput?.value || "";
   const issueTypeSelect = document.getElementById("issueTypeSelect");
   const customIssueType = document.getElementById("customIssueType");
-  const issueType = issueTypeSelect?.value === "Others"
+  const issueType = issueTypeSelect?.value === "Other"
     ? (customIssueType?.value || "").trim()
     : (issueTypeSelect?.value || "").trim();
 
