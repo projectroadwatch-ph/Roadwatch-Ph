@@ -283,8 +283,36 @@
       </div>
 
       <h3 class="form-section-title">Road Location</h3>
-      <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
+      <div class="road-info-grid">
+        <div class="field-group">
+          <label for="region">Region <span aria-hidden="true">*</span></label>
+          <input id="region" placeholder="e.g. NCR">
+        </div>
+        <div class="field-group">
+          <label for="province">Province <span aria-hidden="true">*</span></label>
+          <input id="province" placeholder="e.g. Metro Manila">
+        </div>
+        <div class="field-group">
+          <label for="city">City / Municipality <span aria-hidden="true">*</span></label>
+          <input id="city" placeholder="e.g. Manila">
+        </div>
+        <div class="field-group">
+          <label for="barangay">Barangay <span aria-hidden="true">*</span></label>
+          <input id="barangay" placeholder="e.g. Ermita">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="locationText">Road Name <span aria-hidden="true">*</span></label>
+        <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
+      </div>
       <datalist id="locationSuggestions"></datalist>
+
+      <div class="field-group">
+        <label for="nearestLandmark">Nearest Landmark</label>
+        <input id="nearestLandmark" placeholder="e.g. Near Manila City Hall">
+      </div>
+
       <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
 
       <h3 class="form-section-title">Select Location</h3>

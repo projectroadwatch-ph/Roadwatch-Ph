@@ -1383,6 +1383,29 @@ section.active {
   margin-top: 0;
 }
 
+.road-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.field-group {
+  margin-bottom: 12px;
+}
+
+.field-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.94rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.field-group label span {
+  color: #ff6b6b;
+}
+
 .submit-report-guide {
   margin-bottom: 22px;
 }

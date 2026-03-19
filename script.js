@@ -863,13 +863,28 @@ async function autofillRoadLocationFromCoordinates(latitude, longitude) {
     const data = await response.json();
     const road = data.address?.road || data.address?.neighbourhood || data.display_name;
     const barangay = data.address?.suburb || data.address?.quarter || data.address?.village || data.address?.hamlet || "";
+    const city = data.address?.city || data.address?.town || data.address?.municipality || "";
+    const province = data.address?.state || data.address?.region || "";
+    const region = data.address?.region || data.address?.state_district || data.address?.island || "";
     const locationInput = document.getElementById("locationText");
     const barangayInput = document.getElementById("barangay");
+    const cityInput = document.getElementById("city");
+    const provinceInput = document.getElementById("province");
+    const regionInput = document.getElementById("region");
     if (locationInput && road) {
       locationInput.value = road;
     }
     if (barangayInput) {
       barangayInput.value = barangay;
+    }
+    if (cityInput && city) {
+      cityInput.value = city;
+    }
+    if (provinceInput && province) {
+      provinceInput.value = province;
+    }
+    if (regionInput && region) {
+      regionInput.value = region;
     }
   } catch (error) {
     console.log("Reverse geocoding failed", error);
@@ -1022,7 +1037,14 @@ function setCoordinateDisplay(latitude, longitude) {
 }
 
 function collectEnhancedRoadInfo() {
-  return {};
+  return {
+    region: document.getElementById("region")?.value.trim() || "",
+    province: document.getElementById("province")?.value.trim() || "",
+    city: document.getElementById("city")?.value.trim() || "",
+    barangay: document.getElementById("barangay")?.value.trim() || "",
+    roadName: document.getElementById("locationText")?.value.trim() || "",
+    nearestLandmark: document.getElementById("nearestLandmark")?.value.trim() || ""
+  };
 }
 
 
@@ -1577,7 +1599,18 @@ function setSubmitButtonLoading(isLoading) {
 async function submitReport() {
   if (isSubmittingReport) return;
 
-  if (lat === 0 && !document.getElementById("locationText").value.trim()) {
+  const region = document.getElementById("region")?.value.trim() || "";
+  const province = document.getElementById("province")?.value.trim() || "";
+  const city = document.getElementById("city")?.value.trim() || "";
+  const barangay = document.getElementById("barangay")?.value.trim() || "";
+  const roadName = document.getElementById("locationText")?.value.trim() || "";
+
+  if (!region || !province || !city || !barangay || !roadName) {
+    alert("Please complete Region, Province, City/Municipality, Barangay, and Road Name.");
+    return;
+  }
+
+  if (lat === 0 && !roadName) {
     alert("Please select location on map or type the road name");
     return;
   }
