@@ -1,4 +1,70 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
+const REPORT_HEADERS = [
+  'timestamp',
+  'tracking',
+  'lastname',
+  'firstname',
+  'mi',
+  'email',
+  'phone',
+  'location',
+  'issue',
+  'roadType',
+  'roadClass',
+  'roadSurfaceMaterial',
+  'numberOfLanes',
+  'roadDirection',
+  'trafficVolume',
+  'roadSpeedLimit',
+  'pedestrianActivity',
+  'schoolZone',
+  'commercialArea',
+  'residentialArea',
+  'barangay',
+  'districtZone',
+  'coordinatesDisplay',
+  'elevation',
+  'drainageStatus',
+  'slopeGradient',
+  'sidewalkCondition',
+  'streetLighting',
+  'roadMarkings',
+  'curbsGutters',
+  'busStopNearby',
+  'parkingSpaceAvailable',
+  'accidentProneArea',
+  'nearIntersection',
+  'curveTurnSeverity',
+  'visibility',
+  'nighttimeLightingAdequate',
+  'recentWeatherImpact',
+  'lastMaintenanceDate',
+  'maintenanceFrequency',
+  'previousIssues',
+  'ongoingConstruction',
+  'hospitalNearby',
+  'schoolNearby',
+  'marketCommercialHub',
+  'residentialComplex',
+  'publicTransportRoute',
+  'connectedRoadBridgeName',
+  'alternativeRouteAvailable',
+  'criticalRoute',
+  'tourismRoute',
+  'agriculturalAreaRoad',
+  'seasonalIssues',
+  'treeCoverage',
+  'adjacentWaterBody',
+  'soilType',
+  'roadConditionIndex',
+  'averageIssueResolutionTime',
+  'budgetCategory',
+  'jurisdictionAuthority',
+  'lat',
+  'lng',
+  'photo',
+  'status'
+];
 
 function doGet(e) {
   const params = extractRequestParams_(e);
@@ -373,39 +439,48 @@ function getSheet_() {
 
   const sheet = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
 
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'timestamp',
-      'tracking',
-      'lastname',
-      'firstname',
-      'mi',
-      'email',
-      'phone',
-      'location',
-      'issue',
-      'lat',
-      'lng',
-      'photo',
-      'status'
-    ]);
-  }
+  ensureReportHeaders_(sheet);
 
   return sheet;
 }
 
+function ensureReportHeaders_(sheet) {
+  const requiredColumnCount = REPORT_HEADERS.length;
+
+  if (sheet.getMaxColumns() < requiredColumnCount) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), requiredColumnCount - sheet.getMaxColumns());
+  }
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(REPORT_HEADERS);
+    return;
+  }
+
+  const existingHeaders = sheet.getRange(1, 1, 1, requiredColumnCount).getValues()[0]
+    .map(function (header) { return String(header || '').trim(); });
+
+  const headersMatch = REPORT_HEADERS.every(function (header, index) {
+    return existingHeaders[index] === header;
+  });
+
+  if (!headersMatch) {
+    sheet.getRange(1, 1, 1, requiredColumnCount).setValues([REPORT_HEADERS]);
+  }
+}
+
 function appendReport_(row) {
   const sheet = getSheet_();
-  const columnCount = 13;
+  const columnCount = REPORT_HEADERS.length;
+  const trackingColumnIndex = REPORT_HEADERS.indexOf('tracking');
   const trackingValue = String(row.tracking || '').trim();
   const dataRowCount = Math.max(sheet.getLastRow() - 1, 0);
   const dataValues = dataRowCount > 0
     ? sheet.getRange(2, 1, dataRowCount, columnCount).getValues()
     : [];
 
-  if (trackingValue) {
+  if (trackingValue && trackingColumnIndex !== -1) {
     const existingTrackings = dataValues
-      .map(function (rowValues) { return String(rowValues[1] || '').trim(); })
+      .map(function (rowValues) { return String(rowValues[trackingColumnIndex] || '').trim(); })
       .filter(function (value) { return value !== ''; });
 
     if (existingTrackings.includes(trackingValue)) {
@@ -413,21 +488,9 @@ function appendReport_(row) {
     }
   }
 
-  const valuesToWrite = [[
-    row.timestamp,
-    row.tracking,
-    row.lastname,
-    row.firstname,
-    row.mi,
-    row.email,
-    row.phone,
-    row.location,
-    row.issue,
-    row.lat,
-    row.lng,
-    row.photo,
-    row.status
-  ]];
+  const valuesToWrite = [REPORT_HEADERS.map(function (header) {
+    return row[header] || '';
+  })];
 
   const firstAvailableIndex = dataValues.findIndex(function (rowValues) {
     return rowValues.every(function (value) { return String(value || '').trim() === ''; });
@@ -441,7 +504,6 @@ function appendReport_(row) {
 
   return { duplicate: false };
 }
-
 function readReports_() {
   const sheet = getSheet_();
   const values = sheet.getDataRange().getValues();
