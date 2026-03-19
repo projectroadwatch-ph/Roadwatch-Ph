@@ -1,0 +1,140 @@
+name: "Bug Report"
+description: "Report a reproducible issue or defect in Roadwatch PH"
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please provide as much detail as possible so we can reproduce and fix it quickly.
+
+  - type: checkboxes
+    id: pre_submission
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I am using the latest available version/state of this project.
+          required: true
+        - label: I included enough context, screenshots, logs, or media to help reproduce the issue.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Clear and concise description of the bug.
+      placeholder: Describe what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Provide numbered steps so we can reproduce the problem.
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      placeholder: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity / Priority
+      options:
+        - Critical (blocking)
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: input
+    id: observed_datetime
+    attributes:
+      label: Date and Time Observed
+      description: Include timezone if possible.
+      placeholder: e.g., 2026-03-19 08:30 PM PHT
+    validations:
+      required: true
+
+  - type: input
+    id: route
+    attributes:
+      label: Specific Location / Route
+      placeholder: e.g., EDSA Northbound from Cubao to Ortigas
+    validations:
+      required: true
+
+  - type: input
+    id: road_name
+    attributes:
+      label: Road / Street Name
+      placeholder: e.g., C5 Road
+    validations:
+      required: true
+
+  - type: input
+    id: barangay_city
+    attributes:
+      label: Barangay / City
+      placeholder: e.g., Brgy. Ugong, Pasig City
+    validations:
+      required: true
+
+  - type: input
+    id: gps
+    attributes:
+      label: GPS Coordinates (if applicable)
+      placeholder: e.g., 14.5547, 121.0244
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Share system and app details.
+      placeholder: |
+        - OS & Version:
+        - Browser/App Version:
+        - Device Type:
+        - Network/Carrier (if relevant):
+    validations:
+      required: true
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Screenshots / Logs / Media
+      description: Drag and drop images/videos or paste log snippets.
+      placeholder: Include supporting screenshots, videos, or error logs.
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      placeholder: Any other details that may help.
+
+  - type: markdown
+    attributes:
+      value: |
+        Please review [CONTRIBUTING.md](../../CONTRIBUTING.md) for issue reporting and contribution guidelines.

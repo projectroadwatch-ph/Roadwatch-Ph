@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contribution Guidelines
+    url: https://github.com/OWNER/REPO/blob/main/CONTRIBUTING.md
+    about: Please review reporting standards and contribution process before opening an issue.

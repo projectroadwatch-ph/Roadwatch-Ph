@@ -1,0 +1,49 @@
+name: "Documentation"
+description: "Report missing, unclear, or outdated documentation"
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: checkboxes
+    id: pre_submission
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for documentation requests.
+          required: true
+        - label: I identified the specific document/page that needs improvement.
+          required: true
+
+  - type: textarea
+    id: current_issue
+    attributes:
+      label: Documentation Issue
+      description: What is unclear, incorrect, or missing?
+    validations:
+      required: true
+
+  - type: input
+    id: doc_location
+    attributes:
+      label: Document Location
+      placeholder: e.g., README section, file path, or URL
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_change
+    attributes:
+      label: Suggested Improvement
+      description: How should the docs be updated?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
