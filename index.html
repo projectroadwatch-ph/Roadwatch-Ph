@@ -268,8 +268,9 @@
 
     <div class="card submit-form-card">
       <h2>Submit Road Issue</h2>
+      <p class="submit-form-intro">Provide accurate details so the right authority can validate and act on your report faster.</p>
 
-      <h3>Reporter Information</h3>
+      <h3 class="form-section-title">Reporter Information</h3>
       <div class="row">
         <input id="lastname" placeholder="Last Name">
         <input id="firstname" placeholder="First Name">
@@ -281,19 +282,19 @@
         <input id="phone" placeholder="Mobile Number">
       </div>
 
-      <h3>Road Location</h3>
+      <h3 class="form-section-title">Road Location</h3>
       <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
       <datalist id="locationSuggestions"></datalist>
       <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
 
-      <h3>Select Location</h3>
+      <h3 class="form-section-title">Select Location</h3>
       <div id="reportMap"></div>
       <p id="selectedLocation">No location selected</p>
 
-      <h3>Road Issue</h3>
+      <h3 class="form-section-title">Road Issue</h3>
       <textarea id="issue" placeholder="Describe the issue"></textarea>
 
-      <h3>Road Classification & Type</h3>
+      <h3 class="form-section-title">Road Classification & Type</h3>
       <div class="row">
         <select id="roadType">
           <option value="">Road Type</option>
@@ -331,7 +332,7 @@
         </select>
       </div>
 
-      <h3>Traffic & Road Usage</h3>
+      <h3 class="form-section-title">Traffic & Road Usage</h3>
       <div class="row">
         <select id="trafficVolume">
           <option value="">Traffic Volume</option>
@@ -354,7 +355,7 @@
         <select id="residentialArea"><option value="">Residential Area?</option><option>Yes</option><option>No</option></select>
       </div>
 
-      <h3>Geographic & Environmental Data</h3>
+      <h3 class="form-section-title">Geographic & Environmental Data</h3>
       <div class="row">
         <input id="barangay" placeholder="Barangay (Auto-filled from coordinates)" readonly>
         <input id="districtZone" placeholder="District/Zone">
@@ -366,7 +367,7 @@
         <select id="slopeGradient"><option value="">Slope/Gradient</option><option>Flat</option><option>Slight slope</option><option>Steep</option></select>
       </div>
 
-      <h3>Road Infrastructure Details</h3>
+      <h3 class="form-section-title">Road Infrastructure Details</h3>
       <div class="row">
         <select id="sidewalkCondition"><option value="">Sidewalk Condition</option><option>Present - Good</option><option>Present - Poor</option><option>Absent</option></select>
         <select id="streetLighting"><option value="">Street Lighting</option><option>Present - Working</option><option>Present - Not working</option><option>Absent</option></select>
@@ -378,7 +379,7 @@
         <select id="parkingSpaceAvailable"><option value="">Parking Space Available?</option><option>Yes</option><option>No</option></select>
       </div>
 
-      <h3>Safety & Hazard Features</h3>
+      <h3 class="form-section-title">Safety & Hazard Features</h3>
       <div class="row">
         <select id="accidentProneArea"><option value="">Accident Prone Area?</option><option>Yes</option><option>No</option></select>
         <input id="nearIntersection" placeholder="Near Intersection? (Distance)">
@@ -390,7 +391,7 @@
         <select id="recentWeatherImpact"><option value="">Recent Weather Impact</option><option>Rain</option><option>Flooding</option><option>Landslide risk</option></select>
       </div>
 
-      <h3>Maintenance History</h3>
+      <h3 class="form-section-title">Maintenance History</h3>
       <div class="row">
         <input id="lastMaintenanceDate" type="date" placeholder="Last Maintenance Date">
         <select id="maintenanceFrequency"><option value="">Maintenance Frequency</option><option>Regularly maintained</option><option>Rarely maintained</option><option>Never maintained</option></select>
@@ -400,7 +401,7 @@
         <select id="ongoingConstruction"><option value="">Ongoing Construction?</option><option>Yes</option><option>No</option></select>
       </div>
 
-      <h3>Adjacent Infrastructure</h3>
+      <h3 class="form-section-title">Adjacent Infrastructure</h3>
       <div class="row">
         <input id="hospitalNearby" placeholder="Hospital Nearby? (Distance)">
         <select id="schoolNearby"><option value="">School Nearby?</option><option>Yes</option><option>No</option></select>
@@ -411,7 +412,7 @@
         <input id="publicTransportRoute" placeholder="Public Transport Route (Bus/Jeepney)">
       </div>
 
-      <h3>Road Network Context</h3>
+      <h3 class="form-section-title">Road Network Context</h3>
       <div class="row">
         <input id="connectedRoadBridgeName" placeholder="Connected Road/Bridge Name">
         <select id="alternativeRouteAvailable"><option value="">Alternative Route Available?</option><option>Yes</option><option>No</option></select>
@@ -422,7 +423,7 @@
         <select id="agriculturalAreaRoad"><option value="">Agricultural Area Road?</option><option>Yes</option><option>No</option></select>
       </div>
 
-      <h3>Environmental Factors</h3>
+      <h3 class="form-section-title">Environmental Factors</h3>
       <div class="row">
         <select id="seasonalIssues"><option value="">Seasonal Issues</option><option>Flooding (rainy season)</option><option>Landslide risk</option><option>Dust storms</option></select>
         <select id="treeCoverage"><option value="">Tree Coverage</option><option>None</option><option>Minimal</option><option>Moderate</option><option>Dense</option></select>
@@ -432,7 +433,7 @@
         <input id="soilType" placeholder="Soil Type">
       </div>
 
-      <h3>Repair & Maintenance Priority Data</h3>
+      <h3 class="form-section-title">Repair & Maintenance Priority Data</h3>
       <div class="row">
         <input id="roadConditionIndex" type="number" min="1" max="10" placeholder="Road Condition Index (1-10)">
         <input id="averageIssueResolutionTime" placeholder="Average Issue Resolution Time">
@@ -442,11 +443,14 @@
         <input id="jurisdictionAuthority" placeholder="Jurisdiction Authority (Auto-filled)" readonly>
       </div>
 
-      <h3>Upload Photo</h3>
+      <h3 class="form-section-title">Upload Photo</h3>
       <input type="file" id="photo">
       <img id="photoPreview">
 
-      <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
+      <div class="submit-actions">
+        <button type="button" class="resetBtn" onclick="resetForm()">Clear Form</button>
+        <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
+      </div>
       </div>
 
     <section class="card report-stats-card" aria-labelledby="reportStatsHeading">

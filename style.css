@@ -989,6 +989,26 @@ section.active {
 
 .submit-form-card {
   border: 1px solid rgba(134, 208, 255, 0.34);
+  background:
+    radial-gradient(circle at top left, rgba(64, 162, 255, 0.18), transparent 42%),
+    radial-gradient(circle at bottom right, rgba(86, 243, 216, 0.14), transparent 48%),
+    rgba(7, 33, 58, 0.86);
+  padding: 24px;
+  box-shadow: 0 18px 36px rgba(0, 9, 25, 0.4);
+}
+
+.submit-form-intro {
+  margin: -2px 0 18px;
+  color: #b6d5f4;
+  line-height: 1.5;
+}
+
+.form-section-title {
+  margin: 22px 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(135, 206, 255, 0.2);
+  color: #d8efff;
+  letter-spacing: 0.01em;
 }
 
 .report-stats-card {
@@ -1395,10 +1415,20 @@ select,
 textarea {
   width: 100%;
   padding: 11px 12px;
-  border-radius: 8px;
-  border: 1px solid #2f5f95;
-  background: var(--bg-soft);
+  border-radius: 10px;
+  border: 1px solid #376da8;
+  background: rgba(7, 36, 66, 0.95);
   color: var(--text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #83ceff;
+  box-shadow: 0 0 0 3px rgba(125, 213, 255, 0.2);
+  background: rgba(9, 43, 78, 0.96);
+  outline: none;
 }
 
 input::placeholder,
@@ -1412,21 +1442,23 @@ textarea {
 }
 
 .detectBtn,
-.submitBtn {
+.submitBtn,
+.resetBtn {
   margin-top: 10px;
   padding: 12px;
   width: 100%;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .detectBtn::after,
-.submitBtn::after {
+.submitBtn::after,
+.resetBtn::after {
   content: "";
   position: absolute;
   top: 0;
@@ -1437,7 +1469,8 @@ textarea {
 }
 
 .detectBtn:hover::after,
-.submitBtn:hover::after {
+.submitBtn:hover::after,
+.resetBtn:hover::after {
   animation: btnShimmer 0.7s ease;
 }
 
@@ -1448,6 +1481,26 @@ textarea {
 
 .detectBtn:hover {
   background: #157fdb;
+  box-shadow: 0 8px 20px rgba(23, 143, 239, 0.35);
+}
+
+.submit-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.resetBtn {
+  background: rgba(9, 42, 76, 0.9);
+  color: #d8ebff;
+  border: 1px solid rgba(132, 196, 255, 0.42);
+}
+
+.resetBtn:hover {
+  background: rgba(15, 60, 104, 0.95);
+  box-shadow: 0 8px 20px rgba(3, 19, 38, 0.4);
+  transform: translateY(-1px);
 }
 
 .submitBtn {
@@ -1457,12 +1510,14 @@ textarea {
 
 .submitBtn:hover {
   background: #51f2ca;
+  box-shadow: 0 10px 24px rgba(48, 224, 184, 0.33);
   transform: translateY(-1px);
 }
 
 
 .submitBtn:disabled,
-.detectBtn:disabled {
+.detectBtn:disabled,
+.resetBtn:disabled {
   opacity: 0.72;
   cursor: not-allowed;
   transform: none;
@@ -1490,6 +1545,15 @@ textarea {
   height: 320px;
   margin-top: 10px;
   border-radius: 12px;
+  border: 1px solid rgba(137, 208, 255, 0.42);
+}
+
+#selectedLocation {
+  color: #9fd0fa;
+  background: rgba(5, 33, 58, 0.55);
+  border: 1px dashed rgba(127, 200, 255, 0.38);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
 
 #photoPreview {
@@ -1724,6 +1788,10 @@ textarea {
   }
 
   .track-search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-actions {
     grid-template-columns: 1fr;
   }
 
