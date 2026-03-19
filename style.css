@@ -1834,12 +1834,24 @@ textarea {
   margin-top: 0;
 }
 
-.road-issue-block textarea {
-  min-height: 86px;
+.issue-description-group {
+  margin-top: 8px;
 }
 
-.report-details-grid {
-  margin-bottom: 8px;
+.issue-description-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.issue-description-head small {
+  color: #9fd0fa;
+  font-size: 0.78rem;
+}
+
+.road-issue-block textarea {
+  min-height: 86px;
 }
 
 #photoPreview {
