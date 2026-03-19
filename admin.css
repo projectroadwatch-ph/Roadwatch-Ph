@@ -193,6 +193,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   align-items: end;
 }
 
+.toolbar > * {
+  min-width: 0;
+}
+
 .inlineControl {
   margin-top: 0;
 }
@@ -347,7 +351,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .triage-toolbar {
-  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .check-inline {
