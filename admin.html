@@ -44,7 +44,7 @@
       </nav>
 
       <section id="overviewView" class="dashboard-view">
-      <section class="dashboard-grid">
+      <section class="dashboard-grid overview-layout">
       <article class="panel analytics-panel">
         <h3>Operational Snapshot</h3>
         <div id="analyticsGrid" class="analyticsGrid">
@@ -87,6 +87,20 @@
         </div>
       </article>
 
+      <article class="panel chart-stretch overview-map-panel">
+        <div class="row">
+          <h3>Overview Pin Map</h3>
+          <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
+        </div>
+        <div class="mapLegend" aria-label="Pin map legend">
+          <span class="legendItem"><span class="legendDot legend-pending"></span> Pending (default)</span>
+          <span class="legendItem"><span class="legendDot legend-verified"></span> Verified</span>
+          <span class="legendItem"><span class="legendDot legend-progress"></span> In Progress</span>
+          <span class="legendItem"><span class="legendDot legend-repaired"></span> Repaired</span>
+        </div>
+        <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
+      </article>
+
       <article class="panel chart-stretch">
         <div class="row">
           <h3>Status Distribution</h3>
@@ -94,13 +108,6 @@
         </div>
         <div class="chart-panel">
           <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
-        </div>
-        <div class="mapWrap">
-          <div class="row">
-            <h4>Overview Pin Map</h4>
-            <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
-          </div>
-          <div id="overviewPinMap" class="pinMap" role="img" aria-label="Map showing all pinned report locations"></div>
         </div>
       </article>
 
@@ -121,13 +128,6 @@
         <div class="heatmapWrap">
           <h4>Problem Area Heat Map</h4>
           <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
-        </div>
-        <div class="mapWrap">
-          <div class="row">
-            <h4>Analytics Pin Map</h4>
-            <p id="analyticsMapSummary" class="small">Filtered by selected reporting range.</p>
-          </div>
-          <div id="analyticsPinMap" class="pinMap" role="img" aria-label="Map showing analytics report locations"></div>
         </div>
         <div class="row export-row">
           <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
