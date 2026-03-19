@@ -263,9 +263,9 @@
       </div>
 
       <div class="report-category-tabs" role="tablist" aria-label="Report category">
-        <button type="button" class="category-pill active">🛣️ Road Surface</button>
-        <button type="button" class="category-pill">🌧️ Flooding/Drainage</button>
-        <button type="button" class="category-pill">🏙️ Street Infra</button>
+        <button type="button" class="category-pill active" data-category="Road Surface">🛣️ Road Surface</button>
+        <button type="button" class="category-pill" data-category="Flooding/Drainage">🌧️ Flooding/Drainage</button>
+        <button type="button" class="category-pill" data-category="Street Infra">🏙️ Street Infra</button>
       </div>
 
       <div class="submit-grid-two">
@@ -314,11 +314,13 @@
       <div class="submit-grid-two map-section">
         <section class="glass-panel road-issue-panel">
           <h3>Road Issue</h3>
+          <input id="issueCategory" type="hidden" value="Road Surface">
+          <input id="issueType" type="hidden" value="🕳️ Pothole">
           <div class="issue-chip-row">
-            <span class="issue-chip active">🕳️ Pothole</span>
-            <span class="issue-chip">🧩 Crack</span>
-            <span class="issue-chip">🌊 Flooding</span>
-            <span class="issue-chip">🧱 Others</span>
+            <button type="button" class="issue-chip active">🕳️ Pothole</button>
+            <button type="button" class="issue-chip">🧩 Crack</button>
+            <button type="button" class="issue-chip">🌊 Flooding</button>
+            <button type="button" class="issue-chip">🧱 Others</button>
           </div>
 
           <textarea id="issue" placeholder="Describe the road problem..."></textarea>
