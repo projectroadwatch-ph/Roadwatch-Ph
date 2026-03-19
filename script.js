@@ -1746,6 +1746,7 @@ async function submitReport() {
   try {
     const result = await trySubmit();
     const res = result?.body || "";
+    let submissionNotice = "";
     if (res) {
       let payload;
       try {
@@ -1762,10 +1763,11 @@ async function submitReport() {
     if (result?.requiresVerification) {
       const isVerified = await verifySubmittedReport(tracking);
       if (isVerified === false) {
-        throw new Error("Report submission could not be confirmed in Google Sheets yet. Please check your Apps Script deployment and try again.");
+        submissionNotice = "Submitted, but Google Sheets confirmation is still pending. Please keep your tracking number.";
       }
       if (isVerified === null) {
         console.warn("Skipping strict submission verification because report lookup is temporarily unavailable.");
+        submissionNotice = "Submitted, but live verification is temporarily unavailable. Please keep your tracking number.";
       }
     }
 
@@ -1781,7 +1783,11 @@ async function submitReport() {
     });
 
     document.getElementById("trackInfo").innerText = tracking;
-    document.getElementById("submissionTimeInfo").innerText = `Submitted on ${submittedDateTime}`;
+    const submissionTimeInfoElement = document.getElementById("submissionTimeInfo");
+    if (submissionTimeInfoElement) {
+      const noticeLine = submissionNotice ? `\n${submissionNotice}` : "";
+      submissionTimeInfoElement.innerText = `Submitted on ${submittedDateTime}${noticeLine}`;
+    }
     document.getElementById("copyFeedback").innerText = "";
     cacheLocalSubmission({ ...reportPayload, timestamp: submittedAt.toISOString() });
     cachedReports = [];
