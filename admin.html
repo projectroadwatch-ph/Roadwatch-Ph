@@ -82,53 +82,6 @@
         </div>
       </article>
 
-      <article class="panel analytics-panel">
-        <div class="row">
-          <h3>Priority Queue</h3>
-          <label class="inlineControl compact">Urgent if open for
-            <select id="urgencyThresholdDays">
-              <option value="3">3+ days</option>
-              <option value="5">5+ days</option>
-              <option value="7" selected>7+ days</option>
-              <option value="14">14+ days</option>
-            </select>
-          </label>
-        </div>
-        <p class="small">Shows unresolved reports that may need escalation based on report age.</p>
-        <ul id="priorityQueueList" class="priorityQueueList"></ul>
-      </article>
-
-      <article class="panel analytics-panel">
-        <div class="row">
-          <h3>Verification & Moderation Queue</h3>
-          <label class="inlineControl compact">Show
-            <select id="verificationFilter">
-              <option value="all">All reports</option>
-              <option value="verification">Needs verification</option>
-              <option value="flagged">Spam/abuse flagged</option>
-            </select>
-          </label>
-        </div>
-        <p class="small">Review pending submissions and resolve suspected spam or abuse content before status updates are published.</p>
-        <ul id="verificationQueueList" class="priorityQueueList"></ul>
-      </article>
-
-      <article class="panel analytics-panel">
-        <div class="row">
-          <h3>SLA & Escalation Queue</h3>
-          <label class="inlineControl compact">Show
-            <select id="slaFilter">
-              <option value="all">All unresolved</option>
-              <option value="atRisk">At risk</option>
-              <option value="overdue">Overdue</option>
-            </select>
-          </label>
-        </div>
-        <p class="small">Track unresolved reports approaching or breaching their SLA due date.</p>
-        <ul id="slaQueueList" class="priorityQueueList"></ul>
-      </article>
-
-
       <article class="panel chart-stretch">
         <div class="row">
           <h3>Status Distribution</h3>
@@ -167,131 +120,179 @@
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
-      <article class="panel">
-        <div class="row">
-          <h3>Bulk Report Management Dashboard</h3>
-          <button id="refreshReportsBtn" type="button" class="secondary">Refresh</button>
-        </div>
-        <div class="toolbar bulk-toolbar">
-          <label class="inlineControl compact check-inline">
-            <input id="selectAllReports" type="checkbox">
-            Select all visible reports
-          </label>
-          <label class="inlineControl">Bulk Status
-            <select id="bulkStatusSelect">
-              <option value="">Choose status</option>
-              <option value="Pending">Pending</option>
-              <option value="Verified">Verified</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Repaired">Repaired</option>
-            </select>
-          </label>
-          <button id="bulkUpdateBtn" type="button" class="secondary slim">Apply status</button>
-          <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
-          <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
-        </div>
-        <div class="toolbar triage-toolbar">
-          <label class="inlineControl">Assign selected to
-            <select id="bulkAssigneeSelect">
-              <option value="">Choose assignee</option>
-              <option value="Unassigned">Unassigned</option>
-              <option value="Road Team A">Road Team A</option>
-              <option value="Road Team B">Road Team B</option>
-              <option value="Inspector Desk">Inspector Desk</option>
-            </select>
-          </label>
-          <button id="bulkAssignBtn" type="button" class="secondary slim">Apply assignment</button>
-        </div>
-        <p id="bulkSummary" class="small">No reports selected.</p>
-        <div class="toolbar">
-          <label class="inlineControl">Search
-            <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
-          </label>
-          <label class="inlineControl">Status Filter
-            <select id="statusFilter">
-              <option value="all">All statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="Verified">Verified</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Repaired">Repaired</option>
-            </select>
-          </label>
-          <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
-        </div>
-        <div class="toolbar triage-toolbar">
-          <label class="inlineControl">Category
-            <select id="categoryFilter">
-              <option value="all">All categories</option>
-            </select>
-          </label>
-          <label class="inlineControl">Barangay
-            <select id="barangayFilter">
-              <option value="all">All barangays</option>
-            </select>
-          </label>
-          <label class="inlineControl">Data Quality
-            <select id="qualityFilter">
-              <option value="all">All scores</option>
-              <option value="high">High (80-100)</option>
-              <option value="medium">Medium (50-79)</option>
-              <option value="low">Low (0-49)</option>
-            </select>
-          </label>
-          <label class="inlineControl">Triage Preset
-            <select id="triagePreset">
-              <option value="all">All reports</option>
-              <option value="highRisk">High-risk unresolved</option>
-              <option value="needsVerification">Needs verification</option>
-              <option value="flagged">Flagged spam/abuse</option>
-              <option value="lowQuality">Low data quality</option>
-            </select>
-          </label>
-        </div>
-        <p id="filterSummary" class="small"></p>
-        <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
-        <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Select</th>
-                <th>Submission Time</th>
-                <th>Tracking #</th>
-                <th>Reporter</th>
-                <th>Location</th>
-                <th>Category</th>
-                <th>Issue Type</th>
-                <th>Data Quality</th>
-                <th>Verification</th>
-                <th>Assigned To</th>
-                <th>SLA Due</th>
-                <th>Escalation</th>
-                <th>Photo</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="reportsBody"></tbody>
-          </table>
-        </div>
-        <div class="paginationBar">
-          <p id="paginationSummary" class="small">Page 1 of 1</p>
-          <div class="paginationControls">
-            <button id="prevPageBtn" type="button" class="secondary slim">Previous</button>
-            <button id="nextPageBtn" type="button" class="secondary slim">Next</button>
-          </div>
-        </div>
-        <p id="reportsFeedback" class="feedback"></p>
-      </article>
+        <section class="command-center">
+          <aside class="command-pane command-pane--triage analytics-panel">
+            <div class="row">
+              <h3>Unified Triage Inbox</h3>
+              <button id="refreshReportsBtn" type="button" class="secondary slim">Refresh</button>
+            </div>
+            <p class="small">Monitor priority, verification, and SLA risk in one place before taking action.</p>
+            <label class="inlineControl compact">Urgent if open for
+              <select id="urgencyThresholdDays">
+                <option value="3">3+ days</option>
+                <option value="5">5+ days</option>
+                <option value="7" selected>7+ days</option>
+                <option value="14">14+ days</option>
+              </select>
+            </label>
+            <div class="queue-section">
+              <h4>Priority Queue</h4>
+              <ul id="priorityQueueList" class="priorityQueueList"></ul>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Verification & Moderation</h4>
+                <label class="inlineControl compact">Show
+                  <select id="verificationFilter">
+                    <option value="all">All reports</option>
+                    <option value="verification">Needs verification</option>
+                    <option value="flagged">Spam/abuse flagged</option>
+                  </select>
+                </label>
+              </div>
+              <ul id="verificationQueueList" class="priorityQueueList"></ul>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>SLA & Escalation</h4>
+                <label class="inlineControl compact">Show
+                  <select id="slaFilter">
+                    <option value="all">All unresolved</option>
+                    <option value="atRisk">At risk</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+                </label>
+              </div>
+              <ul id="slaQueueList" class="priorityQueueList"></ul>
+            </div>
+          </aside>
 
-      <article class="panel analytics-panel">
-        <div class="row">
-          <h3>Recent Audit Trail</h3>
-          <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
-        </div>
-        <p class="small">Shows the most recent admin actions captured in this browser session storage.</p>
-        <ul id="auditTrailList" class="priorityQueueList"></ul>
-      </article>
+          <section class="command-pane command-pane--workspace analytics-panel">
+            <div class="row">
+              <h3>Report Workspace</h3>
+              <p id="bulkSummary" class="small">No reports selected.</p>
+            </div>
+            <div class="toolbar">
+              <label class="inlineControl">Search
+                <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
+              </label>
+              <label class="inlineControl">Status Filter
+                <select id="statusFilter">
+                  <option value="all">All statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
+            </div>
+            <div class="toolbar triage-toolbar">
+              <label class="inlineControl">Category
+                <select id="categoryFilter">
+                  <option value="all">All categories</option>
+                </select>
+              </label>
+              <label class="inlineControl">Barangay
+                <select id="barangayFilter">
+                  <option value="all">All barangays</option>
+                </select>
+              </label>
+              <label class="inlineControl">Data Quality
+                <select id="qualityFilter">
+                  <option value="all">All scores</option>
+                  <option value="high">High (80-100)</option>
+                  <option value="medium">Medium (50-79)</option>
+                  <option value="low">Low (0-49)</option>
+                </select>
+              </label>
+              <label class="inlineControl">Triage Preset
+                <select id="triagePreset">
+                  <option value="all">All reports</option>
+                  <option value="highRisk">High-risk unresolved</option>
+                  <option value="needsVerification">Needs verification</option>
+                  <option value="flagged">Flagged spam/abuse</option>
+                  <option value="lowQuality">Low data quality</option>
+                </select>
+              </label>
+            </div>
+            <p id="filterSummary" class="small"></p>
+            <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
+            <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
+            <div class="tableWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Submission Time</th>
+                    <th>Tracking #</th>
+                    <th>Reporter</th>
+                    <th>Location</th>
+                    <th>Category</th>
+                    <th>Issue Type</th>
+                    <th>Data Quality</th>
+                    <th>Verification</th>
+                    <th>Assigned To</th>
+                    <th>SLA Due</th>
+                    <th>Escalation</th>
+                    <th>Photo</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="reportsBody"></tbody>
+              </table>
+            </div>
+            <div class="paginationBar">
+              <p id="paginationSummary" class="small">Page 1 of 1</p>
+              <div class="paginationControls">
+                <button id="prevPageBtn" type="button" class="secondary slim">Previous</button>
+                <button id="nextPageBtn" type="button" class="secondary slim">Next</button>
+              </div>
+            </div>
+            <p id="reportsFeedback" class="feedback"></p>
+          </section>
+
+          <aside class="command-pane command-pane--actions analytics-panel">
+            <h3>Action Drawer</h3>
+            <p class="small">Apply actions to selected reports from this panel.</p>
+            <div class="toolbar stack-toolbar">
+              <label class="inlineControl compact check-inline">
+                <input id="selectAllReports" type="checkbox">
+                Select all visible reports
+              </label>
+              <label class="inlineControl">Bulk Status
+                <select id="bulkStatusSelect">
+                  <option value="">Choose status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <button id="bulkUpdateBtn" type="button" class="secondary slim">Apply status</button>
+              <label class="inlineControl">Assign selected to
+                <select id="bulkAssigneeSelect">
+                  <option value="">Choose assignee</option>
+                  <option value="Unassigned">Unassigned</option>
+                  <option value="Road Team A">Road Team A</option>
+                  <option value="Road Team B">Road Team B</option>
+                  <option value="Inspector Desk">Inspector Desk</option>
+                </select>
+              </label>
+              <button id="bulkAssignBtn" type="button" class="secondary slim">Apply assignment</button>
+              <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
+              <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Recent Audit Trail</h4>
+                <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
+              </div>
+              <ul id="auditTrailList" class="priorityQueueList"></ul>
+            </div>
+          </aside>
+        </section>
       </section>
     </section>
   </main>
