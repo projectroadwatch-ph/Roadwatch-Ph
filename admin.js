@@ -1549,6 +1549,102 @@ function exportReportsToPdf(reports) {
   printWindow.print();
 }
 
+function openReportFormPreview(report) {
+  const printWindow = window.open("", "_blank", "width=980,height=860");
+  if (!printWindow) {
+    setFeedback("reportsFeedback", "Please allow pop-ups to view and print the report form.", true);
+    return;
+  }
+
+  const tracking = escapeHtml(report?.tracking || "N/A");
+  const submissionTime = escapeHtml(report?.dateTime || "-");
+  const reporter = escapeHtml(report?.name || "-");
+  const location = escapeHtml(report?.location || "-");
+  const barangay = escapeHtml(report?.barangay || "-");
+  const city = escapeHtml(report?.city || "-");
+  const landmark = escapeHtml(report?.nearestLandmark || "-");
+  const category = escapeHtml(report?.issueCategory || "-");
+  const issueType = escapeHtml(report?.issueType || report?.issue || "-");
+  const details = escapeHtml(report?.issue || "-");
+  const status = escapeHtml(normalizeStatus(report?.status));
+  const coordinates = (() => {
+    const lat = toNumberOrNull(report?.lat);
+    const lng = toNumberOrNull(report?.lng);
+    return lat !== null && lng !== null ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : "-";
+  })();
+  const qualityScore = `${getDataQualityScore(report)}%`;
+  const verificationState = escapeHtml(getVerificationState(report));
+  const photo = String(report?.photo || "").trim();
+  const safePhotoHtml = photo
+    ? `<img src="${escapeHtml(photo)}" alt="Submitted issue photo" class="form-photo">`
+    : '<div class="photo-placeholder">No uploaded photo</div>';
+
+  const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>RoadWatch Submitted Report - ${tracking}</title>
+    <style>
+      :root { color-scheme: light; }
+      body { font-family: Arial, sans-serif; color: #1b2c3b; margin: 0; background: #eef3f9; }
+      .sheet { max-width: 920px; margin: 20px auto; background: #fff; border: 1px solid #d5e1ec; border-radius: 12px; padding: 20px; }
+      .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+      .toolbar h1 { margin: 0; font-size: 24px; }
+      .toolbar p { margin: 4px 0 0; color: #4c647b; font-size: 13px; }
+      .print-btn { background: #1f5f8b; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+      .item { border: 1px solid #dbe7f1; border-radius: 10px; padding: 10px 12px; background: #fbfdff; }
+      .item strong { display: block; margin-bottom: 4px; font-size: 12px; color: #47617a; text-transform: uppercase; letter-spacing: .04em; }
+      .item span { font-size: 14px; line-height: 1.45; word-break: break-word; }
+      .item.full { grid-column: 1 / -1; }
+      .photo-wrap { margin-top: 12px; }
+      .form-photo { width: 100%; max-height: 420px; object-fit: contain; border: 1px solid #d5e1ec; border-radius: 10px; background: #f7fbff; }
+      .photo-placeholder { border: 1px dashed #bed0df; border-radius: 10px; padding: 24px; text-align: center; color: #607a93; background: #f8fbff; }
+      @media print {
+        body { background: #fff; }
+        .sheet { margin: 0; border: 0; border-radius: 0; max-width: 100%; padding: 0; }
+        .print-btn { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <article class="sheet">
+      <div class="toolbar">
+        <div>
+          <h1>Submitted Road Issue Form</h1>
+          <p>RoadWatch PH • Tracking # ${tracking}</p>
+        </div>
+        <button class="print-btn" type="button" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+      <section class="grid">
+        <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
+        <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
+        <div class="item"><strong>Reporter</strong><span>${reporter}</span></div>
+        <div class="item"><strong>Status</strong><span>${status}</span></div>
+        <div class="item"><strong>Issue Category</strong><span>${category}</span></div>
+        <div class="item"><strong>Issue Type</strong><span>${issueType}</span></div>
+        <div class="item full"><strong>Road Location</strong><span>${location}</span></div>
+        <div class="item"><strong>Barangay</strong><span>${barangay}</span></div>
+        <div class="item"><strong>City / Municipality</strong><span>${city}</span></div>
+        <div class="item"><strong>Nearest Landmark</strong><span>${landmark}</span></div>
+        <div class="item"><strong>Coordinates</strong><span>${coordinates}</span></div>
+        <div class="item"><strong>Data Quality</strong><span>${qualityScore}</span></div>
+        <div class="item"><strong>Verification</strong><span>${verificationState}</span></div>
+        <div class="item full"><strong>Issue Description</strong><span>${details}</span></div>
+      </section>
+      <section class="photo-wrap">
+        <h2>Submitted Photo</h2>
+        ${safePhotoHtml}
+      </section>
+    </article>
+  </body>
+</html>`;
+
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.focus();
+}
+
 function renderAnalytics(reports) {
   const counts = {
     total: reports.length,
@@ -1777,9 +1873,14 @@ function renderRows(reports) {
     timelineBtn.className = "secondary slim";
     timelineBtn.textContent = "Timeline";
     timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
+    const viewBtn = document.createElement("button");
+    viewBtn.type = "button";
+    viewBtn.className = "secondary slim";
+    viewBtn.textContent = "View";
+    viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
     tr.children[15].classList.add("action-cell");
-    tr.children[15].append(timelineBtn, deleteBtn);
+    tr.children[15].append(viewBtn, timelineBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
