@@ -79,6 +79,10 @@
             <span class="analyticsLabel">Avg Data Quality</span>
             <strong id="avgQualityScore">0%</strong>
           </div>
+          <div class="analyticsCard">
+            <span class="analyticsLabel">High Priority Cases</span>
+            <strong id="highPriorityCount">0</strong>
+          </div>
         </div>
       </article>
 
@@ -114,6 +118,13 @@
           <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
           <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
         </div>
+      </article>
+      <article class="panel chart-stretch">
+        <div class="row">
+          <h3>Team Performance Board</h3>
+          <p class="small">Live workload and SLA risk by assignee.</p>
+        </div>
+        <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
       </article>
       </section>
 
@@ -231,6 +242,7 @@
                     <th>Category</th>
                     <th>Issue Type</th>
                     <th>Data Quality</th>
+                    <th>Priority</th>
                     <th>Verification</th>
                     <th>Assigned To</th>
                     <th>SLA Due</th>
@@ -283,6 +295,22 @@
               <button id="bulkAssignBtn" type="button" class="secondary slim">Apply assignment</button>
               <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
               <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Case Timeline</h4>
+              </div>
+              <p id="timelineSummary" class="small">Select a report to view timeline.</p>
+              <label class="inlineControl">Tracking #
+                <select id="timelineTrackingSelect">
+                  <option value="">Choose tracking #</option>
+                </select>
+              </label>
+              <label class="inlineControl">Internal note
+                <textarea id="timelineNoteInput" rows="3" placeholder="Add verification notes, escalation decisions, or dispatch updates."></textarea>
+              </label>
+              <button id="addTimelineNoteBtn" type="button" class="secondary slim">Add note</button>
+              <ul id="caseTimelineList" class="priorityQueueList"></ul>
             </div>
             <div class="queue-section">
               <div class="row">
