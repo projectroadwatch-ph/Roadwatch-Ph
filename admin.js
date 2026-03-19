@@ -664,6 +664,7 @@ function normalizeReport(record = {}) {
     barangay: getFieldValue(record, ["barangay", "Barangay", "reporterBarangay", "Reporter Barangay"]) || "-",
     city: getFieldValue(record, ["city", "City", "municipality", "cityMunicipality", "City / Municipality"]) || "-",
     nearestLandmark: getFieldValue(record, ["nearestLandmark", "nearest_landmark", "Nearest Landmark"]) || "-",
+    coordinatesText: getFieldValue(record, ["coordinatesDisplay", "coordinates", "Coordinates", "Selected Location", "selectedLocation"]) || "",
     lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
     lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
@@ -1597,8 +1598,11 @@ function openReportFormPreview(report) {
   const coordinates = (() => {
     const lat = toNumberOrNull(report?.lat);
     const lng = toNumberOrNull(report?.lng);
-    return lat !== null && lng !== null ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : "-";
+    if (lat !== null && lng !== null) return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    const fallbackCoordinates = String(report?.coordinatesText || "").trim();
+    return fallbackCoordinates || "-";
   })();
+  const fullRoadAddress = [roadName, barangay, city, province].filter((value) => value && value !== "-").join(", ") || "-";
   const qualityScore = `${getDataQualityScore(report)}%`;
   const verificationState = escapeHtml(getVerificationState(report));
   const photo = String(report?.photo || "").trim();
@@ -1619,6 +1623,8 @@ function openReportFormPreview(report) {
       .toolbar h1 { margin: 0; font-size: 24px; }
       .toolbar p { margin: 4px 0 0; color: #4c647b; font-size: 13px; }
       .print-btn { background: #1f5f8b; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; }
+      .section { border: 1px solid #dbe7f1; border-radius: 12px; padding: 12px; margin-bottom: 12px; background: #fdfefe; }
+      .section h2 { margin: 0 0 10px; font-size: 15px; color: #204768; text-transform: uppercase; letter-spacing: .04em; }
       .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
       .item { border: 1px solid #dbe7f1; border-radius: 10px; padding: 10px 12px; background: #fbfdff; }
       .item strong { display: block; margin-bottom: 4px; font-size: 12px; color: #47617a; text-transform: uppercase; letter-spacing: .04em; }
@@ -1643,34 +1649,53 @@ function openReportFormPreview(report) {
         </div>
         <button class="print-btn" type="button" onclick="window.print()">Print / Save as PDF</button>
       </div>
-      <section class="grid">
-        <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
-        <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
-        <div class="item"><strong>Reporter</strong><span>${reporter}</span></div>
-        <div class="item"><strong>Last Name</strong><span>${lastname}</span></div>
-        <div class="item"><strong>First Name</strong><span>${firstname}</span></div>
-        <div class="item"><strong>Middle Initial</strong><span>${middleInitial}</span></div>
-        <div class="item"><strong>Email Address</strong><span>${email}</span></div>
-        <div class="item"><strong>Mobile Number</strong><span>${phone}</span></div>
-        <div class="item"><strong>Reporter Province</strong><span>${reporterProvince}</span></div>
-        <div class="item"><strong>Reporter City / Municipality</strong><span>${reporterCity}</span></div>
-        <div class="item"><strong>Reporter Barangay</strong><span>${reporterBarangay}</span></div>
-        <div class="item full"><strong>Reporter Street Address</strong><span>${reporterStreetAddress}</span></div>
-        <div class="item"><strong>Status</strong><span>${status}</span></div>
-        <div class="item"><strong>Issue Category</strong><span>${category}</span></div>
-        <div class="item"><strong>Issue Type</strong><span>${issueType}</span></div>
-        <div class="item"><strong>Issue Type Option</strong><span>${issueTypeOption}</span></div>
-        <div class="item"><strong>Region</strong><span>${region}</span></div>
-        <div class="item"><strong>Province</strong><span>${province}</span></div>
-        <div class="item full"><strong>Road Name</strong><span>${roadName}</span></div>
-        <div class="item full"><strong>Road Location</strong><span>${location}</span></div>
-        <div class="item"><strong>Barangay</strong><span>${barangay}</span></div>
-        <div class="item"><strong>City / Municipality</strong><span>${city}</span></div>
-        <div class="item"><strong>Nearest Landmark</strong><span>${landmark}</span></div>
-        <div class="item"><strong>Coordinates</strong><span>${coordinates}</span></div>
-        <div class="item"><strong>Data Quality</strong><span>${qualityScore}</span></div>
-        <div class="item"><strong>Verification</strong><span>${verificationState}</span></div>
-        <div class="item full"><strong>Issue Description</strong><span>${details}</span></div>
+      <section class="section">
+        <h2>Submission Summary</h2>
+        <div class="grid">
+          <div class="item"><strong>Submission Time</strong><span>${submissionTime}</span></div>
+          <div class="item"><strong>Tracking #</strong><span>${tracking}</span></div>
+          <div class="item"><strong>Status</strong><span>${status}</span></div>
+          <div class="item"><strong>Verification</strong><span>${verificationState}</span></div>
+          <div class="item"><strong>Data Quality</strong><span>${qualityScore}</span></div>
+          <div class="item"><strong>Reporter Name (Combined)</strong><span>${reporter}</span></div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Reporter Information</h2>
+        <div class="grid">
+          <div class="item"><strong>Last Name</strong><span>${lastname}</span></div>
+          <div class="item"><strong>First Name</strong><span>${firstname}</span></div>
+          <div class="item"><strong>Middle Initial</strong><span>${middleInitial}</span></div>
+          <div class="item"><strong>Email Address</strong><span>${email}</span></div>
+          <div class="item"><strong>Mobile Number</strong><span>${phone}</span></div>
+          <div class="item"><strong>Reporter Province</strong><span>${reporterProvince}</span></div>
+          <div class="item"><strong>Reporter City / Municipality</strong><span>${reporterCity}</span></div>
+          <div class="item"><strong>Reporter Barangay</strong><span>${reporterBarangay}</span></div>
+          <div class="item full"><strong>Reporter Street Address</strong><span>${reporterStreetAddress}</span></div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Road Location</h2>
+        <div class="grid">
+          <div class="item"><strong>Region</strong><span>${region}</span></div>
+          <div class="item"><strong>Province</strong><span>${province}</span></div>
+          <div class="item"><strong>City / Municipality</strong><span>${city}</span></div>
+          <div class="item"><strong>Barangay</strong><span>${barangay}</span></div>
+          <div class="item full"><strong>Road Name</strong><span>${roadName}</span></div>
+          <div class="item full"><strong>Road Location (Submitted)</strong><span>${location}</span></div>
+          <div class="item full"><strong>Full Road Address</strong><span>${fullRoadAddress}</span></div>
+          <div class="item"><strong>Nearest Landmark</strong><span>${landmark}</span></div>
+          <div class="item"><strong>Selected Coordinates</strong><span>${coordinates}</span></div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Report Details</h2>
+        <div class="grid">
+          <div class="item"><strong>Issue Category</strong><span>${category}</span></div>
+          <div class="item"><strong>Issue Type</strong><span>${issueType}</span></div>
+          <div class="item"><strong>Issue Type Option</strong><span>${issueTypeOption}</span></div>
+          <div class="item full"><strong>Issue Description</strong><span>${details}</span></div>
+        </div>
       </section>
       <section class="photo-wrap">
         <h2>Submitted Photo</h2>
