@@ -1,4 +1,35 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
+const DEFAULT_REPORT_HEADERS = [
+  'timestamp',
+  'tracking',
+  'reportCategory',
+  'reportInformation',
+  'issueCategory',
+  'issueType',
+  'issueTypeOption',
+  'issue',
+  'lastname',
+  'firstname',
+  'mi',
+  'email',
+  'phone',
+  'reporterProvince',
+  'reporterCity',
+  'reporterBarangay',
+  'reporterStreetAddress',
+  'roadLocation',
+  'location',
+  'region',
+  'province',
+  'city',
+  'barangay',
+  'roadName',
+  'nearestLandmark',
+  'lat',
+  'lng',
+  'photo',
+  'status'
+];
 
 function doGet(e) {
   const params = extractRequestParams_(e);
@@ -144,59 +175,24 @@ function handleSubmission_(params, e) {
     mi: params.mi || '',
     email: normalizeEmail_(params.email || ''),
     phone: params.phone || '',
+    reporterProvince: params.reporterProvince || '',
+    reporterCity: params.reporterCity || '',
+    reporterBarangay: params.reporterBarangay || '',
+    reporterStreetAddress: params.reporterStreetAddress || '',
     location: params.location || '',
     issue: params.issue || '',
-    roadType: params.roadType || '',
-    roadClass: params.roadClass || '',
-    roadSurfaceMaterial: params.roadSurfaceMaterial || '',
-    numberOfLanes: params.numberOfLanes || '',
-    roadDirection: params.roadDirection || '',
-    trafficVolume: params.trafficVolume || '',
-    roadSpeedLimit: params.roadSpeedLimit || '',
-    pedestrianActivity: params.pedestrianActivity || '',
-    schoolZone: params.schoolZone || '',
-    commercialArea: params.commercialArea || '',
-    residentialArea: params.residentialArea || '',
+    reportCategory: params.issueCategory || '',
+    reportInformation: params.issue || '',
+    roadLocation: params.location || '',
+    issueCategory: params.issueCategory || '',
+    issueType: params.issueType || '',
+    issueTypeOption: params.issueTypeOption || '',
+    region: params.region || '',
+    province: params.province || '',
+    city: params.city || '',
     barangay: params.barangay || '',
-    districtZone: params.districtZone || '',
-    coordinatesDisplay: params.coordinatesDisplay || '',
-    elevation: params.elevation || '',
-    drainageStatus: params.drainageStatus || '',
-    slopeGradient: params.slopeGradient || '',
-    sidewalkCondition: params.sidewalkCondition || '',
-    streetLighting: params.streetLighting || '',
-    roadMarkings: params.roadMarkings || '',
-    curbsGutters: params.curbsGutters || '',
-    busStopNearby: params.busStopNearby || '',
-    parkingSpaceAvailable: params.parkingSpaceAvailable || '',
-    accidentProneArea: params.accidentProneArea || '',
-    nearIntersection: params.nearIntersection || '',
-    curveTurnSeverity: params.curveTurnSeverity || '',
-    visibility: params.visibility || '',
-    nighttimeLightingAdequate: params.nighttimeLightingAdequate || '',
-    recentWeatherImpact: params.recentWeatherImpact || '',
-    lastMaintenanceDate: params.lastMaintenanceDate || '',
-    maintenanceFrequency: params.maintenanceFrequency || '',
-    previousIssues: params.previousIssues || '',
-    ongoingConstruction: params.ongoingConstruction || '',
-    hospitalNearby: params.hospitalNearby || '',
-    schoolNearby: params.schoolNearby || '',
-    marketCommercialHub: params.marketCommercialHub || '',
-    residentialComplex: params.residentialComplex || '',
-    publicTransportRoute: params.publicTransportRoute || '',
-    connectedRoadBridgeName: params.connectedRoadBridgeName || '',
-    alternativeRouteAvailable: params.alternativeRouteAvailable || '',
-    criticalRoute: params.criticalRoute || '',
-    tourismRoute: params.tourismRoute || '',
-    agriculturalAreaRoad: params.agriculturalAreaRoad || '',
-    seasonalIssues: params.seasonalIssues || '',
-    treeCoverage: params.treeCoverage || '',
-    adjacentWaterBody: params.adjacentWaterBody || '',
-    soilType: params.soilType || '',
-    roadConditionIndex: params.roadConditionIndex || '',
-    averageIssueResolutionTime: params.averageIssueResolutionTime || '',
-    budgetCategory: params.budgetCategory || '',
-    jurisdictionAuthority: params.jurisdictionAuthority || '',
+    roadName: params.roadName || '',
+    nearestLandmark: params.nearestLandmark || '',
     lat: params.lat || '',
     lng: params.lng || '',
     photo: params.photo || '',
@@ -374,21 +370,7 @@ function getSheet_() {
   const sheet = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'timestamp',
-      'tracking',
-      'lastname',
-      'firstname',
-      'mi',
-      'email',
-      'phone',
-      'location',
-      'issue',
-      'lat',
-      'lng',
-      'photo',
-      'status'
-    ]);
+    sheet.appendRow(DEFAULT_REPORT_HEADERS);
   }
 
   return sheet;
@@ -396,7 +378,8 @@ function getSheet_() {
 
 function appendReport_(row) {
   const sheet = getSheet_();
-  const columnCount = 13;
+  const headers = ensureSheetHeaders_(sheet, Object.keys(row || {}));
+  const columnCount = headers.length;
   const trackingValue = String(row.tracking || '').trim();
   const dataRowCount = Math.max(sheet.getLastRow() - 1, 0);
   const dataValues = dataRowCount > 0
@@ -404,8 +387,15 @@ function appendReport_(row) {
     : [];
 
   if (trackingValue) {
+    const trackingColumnIndex = headers.findIndex(function (header) {
+      return String(header || '').trim().toLowerCase() === 'tracking';
+    });
+
     const existingTrackings = dataValues
-      .map(function (rowValues) { return String(rowValues[1] || '').trim(); })
+      .map(function (rowValues) {
+        if (trackingColumnIndex === -1) return '';
+        return String(rowValues[trackingColumnIndex] || '').trim();
+      })
       .filter(function (value) { return value !== ''; });
 
     if (existingTrackings.includes(trackingValue)) {
@@ -413,21 +403,9 @@ function appendReport_(row) {
     }
   }
 
-  const valuesToWrite = [[
-    row.timestamp,
-    row.tracking,
-    row.lastname,
-    row.firstname,
-    row.mi,
-    row.email,
-    row.phone,
-    row.location,
-    row.issue,
-    row.lat,
-    row.lng,
-    row.photo,
-    row.status
-  ]];
+  const valuesToWrite = [headers.map(function (header) {
+    return row[header] || '';
+  })];
 
   const firstAvailableIndex = dataValues.findIndex(function (rowValues) {
     return rowValues.every(function (value) { return String(value || '').trim() === ''; });
@@ -440,6 +418,44 @@ function appendReport_(row) {
   }
 
   return { duplicate: false };
+}
+
+function ensureSheetHeaders_(sheet, incomingHeaders) {
+  const headerValues = sheet.getLastRow() > 0
+    ? sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
+    : [];
+
+  const existingHeaders = headerValues
+    .map(function (header) { return String(header || '').trim(); })
+    .filter(function (header) { return header !== ''; });
+
+  const resolvedHeaders = existingHeaders.length > 0
+    ? existingHeaders.slice()
+    : DEFAULT_REPORT_HEADERS.slice();
+
+  const knownHeadersLookup = {};
+  resolvedHeaders.forEach(function (header) {
+    knownHeadersLookup[header.toLowerCase()] = true;
+  });
+
+  (incomingHeaders || []).forEach(function (header) {
+    const normalized = String(header || '').trim();
+    if (!normalized) return;
+    if (knownHeadersLookup[normalized.toLowerCase()]) return;
+    resolvedHeaders.push(normalized);
+    knownHeadersLookup[normalized.toLowerCase()] = true;
+  });
+
+  if (existingHeaders.length === 0) {
+    sheet.getRange(1, 1, 1, resolvedHeaders.length).setValues([resolvedHeaders]);
+    return resolvedHeaders;
+  }
+
+  if (resolvedHeaders.length !== existingHeaders.length) {
+    sheet.getRange(1, 1, 1, resolvedHeaders.length).setValues([resolvedHeaders]);
+  }
+
+  return resolvedHeaders;
 }
 
 function readReports_() {
