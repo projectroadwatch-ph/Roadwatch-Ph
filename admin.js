@@ -32,6 +32,10 @@ const bulkSummary = document.getElementById("bulkSummary");
 const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
+const overviewPinMap = document.getElementById("overviewPinMap");
+const analyticsPinMap = document.getElementById("analyticsPinMap");
+const overviewMapSummary = document.getElementById("overviewMapSummary");
+const analyticsMapSummary = document.getElementById("analyticsMapSummary");
 const auditTrailList = document.getElementById("auditTrailList");
 const teamPerformanceBoard = document.getElementById("teamPerformanceBoard");
 const timelineTrackingSelect = document.getElementById("timelineTrackingSelect");
@@ -58,6 +62,10 @@ const selectedReports = new Set();
 const flaggedReports = new Set();
 const REPORTS_PER_PAGE = 15;
 let currentPage = 1;
+let overviewMap = null;
+let analyticsMap = null;
+let overviewMarkers = null;
+let analyticsMarkers = null;
 
 
 function buildJsonpEndpoint(endpoint) {
@@ -466,7 +474,13 @@ function setDashboardView(view) {
 
   if (!showOverview) {
     setManagementPane("workspace");
+    return;
   }
+
+  window.setTimeout(() => {
+    overviewMap?.invalidateSize();
+    analyticsMap?.invalidateSize();
+  }, 40);
 }
 
 function setManagementPane(pane) {
@@ -1348,6 +1362,113 @@ function renderHotspotHeatmap(reports) {
   }).join("");
 }
 
+function getReportsWithCoordinates(reports) {
+  return reports
+    .map((report) => {
+      const lat = toNumberOrNull(report?.lat);
+      const lng = toNumberOrNull(report?.lng);
+      if (lat === null || lng === null) return null;
+      return {
+        ...report,
+        lat,
+        lng
+      };
+    })
+    .filter(Boolean)
+    .filter((report) => Math.abs(report.lat) <= 90 && Math.abs(report.lng) <= 180);
+}
+
+function getReportsWithinRange(reports, range) {
+  const now = new Date();
+  const rangeDays = range === "weekly" ? 7 : 30;
+  const cutoff = now.getTime() - (rangeDays * 24 * 60 * 60 * 1000);
+
+  return reports.filter((report) => {
+    const reportDate = parseReportDate(report);
+    if (!reportDate) return false;
+    return reportDate.getTime() >= cutoff;
+  });
+}
+
+function ensurePinMapInstance(mapElement, mapInstance) {
+  if (!mapElement || typeof window.L === "undefined") return null;
+  if (mapInstance) return mapInstance;
+
+  return window.L.map(mapElement, {
+    zoomControl: true
+  }).setView([14.5995, 120.9842], 11);
+}
+
+function ensurePinMapLayer(mapInstance, layerInstance) {
+  if (!mapInstance || typeof window.L === "undefined") return null;
+  if (!mapInstance.__hasTileLayer) {
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(mapInstance);
+    mapInstance.__hasTileLayer = true;
+  }
+
+  if (layerInstance) return layerInstance;
+  return window.L.layerGroup().addTo(mapInstance);
+}
+
+function clearPinMapView(mapElement, mapSummaryElement, mapSummaryText) {
+  if (mapElement) {
+    mapElement.classList.add("is-empty");
+    mapElement.textContent = "No geotagged report pins available for this view.";
+  }
+  if (mapSummaryElement) mapSummaryElement.textContent = mapSummaryText;
+}
+
+function renderPinMap(mapElement, mapSummaryElement, mapSummaryText, reports, currentMap, currentLayer) {
+  if (!mapElement || !mapSummaryElement) return { map: currentMap, layer: currentLayer };
+
+  if (typeof window.L === "undefined") {
+    clearPinMapView(mapElement, mapSummaryElement, "Map library unavailable.");
+    return { map: currentMap, layer: currentLayer };
+  }
+
+  const geoReports = getReportsWithCoordinates(reports);
+  if (geoReports.length === 0) {
+    if (currentLayer) currentLayer.clearLayers();
+    clearPinMapView(mapElement, mapSummaryElement, mapSummaryText);
+    return { map: currentMap, layer: currentLayer };
+  }
+
+  mapElement.classList.remove("is-empty");
+  mapElement.textContent = "";
+
+  const map = ensurePinMapInstance(mapElement, currentMap);
+  const markers = ensurePinMapLayer(map, currentLayer);
+  markers.clearLayers();
+
+  const bounds = [];
+  geoReports.forEach((report) => {
+    const marker = window.L.circleMarker([report.lat, report.lng], {
+      radius: 6,
+      color: "#4fc3f7",
+      fillColor: "#63e6be",
+      fillOpacity: 0.75,
+      weight: 1.5
+    });
+
+    marker.bindPopup(`<strong>${escapeHtml(report.tracking || "Unknown Tracking #")}</strong><br>${escapeHtml(report.location || "Unknown location")}<br>Status: ${escapeHtml(normalizeStatus(report.status))}`);
+    marker.addTo(markers);
+    bounds.push([report.lat, report.lng]);
+  });
+
+  if (bounds.length === 1) {
+    map.setView(bounds[0], 15);
+  } else {
+    map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
+  }
+
+  mapSummaryElement.textContent = mapSummaryText.replace("{count}", String(geoReports.length));
+  window.setTimeout(() => map.invalidateSize(), 30);
+  return { map, layer: markers };
+}
+
 function updateReportingSummary(reports) {
   if (!reportingSummary) return;
 
@@ -1364,6 +1485,30 @@ function refreshReportingSection(reports) {
   drawTrendChart(reports);
   renderHotspotHeatmap(reports);
   updateReportingSummary(reports);
+  const range = reportingRange?.value || "monthly";
+  const rangeReports = getReportsWithinRange(reports, range);
+
+  const overviewMapState = renderPinMap(
+    overviewPinMap,
+    overviewMapSummary,
+    "Showing {count} geotagged report pin(s) across all records.",
+    reports,
+    overviewMap,
+    overviewMarkers
+  );
+  overviewMap = overviewMapState.map;
+  overviewMarkers = overviewMapState.layer;
+
+  const analyticsMapState = renderPinMap(
+    analyticsPinMap,
+    analyticsMapSummary,
+    `Showing {count} geotagged report pin(s) in the ${range} analytics range.`,
+    rangeReports,
+    analyticsMap,
+    analyticsMarkers
+  );
+  analyticsMap = analyticsMapState.map;
+  analyticsMarkers = analyticsMapState.layer;
 }
 
 function exportReportsToCsv(reports) {

@@ -254,6 +254,34 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-top: 14px;
 }
 
+.mapWrap {
+  margin-top: 14px;
+}
+
+.mapWrap h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #d7ebff;
+}
+
+.pinMap {
+  margin-top: 8px;
+  min-height: 280px;
+  border-radius: 12px;
+  border: 1px solid rgba(165, 213, 255, 0.25);
+  overflow: hidden;
+  background: rgba(3, 16, 33, 0.55);
+}
+
+.pinMap.is-empty {
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .heatmapWrap h4 {
   margin: 0 0 10px;
   font-size: 0.95rem;
