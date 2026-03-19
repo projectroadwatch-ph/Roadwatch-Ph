@@ -28,6 +28,12 @@ const LEAFLET_STYLE_SOURCES = [
 ];
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzQLZBJfuHnTzrAtfgURmglvJcTGGspQL8KkH-C7ztN7PWyha49o8298CKkNse-PL3_/exec";
+const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
+  "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Others"],
+  "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Others"],
+  "Road Safety": ["Malfunctioning traffic lights", "Missing or damaged traffic signs", "Lack of pedestrian crossings", "Broken or missing guardrails", "Others"],
+  "Street Infrastructure": ["Damaged sidewalk", "Broken streetlights", "Damaged road reflectors", "Open or uncovered manholes", "Others"]
+};
 
 
 function buildHomepageUrl() {
@@ -1570,6 +1576,27 @@ document.addEventListener("DOMContentLoaded", () => {
     field.addEventListener("input", () => clearFieldInvalidState(field));
   });
 
+  updateIssueTypeOptionsByCategory("");
+  document.querySelectorAll('input[name="issueCategory"]').forEach((option) => {
+    option.addEventListener("change", () => {
+      updateIssueTypeOptionsByCategory(option.checked ? option.value : "");
+      clearFieldInvalidState(document.querySelector('.report-category-group'));
+    });
+  });
+
+  const issueTypeSelect = document.getElementById("issueTypeSelect");
+  if (issueTypeSelect) {
+    issueTypeSelect.addEventListener("change", () => {
+      const customIssueTypeGroup = document.getElementById("customIssueTypeGroup");
+      const customIssueType = document.getElementById("customIssueType");
+      const showCustomType = issueTypeSelect.value === "Others";
+      if (customIssueTypeGroup) customIssueTypeGroup.hidden = !showCustomType;
+      if (!showCustomType && customIssueType) customIssueType.value = "";
+      clearFieldInvalidState(issueTypeSelect);
+      clearFieldInvalidState(customIssueType);
+    });
+  }
+
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
     "Live updates active across Metro Manila",
@@ -1671,6 +1698,25 @@ function validateSubmitFields() {
     clearFieldInvalidState(document.querySelector('.report-category-group'));
   }
 
+  const issueTypeSelect = document.getElementById("issueTypeSelect");
+  const customIssueType = document.getElementById("customIssueType");
+
+  if (!issueTypeSelect || !issueTypeSelect.value.trim()) {
+    markFieldInvalid(issueTypeSelect, "Please choose an issue type.");
+    touchedFields.push(issueTypeSelect);
+    missingLabels.push("Issue Type");
+  } else {
+    clearFieldInvalidState(issueTypeSelect);
+  }
+
+  if (issueTypeSelect?.value === "Others" && (!customIssueType || !customIssueType.value.trim())) {
+    markFieldInvalid(customIssueType, "Please enter the issue type.");
+    touchedFields.push(customIssueType);
+    missingLabels.push("Other Type");
+  } else {
+    clearFieldInvalidState(customIssueType);
+  }
+
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0);
   if (!hasCoordinates) {
     const mapEl = document.getElementById("reportMap");
@@ -1697,6 +1743,35 @@ function setSubmitButtonLoading(isLoading) {
   submitBtn.textContent = isLoading ? "Submitting Report..." : "Submit Report";
 }
 
+function updateIssueTypeOptionsByCategory(selectedCategory = "") {
+  const issueTypeSelect = document.getElementById("issueTypeSelect");
+  const customIssueTypeGroup = document.getElementById("customIssueTypeGroup");
+  const customIssueType = document.getElementById("customIssueType");
+  if (!issueTypeSelect) return;
+
+  const options = ISSUE_TYPE_OPTIONS_BY_CATEGORY[selectedCategory] || [];
+  const previousValue = issueTypeSelect.value;
+  issueTypeSelect.innerHTML = '<option value="">Select issue type</option>';
+
+  options.forEach((optionValue) => {
+    const option = document.createElement("option");
+    option.value = optionValue;
+    option.textContent = optionValue;
+    issueTypeSelect.appendChild(option);
+  });
+
+  if (options.includes(previousValue)) {
+    issueTypeSelect.value = previousValue;
+  }
+
+  const showCustomType = issueTypeSelect.value === "Others";
+  if (customIssueTypeGroup) customIssueTypeGroup.hidden = !showCustomType;
+  if (!showCustomType && customIssueType) {
+    customIssueType.value = "";
+    clearFieldInvalidState(customIssueType);
+  }
+}
+
 // Submit report
 async function submitReport() {
   if (isSubmittingReport) return;
@@ -1710,6 +1785,11 @@ async function submitReport() {
 
   const selectedCategoryInput = document.querySelector('input[name="issueCategory"]:checked');
   const issueCategory = selectedCategoryInput?.value || "";
+  const issueTypeSelect = document.getElementById("issueTypeSelect");
+  const customIssueType = document.getElementById("customIssueType");
+  const issueType = issueTypeSelect?.value === "Others"
+    ? (customIssueType?.value || "").trim()
+    : (issueTypeSelect?.value || "").trim();
 
   isSubmittingReport = true;
   setSubmitButtonLoading(true);
@@ -1748,7 +1828,8 @@ async function submitReport() {
     location: document.getElementById("locationText").value,
     issue: document.getElementById("issue").value,
     issueCategory,
-    issueType: issueCategory,
+    issueType,
+    issueTypeOption: issueTypeSelect?.value || "",
     lat: lat || "",
     lng: lng || "",
     photo: photoData,
@@ -1920,6 +2001,7 @@ function resetForm() {
   document.querySelectorAll('input[name="issueCategory"]').forEach(option => {
     option.checked = false;
   });
+  updateIssueTypeOptionsByCategory("");
   clearFieldInvalidState(document.querySelector('.report-category-group'));
   clearFieldInvalidState(document.getElementById('reportMap'));
   document.getElementById("selectedLocation").innerText = "No location selected";

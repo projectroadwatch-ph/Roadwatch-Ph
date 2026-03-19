@@ -1575,6 +1575,39 @@ section.active {
   margin-bottom: 22px;
 }
 
+.report-guide-collapse {
+  border: 0;
+}
+
+.report-guide-collapse > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.report-guide-collapse > summary::-webkit-details-marker {
+  display: none;
+}
+
+.report-guide-collapse .report-focus-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.collapse-indicator {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #9fd0fa;
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+  margin-top: 3px;
+}
+
+.report-guide-collapse[open] .collapse-indicator {
+  transform: rotate(0deg);
+}
+
 .issue-type-scroll {
   overflow-x: auto;
   overflow-y: hidden;
@@ -1803,6 +1836,10 @@ textarea {
 
 .road-issue-block textarea {
   min-height: 86px;
+}
+
+.report-details-grid {
+  margin-bottom: 8px;
 }
 
 #photoPreview {
