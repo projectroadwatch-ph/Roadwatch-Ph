@@ -256,38 +256,89 @@
       <p class="report-focus-note">Every report helps agencies prioritize road repairs and improve safety for all road users.</p>
     </section>
 
-    <div class="card submit-form-card">
-      <h2>Submit Road Issue</h2>
-
-      <h3>Reporter Information</h3>
-      <div class="row">
-        <input id="lastname" placeholder="Last Name">
-        <input id="firstname" placeholder="First Name">
-        <input id="mi" placeholder="M.I.">
+    <div class="card submit-form-card neon-submit-card">
+      <div class="submit-hero-banner">
+        <p class="submit-kicker">Submit a Road Report</p>
+        <h2>Help improve road safety in your community</h2>
       </div>
 
-      <div class="row">
-        <input id="email" placeholder="Email">
-        <input id="phone" placeholder="Mobile Number">
+      <div class="report-category-tabs" role="tablist" aria-label="Report category">
+        <button type="button" class="category-pill active">🛣️ Road Surface</button>
+        <button type="button" class="category-pill">🌧️ Flooding/Drainage</button>
+        <button type="button" class="category-pill">🏙️ Street Infra</button>
       </div>
 
-      <h3>Road Location</h3>
-      <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
-      <datalist id="locationSuggestions"></datalist>
-      <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
+      <div class="submit-grid-two">
+        <section class="glass-panel">
+          <h3>Reporter Information</h3>
+          <div class="row three-col">
+            <input id="lastname" placeholder="Last Name *">
+            <input id="firstname" placeholder="First Name *">
+            <input id="mi" placeholder="Middle Initial *">
+          </div>
 
-      <h3>Select Location</h3>
-      <div id="reportMap"></div>
-      <p id="selectedLocation">No location selected</p>
+          <div class="row two-col">
+            <input id="email" placeholder="Email Address *">
+            <input id="phone" placeholder="Mobile Number *">
+          </div>
 
-      <h3>Road Issue</h3>
-      <textarea id="issue" placeholder="Describe the issue"></textarea>
+          <div class="row two-col">
+            <input placeholder="Province *">
+            <input placeholder="City / Municipality *">
+          </div>
 
-      <h3>Upload Photo</h3>
-      <input type="file" id="photo">
-      <img id="photoPreview">
+          <div class="row two-col">
+            <input placeholder="Barangay *">
+            <input placeholder="Street / House No. *">
+          </div>
+        </section>
 
-      <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
+        <section class="glass-panel">
+          <h3>Road Information</h3>
+          <div class="row two-col">
+            <input placeholder="Region *">
+            <input placeholder="Province *">
+          </div>
+          <div class="row two-col">
+            <input placeholder="City / Municipality *">
+            <input placeholder="Barangay *">
+          </div>
+
+          <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Road Name *">
+          <datalist id="locationSuggestions"></datalist>
+          <input placeholder="Nearest Landmark" class="mb-sm">
+          <button type="button" class="detectBtn" onclick="detectLocation()">📍 Auto Detect Location</button>
+        </section>
+      </div>
+
+      <div class="submit-grid-two map-section">
+        <section class="glass-panel road-issue-panel">
+          <h3>Road Issue</h3>
+          <div class="issue-chip-row">
+            <span class="issue-chip active">🕳️ Pothole</span>
+            <span class="issue-chip">🧩 Crack</span>
+            <span class="issue-chip">🌊 Flooding</span>
+            <span class="issue-chip">🧱 Others</span>
+          </div>
+
+          <textarea id="issue" placeholder="Describe the road problem..."></textarea>
+
+          <div class="photo-actions">
+            <label for="photo" class="photo-btn">📷 Take Photo</label>
+            <input type="file" id="photo" accept="image/*">
+          </div>
+          <img id="photoPreview">
+        </section>
+
+        <section class="glass-panel map-panel">
+          <h3>Select Location</h3>
+          <div id="reportMap"></div>
+          <p id="selectedLocation">No location selected</p>
+        </section>
+      </div>
+
+      <div class="submit-footer-actions">
+        <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">🚀 Submit Report</button>
       </div>
     </div>
   </div>
