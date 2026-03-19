@@ -7,6 +7,7 @@ const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
+const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -32,6 +33,11 @@ const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 const auditTrailList = document.getElementById("auditTrailList");
+const teamPerformanceBoard = document.getElementById("teamPerformanceBoard");
+const timelineTrackingSelect = document.getElementById("timelineTrackingSelect");
+const timelineNoteInput = document.getElementById("timelineNoteInput");
+const caseTimelineList = document.getElementById("caseTimelineList");
+const timelineSummary = document.getElementById("timelineSummary");
 const overviewView = document.getElementById("overviewView");
 const managementView = document.getElementById("managementView");
 const showOverviewBtn = document.getElementById("showOverviewBtn");
@@ -343,6 +349,57 @@ function addAuditEntry(action, tracking, details = "") {
     createdAt: new Date().toISOString()
   }, ...getAuditTrail()];
   saveAuditTrail(next);
+}
+
+function getCaseTimelineStore() {
+  try {
+    const raw = localStorage.getItem(ADMIN_CASE_TIMELINE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCaseTimelineStore(store) {
+  localStorage.setItem(ADMIN_CASE_TIMELINE_KEY, JSON.stringify(store || {}));
+}
+
+function addTimelineEntry(tracking, eventType, details = "") {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+  const store = getCaseTimelineStore();
+  const current = Array.isArray(store[key]) ? store[key] : [];
+  current.unshift({
+    eventType: String(eventType || "Update").trim(),
+    details: String(details || "").trim(),
+    createdAt: new Date().toISOString()
+  });
+  store[key] = current.slice(0, 30);
+  saveCaseTimelineStore(store);
+}
+
+function getCaseTimeline(tracking) {
+  const key = String(tracking || "").trim();
+  if (!key) return [];
+  const store = getCaseTimelineStore();
+  return Array.isArray(store[key]) ? store[key] : [];
+}
+
+function getPriorityScore(report) {
+  const status = normalizeStatus(report?.status);
+  if (status === "Repaired") return 0;
+
+  const qualityScore = getDataQualityScore(report);
+  const dataPenalty = Math.max(0, 100 - qualityScore) * 0.2;
+  const escalation = getEscalationState(report);
+  const escalationWeight = escalation === "Overdue" ? 55 : escalation === "At Risk" ? 30 : 12;
+  const reportDate = parseReportDate(report);
+  const ageDays = reportDate ? Math.max(0, Math.floor((Date.now() - reportDate.getTime()) / 86400000)) : 0;
+  const ageWeight = Math.min(35, ageDays * 2);
+
+  return Math.round(Math.min(100, escalationWeight + ageWeight + dataPenalty));
 }
 
 function shouldHideReport(tracking) {
@@ -714,6 +771,7 @@ function statusSelect(current, tracking) {
       if (report) report.status = nextStatus;
 
       addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
+      addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${nextStatus}`);
       setFeedback("reportsFeedback", `Updated ${tracking} to ${nextStatus}.`);
       applyFiltersAndRender();
     } catch (error) {
@@ -931,6 +989,104 @@ function renderSlaQueue(reports) {
   });
 }
 
+function renderTeamPerformanceBoard(reports) {
+  if (!teamPerformanceBoard) return;
+
+  const assigneeStats = new Map();
+  reports.forEach((report) => {
+    const assignee = String(report?.assignedTo || "Unassigned").trim() || "Unassigned";
+    const state = assigneeStats.get(assignee) || { total: 0, open: 0, overdue: 0, atRisk: 0, repaired: 0, scoreTotal: 0 };
+    state.total += 1;
+    const status = normalizeStatus(report.status);
+    if (status === "Repaired") state.repaired += 1;
+    else state.open += 1;
+    const escalation = getEscalationState(report);
+    if (escalation === "Overdue") state.overdue += 1;
+    if (escalation === "At Risk") state.atRisk += 1;
+    state.scoreTotal += getPriorityScore(report);
+    assigneeStats.set(assignee, state);
+  });
+
+  const ranking = Array.from(assigneeStats.entries())
+    .sort((a, b) => (b[1].open - a[1].open) || (b[1].overdue - a[1].overdue))
+    .slice(0, 8);
+
+  if (ranking.length === 0) {
+    teamPerformanceBoard.innerHTML = '<p class="small">No assignment data available yet.</p>';
+    return;
+  }
+
+  teamPerformanceBoard.innerHTML = ranking.map(([assignee, stats]) => {
+    const avgPriority = stats.total ? Math.round(stats.scoreTotal / stats.total) : 0;
+    return `
+      <article class="teamCard">
+        <div class="teamCardHeader">
+          <strong>${escapeHtml(assignee)}</strong>
+          <span class="priority-badge">P${avgPriority}</span>
+        </div>
+        <div class="teamCardMeta">
+          <span>Open: ${stats.open}</span>
+          <span>Overdue: ${stats.overdue}</span>
+          <span>At risk: ${stats.atRisk}</span>
+          <span>Repaired: ${stats.repaired}</span>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function syncTimelineTrackingOptions(reports) {
+  if (!timelineTrackingSelect) return;
+  const currentValue = timelineTrackingSelect.value;
+  const options = reports
+    .map((report) => String(report?.tracking || "").trim())
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+
+  timelineTrackingSelect.innerHTML = `<option value="">Choose tracking #</option>${options
+    .map((tracking) => `<option value="${escapeHtml(tracking)}">${escapeHtml(tracking)}</option>`)
+    .join("")}`;
+
+  if (options.includes(currentValue)) timelineTrackingSelect.value = currentValue;
+}
+
+function renderCaseTimeline(tracking) {
+  if (!caseTimelineList) return;
+  const key = String(tracking || "").trim();
+  if (!key) {
+    caseTimelineList.innerHTML = '<li class="priorityItem empty">Pick a tracking number to show the timeline.</li>';
+    if (timelineSummary) timelineSummary.textContent = "Select a report to view timeline.";
+    return;
+  }
+
+  const entries = getCaseTimeline(key);
+  if (timelineSummary) timelineSummary.textContent = `Timeline for ${key}`;
+
+  if (entries.length === 0) {
+    caseTimelineList.innerHTML = `<li class="priorityItem empty">No timeline entries yet for ${escapeHtml(key)}.</li>`;
+    return;
+  }
+
+  caseTimelineList.innerHTML = entries.slice(0, 10).map((entry) => `
+    <li class="priorityItem">
+      <div>
+        <strong>${escapeHtml(entry.eventType || "Update")}</strong>
+        <p>${escapeHtml(entry.details || "No details provided")}</p>
+      </div>
+      <div class="priorityMeta">
+        <span>${formatDueAt(entry.createdAt)}</span>
+      </div>
+    </li>
+  `).join("");
+}
+
+function focusTimeline(tracking) {
+  const key = String(tracking || "").trim();
+  if (!key || !timelineTrackingSelect) return;
+  timelineTrackingSelect.value = key;
+  renderCaseTimeline(key);
+}
+
 function renderAuditTrail() {
   if (!auditTrailList) return;
   const entries = getAuditTrail().slice(0, 8);
@@ -984,6 +1140,7 @@ async function bulkUpdateStatus(reports, status) {
     await updateReportStatus(report.tracking, status);
     report.status = status;
     addAuditEntry("Bulk Status Update", report.tracking, `Set to ${status}`);
+    addTimelineEntry(report.tracking, "Bulk Status Update", `Set to ${status}`);
   }
 }
 
@@ -1012,6 +1169,7 @@ function bulkAssignReports(reports, assignee) {
     updateCaseMeta(tracking, { assignedTo: assignee || "Unassigned" });
     report.assignedTo = assignee || "Unassigned";
     addAuditEntry("Assignment Updated", tracking, `Assigned to ${assignee || "Unassigned"}`);
+    addTimelineEntry(tracking, "Assignment Updated", `Assigned to ${assignee || "Unassigned"}`);
   });
 }
 
@@ -1266,7 +1424,10 @@ function renderAnalytics(reports) {
   document.getElementById("needsVerificationCount").textContent = counts.needsVerification;
   document.getElementById("flaggedReportsCount").textContent = counts.flagged;
   document.getElementById("avgQualityScore").textContent = `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`;
+  const highPriorityCount = reports.filter((report) => getPriorityScore(report) >= 70).length;
+  document.getElementById("highPriorityCount").textContent = highPriorityCount;
   drawStatusChart(counts);
+  renderTeamPerformanceBoard(reports);
 }
 
 function populateSelectFilter(select, values, allLabel) {
@@ -1369,7 +1530,7 @@ function renderPagination(totalItems) {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="15">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="16">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -1394,6 +1555,7 @@ function renderRows(reports) {
       <td>${report.issueCategory || "-"}</td>
       <td>${report.issueType || report.issue || "-"}</td>
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
+      <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
       <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
       <td>${formatDueAt(report.dueAt)}</td>
@@ -1421,13 +1583,13 @@ function renderRows(reports) {
 
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[12].textContent = photoElement;
+      tr.children[13].textContent = photoElement;
     } else {
-      tr.children[12].appendChild(photoElement);
+      tr.children[13].appendChild(photoElement);
     }
 
-    tr.children[13].classList.add("status-cell");
-    tr.children[13].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[14].classList.add("status-cell");
+    tr.children[14].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -1445,6 +1607,7 @@ function renderRows(reports) {
         selectedReports.delete(trackingValue);
         flaggedReports.delete(trackingValue);
         addAuditEntry("Report Deleted", report.tracking, "Deleted from management table");
+        addTimelineEntry(report.tracking, "Report Deleted", "Deleted from management table");
         setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
         applyFiltersAndRender();
       } catch (error) {
@@ -1453,8 +1616,14 @@ function renderRows(reports) {
         deleteBtn.disabled = false;
       }
     });
-    tr.children[14].classList.add("action-cell");
-    tr.children[14].appendChild(deleteBtn);
+    const timelineBtn = document.createElement("button");
+    timelineBtn.type = "button";
+    timelineBtn.className = "secondary slim";
+    timelineBtn.textContent = "Timeline";
+    timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
+
+    tr.children[15].classList.add("action-cell");
+    tr.children[15].append(timelineBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -1462,6 +1631,7 @@ function renderRows(reports) {
 
 function applyFiltersAndRender() {
   syncDynamicFilters(allReports);
+  syncTimelineTrackingOptions(allReports);
   const filtered = getFilteredReports();
   const paginated = getPaginatedReports(filtered);
   renderRows(paginated);
@@ -1479,7 +1649,7 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="15">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="16">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
 
   try {
@@ -1496,11 +1666,12 @@ async function loadReports() {
       .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="15">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="16">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
       renderSlaQueue([]);
       renderAuditTrail();
+      renderCaseTimeline("");
       refreshReportingSection([]);
       filterSummary.textContent = "No records to filter.";
       setTableLoadingState(false);
@@ -1510,11 +1681,12 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="15">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="16">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
     renderSlaQueue([]);
     renderAuditTrail();
+    renderCaseTimeline("");
     refreshReportingSection([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
@@ -1670,6 +1842,29 @@ document.getElementById("clearAuditTrailBtn")?.addEventListener("click", () => {
   renderAuditTrail();
 });
 
+document.getElementById("addTimelineNoteBtn")?.addEventListener("click", () => {
+  const tracking = String(timelineTrackingSelect?.value || "").trim();
+  const note = String(timelineNoteInput?.value || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Choose a tracking number before adding a timeline note.", true);
+    return;
+  }
+  if (!note) {
+    setFeedback("reportsFeedback", "Write a timeline note before saving.", true);
+    return;
+  }
+
+  addTimelineEntry(tracking, "Admin Note", note);
+  addAuditEntry("Timeline Note Added", tracking, note.slice(0, 80));
+  if (timelineNoteInput) timelineNoteInput.value = "";
+  renderCaseTimeline(tracking);
+  setFeedback("reportsFeedback", `Saved timeline note for ${tracking}.`);
+});
+
+timelineTrackingSelect?.addEventListener("change", () => {
+  renderCaseTimeline(timelineTrackingSelect.value);
+});
+
 
 
 reportingRange?.addEventListener("change", () => refreshReportingSection(allReports));
@@ -1696,4 +1891,5 @@ document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
 });
 
 setDashboardView("overview");
+renderCaseTimeline("");
 applyAuthUI();
