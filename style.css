@@ -1335,19 +1335,27 @@ section.active {
   margin: 18px 0 8px;
 }
 
+.form-group-card {
+  border: 1px solid rgba(134, 208, 255, 0.24);
+  border-radius: 14px;
+  background: rgba(7, 33, 58, 0.45);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
 .submit-form-card .row {
   margin-bottom: 14px;
 }
 
-.submit-form-card > input,
-.submit-form-card > textarea,
-.submit-form-card > #reportMap,
-.submit-form-card > #selectedLocation,
-.submit-form-card > #photo {
+.form-group-card > input,
+.form-group-card > textarea,
+.form-group-card > #reportMap,
+.form-group-card > #selectedLocation,
+.form-group-card > #photo {
   margin-bottom: 14px;
 }
 
-.submit-form-card > #selectedLocation {
+.form-group-card > #selectedLocation {
   margin-top: 0;
 }
 
