@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoadWatch PH</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+<div class="brand-intro" id="brandIntro" aria-hidden="true">
+  <span>RoadWatch PH</span>
+</div>
+
+<div class="bg-orb orb-one" aria-hidden="true"></div>
+<div class="bg-orb orb-two" aria-hidden="true"></div>
+<div class="bg-orb orb-three" aria-hidden="true"></div>
+
+<header>
+  <button class="menuBtn" id="menuBtn" type="button" aria-controls="menu" aria-expanded="false" onclick="toggleMenu()">☰</button>
+  <div class="brand-lockup">
+    <h2>RoadWatch PH</h2>
+    <p>Citizen-powered Road Safety Dashboard</p>
+  </div>
+</header>
+
+<div class="sidebar" id="menu" aria-hidden="true">
+  <button class="closeSidebarBtn" type="button" onclick="closeMenu()" aria-label="Close sidebar">✕</button>
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('submit')">Submit Report</button>
+  <button onclick="showPage('about')">About</button>
+  <button onclick="showPage('contact')">Contact</button>
+  <button onclick="window.location.href='admin.html'">Admin Portal</button>
+</div>
+
+<!-- HOME -->
+<section id="home" class="active">
+  <div class="hero-card highlighted-hero">
+    <p class="hero-tag">Community Road Safety Platform</p>
+    <h1>RoadWatch PH</h1>
+    <h2 id="heroSubheader" class="subheader">Sumbong ng Bayan para sa Mas Maayos na Daan</h2>
+    <p class="live-chip"><span></span><span id="liveStatus">Live updates active across Metro Manila</span></p>
+    <div class="hero-purpose-wrap">
+      <p id="heroPurpose" class="hero-purpose">RoadWatch PH allows citizens to report road problems through a simple mobile-friendly website accessed via QR codes placed in public areas. By submitting reports with photos and exact locations, communities can help authorities respond faster and improve road conditions nationwide.</p>
+    </div>
+
+  </div>
+
+  <div class="home-main-stack">
+
+    <div class="journey-guide card">
+      <p class="journey-eyebrow">From Report to Repair</p>
+      <h3>How RoadWatch PH Works</h3>
+      <div class="journey-top-row">
+        <p class="journey-intro">Every report starts with one caring citizen and ends with safer roads for the whole community. Here is the journey from first scan to final repair.</p>
+        <figure class="journey-qr-card">
+          <img id="homepageQrCode" src="" alt="QR code that opens the RoadWatch PH homepage">
+          <p>Scan to open the RoadWatch PH homepage instantly.</p>
+        </figure>
+      </div>
+
+      <div class="journey-columns">
+        <article class="journey-column citizens-journey">
+          <div class="journey-heading-wrap">
+            <p class="journey-label">FOR CITIZENS</p>
+            <h4>How Citizens Make a Difference</h4>
+          </div>
+          <ol class="journey-steps">
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">📱</span>
+              <div>
+                <strong>Scan the QR Code</strong>
+                <small>Spot RoadWatch PH QR codes in barangay halls, waiting sheds, or electric posts to quickly open the website.</small>
+              </div>
+            </li>
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">📝</span>
+              <div>
+                <strong>Add Details, Snap a Photo, and Pin</strong>
+                <small>Tap <b>Report Road Issue</b>, complete the Google Form, upload a clear photo, and pinpoint the location on the map.</small>
+              </div>
+            </li>
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">📬</span>
+              <div>
+                <strong>Submit and Track</strong>
+                <small>Submit instantly and check your email for a unique tracking number to monitor status updates in real time.</small>
+              </div>
+            </li>
+          </ol>
+        </article>
+
+        <article class="journey-column authority-journey">
+          <div class="journey-heading-wrap">
+            <p class="journey-label">FOR AUTHORITIES</p>
+            <h4>How Authorities Drive Solutions</h4>
+          </div>
+          <ol class="journey-steps">
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">🖥️</span>
+              <div>
+                <strong>Receive Reports</strong>
+                <small>Barangay, LGU, and DPWH teams receive incoming reports through the RoadWatch PH website in real time.</small>
+              </div>
+            </li>
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">🚦</span>
+              <div>
+                <strong>Verify and Prioritize</strong>
+                <small>Officials validate submitted reports, assess severity, and prioritize urgent road concerns for faster action.</small>
+              </div>
+            </li>
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">🔧</span>
+              <div>
+                <strong>Update Progress</strong>
+                <small>Repair teams update statuses like <b>Pending</b>, <b>In Progress</b>, and <b>Repaired</b> so citizens stay informed.</small>
+              </div>
+            </li>
+            <li>
+              <span class="journey-step-icon" aria-hidden="true">🤝</span>
+              <div>
+                <strong>Ensure Transparency</strong>
+                <small>Digital tracking keeps the process accountable and helps communities see that road concerns are being addressed.</small>
+              </div>
+            </li>
+          </ol>
+        </article>
+      </div>
+
+      <div class="journey-cta" role="region" aria-label="Report road issue call to action">
+        <p><strong>Every update matters.</strong> Citizens report, authorities act, and communities stay informed together.</p>
+        <button type="button" class="journey-cta-btn" onclick="showPage('submit')">Start a Road Report</button>
+      </div>
+    </div>
+
+
+    <div class="card track-report-card" aria-labelledby="trackReportHeading">
+      <p class="journey-eyebrow">Track Report Status</p>
+      <h3 id="trackReportHeading">Search by Tracking Number</h3>
+      <p class="track-report-copy">Enter your tracking number to view the submitted report details and current status.</p>
+
+      <form id="trackSearchForm" class="track-search-form">
+        <label for="trackingSearchInput" class="sr-only">Tracking number</label>
+        <input id="trackingSearchInput" type="text" placeholder="e.g., RW1735123456789" required>
+        <button type="submit">Search</button>
+      </form>
+
+      <p id="trackingSearchFeedback" class="track-search-feedback" role="status" aria-live="polite"></p>
+
+      <div id="trackingResultWrapper" class="track-result-wrapper" hidden>
+        <table class="track-result-table">
+          <thead>
+            <tr>
+              <th>Tracking #</th>
+              <th>Submission Time</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Issue Details</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="trackingResultBody"></tbody>
+        </table>
+      </div>
+
+      <section class="card reports-map-card track-status-map" aria-labelledby="reportsMapHeading">
+        <div class="report-stats-head">
+          <p class="stats-eyebrow">Citizen Report Locations</p>
+          <h3 id="reportsMapHeading">Road-Damaged Map</h3>
+          <p class="report-stats-subtitle">See all reported road concerns with live status colors linked to admin updates.</p>
+        </div>
+
+        <div class="reports-map-legend" aria-label="Map marker legend">
+          <span><i class="legend-dot red"></i> 🔴 Red – Reported (When status is verified)</span>
+          <span><i class="legend-dot yellow"></i> 🟡 Yellow – Being repaired (When status is in progress)</span>
+          <span><i class="legend-dot green"></i> 🟢 Green – Fixed (when status is repaired)</span>
+        </div>
+
+        <div id="citizenReportsMap" class="citizen-reports-map" role="img" aria-label="Map of reported road issues"></div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- SUBMIT REPORT -->
+<section id="submit">
+  <div class="submit-stack">
+    <div class="section-heading-block">
+      <p class="journey-eyebrow">Citizen Reporting Center</p>
+      <h2>Submit a Roadwatch Report</h2>
+      <p>Provide complete and accurate details so authorities can respond faster and resolve road concerns in your area.</p>
+    </div>
+
+    <section class="card home-info report-focus-card submit-guide-card">
+      <div class="report-focus-header">
+        <h3>What You Can Report</h3>
+        <p class="report-lead">Citizens can report different types of road and infrastructure problems to help authorities respond faster and improve road safety.</p>
+      </div>
+
+      <div class="issue-type-scroll">
+        <div class="issue-type-grid horizontal-scroll">
+        <article class="issue-type-card">
+          <img src="assets/issues/potholes.svg" alt="Illustration of potholes for road surface problems">
+          <h4>🛣️ Road Surface Problems</h4>
+          <ul>
+            <li>Potholes</li>
+            <li>Road cracks</li>
+            <li>Faded or missing road markings</li>
+            <li>Uneven or damaged road surfaces</li>
+          </ul>
+        </article>
+
+        <article class="issue-type-card">
+          <img src="assets/issues/flooded-street.svg" alt="Illustration of a flooded street for drainage and flooding problems">
+          <h4>🌧️ Drainage and Flooding Problems</h4>
+          <ul>
+            <li>Clogged roadside drainage</li>
+            <li>Missing or broken drainage cover</li>
+            <li>Flooded roads during heavy rain</li>
+            <li>Water pooling on the road</li>
+          </ul>
+        </article>
+
+        <article class="issue-type-card">
+          <img src="assets/issues/faded-lanes.svg" alt="Illustration of faded lane markings for road safety issues">
+          <h4>⚠️ Road Safety Issues</h4>
+          <ul>
+            <li>Malfunctioning traffic lights</li>
+            <li>Missing or damaged traffic signs</li>
+            <li>Lack of pedestrian crossings</li>
+            <li>Broken or missing guardrails</li>
+          </ul>
+        </article>
+
+        <article class="issue-type-card">
+          <img src="assets/issues/rough-pavement.svg" alt="Illustration of rough pavement for street infrastructure problems">
+          <h4>🏙️ Street Infrastructure Problems</h4>
+          <ul>
+            <li>Damaged sidewalk</li>
+            <li>Broken streetlights</li>
+            <li>Damaged road reflectors</li>
+            <li>Open or uncovered manholes</li>
+          </ul>
+        </article>
+
+        <article class="issue-type-card">
+          <img src="assets/issues/construction-zone.svg" alt="Illustration of a construction zone for road obstruction issues">
+          <h4>🚧 Road Obstruction Issues</h4>
+          <ul>
+            <li>Fallen trees blocking the road</li>
+            <li>Construction materials on the road</li>
+            <li>Illegal parking blocking lanes</li>
+            <li>Debris or large objects on the roadway</li>
+          </ul>
+        </article>
+        </div>
+      </div>
+      <p class="report-focus-note">Every report helps agencies prioritize road repairs and improve safety for all road users.</p>
+    </section>
+
+    <div class="card submit-form-card">
+      <h2>Submit Road Issue</h2>
+
+      <h3>Reporter Information</h3>
+      <div class="row">
+        <input id="lastname" placeholder="Last Name">
+        <input id="firstname" placeholder="First Name">
+        <input id="mi" placeholder="M.I.">
+      </div>
+
+      <div class="row">
+        <input id="email" placeholder="Email">
+        <input id="phone" placeholder="Mobile Number">
+      </div>
+
+      <h3>Road Location</h3>
+      <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
+      <datalist id="locationSuggestions"></datalist>
+      <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
+
+      <h3>Select Location</h3>
+      <div id="reportMap"></div>
+      <p id="selectedLocation">No location selected</p>
+
+      <h3>Road Issue</h3>
+      <textarea id="issue" placeholder="Describe the issue"></textarea>
+
+      <h3>Upload Photo</h3>
+      <input type="file" id="photo">
+      <img id="photoPreview">
+
+      <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
+      </div>
+
+    <section class="card report-stats-card" aria-labelledby="reportStatsHeading">
+      <div class="report-stats-head">
+        <p class="stats-eyebrow">Live Google Sheet Insights</p>
+        <h3 id="reportStatsHeading">Road Issue Report Statistics</h3>
+        <p class="report-stats-subtitle">Real-time report trends based on the reports submitted through RoadWatch PH.</p>
+      </div>
+
+      <div class="report-stats-grid">
+        <article class="stats-kpi stats-kpi-total">
+          <p>Reports Submitted</p>
+          <strong id="statsTotalReports">--</strong>
+        </article>
+        <article class="stats-kpi">
+          <p>Pending Reports</p>
+          <strong id="statsPending">--</strong>
+        </article>
+        <article class="stats-kpi">
+          <p>Reports In Progress</p>
+          <strong id="statsInProgress">--</strong>
+        </article>
+        <article class="stats-kpi">
+          <p>Issues Repaired</p>
+          <strong id="statsRepaired">--</strong>
+        </article>
+      </div>
+
+      <div class="home-fixed-list-wrap">
+        <h4>Recently Fixed Roads</h4>
+        <ul id="recentlyFixedRoads" class="home-fixed-list">
+          <li>No repaired reports yet.</li>
+        </ul>
+      </div>
+
+      <p id="statsFeedback" class="stats-feedback">Loading statistics…</p>
+    </section>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-stack">
+    <div class="section-heading-block">
+      <p class="journey-eyebrow">Know the Platform</p>
+      <h2>About RoadWatch PH</h2>
+      <p>Understand the mission, the people behind the project, and how the platform builds safer roads through citizen-government collaboration.</p>
+    </div>
+
+    <div class="card about-card">
+      <h2>About RoadWatch PH</h2>
+      <p>RoadWatch PH is a national road reporting system designed to make it easier for citizens to report road-related issues in their communities. Through a mobile-friendly website and QR codes placed in public areas, residents can quickly submit reports by uploading photos, indicating the exact location, and providing a brief description of the problem.</p>
+      <p>Each report generates a unique tracking number sent to the user’s email, allowing citizens to monitor the status of their report—from pending to repaired—through real-time updates on the website. This tracking system ensures transparency and keeps citizens informed about the progress of road maintenance.</p>
+      <p>By connecting citizens with responsible authorities such as Barangay Officials, Local Government Units (LGUs), and the Department of Public Works and Highways, RoadWatch PH promotes faster response, improved coordination, and more efficient road management across the country.</p>
+    </div>
+
+    <div class="card team-card">
+      <h2>RoadWatch PH Team</h2>
+      <p class="team-subcopy">Structured following a project-office model with clear leadership and functional team ownership.</p>
+
+      <div class="team-hierarchy team-org-chart">
+        <article class="role-level role-head role-director">
+          <h3>Project Manager</h3>
+          <div class="member-profile">
+            <img src="assets/team/kristine-jewel-edan.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Kristine+Jewel+Edan&background=0D8ABC&color=fff&size=256';" alt="Kristine Jewel Edan profile photo">
+            <div>
+              <strong>Edan, Kristine Jewel</strong>
+              <p>Project Manager</p>
+            </div>
+          </div>
+        </article>
+
+        <div class="role-grid role-grid-two">
+          <article class="role-level">
+            <h4>Business Planning</h4>
+            <div class="member-profile">
+              <img src="assets/team/jhon-lenard-dimaano.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Jhon+Lenard+Dimaano&background=1A4C88&color=fff&size=256';" alt="Jhon Lenard Dimaano profile photo">
+              <div>
+                <strong>Dimaano, Jhon Lenard</strong>
+                <p>Business Planning</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="role-level">
+            <h4>Sales/Marketing</h4>
+            <div class="member-profile">
+              <img src="assets/team/mark-joven-arellano.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Mark+Joven+Arellano&background=5B4B8A&color=fff&size=256';" alt="Mark Joven Arellano profile photo">
+              <div>
+                <strong>Arellano, Mark Joven</strong>
+                <p>Sales/Marketing</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="role-grid role-grid-three">
+          <article class="role-level">
+            <h4>Designer</h4>
+            <div class="member-profile">
+              <img src="assets/team/john-cloyd-jimenez.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=John+Cloyd+Jimenez&background=A94A4A&color=fff&size=256';" alt="John Cloyd Jimenez profile photo">
+              <div>
+                <strong>Jimenez, John Cloyd</strong>
+                <p>Designer</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="role-level">
+            <h4>Engineer</h4>
+            <div class="member-profile">
+              <img src="assets/team/ericka-gonzales.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Ericka+Gonzales&background=276749&color=fff&size=256';" alt="Ericka Gonzales profile photo">
+              <div>
+                <strong>Gonzales, Ericka</strong>
+                <p>Engineer</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="role-level">
+            <h4>Engineer</h4>
+            <div class="member-profile">
+              <img src="assets/team/kyle-maurry-knett-simara.jpg" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Kyle+Maurry+Knett+Simara&background=22577A&color=fff&size=256';" alt="Kyle Maurry Knett Simara profile photo">
+              <div>
+                <strong>Simara, Kyle Maurry Knett</strong>
+                <p>Engineer</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="card faq-card">
+      <h2>Frequently Asked Questions (FAQ)</h2>
+      <div class="faq-list">
+      <details>
+        <summary>Who can report road issues?</summary>
+        <p>Any citizen who notices unsafe road conditions.</p>
+      </details>
+      <details>
+        <summary>Do I need an account to report?</summary>
+        <p>No account is required.</p>
+      </details>
+      <details>
+        <summary>What road problems can be reported?</summary>
+        <p>Potholes, flooding, cracked pavements, missing manhole covers, and other hazards.</p>
+      </details>
+      <details>
+        <summary>How long does the repair take?</summary>
+        <p>Repair time depends on the severity of the issue.</p>
+      </details>
+      <details>
+        <summary>Can I report anonymously?</summary>
+        <p>Yes, you can submit a report without revealing your identity.</p>
+      </details>
+      <details>
+        <summary>How do I track my report?</summary>
+        <p>Each report generates a unique tracking number that you can use to monitor its status online.</p>
+      </details>
+      <details>
+        <summary>Will I be notified when the issue is fixed?</summary>
+        <p>Yes, the system updates the status of your report, and you'll receive a notification once it is resolved.</p>
+      </details>
+      <details>
+        <summary>What if the road problem is urgent?</summary>
+        <p>For urgent issues that could cause accidents, report them immediately to the emergency contacts, and include clear details and photos.</p>
+      </details>
+      <details>
+        <summary>Can businesses or organizations report issues?</summary>
+        <p>Yes, both individuals and organizations can report road hazards.</p>
+      </details>
+      <details>
+        <summary>Are all reports automatically sent to the authorities?</summary>
+        <p>Yes, once submitted, reports are forwarded to the appropriate local government unit or agency responsible for road maintenance.</p>
+      </details>
+      <details>
+        <summary>What if the road issue is already being repaired?</summary>
+        <p>You can still report it; your report helps track ongoing repairs and ensures proper completion.</p>
+      </details>
+      <details>
+        <summary>Can I report multiple issues at once?</summary>
+        <p>Yes, you can submit separate reports for each road problem for better tracking.</p>
+      </details>
+      <details>
+        <summary>Is there a cost to report a road issue?</summary>
+        <p>No, reporting is completely free.</p>
+      </details>
+      <details>
+        <summary>What information should I include in my report?</summary>
+        <p>Include clear photos, nearby landmarks, accurate location, and a short description of the problem.</p>
+      </details>
+      <details>
+        <summary>Who is responsible for fixing the road?</summary>
+        <p>The local government unit or the agency in charge of road maintenance handles repairs.</p>
+      </details>
+      <details>
+        <summary>Can I suggest a repair priority?</summary>
+        <p>You can mention the urgency, but final decisions are made by the responsible authority.</p>
+      </details>
+      <details>
+        <summary>What if the reported issue is outside my area?</summary>
+        <p>Reports are forwarded to the proper local authority, even if it's outside your barangay or city.</p>
+      </details>
+      <details>
+        <summary>Can I report road hazards caused by private construction?</summary>
+        <p>Yes, you can report hazards from construction sites that affect public roads.</p>
+      </details>
+      <details>
+        <summary>Is RoadWatch PH available nationwide?</summary>
+        <p>Yes, the platform is designed for citizens across the Philippines.</p>
+      </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-stack">
+    <div class="section-heading-block">
+      <p class="journey-eyebrow">Reach Our Team</p>
+      <h2>RoadWatch PH Contacts</h2>
+      <p>Use the following channels for report assistance, follow-ups, and emergency road hazard escalation.</p>
+    </div>
+
+    <div class="card contact-card">
+      <h2>Contact RoadWatch PH</h2>
+      <p>Need help with your report, tracking number, or urgent road safety concerns? Reach out through the channels below.</p>
+
+      <div class="contact-grid">
+        <article>
+          <h3>General Support</h3>
+          <p><strong>Email:</strong> support@roadwatchph.gov.ph</p>
+          <p><strong>Hotline:</strong> (02) 8888 7234</p>
+          <p><strong>Mobile:</strong> +63 917 800 4721</p>
+          <p><strong>Office Hours:</strong> Monday to Friday, 8:00 AM – 5:00 PM</p>
+        </article>
+
+        <article>
+          <h3>Emergency Road Hazards</h3>
+          <p>For urgent accidents, major flooding, or dangerous obstructions, contact your local emergency responders first:</p>
+          <ul>
+            <li>911 National Emergency Hotline</li>
+            <li>MMDA Hotline: 136</li>
+            <li>DPWH Action Center: (02) 5304 3000</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POPUP -->
+<div id="popup">
+  <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="submissionSuccessTitle">
+    <div class="popup-icon" aria-hidden="true">✓</div>
+    <h3 id="submissionSuccessTitle">Report Submitted Successfully!</h3>
+    <p class="popup-subtitle">Your report has been received and forwarded to the monitoring queue.</p>
+    <p id="submissionTimeInfo" class="popup-meta"></p>
+    <div class="tracking-wrap">
+      <p class="tracking-label">Reference Number</p>
+      <p id="trackInfo" class="track-info"></p>
+      <button id="copyTrackingBtn" type="button" class="copy-btn" onclick="copyTrackingNumber()">Copy Reference #</button>
+    </div>
+    <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
+    <div class="popup-actions">
+      <button class="submit popup-action" onclick="closePopup()">Done</button>
+      <button class="submit popup-action ghost" onclick="newReport()">Submit Another</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
