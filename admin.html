@@ -131,8 +131,13 @@
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
+        <nav class="dashboard-nav management-nav" aria-label="Report management panels">
+          <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
+          <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
+          <button id="showActionsPaneBtn" type="button" class="secondary nav-btn">Action Drawer</button>
+        </nav>
         <section class="command-center">
-          <aside class="command-pane command-pane--triage analytics-panel">
+          <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
             <div class="row">
               <h3>Unified Triage Inbox</h3>
               <button id="refreshReportsBtn" type="button" class="secondary slim">Refresh</button>
@@ -178,7 +183,7 @@
             </div>
           </aside>
 
-          <section class="command-pane command-pane--workspace analytics-panel">
+          <section id="workspacePane" class="command-pane command-pane--workspace analytics-panel">
             <div class="row">
               <h3>Report Workspace</h3>
               <p id="bulkSummary" class="small">No reports selected.</p>
@@ -265,7 +270,7 @@
             <p id="reportsFeedback" class="feedback"></p>
           </section>
 
-          <aside class="command-pane command-pane--actions analytics-panel">
+          <aside id="actionsPane" class="command-pane command-pane--actions analytics-panel" hidden>
             <h3>Action Drawer</h3>
             <p class="small">Apply actions to selected reports from this panel.</p>
             <div class="toolbar stack-toolbar">

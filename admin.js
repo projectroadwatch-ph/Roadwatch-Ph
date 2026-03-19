@@ -42,6 +42,12 @@ const overviewView = document.getElementById("overviewView");
 const managementView = document.getElementById("managementView");
 const showOverviewBtn = document.getElementById("showOverviewBtn");
 const showManagementBtn = document.getElementById("showManagementBtn");
+const triagePane = document.getElementById("triagePane");
+const workspacePane = document.getElementById("workspacePane");
+const actionsPane = document.getElementById("actionsPane");
+const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
+const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
+const showActionsPaneBtn = document.getElementById("showActionsPaneBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
@@ -457,6 +463,22 @@ function setDashboardView(view) {
 
   showOverviewBtn?.classList.toggle("is-active", showOverview);
   showManagementBtn?.classList.toggle("is-active", !showOverview);
+
+  if (!showOverview) {
+    setManagementPane("workspace");
+  }
+}
+
+function setManagementPane(pane) {
+  const activePane = pane === "triage" || pane === "actions" ? pane : "workspace";
+
+  if (triagePane) triagePane.hidden = activePane !== "triage";
+  if (workspacePane) workspacePane.hidden = activePane !== "workspace";
+  if (actionsPane) actionsPane.hidden = activePane !== "actions";
+
+  showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
+  showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
+  showActionsPaneBtn?.classList.toggle("is-active", activePane === "actions");
 }
 
 function applyAuthUI() {
@@ -1741,6 +1763,9 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
+showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
+showActionsPaneBtn?.addEventListener("click", () => setManagementPane("actions"));
 
 selectAllReports?.addEventListener("change", () => {
   const filtered = getFilteredReports();
