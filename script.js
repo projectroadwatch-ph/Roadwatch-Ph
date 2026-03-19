@@ -1433,6 +1433,28 @@ function syncHomeReportViews(options = {}) {
   refreshVisibleTrackingResult();
 }
 
+function wireHomepageQuickActions() {
+  const reportBtn = document.getElementById("heroReportCta");
+  const trackBtn = document.getElementById("heroTrackCta");
+  const trackingInput = document.getElementById("trackingSearchInput");
+
+  reportBtn?.addEventListener("click", () => {
+    showPage("submit");
+    setTimeout(() => {
+      const firstSubmitField = document.querySelector("#submit #lastname, #submit input, #submit textarea, #submit select");
+      firstSubmitField?.focus({ preventScroll: true });
+    }, 220);
+  });
+
+  trackBtn?.addEventListener("click", () => {
+    showPage("home");
+    setTimeout(() => {
+      trackingInput?.focus({ preventScroll: true });
+      trackingInput?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 220);
+  });
+}
+
 async function handleTrackingSearch(event) {
   event.preventDefault();
 
@@ -1501,6 +1523,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialPage = resolveInitialPage();
   showPage(initialPage);
   setHomepageQrCode();
+  wireHomepageQuickActions();
   syncHomeReportViews();
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");

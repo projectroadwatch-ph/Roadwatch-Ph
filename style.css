@@ -398,6 +398,43 @@ section.active {
   animation: pulse 1.8s infinite;
 }
 
+.hero-cta-row {
+  margin: 18px auto 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-primary-cta,
+.hero-secondary-cta {
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-primary-cta {
+  border: 1px solid rgba(140, 215, 255, 0.65);
+  background: linear-gradient(145deg, #3cb6ff, #268de8);
+  color: #eff8ff;
+  box-shadow: 0 10px 24px rgba(16, 123, 201, 0.36);
+}
+
+.hero-secondary-cta {
+  border: 1px solid rgba(155, 210, 255, 0.38);
+  background: rgba(7, 33, 58, 0.82);
+  color: #d8efff;
+}
+
+.hero-primary-cta:hover,
+.hero-secondary-cta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(127, 255, 212, 0.65); }
   100% { box-shadow: 0 0 0 13px rgba(127, 255, 212, 0); }
@@ -420,6 +457,45 @@ section.active {
   line-height: 1.75;
   font-size: clamp(1rem, 1.9vw, 1.12rem);
   text-wrap: pretty;
+}
+
+.hero-quick-start {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quick-step-card {
+  text-align: left;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(155, 206, 255, 0.2);
+  background: rgba(10, 35, 58, 0.55);
+}
+
+.quick-step-card p {
+  margin: 0 0 6px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(78, 160, 255, 0.24);
+  border: 1px solid rgba(145, 205, 255, 0.35);
+  color: #dff1ff;
+  font-weight: 700;
+}
+
+.quick-step-card strong {
+  display: block;
+  color: #e9f4ff;
+  margin-bottom: 4px;
+}
+
+.quick-step-card small {
+  color: #b6cde8;
+  line-height: 1.45;
 }
 
 .hero-qr-wrap {
@@ -2107,6 +2183,10 @@ textarea {
   .hero-card,
   .card {
     padding: 20px;
+  }
+
+  .hero-quick-start {
+    grid-template-columns: 1fr;
   }
 
   section {
