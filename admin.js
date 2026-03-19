@@ -5,6 +5,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz5Z666xxZThJsMGwPCDNg8
 const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
+const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
+const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -20,12 +22,16 @@ const urgencyThresholdDays = document.getElementById("urgencyThresholdDays");
 const priorityQueueList = document.getElementById("priorityQueueList");
 const verificationQueueList = document.getElementById("verificationQueueList");
 const verificationFilter = document.getElementById("verificationFilter");
+const slaQueueList = document.getElementById("slaQueueList");
+const slaFilter = document.getElementById("slaFilter");
 const selectAllReports = document.getElementById("selectAllReports");
 const bulkStatusSelect = document.getElementById("bulkStatusSelect");
+const bulkAssigneeSelect = document.getElementById("bulkAssigneeSelect");
 const bulkSummary = document.getElementById("bulkSummary");
 const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
+const auditTrailList = document.getElementById("auditTrailList");
 const overviewView = document.getElementById("overviewView");
 const managementView = document.getElementById("managementView");
 const showOverviewBtn = document.getElementById("showOverviewBtn");
@@ -259,6 +265,86 @@ function markReportDeleted(tracking) {
   saveDeletedReports(list);
 }
 
+function getCaseMetaStore() {
+  try {
+    const raw = localStorage.getItem(ADMIN_CASE_META_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCaseMetaStore(data) {
+  localStorage.setItem(ADMIN_CASE_META_KEY, JSON.stringify(data || {}));
+}
+
+function deriveSlaHours(report) {
+  const issue = String(report?.issue || "").toLowerCase();
+  const issueType = String(report?.issueType || "").toLowerCase();
+  const category = String(report?.issueCategory || "").toLowerCase();
+  const keywords = `${issue} ${issueType} ${category}`;
+
+  if (keywords.includes("flood")) return 24;
+  if (keywords.includes("construction")) return 48;
+  if (keywords.includes("pothole")) return 72;
+  if (keywords.includes("lane")) return 96;
+  return 120;
+}
+
+function defaultSlaDueIso(report) {
+  const reported = parseReportDate(report);
+  if (!reported) return "";
+  return new Date(reported.getTime() + (deriveSlaHours(report) * 60 * 60 * 1000)).toISOString();
+}
+
+function getCaseMeta(report) {
+  const tracking = String(report?.tracking || "").trim();
+  if (!tracking) return { assignedTo: "Unassigned", dueAt: defaultSlaDueIso(report) };
+
+  const store = getCaseMetaStore();
+  const saved = store[tracking] || {};
+  return {
+    assignedTo: saved.assignedTo || "Unassigned",
+    dueAt: saved.dueAt || defaultSlaDueIso(report)
+  };
+}
+
+function updateCaseMeta(tracking, patch = {}) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+  const store = getCaseMetaStore();
+  const current = store[key] || {};
+  store[key] = { ...current, ...patch };
+  saveCaseMetaStore(store);
+}
+
+function getAuditTrail() {
+  try {
+    const raw = localStorage.getItem(ADMIN_AUDIT_TRAIL_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAuditTrail(entries) {
+  localStorage.setItem(ADMIN_AUDIT_TRAIL_KEY, JSON.stringify((entries || []).slice(0, 100)));
+}
+
+function addAuditEntry(action, tracking, details = "") {
+  const next = [{
+    action,
+    tracking: String(tracking || "").trim() || "N/A",
+    details: String(details || "").trim(),
+    createdAt: new Date().toISOString()
+  }, ...getAuditTrail()];
+  saveAuditTrail(next);
+}
+
 function shouldHideReport(tracking) {
   const key = String(tracking || "").trim().toLowerCase();
   if (!key) return false;
@@ -295,6 +381,15 @@ function applyLocalStatusOverrides(report) {
   if (!match) return report;
 
   return { ...report, status: normalizeStatus(overrides[match]) };
+}
+
+function applyCaseMetadata(report) {
+  const meta = getCaseMeta(report);
+  return {
+    ...report,
+    assignedTo: meta.assignedTo || "Unassigned",
+    dueAt: meta.dueAt || ""
+  };
 }
 
 function setDashboardView(view) {
@@ -588,6 +683,7 @@ async function deleteReport(tracking) {
 
   markReportDeleted(trackingValue);
   clearStatusOverride(trackingValue);
+  updateCaseMeta(trackingValue, { assignedTo: "Unassigned", dueAt: "" });
   return { success: true };
 }
 
@@ -617,6 +713,7 @@ function statusSelect(current, tracking) {
       const report = allReports.find((item) => String(item.tracking) === String(tracking));
       if (report) report.status = nextStatus;
 
+      addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
       setFeedback("reportsFeedback", `Updated ${tracking} to ${nextStatus}.`);
       applyFiltersAndRender();
     } catch (error) {
@@ -671,6 +768,29 @@ function parseReportDate(report) {
   const parsed = new Date(raw);
   if (Number.isNaN(parsed.getTime())) return null;
   return parsed;
+}
+
+function formatDueAt(dueAtIso) {
+  const parsed = new Date(String(dueAtIso || "").trim());
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return parsed.toLocaleString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function getEscalationState(report) {
+  if (normalizeStatus(report?.status) === "Repaired") return "Resolved";
+  const dueAt = new Date(String(report?.dueAt || "").trim());
+  if (Number.isNaN(dueAt.getTime())) return "On Track";
+
+  const remainingMs = dueAt.getTime() - Date.now();
+  if (remainingMs < 0) return "Overdue";
+  if (remainingMs <= 24 * 60 * 60 * 1000) return "At Risk";
+  return "On Track";
 }
 
 function getUrgencyThresholdDays() {
@@ -767,6 +887,75 @@ function renderVerificationQueue(reports) {
   });
 }
 
+function renderSlaQueue(reports) {
+  if (!slaQueueList) return;
+
+  const filterValue = slaFilter?.value || "all";
+  const queue = reports
+    .filter((report) => normalizeStatus(report.status) !== "Repaired")
+    .map((report) => ({
+      report,
+      escalationState: getEscalationState(report)
+    }))
+    .filter(({ escalationState }) => {
+      if (filterValue === "overdue") return escalationState === "Overdue";
+      if (filterValue === "atRisk") return escalationState === "At Risk";
+      return true;
+    })
+    .sort((a, b) => {
+      const weight = (state) => (state === "Overdue" ? 0 : state === "At Risk" ? 1 : 2);
+      return weight(a.escalationState) - weight(b.escalationState);
+    })
+    .slice(0, 8);
+
+  if (queue.length === 0) {
+    slaQueueList.innerHTML = '<li class="priorityItem empty">No unresolved reports match the SLA filter.</li>';
+    return;
+  }
+
+  slaQueueList.innerHTML = "";
+  queue.forEach(({ report, escalationState }) => {
+    const item = document.createElement("li");
+    item.className = `priorityItem ${escalationState === "Overdue" ? "is-flagged" : ""}`;
+    item.innerHTML = `
+      <div>
+        <strong>${report.tracking || "No Tracking #"}</strong>
+        <p>${report.location || "Location unavailable"}</p>
+      </div>
+      <div class="priorityMeta">
+        <span>${escalationState}</span>
+        <span>Due: ${formatDueAt(report.dueAt)}</span>
+      </div>
+    `;
+    slaQueueList.appendChild(item);
+  });
+}
+
+function renderAuditTrail() {
+  if (!auditTrailList) return;
+  const entries = getAuditTrail().slice(0, 8);
+  if (entries.length === 0) {
+    auditTrailList.innerHTML = '<li class="priorityItem empty">No audit entries yet.</li>';
+    return;
+  }
+
+  auditTrailList.innerHTML = "";
+  entries.forEach((entry) => {
+    const item = document.createElement("li");
+    item.className = "priorityItem";
+    item.innerHTML = `
+      <div>
+        <strong>${entry.action || "Action"}</strong>
+        <p>${entry.tracking || "N/A"}${entry.details ? ` · ${entry.details}` : ""}</p>
+      </div>
+      <div class="priorityMeta">
+        <span>${formatDueAt(entry.createdAt)}</span>
+      </div>
+    `;
+    auditTrailList.appendChild(item);
+  });
+}
+
 function updateBulkSummary(totalVisible) {
   if (!bulkSummary) return;
   const selectedCount = selectedReports.size;
@@ -794,13 +983,17 @@ async function bulkUpdateStatus(reports, status) {
     if (!report?.tracking) continue;
     await updateReportStatus(report.tracking, status);
     report.status = status;
+    addAuditEntry("Bulk Status Update", report.tracking, `Set to ${status}`);
   }
 }
 
 function markReportsFlagged(reports) {
   reports.forEach((report) => {
     const tracking = String(report?.tracking || "").trim();
-    if (tracking) flaggedReports.add(tracking);
+    if (tracking) {
+      flaggedReports.add(tracking);
+      addAuditEntry("Report Flagged", tracking, "Flagged for moderation review");
+    }
   });
 }
 
@@ -808,7 +1001,18 @@ async function bulkDeleteReports(reports) {
   for (const report of reports) {
     if (!report?.tracking) continue;
     await deleteReport(report.tracking);
+    addAuditEntry("Bulk Delete", report.tracking, "Deleted via bulk action");
   }
+}
+
+function bulkAssignReports(reports, assignee) {
+  reports.forEach((report) => {
+    const tracking = String(report?.tracking || "").trim();
+    if (!tracking) return;
+    updateCaseMeta(tracking, { assignedTo: assignee || "Unassigned" });
+    report.assignedTo = assignee || "Unassigned";
+    addAuditEntry("Assignment Updated", tracking, `Assigned to ${assignee || "Unassigned"}`);
+  });
 }
 
 function bucketLabelForDate(date, range) {
@@ -1165,7 +1369,7 @@ function renderPagination(totalItems) {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="12">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="15">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -1179,6 +1383,7 @@ function renderRows(reports) {
     const verificationState = getVerificationState(report);
     const qualityScore = getDataQualityScore(report);
     const qualityBand = getQualityBand(qualityScore);
+    const escalationState = getEscalationState(report);
 
     tr.innerHTML = `
       <td></td>
@@ -1190,6 +1395,9 @@ function renderRows(reports) {
       <td>${report.issueType || report.issue || "-"}</td>
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
+      <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
+      <td>${formatDueAt(report.dueAt)}</td>
+      <td><span class="verification-badge ${escalationState === "Overdue" ? "is-flagged" : escalationState === "At Risk" ? "is-pending" : "is-verified"}">${escalationState}</span></td>
       <td></td>
       <td></td>
       <td></td>
@@ -1213,13 +1421,13 @@ function renderRows(reports) {
 
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[9].textContent = photoElement;
+      tr.children[12].textContent = photoElement;
     } else {
-      tr.children[9].appendChild(photoElement);
+      tr.children[12].appendChild(photoElement);
     }
 
-    tr.children[10].classList.add("status-cell");
-    tr.children[10].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[13].classList.add("status-cell");
+    tr.children[13].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -1236,6 +1444,7 @@ function renderRows(reports) {
         const trackingValue = String(report.tracking || "").trim();
         selectedReports.delete(trackingValue);
         flaggedReports.delete(trackingValue);
+        addAuditEntry("Report Deleted", report.tracking, "Deleted from management table");
         setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
         applyFiltersAndRender();
       } catch (error) {
@@ -1244,8 +1453,8 @@ function renderRows(reports) {
         deleteBtn.disabled = false;
       }
     });
-    tr.children[11].classList.add("action-cell");
-    tr.children[11].appendChild(deleteBtn);
+    tr.children[14].classList.add("action-cell");
+    tr.children[14].appendChild(deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -1259,6 +1468,8 @@ function applyFiltersAndRender() {
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
   renderVerificationQueue(allReports);
+  renderSlaQueue(allReports);
+  renderAuditTrail();
   refreshReportingSection(allReports);
   updateSelectAllState(filtered);
   const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
@@ -1268,7 +1479,7 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="12">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="15">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
 
   try {
@@ -1281,12 +1492,15 @@ async function loadReports() {
       parseReports(payload)
       .map(normalizeReport)
       .map(applyLocalStatusOverrides)
+      .map(applyCaseMetadata)
       .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="12">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="15">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
+      renderSlaQueue([]);
+      renderAuditTrail();
       refreshReportingSection([]);
       filterSummary.textContent = "No records to filter.";
       setTableLoadingState(false);
@@ -1296,9 +1510,11 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="12">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="15">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
+    renderSlaQueue([]);
+    renderAuditTrail();
     refreshReportingSection([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
@@ -1349,6 +1565,7 @@ urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allRe
 window.addEventListener("resize", () => renderAnalytics(allReports));
 
 verificationFilter?.addEventListener("change", () => renderVerificationQueue(allReports));
+slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
@@ -1427,6 +1644,30 @@ document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => 
   } finally {
     setTableLoadingState(false);
   }
+});
+
+document.getElementById("bulkAssignBtn")?.addEventListener("click", () => {
+  const assignee = bulkAssigneeSelect?.value || "";
+  if (!assignee) {
+    setFeedback("reportsFeedback", "Choose an assignee before applying bulk assignment.", true);
+    return;
+  }
+
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report to assign.", true);
+    return;
+  }
+
+  bulkAssignReports(selected, assignee);
+  setFeedback("reportsFeedback", `Assigned ${selected.length} report(s) to ${assignee}.`);
+  applyFiltersAndRender();
+});
+
+document.getElementById("clearAuditTrailBtn")?.addEventListener("click", () => {
+  saveAuditTrail([]);
+  setFeedback("reportsFeedback", "Cleared local audit trail entries.");
+  renderAuditTrail();
 });
 
 
