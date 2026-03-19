@@ -988,12 +988,38 @@ section.active {
 }
 
 .submit-form-card {
-  border: 1px solid rgba(9, 53, 104, 0.24);
-  background: linear-gradient(180deg, #f2f5fb, #e8eef9);
-  color: #102849;
-  padding: 14px;
+  border: 1px solid rgba(124, 199, 255, 0.32);
+  background: linear-gradient(180deg, rgba(7, 33, 58, 0.9), rgba(5, 24, 45, 0.94));
+  color: #eaf5ff;
+  padding: 18px;
   border-radius: 18px;
-  box-shadow: 0 16px 40px rgba(7, 34, 73, 0.2);
+  box-shadow: 0 18px 40px rgba(2, 18, 34, 0.45);
+}
+
+.submit-form-card h2 {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.submit-form-card h3 {
+  color: #dceeff;
+}
+
+.submit-form-card input,
+.submit-form-card textarea,
+.submit-form-card input[type="file"] {
+  border: 1px solid rgba(136, 202, 255, 0.36);
+  background: rgba(8, 37, 67, 0.9);
+  color: #e5f3ff;
+}
+
+.submit-form-card input::placeholder,
+.submit-form-card textarea::placeholder {
+  color: #8bb8df;
+}
+
+.submit-form-card #selectedLocation {
+  color: #c7e4ff;
 }
 
 .report-stats-card {
@@ -1529,7 +1555,7 @@ textarea {
 }
 
 .detectBtn {
-  background: linear-gradient(145deg, #1b63be, #0d4b97);
+  background: linear-gradient(145deg, #38a8ff, #1d86df);
   color: #ffffff;
   margin-top: 4px;
 }
@@ -1539,8 +1565,8 @@ textarea {
 }
 
 .submitBtn {
-  background: linear-gradient(145deg, #25b96f, #1b8f56);
-  color: #ffffff;
+  background: linear-gradient(145deg, #7ef0d1, #53ddc0);
+  color: #07344d;
   margin-top: 0;
 }
 
