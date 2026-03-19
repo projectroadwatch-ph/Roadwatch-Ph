@@ -113,6 +113,21 @@
         <ul id="verificationQueueList" class="priorityQueueList"></ul>
       </article>
 
+      <article class="panel analytics-panel">
+        <div class="row">
+          <h3>SLA & Escalation Queue</h3>
+          <label class="inlineControl compact">Show
+            <select id="slaFilter">
+              <option value="all">All unresolved</option>
+              <option value="atRisk">At risk</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </label>
+        </div>
+        <p class="small">Track unresolved reports approaching or breaching their SLA due date.</p>
+        <ul id="slaQueueList" class="priorityQueueList"></ul>
+      </article>
+
 
       <article class="panel chart-stretch">
         <div class="row">
@@ -175,6 +190,18 @@
           <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
           <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
         </div>
+        <div class="toolbar triage-toolbar">
+          <label class="inlineControl">Assign selected to
+            <select id="bulkAssigneeSelect">
+              <option value="">Choose assignee</option>
+              <option value="Unassigned">Unassigned</option>
+              <option value="Road Team A">Road Team A</option>
+              <option value="Road Team B">Road Team B</option>
+              <option value="Inspector Desk">Inspector Desk</option>
+            </select>
+          </label>
+          <button id="bulkAssignBtn" type="button" class="secondary slim">Apply assignment</button>
+        </div>
         <p id="bulkSummary" class="small">No reports selected.</p>
         <div class="toolbar">
           <label class="inlineControl">Search
@@ -236,6 +263,9 @@
                 <th>Issue Type</th>
                 <th>Data Quality</th>
                 <th>Verification</th>
+                <th>Assigned To</th>
+                <th>SLA Due</th>
+                <th>Escalation</th>
                 <th>Photo</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -252,6 +282,15 @@
           </div>
         </div>
         <p id="reportsFeedback" class="feedback"></p>
+      </article>
+
+      <article class="panel analytics-panel">
+        <div class="row">
+          <h3>Recent Audit Trail</h3>
+          <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
+        </div>
+        <p class="small">Shows the most recent admin actions captured in this browser session storage.</p>
+        <ul id="auditTrailList" class="priorityQueueList"></ul>
       </article>
       </section>
     </section>
