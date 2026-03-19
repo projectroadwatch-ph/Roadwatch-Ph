@@ -1554,8 +1554,22 @@ document.addEventListener("DOMContentLoaded", () => {
         preview.style.display = "block";
       };
       reader.readAsDataURL(file);
+  });
+}
+
+function setupUrgencyTagIntegration() {
+  const urgencyTags = document.querySelectorAll(".urgency-tag");
+  const urgencyInput = document.getElementById("urgencyLevel");
+  if (!urgencyTags.length || !urgencyInput) return;
+
+  urgencyTags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      urgencyTags.forEach((button) => button.classList.remove("active"));
+      tag.classList.add("active");
+      urgencyInput.value = tag.dataset.urgency || "Medium";
     });
-  }
+  });
+}
 
   const trackSearchForm = document.getElementById("trackSearchForm");
   if (trackSearchForm) {
@@ -1564,6 +1578,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   attachLocationAutocomplete();
   setupSubmitCategoryIntegration();
+  setupUrgencyTagIntegration();
 
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
@@ -1649,6 +1664,8 @@ async function submitReport() {
     issue: document.getElementById("issue").value,
     issueCategory: document.getElementById("issueCategory")?.value || "Road Surface",
     issueType: document.getElementById("issueType")?.value || "",
+    incidentDatetime: document.getElementById("incidentDatetime")?.value || "",
+    urgencyLevel: document.getElementById("urgencyLevel")?.value || "Medium",
     lat: lat || "",
     lng: lng || "",
     photo: photoData
@@ -1824,6 +1841,11 @@ function resetForm() {
   lng = 0;
   if (marker) map.removeLayer(marker);
   document.getElementById("photoPreview").style.display = "none";
+  const urgencyInput = document.getElementById("urgencyLevel");
+  if (urgencyInput) urgencyInput.value = "Medium";
+  document.querySelectorAll(".urgency-tag").forEach((tag) => {
+    tag.classList.toggle("active", (tag.dataset.urgency || "").toLowerCase() === "medium");
+  });
 }
 
 function hasValidCoordinates(report) {

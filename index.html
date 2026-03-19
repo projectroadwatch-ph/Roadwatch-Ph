@@ -256,17 +256,23 @@
       <p class="report-focus-note">Every report helps agencies prioritize road repairs and improve safety for all road users.</p>
     </section>
 
-    <div class="card submit-form-card neon-submit-card">
+    <div class="card submit-form-card modern-submit-layout">
       <div class="submit-hero-banner">
-        <p class="submit-kicker">Submit a Road Report</p>
-        <h2>Help improve road safety in your community</h2>
+        <p class="submit-kicker">RoadWatch PH</p>
+        <h2>Submit a Road Report</h2>
+        <p>Help improve road safety in your community.</p>
       </div>
 
-      <div class="report-category-tabs" role="tablist" aria-label="Report category">
-        <button type="button" class="category-pill active" data-category="Road Surface">🛣️ Road Surface</button>
-        <button type="button" class="category-pill" data-category="Flooding/Drainage">🌧️ Flooding/Drainage</button>
-        <button type="button" class="category-pill" data-category="Street Infra">🏙️ Street Infra</button>
-      </div>
+      <section class="glass-panel">
+        <h3>Report Category</h3>
+        <input id="issueCategory" type="hidden" value="Road Surface">
+        <div class="report-category-tabs modern-tag-group" role="tablist" aria-label="Report category">
+          <button type="button" class="category-pill modern-tag active" data-category="Road Surface">Road Surface</button>
+          <button type="button" class="category-pill modern-tag" data-category="Flooding/Drainage">Flooding</button>
+          <button type="button" class="category-pill modern-tag" data-category="Road Safety">Road Safety</button>
+          <button type="button" class="category-pill modern-tag" data-category="Street Infra">Street Infra</button>
+        </div>
+      </section>
 
       <div class="submit-grid-two">
         <section class="glass-panel">
@@ -274,73 +280,70 @@
           <div class="row three-col">
             <input id="lastname" placeholder="Last Name *">
             <input id="firstname" placeholder="First Name *">
-            <input id="mi" placeholder="Middle Initial *">
+            <input id="mi" placeholder="M.I.">
           </div>
-
           <div class="row two-col">
             <input id="email" placeholder="Email Address *">
-            <input id="phone" placeholder="Mobile Number *">
-          </div>
-
-          <div class="row two-col">
-            <input placeholder="Province *">
-            <input placeholder="City / Municipality *">
-          </div>
-
-          <div class="row two-col">
-            <input placeholder="Barangay *">
-            <input placeholder="Street / House No. *">
+            <input id="phone" placeholder="Mobile Number">
           </div>
         </section>
 
         <section class="glass-panel">
           <h3>Road Information</h3>
           <div class="row two-col">
-            <input placeholder="Region *">
-            <input placeholder="Province *">
+            <input placeholder="Region">
+            <input placeholder="City / Municipality">
           </div>
           <div class="row two-col">
-            <input placeholder="City / Municipality *">
-            <input placeholder="Barangay *">
+            <input placeholder="Barangay">
+            <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Landmark *">
           </div>
-
-          <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Road Name *">
           <datalist id="locationSuggestions"></datalist>
-          <input placeholder="Nearest Landmark" class="mb-sm">
-          <button type="button" class="detectBtn" onclick="detectLocation()">📍 Auto Detect Location</button>
         </section>
       </div>
 
       <div class="submit-grid-two map-section">
         <section class="glass-panel road-issue-panel">
-          <h3>Road Issue</h3>
-          <input id="issueCategory" type="hidden" value="Road Surface">
-          <input id="issueType" type="hidden" value="🕳️ Pothole">
-          <div class="issue-chip-row">
-            <button type="button" class="issue-chip active">🕳️ Pothole</button>
-            <button type="button" class="issue-chip">🧩 Crack</button>
-            <button type="button" class="issue-chip">🌊 Flooding</button>
-            <button type="button" class="issue-chip">🧱 Others</button>
+          <h3>Report Details</h3>
+          <input id="issueType" type="hidden" value="Pothole">
+          <div class="issue-chip-row modern-tag-group">
+            <button type="button" class="issue-chip modern-tag active">Pothole</button>
+            <button type="button" class="issue-chip modern-tag">Crack</button>
+            <button type="button" class="issue-chip modern-tag">Flooding</button>
+            <button type="button" class="issue-chip modern-tag">Missing Sign</button>
           </div>
 
-          <textarea id="issue" placeholder="Describe the road problem..."></textarea>
+          <textarea id="issue" placeholder="Describe the issue..."></textarea>
 
-          <div class="photo-actions">
-            <label for="photo" class="photo-btn">📷 Take Photo</label>
+          <div class="upload-box">
+            <label for="photo">Upload Photos</label>
             <input type="file" id="photo" accept="image/*">
           </div>
-          <img id="photoPreview">
+          <img id="photoPreview" alt="Selected upload preview">
         </section>
 
         <section class="glass-panel map-panel">
-          <h3>Select Location</h3>
+          <h3>Location on Map</h3>
+          <button type="button" class="detectBtn" onclick="detectLocation()">📍 Auto Detect Location</button>
           <div id="reportMap"></div>
           <p id="selectedLocation">No location selected</p>
         </section>
       </div>
 
+      <section class="glass-panel incident-panel">
+        <h3>Incident Details</h3>
+        <input id="incidentDatetime" type="datetime-local">
+        <p class="urgency-label">Urgency</p>
+        <input id="urgencyLevel" type="hidden" value="Medium">
+        <div class="modern-tag-group urgency-tags" role="listbox" aria-label="Urgency level">
+          <button type="button" class="urgency-tag modern-tag" data-urgency="Low">Low</button>
+          <button type="button" class="urgency-tag modern-tag active" data-urgency="Medium">Medium</button>
+          <button type="button" class="urgency-tag modern-tag" data-urgency="High">High</button>
+        </div>
+      </section>
+
       <div class="submit-footer-actions">
-        <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">🚀 Submit Report</button>
+        <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
       </div>
     </div>
   </div>

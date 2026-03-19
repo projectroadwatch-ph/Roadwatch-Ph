@@ -1332,21 +1332,22 @@ section.active {
 }
 
 
-.neon-submit-card {
+.modern-submit-layout {
   background:
-    radial-gradient(circle at 15% 15%, rgba(61, 133, 255, 0.26), transparent 44%),
-    radial-gradient(circle at 85% 8%, rgba(23, 173, 255, 0.18), transparent 40%),
-    linear-gradient(150deg, rgba(4, 24, 51, 0.96), rgba(2, 16, 36, 0.95));
-  border: 1px solid rgba(129, 198, 255, 0.4);
-  box-shadow: 0 20px 42px rgba(1, 9, 19, 0.55), inset 0 0 0 1px rgba(147, 218, 255, 0.08);
+    radial-gradient(circle at 10% 5%, rgba(54, 157, 255, 0.22), transparent 42%),
+    linear-gradient(140deg, rgba(4, 20, 41, 0.97), rgba(4, 18, 34, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
 }
 
 .submit-hero-banner {
-  padding: 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(124, 197, 255, 0.35);
-  background: linear-gradient(110deg, rgba(11, 58, 112, 0.62), rgba(10, 38, 72, 0.45));
-  margin-bottom: 16px;
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(rgba(3, 16, 33, 0.42), rgba(3, 16, 33, 0.42)),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70") center/cover;
+  margin-bottom: 20px;
 }
 
 .submit-kicker {
@@ -1359,29 +1360,49 @@ section.active {
 }
 
 .submit-hero-banner h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.3rem, 1.9vw, 1.9rem);
+}
+
+.submit-hero-banner p {
   margin: 0;
-  font-size: clamp(1.2rem, 1.6vw, 1.6rem);
+  color: #d6eaff;
 }
 
 .report-category-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin: 0 0 16px;
+  margin: 0;
+}
+
+.modern-tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.modern-tag {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ecf5ff;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modern-tag:hover,
+.modern-tag.active {
+  background: #ffd166;
+  color: #10233e;
+  border-color: #ffd166;
 }
 
 .category-pill {
-  border: 1px solid rgba(126, 193, 255, 0.45);
-  background: rgba(8, 38, 72, 0.8);
-  color: #d8ecff;
-  font-weight: 700;
-  border-radius: 12px;
-  padding: 10px;
-}
-
-.category-pill.active {
-  background: linear-gradient(135deg, rgba(25, 80, 151, 0.95), rgba(23, 113, 214, 0.7));
-  box-shadow: 0 6px 16px rgba(18, 90, 177, 0.35);
+  min-width: 134px;
 }
 
 .submit-grid-two {
@@ -1392,15 +1413,16 @@ section.active {
 }
 
 .glass-panel {
-  border: 1px solid rgba(121, 189, 255, 0.34);
-  border-radius: 14px;
-  padding: 14px;
-  background: linear-gradient(160deg, rgba(10, 44, 81, 0.68), rgba(5, 24, 47, 0.58));
-  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
 }
 
 .glass-panel h3 {
   margin-top: 0;
+  color: #ffd166;
 }
 
 .row.three-col input {
@@ -1425,43 +1447,26 @@ section.active {
 
 .issue-chip {
   appearance: none;
-  border: 1px solid rgba(119, 188, 255, 0.35);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  background: rgba(7, 40, 77, 0.66);
-  color: #cde8ff;
-  cursor: pointer;
 }
 
 .issue-chip.active {
-  background: rgba(29, 106, 192, 0.8);
-  border-color: rgba(160, 218, 255, 0.72);
+  background: #ffd166;
+  color: #10233e;
+  border-color: #ffd166;
 }
 
-.photo-actions {
-  margin-top: 10px;
+.upload-box {
+  margin-top: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.32);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
 }
 
-.photo-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(126, 201, 255, 0.42);
-  background: linear-gradient(135deg, rgba(21, 92, 168, 0.85), rgba(14, 72, 135, 0.8));
-  color: #edf7ff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-#photo {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+.upload-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .map-panel #selectedLocation {
@@ -1474,12 +1479,11 @@ section.active {
 }
 
 .submit-footer-actions {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 @media (max-width: 860px) {
   .submit-grid-two,
-  .report-category-tabs,
   .two-col {
     grid-template-columns: 1fr;
   }
@@ -1603,7 +1607,7 @@ textarea {
 }
 
 .detectBtn {
-  background: var(--accent-strong);
+  background: linear-gradient(45deg, #3270ff, #00a7cc);
   color: #ffffff;
 }
 
@@ -1612,8 +1616,8 @@ textarea {
 }
 
 .submitBtn {
-  background: var(--success);
-  color: #052747;
+  background: linear-gradient(45deg, #28c76f, #00cfe8);
+  color: #ffffff;
 }
 
 .submitBtn:hover {
@@ -1648,9 +1652,18 @@ textarea {
 
 
 #reportMap {
-  height: 320px;
+  height: 300px;
   margin-top: 10px;
   border-radius: 12px;
+}
+
+.incident-panel {
+  margin-top: 4px;
+}
+
+.urgency-label {
+  margin: 12px 0 8px;
+  font-weight: 600;
 }
 
 #photoPreview {
