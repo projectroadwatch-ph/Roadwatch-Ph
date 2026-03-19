@@ -857,9 +857,32 @@ async function autofillRoadLocationFromCoordinates(latitude, longitude) {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
     const data = await response.json();
     const road = data.address?.road || data.address?.neighbourhood || data.display_name;
+    const barangay = data.address?.suburb || data.address?.village || data.address?.quarter || "";
+    const cityMunicipality = data.address?.city || data.address?.municipality || data.address?.town || "";
+    const province = data.address?.state || data.address?.province || "";
+    const lgu = cityMunicipality
+      ? `${cityMunicipality} LGU`
+      : (province ? `${province} Provincial LGU` : "");
     const locationInput = document.getElementById("locationText");
+    const roadBarangayInput = document.getElementById("roadBarangay");
+    const roadCityInput = document.getElementById("roadCity");
+    const roadProvinceInput = document.getElementById("roadProvince");
+    const roadLguInput = document.getElementById("roadLgu");
+
     if (locationInput && road) {
       locationInput.value = road;
+    }
+    if (roadBarangayInput && barangay) {
+      roadBarangayInput.value = barangay;
+    }
+    if (roadCityInput && cityMunicipality) {
+      roadCityInput.value = cityMunicipality;
+    }
+    if (roadProvinceInput && province) {
+      roadProvinceInput.value = province;
+    }
+    if (roadLguInput && lgu) {
+      roadLguInput.value = lgu;
     }
   } catch (error) {
     console.log("Reverse geocoding failed", error);
@@ -927,11 +950,17 @@ function renderLocationSuggestions(results) {
 
   (Array.isArray(results) ? results : []).forEach((item) => {
     const option = document.createElement("option");
+    const barangay = item?.address?.suburb || item?.address?.village || item?.address?.quarter || "";
+    const cityMunicipality = item?.address?.city || item?.address?.municipality || item?.address?.town || "";
+    const province = item?.address?.state || item?.address?.province || "";
     const road = item?.address?.road || item?.name || item?.display_name || "";
     option.value = road;
     option.label = item?.display_name || road;
     option.dataset.lat = item?.lat || "";
     option.dataset.lon = item?.lon || "";
+    option.dataset.barangay = barangay;
+    option.dataset.city = cityMunicipality;
+    option.dataset.province = province;
     datalist.appendChild(option);
   });
 }
@@ -975,6 +1004,19 @@ function attachLocationAutocomplete() {
 
     lat = optionLat;
     lng = optionLng;
+    const roadBarangayInput = document.getElementById("roadBarangay");
+    const roadCityInput = document.getElementById("roadCity");
+    const roadProvinceInput = document.getElementById("roadProvince");
+    const roadLguInput = document.getElementById("roadLgu");
+    const city = selectedOption.dataset.city || "";
+    if (roadBarangayInput) roadBarangayInput.value = selectedOption.dataset.barangay || "";
+    if (roadCityInput) roadCityInput.value = city;
+    if (roadProvinceInput) roadProvinceInput.value = selectedOption.dataset.province || "";
+    if (roadLguInput) {
+      roadLguInput.value = city
+        ? `${city} LGU`
+        : ((selectedOption.dataset.province || "") ? `${selectedOption.dataset.province} Provincial LGU` : "");
+    }
 
     if (!map) {
       loadMap().then((loadedMap) => {
@@ -1582,7 +1624,14 @@ async function submitReport() {
     mi: document.getElementById("mi").value,
     email: reporterEmail,
     phone: document.getElementById("phone").value,
+    reporterBarangay: document.getElementById("reporterBarangay").value,
+    reporterCity: document.getElementById("reporterCity").value,
+    reporterNote: document.getElementById("reporterNote").value,
     location: document.getElementById("locationText").value,
+    roadBarangay: document.getElementById("roadBarangay").value,
+    roadCity: document.getElementById("roadCity").value,
+    roadProvince: document.getElementById("roadProvince").value,
+    roadLgu: document.getElementById("roadLgu").value,
     issue: document.getElementById("issue").value,
     lat: lat || "",
     lng: lng || "",

@@ -269,36 +269,54 @@
     <div class="card submit-form-card">
       <h2>Submit Road Issue</h2>
 
-      <h3>Reporter Information</h3>
-      <div class="row">
-        <input id="lastname" placeholder="Last Name">
-        <input id="firstname" placeholder="First Name">
-        <input id="mi" placeholder="M.I.">
-      </div>
+      <section class="form-group-card" aria-label="Reporter information">
+        <h3>Reporter Information</h3>
+        <div class="row">
+          <input id="lastname" placeholder="Last Name">
+          <input id="firstname" placeholder="First Name">
+          <input id="mi" placeholder="M.I.">
+        </div>
 
-      <div class="row">
-        <input id="email" placeholder="Email">
-        <input id="phone" placeholder="Mobile Number">
-      </div>
+        <div class="row">
+          <input id="email" placeholder="Email">
+          <input id="phone" placeholder="Mobile Number">
+        </div>
 
-      <h3>Road Location</h3>
-      <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
-      <datalist id="locationSuggestions"></datalist>
-      <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
+        <div class="row">
+          <input id="reporterBarangay" placeholder="Your Barangay (Optional)">
+          <input id="reporterCity" placeholder="Your City / Municipality (Optional)">
+        </div>
 
-      <h3>Select Location</h3>
-      <div id="reportMap"></div>
-      <p id="selectedLocation">No location selected</p>
+        <input id="reporterNote" placeholder="Additional Reporter Note (Optional)">
+      </section>
 
-      <h3>Road Issue</h3>
-      <textarea id="issue" placeholder="Describe the issue"></textarea>
+      <section class="form-group-card" aria-label="Road information">
+        <h3>Road Information</h3>
+        <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
+        <datalist id="locationSuggestions"></datalist>
+        <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
 
-      <h3>Upload Photo</h3>
-      <input type="file" id="photo">
-      <img id="photoPreview">
+        <div id="reportMap"></div>
+        <p id="selectedLocation">No location selected</p>
+
+        <div class="row">
+          <input id="roadBarangay" placeholder="Road Barangay">
+          <input id="roadCity" placeholder="Road City / Municipality">
+        </div>
+        <div class="row">
+          <input id="roadProvince" placeholder="Road Province">
+          <input id="roadLgu" placeholder="Responsible LGU">
+        </div>
+
+        <textarea id="issue" placeholder="Describe the issue"></textarea>
+
+        <h3>Upload Photo</h3>
+        <input type="file" id="photo">
+        <img id="photoPreview">
+      </section>
 
       <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
-      </div>
+    </div>
 
     <section class="card report-stats-card" aria-labelledby="reportStatsHeading">
       <div class="report-stats-head">
