@@ -845,7 +845,7 @@ async function loadMap() {
     lat = e.latlng.lat;
     lng = e.latlng.lng;
 
-    if (marker) map.removeLayer(marker);
+    if (marker && map) map.removeLayer(marker);
     marker = L.marker([lat, lng]).addTo(map);
 
     document.getElementById("selectedLocation").innerText =
@@ -914,7 +914,7 @@ async function detectLocation() {
 
     map.setView([lat, lng], 16);
 
-    if (marker) map.removeLayer(marker);
+    if (marker && map) map.removeLayer(marker);
     marker = L.marker([lat, lng]).addTo(map);
 
     document.getElementById("selectedLocation").innerText =
@@ -1017,7 +1017,7 @@ function attachLocationAutocomplete() {
     }
 
     map.setView([lat, lng], 16);
-    if (marker) map.removeLayer(marker);
+    if (marker && map) map.removeLayer(marker);
     marker = L.marker([lat, lng]).addTo(map);
     document.getElementById("selectedLocation").innerText =
       "Selected: " + lat.toFixed(5) + " , " + lng.toFixed(5);
@@ -1558,6 +1558,18 @@ document.addEventListener("DOMContentLoaded", () => {
   attachLocationAutocomplete();
   setCoordinateDisplay(null, null);
 
+  const submitRoadIssueForm = document.getElementById("submitRoadIssueForm");
+  if (submitRoadIssueForm) {
+    submitRoadIssueForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      submitReport();
+    });
+  }
+
+  document.querySelectorAll("#submit input, #submit textarea").forEach((field) => {
+    field.addEventListener("input", () => clearFieldInvalidState(field));
+  });
+
   const liveStatus = document.getElementById("liveStatus");
   const statuses = applyAdminWebsiteSettings() || [
     "Live updates active across Metro Manila",
@@ -1590,6 +1602,92 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+function markFieldInvalid(field, message = "") {
+  if (!field) return;
+  field.classList.add("field-invalid");
+  if (message) {
+    field.setAttribute("aria-invalid", "true");
+    field.setAttribute("title", message);
+  }
+}
+
+function clearFieldInvalidState(field) {
+  if (!field) return;
+  field.classList.remove("field-invalid");
+  field.removeAttribute("aria-invalid");
+  field.removeAttribute("title");
+}
+
+function focusFirstInvalidField(fields) {
+  const firstInvalid = fields.find((field) => field?.classList?.contains("field-invalid"));
+  if (!firstInvalid) return;
+  firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+  firstInvalid.focus({ preventScroll: true });
+}
+
+function validateSubmitFields() {
+  const requiredFields = [
+    { id: "region", label: "Region" },
+    { id: "province", label: "Province" },
+    { id: "city", label: "City / Municipality" },
+    { id: "barangay", label: "Barangay" },
+    { id: "locationText", label: "Road Name" },
+    { id: "lastname", label: "Last Name" },
+    { id: "firstname", label: "First Name" },
+    { id: "mi", label: "Middle Initial" },
+    { id: "email", label: "Email Address" },
+    { id: "phone", label: "Mobile Number" },
+    { id: "reporterProvince", label: "Reporter Province" },
+    { id: "reporterCity", label: "Reporter City/Municipality" },
+    { id: "reporterBarangay", label: "Reporter Barangay" },
+    { id: "reporterStreetAddress", label: "Street / House No." },
+    { id: "issue", label: "Road Issue Description" }
+  ];
+
+  const missingLabels = [];
+  const touchedFields = [];
+
+  requiredFields.forEach(({ id, label }) => {
+    const field = document.getElementById(id);
+    if (!field) return;
+
+    touchedFields.push(field);
+    clearFieldInvalidState(field);
+
+    if (!field.value.trim()) {
+      markFieldInvalid(field, `${label} is required.`);
+      missingLabels.push(label);
+    }
+  });
+
+  const selectedCategoryInput = document.querySelector('input[name="issueCategory"]:checked');
+  if (!selectedCategoryInput) {
+    const group = document.querySelector('.report-category-group');
+    markFieldInvalid(group, "Please select a report category.");
+    touchedFields.push(group);
+    missingLabels.push("Report Category");
+  } else {
+    clearFieldInvalidState(document.querySelector('.report-category-group'));
+  }
+
+  const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0);
+  if (!hasCoordinates) {
+    const mapEl = document.getElementById("reportMap");
+    markFieldInvalid(mapEl, "Please click on the map to select coordinates.");
+    touchedFields.push(mapEl);
+    missingLabels.push("Map Location");
+  } else {
+    clearFieldInvalidState(document.getElementById("reportMap"));
+  }
+
+  return {
+    isValid: missingLabels.length === 0,
+    missingLabels,
+    touchedFields
+  };
+}
+
 function setSubmitButtonLoading(isLoading) {
   const submitBtn = document.getElementById("submitReportBtn");
   if (!submitBtn) return;
@@ -1603,28 +1701,15 @@ function setSubmitButtonLoading(isLoading) {
 async function submitReport() {
   if (isSubmittingReport) return;
 
-  const region = document.getElementById("region")?.value.trim() || "";
-  const province = document.getElementById("province")?.value.trim() || "";
-  const city = document.getElementById("city")?.value.trim() || "";
-  const barangay = document.getElementById("barangay")?.value.trim() || "";
-  const roadName = document.getElementById("locationText")?.value.trim() || "";
-
-  if (!region || !province || !city || !barangay || !roadName) {
-    alert("Please complete Region, Province, City/Municipality, Barangay, and Road Name.");
+  const validation = validateSubmitFields();
+  if (!validation.isValid) {
+    focusFirstInvalidField(validation.touchedFields);
+    alert(`Please complete all required details before submitting. Missing: ${validation.missingLabels.join(", ")}`);
     return;
   }
 
   const selectedCategoryInput = document.querySelector('input[name="issueCategory"]:checked');
   const issueCategory = selectedCategoryInput?.value || "";
-  if (!issueCategory) {
-    alert("Please select a Report Category.");
-    return;
-  }
-
-  if (lat === 0 && !roadName) {
-    alert("Please select location on map or type the road name");
-    return;
-  }
 
   isSubmittingReport = true;
   setSubmitButtonLoading(true);
@@ -1828,10 +1913,15 @@ function newReport() {
 }
 // Reset the form
 function resetForm() {
-  document.querySelectorAll("#submit input,#submit textarea,#submit select").forEach(el => el.value = "");
+  document.querySelectorAll("#submit input,#submit textarea,#submit select").forEach(el => {
+    el.value = "";
+    clearFieldInvalidState(el);
+  });
   document.querySelectorAll('input[name="issueCategory"]').forEach(option => {
     option.checked = false;
   });
+  clearFieldInvalidState(document.querySelector('.report-category-group'));
+  clearFieldInvalidState(document.getElementById('reportMap'));
   document.getElementById("selectedLocation").innerText = "No location selected";
   const trackInfo = document.getElementById("trackInfo");
   const submissionTimeInfo = document.getElementById("submissionTimeInfo");
@@ -1842,7 +1932,7 @@ function resetForm() {
   lat = 0;
   lng = 0;
   setCoordinateDisplay(null, null);
-  if (marker) map.removeLayer(marker);
+  if (marker && map) map.removeLayer(marker);
   document.getElementById("photoPreview").style.display = "none";
 }
 
