@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RoadWatch PH Admin</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -94,6 +95,13 @@
         <div class="chart-panel">
           <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
         </div>
+        <div class="mapWrap">
+          <div class="row">
+            <h4>Overview Pin Map</h4>
+            <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
+          </div>
+          <div id="overviewPinMap" class="pinMap" role="img" aria-label="Map showing all pinned report locations"></div>
+        </div>
       </article>
 
       <article class="panel chart-stretch">
@@ -113,6 +121,13 @@
         <div class="heatmapWrap">
           <h4>Problem Area Heat Map</h4>
           <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
+        </div>
+        <div class="mapWrap">
+          <div class="row">
+            <h4>Analytics Pin Map</h4>
+            <p id="analyticsMapSummary" class="small">Filtered by selected reporting range.</p>
+          </div>
+          <div id="analyticsPinMap" class="pinMap" role="img" aria-label="Map showing analytics report locations"></div>
         </div>
         <div class="row export-row">
           <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
@@ -330,6 +345,7 @@
     </section>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="admin.js"></script>
 </body>
 </html>
