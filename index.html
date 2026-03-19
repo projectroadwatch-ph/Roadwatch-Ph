@@ -200,7 +200,7 @@
     </div>
 
     <section class="card home-info report-focus-card submit-guide-card">
-      <details class="report-guide-collapse" open>
+      <details class="report-guide-collapse">
         <summary class="report-focus-header">
           <span>
             <h3>What You Can Report</h3>
@@ -283,7 +283,7 @@
       </div>
 
       <fieldset class="report-category-group">
-        <legend>Report Category <span aria-hidden="true">*</span></legend>
+        <legend class="form-section-title">Report Category <span aria-hidden="true">*</span></legend>
         <div class="report-category-options">
           <label class="report-category-option">
             <input type="radio" name="issueCategory" value="Road Surface">
@@ -356,7 +356,7 @@
           <input id="reporterBarangay" placeholder="Select Barangay">
         </div>
         <div class="field-group">
-          <label for="reporterStreetAddress">Street / House No. <span aria-hidden="true">*</span></label>
+          <label for="reporterStreetAddress">Street / House No.</label>
           <input id="reporterStreetAddress" placeholder="123 Sampaguita Street">
         </div>
       </div>
@@ -406,7 +406,7 @@
         <div class="field-group">
           <label for="issueTypeSelect">Type <span aria-hidden="true">*</span></label>
           <select id="issueTypeSelect">
-            <option value="">Select issue type</option>
+            <option value="" selected disabled hidden>Select issue type</option>
           </select>
         </div>
         <div class="field-group" id="customIssueTypeGroup" hidden>
