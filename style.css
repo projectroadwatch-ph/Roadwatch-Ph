@@ -989,6 +989,8 @@ section.active {
 
 .submit-form-card {
   border: 1px solid rgba(134, 208, 255, 0.34);
+  background: linear-gradient(180deg, rgba(6, 38, 71, 0.9), rgba(6, 28, 50, 0.86));
+  padding: 18px;
 }
 
 .report-stats-card {
@@ -1144,9 +1146,89 @@ section.active {
   color: #d8ecff;
 }
 
-.submit-form-card h2 {
-  text-align: center;
-  margin-bottom: 18px;
+.submit-form-banner {
+  border: 1px solid rgba(137, 211, 255, 0.35);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: linear-gradient(115deg, rgba(19, 95, 166, 0.6), rgba(7, 39, 77, 0.84));
+}
+
+.submit-form-eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b7e6ff;
+  font-weight: 700;
+}
+
+.submit-form-banner h2 {
+  margin: 4px 0 6px;
+  font-size: 1.65rem;
+}
+
+.submit-form-banner p {
+  margin: 0;
+  color: #d7ebff;
+}
+
+.report-category-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.category-pill {
+  border: 1px solid rgba(147, 215, 255, 0.4);
+  background: rgba(11, 44, 79, 0.84);
+  color: #e8f6ff;
+  border-radius: 10px;
+  padding: 10px 8px;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.category-pill.active {
+  background: linear-gradient(145deg, #1b81db, #105da6);
+}
+
+.submit-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.submit-panel {
+  border: 1px solid rgba(134, 208, 255, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(4, 30, 55, 0.6);
+}
+
+.submit-panel h3 {
+  margin: 0 0 10px;
+  color: #abddff;
+  font-size: 1rem;
+}
+
+.details-panel,
+.map-panel {
+  grid-column: span 1;
+}
+
+.inline-label {
+  display: block;
+  margin: 6px 0;
+  color: #a7d8fa;
+  font-size: 0.88rem;
+}
+
+.incident-meta {
+  margin: 0 0 10px;
+  color: #c9e7ff;
+  font-size: 0.85rem;
 }
 
 
@@ -1331,24 +1413,8 @@ section.active {
   padding-left: 18px;
 }
 
-.submit-form-card h3 {
-  margin: 18px 0 8px;
-}
-
 .submit-form-card .row {
-  margin-bottom: 14px;
-}
-
-.submit-form-card > input,
-.submit-form-card > textarea,
-.submit-form-card > #reportMap,
-.submit-form-card > #selectedLocation,
-.submit-form-card > #photo {
-  margin-bottom: 14px;
-}
-
-.submit-form-card > #selectedLocation {
-  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .submit-report-guide {
@@ -1449,6 +1515,7 @@ textarea {
 .submitBtn {
   background: var(--success);
   color: #052747;
+  margin-top: 16px;
 }
 
 .submitBtn:hover {
@@ -1483,9 +1550,17 @@ textarea {
 
 
 #reportMap {
-  height: 320px;
-  margin-top: 10px;
+  height: 260px;
+  margin-top: 2px;
   border-radius: 12px;
+}
+
+#selectedLocation {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(9, 47, 84, 0.7);
+  border: 1px solid rgba(152, 216, 255, 0.35);
 }
 
 #photoPreview {
@@ -1705,12 +1780,22 @@ textarea {
 
 
 @media (max-width: 900px) {
+  .report-category-row,
+  .submit-layout-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .issue-type-card h4 {
     min-height: 0;
   }
 }
 
 @media (max-width: 700px) {
+  .report-category-row,
+  .submit-layout-grid {
+    grid-template-columns: 1fr;
+  }
+
   .brand-lockup p {
     font-size: 0.67rem;
   }

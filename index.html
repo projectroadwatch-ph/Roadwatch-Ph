@@ -267,38 +267,70 @@
     </section>
 
     <div class="card submit-form-card">
-      <h2>Submit Road Issue</h2>
-
-      <h3>Reporter Information</h3>
-      <div class="row">
-        <input id="lastname" placeholder="Last Name">
-        <input id="firstname" placeholder="First Name">
-        <input id="mi" placeholder="M.I.">
+      <div class="submit-form-banner">
+        <p class="submit-form-eyebrow">RoadWatch PH</p>
+        <h2>Submit a Road Report</h2>
+        <p>Help us improve road safety by sharing accurate incident details and location.</p>
       </div>
 
-      <div class="row">
-        <input id="email" placeholder="Email">
-        <input id="phone" placeholder="Mobile Number">
+      <div class="report-category-row">
+        <button type="button" class="category-pill active">🛣️ Road Surface</button>
+        <button type="button" class="category-pill">🌧️ Flooding / Drainage</button>
+        <button type="button" class="category-pill">⚠️ Road Safety</button>
+        <button type="button" class="category-pill">🏙️ Street Infra</button>
       </div>
 
-      <h3>Road Location</h3>
-      <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Street / Road Name (Type or Auto-detect)" />
-      <datalist id="locationSuggestions"></datalist>
-      <button class="detectBtn" onclick="detectLocation()">Auto-detect My Location</button>
+      <div class="submit-layout-grid">
+        <section class="submit-panel">
+          <h3>Reporter Information</h3>
+          <div class="row">
+            <input id="lastname" placeholder="Last Name *">
+            <input id="firstname" placeholder="First Name *">
+            <input id="mi" placeholder="Middle Initial">
+          </div>
 
-      <h3>Select Location</h3>
-      <div id="reportMap"></div>
-      <p id="selectedLocation">No location selected</p>
+          <div class="row">
+            <input id="email" placeholder="Email Address *">
+            <input id="phone" placeholder="Mobile Number *">
+          </div>
+        </section>
 
-      <h3>Road Issue</h3>
-      <textarea id="issue" placeholder="Describe the issue"></textarea>
+        <section class="submit-panel">
+          <h3>Road Information</h3>
+          <div class="row">
+            <input placeholder="Region">
+            <input placeholder="Province">
+          </div>
+          <div class="row">
+            <input placeholder="City / Municipality">
+            <input placeholder="Barangay">
+          </div>
+          <input id="locationText" list="locationSuggestions" autocomplete="off" placeholder="Road Name / Street / House No. *">
+          <datalist id="locationSuggestions"></datalist>
+          <button class="detectBtn" onclick="detectLocation()">Auto Detect Location</button>
+        </section>
 
-      <h3>Upload Photo</h3>
-      <input type="file" id="photo">
-      <img id="photoPreview">
+        <section class="submit-panel map-panel">
+          <h3>Location on Map</h3>
+          <div id="reportMap"></div>
+          <p id="selectedLocation">No location selected</p>
+        </section>
+
+        <section class="submit-panel details-panel">
+          <h3>Incident Details</h3>
+          <p class="incident-meta">Date &amp; Time: Automatically captured on submission</p>
+
+          <label class="inline-label" for="issue">Issue Description *</label>
+          <textarea id="issue" placeholder="Describe the road problem and include nearby landmarks..."></textarea>
+
+          <label class="inline-label" for="photo">Upload Photos</label>
+          <input type="file" id="photo" accept="image/*">
+          <img id="photoPreview">
+        </section>
+      </div>
 
       <button id="submitReportBtn" class="submitBtn" onclick="submitReport()">Submit Report</button>
-      </div>
+    </div>
 
     <section class="card report-stats-card" aria-labelledby="reportStatsHeading">
       <div class="report-stats-head">
