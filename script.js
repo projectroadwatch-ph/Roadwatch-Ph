@@ -651,6 +651,7 @@ function toReportModel(report) {
       "Report Detail",
       "Report Details"
     ]),
+    issueCategory: getFieldValue(report, ["issueCategory", "issue_category", "Issue Category", "category"]),
     status: getFieldValue(report, ["status", "reportStatus", "Status"]),
     roadType: getFieldValue(report, ["roadType", "road_type", "Road Type"]),
     roadClass: getFieldValue(report, ["roadClass", "road_class", "Road Class"]),
@@ -1079,7 +1080,10 @@ function formatSubmissionTime(report) {
   return `${datePart}, ${timePart}`;
 }
 
-function getIssueCategory(issueText) {
+function getIssueCategory(issueText, explicitCategory = "") {
+  const explicit = (explicitCategory || "").toString().trim();
+  if (explicit) return explicit;
+
   const issue = (issueText || "").toString().trim().toLowerCase();
   if (!issue) return "Unspecified";
 
@@ -1118,7 +1122,7 @@ function computeReportStatistics(reports) {
     if (status === "in progress") statusCounts.inProgress += 1;
     if (status === "repaired") statusCounts.repaired += 1;
 
-    const issueType = getIssueCategory(report.issue);
+    const issueType = getIssueCategory(report.issue, report.issueCategory);
     issueTypeCounts[issueType] = (issueTypeCounts[issueType] || 0) + 1;
 
     const rawDate = getFieldValue(report, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"]);
@@ -1610,6 +1614,13 @@ async function submitReport() {
     return;
   }
 
+  const selectedCategoryInput = document.querySelector('input[name="issueCategory"]:checked');
+  const issueCategory = selectedCategoryInput?.value || "";
+  if (!issueCategory) {
+    alert("Please select a Report Category.");
+    return;
+  }
+
   if (lat === 0 && !roadName) {
     alert("Please select location on map or type the road name");
     return;
@@ -1651,6 +1662,8 @@ async function submitReport() {
     reporterStreetAddress: document.getElementById("reporterStreetAddress")?.value || "",
     location: document.getElementById("locationText").value,
     issue: document.getElementById("issue").value,
+    issueCategory,
+    issueType: issueCategory,
     lat: lat || "",
     lng: lng || "",
     photo: photoData,
@@ -1816,6 +1829,9 @@ function newReport() {
 // Reset the form
 function resetForm() {
   document.querySelectorAll("#submit input,#submit textarea,#submit select").forEach(el => el.value = "");
+  document.querySelectorAll('input[name="issueCategory"]').forEach(option => {
+    option.checked = false;
+  });
   document.getElementById("selectedLocation").innerText = "No location selected";
   const trackInfo = document.getElementById("trackInfo");
   const submissionTimeInfo = document.getElementById("submissionTimeInfo");

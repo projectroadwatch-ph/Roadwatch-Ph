@@ -1406,6 +1406,56 @@ section.active {
   color: #ff6b6b;
 }
 
+.report-category-group {
+  border: 0;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.report-category-group legend {
+  margin-bottom: 8px;
+  font-size: 0.94rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.report-category-group legend span {
+  color: #ff6b6b;
+}
+
+.report-category-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.report-category-option {
+  cursor: pointer;
+}
+
+.report-category-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.report-category-option span {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #376da8;
+  background: rgba(7, 36, 66, 0.95);
+  color: var(--text);
+  font-weight: 600;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.report-category-option input:checked + span {
+  border-color: #83ceff;
+  box-shadow: 0 0 0 3px rgba(125, 213, 255, 0.2);
+  background: rgba(9, 43, 78, 0.96);
+}
+
 .submit-report-guide {
   margin-bottom: 22px;
 }
