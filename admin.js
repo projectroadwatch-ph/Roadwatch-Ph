@@ -26,11 +26,16 @@ const overviewView = document.getElementById("overviewView");
 const managementView = document.getElementById("managementView");
 const showOverviewBtn = document.getElementById("showOverviewBtn");
 const showManagementBtn = document.getElementById("showManagementBtn");
+const paginationSummary = document.getElementById("paginationSummary");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
 const selectedReports = new Set();
 const flaggedReports = new Set();
+const REPORTS_PER_PAGE = 15;
+let currentPage = 1;
 
 
 function buildJsonpEndpoint(endpoint) {
@@ -1019,6 +1024,29 @@ function getFilteredReports() {
   });
 }
 
+function getTotalPages(totalItems) {
+  return Math.max(1, Math.ceil(totalItems / REPORTS_PER_PAGE));
+}
+
+function getPaginatedReports(reports) {
+  const totalPages = getTotalPages(reports.length);
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
+  return reports.slice(startIndex, startIndex + REPORTS_PER_PAGE);
+}
+
+function renderPagination(totalItems) {
+  const totalPages = getTotalPages(totalItems);
+  if (paginationSummary) {
+    paginationSummary.textContent = `Page ${currentPage} of ${totalPages}`;
+  }
+
+  if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+  if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
+}
+
 function renderRows(reports) {
   if (reports.length === 0) {
     reportsBody.innerHTML = '<tr><td colspan="10">No reports match your current filters.</td></tr>';
@@ -1105,13 +1133,17 @@ function renderRows(reports) {
 
 function applyFiltersAndRender() {
   const filtered = getFilteredReports();
-  renderRows(filtered);
+  const paginated = getPaginatedReports(filtered);
+  renderRows(paginated);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
   renderVerificationQueue(allReports);
   refreshReportingSection(allReports);
   updateSelectAllState(filtered);
-  filterSummary.textContent = `Showing ${filtered.length} of ${allReports.length} report(s).`;
+  const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
+  const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
+  filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.`;
+  renderPagination(filtered.length);
 }
 
 async function loadReports() {
@@ -1122,6 +1154,7 @@ async function loadReports() {
     const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
 
     selectedReports.clear();
+    currentPage = 1;
 
     allReports = dedupeReports(
       parseReports(payload)
@@ -1160,10 +1193,17 @@ document.getElementById("refreshReportsBtn").addEventListener("click", loadRepor
 document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   reportSearch.value = "";
   statusFilter.value = "all";
+  currentPage = 1;
   applyFiltersAndRender();
 });
-reportSearch.addEventListener("input", applyFiltersAndRender);
-statusFilter.addEventListener("change", applyFiltersAndRender);
+reportSearch.addEventListener("input", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+statusFilter.addEventListener("change", () => {
+  currentPage = 1;
+  applyFiltersAndRender();
+});
 urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allReports));
 window.addEventListener("resize", () => renderAnalytics(allReports));
 
@@ -1251,6 +1291,17 @@ document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => 
 
 
 reportingRange?.addEventListener("change", () => refreshReportingSection(allReports));
+
+prevPageBtn?.addEventListener("click", () => {
+  currentPage = Math.max(1, currentPage - 1);
+  applyFiltersAndRender();
+});
+
+nextPageBtn?.addEventListener("click", () => {
+  const filtered = getFilteredReports();
+  currentPage = Math.min(getTotalPages(filtered.length), currentPage + 1);
+  applyFiltersAndRender();
+});
 
 document.getElementById("exportCsvBtn")?.addEventListener("click", () => {
   exportReportsToCsv(getFilteredReports());
