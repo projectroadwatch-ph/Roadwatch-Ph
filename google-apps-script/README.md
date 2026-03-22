@@ -35,7 +35,8 @@ Examples:
 
 ## Submission receipt emails
 
-On successful `POST /exec` report submissions, the script now sends a confirmation email to the reporter's `email` address using `MailApp`.
+On successful `POST /exec` report submissions, the script now sends a confirmation email to the reporter's `email` address using `GmailApp` with `projectroadwatch23@gmail.com` configured as the sender.
 
-- Make sure the deploying Google account authorizes **Send email as you** when prompted by Apps Script.
+- Deploy the script while signed in as `projectroadwatch23@gmail.com`, or add that address as an approved Gmail **Send mail as** alias for the deploying account.
+- Make sure Apps Script has Gmail sending permissions before publishing the deployment.
 - Duplicate tracking submissions are ignored and will not trigger another receipt email.
