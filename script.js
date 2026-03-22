@@ -16,6 +16,7 @@ const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
+const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LEAFLET_SCRIPT_SOURCES = [
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
@@ -1716,6 +1717,14 @@ function validateSubmitFields() {
     }
   });
 
+  const emailField = document.getElementById("email");
+  if (emailField && emailField.value.trim() && !EMAIL_ADDRESS_PATTERN.test(emailField.value.trim())) {
+    markFieldInvalid(emailField, "Please enter a valid email address.");
+    if (!missingLabels.includes("Valid Email Address")) {
+      missingLabels.push("Valid Email Address");
+    }
+  }
+
   const selectedCategoryInput = document.querySelector('input[name="issueCategory"]:checked');
   if (!selectedCategoryInput) {
     const group = document.querySelector('.report-category-group');
@@ -1951,8 +1960,8 @@ async function submitReport() {
   try {
     const result = await trySubmit();
     const res = result?.body || "";
+    let payload = null;
     if (res) {
-      let payload;
       try {
         payload = JSON.parse(res);
       } catch (error) {
@@ -1988,6 +1997,17 @@ async function submitReport() {
     document.getElementById("trackInfo").innerText = tracking;
     document.getElementById("submissionTimeInfo").innerText = `Submitted on ${submittedDateTime}`;
     document.getElementById("copyFeedback").innerText = "";
+    const emailDeliveryInfo = document.getElementById("emailDeliveryInfo");
+    if (emailDeliveryInfo) {
+      if (payload?.emailSent === false) {
+        const emailErrorMessage = (payload.emailError || "We saved your report, but we could not send the confirmation email.").trim();
+        emailDeliveryInfo.innerText = `Report saved, but the confirmation email was not sent: ${emailErrorMessage}`;
+      } else if (payload?.emailSent === true) {
+        emailDeliveryInfo.innerText = `A confirmation email was sent to ${reporterEmail}.`;
+      } else {
+        emailDeliveryInfo.innerText = "Your report was saved. If the confirmation email does not arrive soon, please use the reference number above to track it.";
+      }
+    }
     cacheLocalSubmission({ ...reportPayload, timestamp: submittedAt.toISOString() });
     cachedReports = [];
     loadStatistics();
@@ -2048,9 +2068,11 @@ function resetForm() {
   const trackInfo = document.getElementById("trackInfo");
   const submissionTimeInfo = document.getElementById("submissionTimeInfo");
   const copyFeedback = document.getElementById("copyFeedback");
+  const emailDeliveryInfo = document.getElementById("emailDeliveryInfo");
   if (trackInfo) trackInfo.innerText = "";
   if (submissionTimeInfo) submissionTimeInfo.innerText = "";
   if (copyFeedback) copyFeedback.innerText = "";
+  if (emailDeliveryInfo) emailDeliveryInfo.innerText = "";
   lat = 0;
   lng = 0;
   setCoordinateDisplay(null, null);
