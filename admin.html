@@ -41,12 +41,14 @@
       <nav class="dashboard-nav" aria-label="Dashboard sections">
         <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
         <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
+        <button id="showOperationsBtn" type="button" class="secondary nav-btn">Operations Suite</button>
       </nav>
 
       <section id="overviewView" class="dashboard-view">
       <section class="dashboard-grid overview-layout">
       <article class="panel analytics-panel">
         <h3>Operational Snapshot</h3>
+        <div id="executiveSummary" class="executiveSummary"></div>
         <div id="analyticsGrid" class="analyticsGrid">
           <div class="analyticsCard">
             <span class="analyticsLabel">Total Reports</span>
@@ -118,6 +120,14 @@
             <select id="reportingRange">
               <option value="weekly">Weekly</option>
               <option value="monthly" selected>Monthly</option>
+              <option value="daily">Daily</option>
+            </select>
+          </label>
+          <label class="inlineControl compact">Forecast view
+            <select id="forecastRange">
+              <option value="7" selected>Next 7 days</option>
+              <option value="14">Next 14 days</option>
+              <option value="30">Next 30 days</option>
             </select>
           </label>
         </div>
@@ -128,6 +138,10 @@
         <div class="heatmapWrap">
           <h4>Problem Area Heat Map</h4>
           <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
+        </div>
+        <div class="forecastPanel">
+          <h4>Forward Outlook</h4>
+          <div id="forecastCards" class="forecastCards"></div>
         </div>
         <div class="row export-row">
           <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
@@ -140,6 +154,42 @@
           <p class="small">Live workload and SLA risk by assignee.</p>
         </div>
         <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
+      </article>
+      <article class="panel chart-stretch">
+        <div class="row">
+          <h3>Map Intelligence</h3>
+          <p class="small">Filter hotspots, drill into hotspots, and stage field routes.</p>
+        </div>
+        <div class="toolbar triage-toolbar">
+          <label class="inlineControl">Map status
+            <select id="mapStatusFilter">
+              <option value="all">All statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Repaired">Repaired</option>
+            </select>
+          </label>
+          <label class="inlineControl">Map assignee
+            <select id="mapAssigneeFilter">
+              <option value="all">All assignees</option>
+            </select>
+          </label>
+          <label class="inlineControl">Map category
+            <select id="mapCategoryFilter">
+              <option value="all">All categories</option>
+            </select>
+          </label>
+          <label class="inlineControl">Map risk
+            <select id="mapRiskFilter">
+              <option value="all">All cases</option>
+              <option value="critical">Critical only</option>
+              <option value="high">High and critical</option>
+            </select>
+          </label>
+        </div>
+        <p id="mapIntelligenceSummary" class="small">Interactive geographic workload view.</p>
+        <div id="mapIntelligenceList" class="priorityQueueList"></div>
       </article>
       </section>
 
@@ -244,6 +294,8 @@
                   <option value="needsVerification">Needs verification</option>
                   <option value="flagged">Flagged spam/abuse</option>
                   <option value="lowQuality">Low data quality</option>
+                  <option value="duplicates">Possible duplicates</option>
+                  <option value="critical">Critical public risk</option>
                 </select>
               </label>
             </div>
@@ -264,9 +316,11 @@
                     <th>Data Quality</th>
                     <th>Priority</th>
                     <th>Verification</th>
+                    <th>Severity</th>
                     <th>Assigned To</th>
                     <th>SLA Due</th>
                     <th>Escalation</th>
+                    <th>Project</th>
                     <th>Photo</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -313,6 +367,14 @@
                 </select>
               </label>
               <button id="bulkAssignBtn" type="button" class="secondary slim">Apply assignment</button>
+              <label class="inlineControl">Escalation profile
+                <select id="bulkEscalationSelect">
+                  <option value="Routine">Routine</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </label>
+              <button id="bulkEscalateBtn" type="button" class="secondary slim">Apply escalation</button>
               <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
               <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
             </div>
@@ -334,6 +396,59 @@
             </div>
             <div class="queue-section">
               <div class="row">
+                <h4>Citizen Communication</h4>
+              </div>
+              <label class="inlineControl">Public update template
+                <select id="notificationTemplateSelect">
+                  <option value="received">Report received</option>
+                  <option value="verification">Need more information</option>
+                  <option value="scheduled">Repair scheduled</option>
+                  <option value="resolved">Repair resolved</option>
+                </select>
+              </label>
+              <label class="inlineControl">Public ETA
+                <input id="publicEtaInput" type="text" placeholder="e.g. Within 3 working days">
+              </label>
+              <label class="inlineControl">Public message
+                <textarea id="notificationMessageInput" rows="3" placeholder="Citizen-facing status message or request for more details."></textarea>
+              </label>
+              <button id="queueNotificationBtn" type="button" class="secondary slim">Queue citizen update</button>
+              <ul id="notificationQueueList" class="priorityQueueList"></ul>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Repair Closure QA</h4>
+              </div>
+              <label class="inlineControl">Closure proof link
+                <input id="closureProofInput" type="url" placeholder="https://example.com/after-photo.jpg">
+              </label>
+              <label class="inlineControl">Repair details
+                <textarea id="closureDetailsInput" rows="3" placeholder="Summarize work completed, materials used, and field observations."></textarea>
+              </label>
+              <button id="saveClosureBtn" type="button" class="secondary slim">Save closure evidence</button>
+              <div id="closureChecklist" class="miniCardGrid"></div>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Roles & Collaboration</h4>
+              </div>
+              <label class="inlineControl">Active role
+                <select id="roleFilterSelect">
+                  <option value="Super Admin">Super Admin</option>
+                  <option value="Verifier">Verifier</option>
+                  <option value="Dispatcher">Dispatcher</option>
+                  <option value="Field Lead">Field Lead</option>
+                  <option value="Viewer">Viewer</option>
+                </select>
+              </label>
+              <label class="inlineControl">Mention / handoff
+                <input id="mentionInput" type="text" placeholder="@Road Team A or @City Engineer">
+              </label>
+              <button id="saveCollabNoteBtn" type="button" class="secondary slim">Save collaboration note</button>
+              <div id="permissionsSummary" class="miniCardGrid"></div>
+            </div>
+            <div class="queue-section">
+              <div class="row">
                 <h4>Recent Audit Trail</h4>
                 <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
               </div>
@@ -342,6 +457,57 @@
           </aside>
         </section>
       </section>
+      <section id="operationsView" class="dashboard-view" hidden>
+        <section class="dashboard-grid overview-layout">
+          <article class="panel analytics-panel">
+            <div class="row">
+              <h3>Incident & Project Console</h3>
+              <p class="small">Merge duplicates into tracked repair projects.</p>
+            </div>
+            <div id="duplicateCaseBoard" class="priorityQueueList"></div>
+            <div class="toolbar triage-toolbar">
+              <label class="inlineControl">Project name
+                <input id="projectNameInput" type="text" placeholder="e.g. JP Rizal resurfacing package">
+              </label>
+              <label class="inlineControl">Project owner
+                <select id="projectOwnerSelect">
+                  <option value="City Engineering Office">City Engineering Office</option>
+                  <option value="Barangay Engineering Team">Barangay Engineering Team</option>
+                  <option value="DPWH Coordination Desk">DPWH Coordination Desk</option>
+                </select>
+              </label>
+              <label class="inlineControl">Budget estimate
+                <input id="projectBudgetInput" type="text" placeholder="₱ 150,000">
+              </label>
+            </div>
+            <button id="createProjectBtn" type="button" class="secondary slim">Create project from selected reports</button>
+            <div id="projectPortfolio" class="teamPerformanceBoard"></div>
+          </article>
+          <article class="panel analytics-panel">
+            <div class="row">
+              <h3>Moderation & Safety Desk</h3>
+              <p class="small">Verification scorecards, fraud risk, and public safety review.</p>
+            </div>
+            <div id="moderationBoard" class="priorityQueueList"></div>
+            <div id="rootCauseBoard" class="miniCardGrid"></div>
+          </article>
+          <article class="panel chart-stretch">
+            <div class="row">
+              <h3>Field Operations Mode</h3>
+              <p class="small">Compact mobile-style dispatch cards for inspectors and crews.</p>
+            </div>
+            <div id="fieldOpsBoard" class="teamPerformanceBoard"></div>
+          </article>
+          <article class="panel chart-stretch">
+            <div class="row">
+              <h3>Citizen Trust Center</h3>
+              <p class="small">Queued public updates, ETA promises, and reopen monitoring.</p>
+            </div>
+            <div id="trustCenterBoard" class="priorityQueueList"></div>
+          </article>
+        </section>
+      </section>
+
     </section>
   </main>
 

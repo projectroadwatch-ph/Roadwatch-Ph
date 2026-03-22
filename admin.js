@@ -8,6 +8,8 @@ const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
+const ADMIN_NOTIFICATION_QUEUE_KEY = "roadwatchAdminNotificationQueue";
+const ADMIN_PROJECTS_KEY = "roadwatchAdminProjects";
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -53,6 +55,42 @@ const showActionsPaneBtn = document.getElementById("showActionsPaneBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
+const operationsView = document.getElementById("operationsView");
+const showOperationsBtn = document.getElementById("showOperationsBtn");
+const executiveSummary = document.getElementById("executiveSummary");
+const forecastRange = document.getElementById("forecastRange");
+const forecastCards = document.getElementById("forecastCards");
+const mapStatusFilter = document.getElementById("mapStatusFilter");
+const mapAssigneeFilter = document.getElementById("mapAssigneeFilter");
+const mapCategoryFilter = document.getElementById("mapCategoryFilter");
+const mapRiskFilter = document.getElementById("mapRiskFilter");
+const mapIntelligenceSummary = document.getElementById("mapIntelligenceSummary");
+const mapIntelligenceList = document.getElementById("mapIntelligenceList");
+const duplicateCaseBoard = document.getElementById("duplicateCaseBoard");
+const projectNameInput = document.getElementById("projectNameInput");
+const projectOwnerSelect = document.getElementById("projectOwnerSelect");
+const projectBudgetInput = document.getElementById("projectBudgetInput");
+const projectPortfolio = document.getElementById("projectPortfolio");
+const moderationBoard = document.getElementById("moderationBoard");
+const rootCauseBoard = document.getElementById("rootCauseBoard");
+const fieldOpsBoard = document.getElementById("fieldOpsBoard");
+const trustCenterBoard = document.getElementById("trustCenterBoard");
+const notificationTemplateSelect = document.getElementById("notificationTemplateSelect");
+const publicEtaInput = document.getElementById("publicEtaInput");
+const notificationMessageInput = document.getElementById("notificationMessageInput");
+const queueNotificationBtn = document.getElementById("queueNotificationBtn");
+const notificationQueueList = document.getElementById("notificationQueueList");
+const closureProofInput = document.getElementById("closureProofInput");
+const closureDetailsInput = document.getElementById("closureDetailsInput");
+const saveClosureBtn = document.getElementById("saveClosureBtn");
+const closureChecklist = document.getElementById("closureChecklist");
+const roleFilterSelect = document.getElementById("roleFilterSelect");
+const mentionInput = document.getElementById("mentionInput");
+const saveCollabNoteBtn = document.getElementById("saveCollabNoteBtn");
+const permissionsSummary = document.getElementById("permissionsSummary");
+const createProjectBtn = document.getElementById("createProjectBtn");
+const bulkEscalationSelect = document.getElementById("bulkEscalationSelect");
+const bulkEscalateBtn = document.getElementById("bulkEscalateBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -317,13 +355,30 @@ function defaultSlaDueIso(report) {
 
 function getCaseMeta(report) {
   const tracking = String(report?.tracking || "").trim();
-  if (!tracking) return { assignedTo: "Unassigned", dueAt: defaultSlaDueIso(report) };
+  const fallback = {
+    assignedTo: "Unassigned",
+    dueAt: defaultSlaDueIso(report),
+    escalationProfile: "Routine",
+    publicEta: "",
+    publicMessage: "",
+    closureProof: "",
+    closureDetails: "",
+    role: "Super Admin",
+    mention: "",
+    projectId: "",
+    rootCause: "Surface wear",
+    verificationChecklist: [],
+    repairEvidenceSavedAt: ""
+  };
+  if (!tracking) return fallback;
 
   const store = getCaseMetaStore();
   const saved = store[tracking] || {};
   return {
-    assignedTo: saved.assignedTo || "Unassigned",
-    dueAt: saved.dueAt || defaultSlaDueIso(report)
+    ...fallback,
+    ...saved,
+    assignedTo: saved.assignedTo || fallback.assignedTo,
+    dueAt: saved.dueAt || fallback.dueAt
   };
 }
 
@@ -334,6 +389,121 @@ function updateCaseMeta(tracking, patch = {}) {
   const current = store[key] || {};
   store[key] = { ...current, ...patch };
   saveCaseMetaStore(store);
+}
+
+
+function getNotificationQueue() {
+  try {
+    const raw = localStorage.getItem(ADMIN_NOTIFICATION_QUEUE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveNotificationQueue(entries) {
+  localStorage.setItem(ADMIN_NOTIFICATION_QUEUE_KEY, JSON.stringify((entries || []).slice(0, 100)));
+}
+
+function queueNotification(tracking, template, message, eta) {
+  const next = [{
+    tracking: String(tracking || "").trim(),
+    template: String(template || "update").trim(),
+    message: String(message || "").trim(),
+    eta: String(eta || "").trim(),
+    createdAt: new Date().toISOString()
+  }, ...getNotificationQueue()];
+  saveNotificationQueue(next);
+}
+
+function getProjects() {
+  try {
+    const raw = localStorage.getItem(ADMIN_PROJECTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveProjects(projects) {
+  localStorage.setItem(ADMIN_PROJECTS_KEY, JSON.stringify(projects || []));
+}
+
+function createProjectFromReports(reports, payload = {}) {
+  const trackingList = reports.map((report) => String(report?.tracking || "").trim()).filter(Boolean);
+  if (trackingList.length === 0) return null;
+  const projectId = `PRJ-${Date.now().toString(36).toUpperCase()}`;
+  const project = {
+    id: projectId,
+    name: String(payload.name || "Road Repair Project").trim(),
+    owner: String(payload.owner || "City Engineering Office").trim(),
+    budget: String(payload.budget || "TBD").trim(),
+    createdAt: new Date().toISOString(),
+    trackings: trackingList
+  };
+  const projects = [project, ...getProjects()].slice(0, 30);
+  saveProjects(projects);
+  trackingList.forEach((tracking) => updateCaseMeta(tracking, { projectId }));
+  return project;
+}
+
+function getProjectById(projectId) {
+  return getProjects().find((project) => project.id === projectId);
+}
+
+function getSeverityLabel(report) {
+  const score = getPriorityScore(report);
+  if (score >= 85) return "Critical";
+  if (score >= 65) return "High";
+  if (score >= 40) return "Moderate";
+  return "Routine";
+}
+
+function getRootCause(report) {
+  const keywords = `${report?.issueCategory || ""} ${report?.issueType || ""} ${report?.issue || ""}`.toLowerCase();
+  if (keywords.includes("flood") || keywords.includes("drain")) return "Drainage failure";
+  if (keywords.includes("construction") || keywords.includes("utility")) return "Utility / construction cut";
+  if (keywords.includes("crack") || keywords.includes("pothole")) return "Pavement degradation";
+  if (keywords.includes("lane") || keywords.includes("marking")) return "Road marking / visibility";
+  return "Surface wear";
+}
+
+function getVerificationChecklist(report) {
+  return [
+    { label: "Photo evidence", done: Boolean(String(report?.photo || "").trim()) },
+    { label: "Location captured", done: Boolean(String(report?.location || "").trim() && report.location !== "-") },
+    { label: "Coordinates present", done: toNumberOrNull(report?.lat) !== null && toNumberOrNull(report?.lng) !== null },
+    { label: "Detailed description", done: String(report?.issue || "").trim().length >= 20 }
+  ];
+}
+
+function getDuplicateClusters(reports) {
+  const groups = new Map();
+  reports.forEach((report) => {
+    const key = [String(report?.barangay || "").trim().toLowerCase(), String(report?.issueCategory || "").trim().toLowerCase(), String(report?.location || "").trim().toLowerCase().slice(0, 24)].join("|");
+    if (!key.replace(/\|/g, "")) return;
+    const arr = groups.get(key) || [];
+    arr.push(report);
+    groups.set(key, arr);
+  });
+  return Array.from(groups.values()).filter((group) => group.length > 1).sort((a,b)=>b.length-a.length);
+}
+
+function getForecastSummary(reports, days) {
+  const dated = reports.map((report) => parseReportDate(report)).filter(Boolean);
+  if (dated.length === 0) return { projected: 0, backlog: 0, repeatRoads: 0 };
+  const sorted = dated.sort((a,b)=>a-b);
+  const spanDays = Math.max(1, Math.ceil((sorted[sorted.length-1] - sorted[0]) / 86400000));
+  const dailyRate = reports.length / spanDays;
+  return {
+    projected: Math.round(dailyRate * days),
+    backlog: reports.filter((report) => normalizeStatus(report.status) !== "Repaired").length,
+    repeatRoads: getDuplicateClusters(reports).length
+  };
 }
 
 function getAuditTrail() {
@@ -455,20 +625,32 @@ function applyCaseMetadata(report) {
   return {
     ...report,
     assignedTo: meta.assignedTo || "Unassigned",
-    dueAt: meta.dueAt || ""
+    dueAt: meta.dueAt || "",
+    escalationProfile: meta.escalationProfile || "Routine",
+    publicEta: meta.publicEta || "",
+    publicMessage: meta.publicMessage || "",
+    closureProof: meta.closureProof || "",
+    closureDetails: meta.closureDetails || "",
+    role: meta.role || "Super Admin",
+    mention: meta.mention || "",
+    projectId: meta.projectId || "",
+    rootCause: meta.rootCause || getRootCause(report),
+    verificationChecklist: Array.isArray(meta.verificationChecklist) && meta.verificationChecklist.length ? meta.verificationChecklist : getVerificationChecklist(report),
+    repairEvidenceSavedAt: meta.repairEvidenceSavedAt || ""
   };
 }
 
 function setDashboardView(view) {
-  const showOverview = view !== "management";
+  const activeView = view === "management" || view === "operations" ? view : "overview";
+  if (overviewView) overviewView.hidden = activeView !== "overview";
+  if (managementView) managementView.hidden = activeView !== "management";
+  if (operationsView) operationsView.hidden = activeView !== "operations";
 
-  if (overviewView) overviewView.hidden = !showOverview;
-  if (managementView) managementView.hidden = showOverview;
+  showOverviewBtn?.classList.toggle("is-active", activeView === "overview");
+  showManagementBtn?.classList.toggle("is-active", activeView === "management");
+  showOperationsBtn?.classList.toggle("is-active", activeView === "operations");
 
-  showOverviewBtn?.classList.toggle("is-active", showOverview);
-  showManagementBtn?.classList.toggle("is-active", !showOverview);
-
-  if (!showOverview) {
+  if (activeView === "management") {
     setManagementPane("workspace");
     return;
   }
@@ -1107,6 +1289,7 @@ function renderCaseTimeline(tracking) {
 
   const entries = getCaseTimeline(key);
   if (timelineSummary) timelineSummary.textContent = `Timeline for ${key}`;
+  renderClosureChecklist(key);
 
   if (entries.length === 0) {
     caseTimelineList.innerHTML = `<li class="priorityItem empty">No timeline entries yet for ${escapeHtml(key)}.</li>`;
@@ -1156,6 +1339,118 @@ function renderAuditTrail() {
     `;
     auditTrailList.appendChild(item);
   });
+}
+
+
+function renderExecutiveSummary(reports) {
+  if (!executiveSummary) return;
+  const openReports = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
+  const overdue = openReports.filter((report) => getEscalationState(report) === "Overdue").length;
+  const critical = reports.filter((report) => getSeverityLabel(report) === "Critical").length;
+  const duplicates = getDuplicateClusters(reports).length;
+  const topBarangay = Array.from(reports.reduce((acc, report) => {
+    const key = String(report?.barangay || "Unknown").trim() || "Unknown";
+    acc.set(key, (acc.get(key) || 0) + 1);
+    return acc;
+  }, new Map()).entries()).sort((a,b)=>b[1]-a[1])[0];
+  executiveSummary.innerHTML = [
+    { label: "Needs attention today", value: `${overdue} overdue / ${critical} critical`, meta: "Operational risk now" },
+    { label: "Repeat incidents", value: `${duplicates} duplicate clusters`, meta: "Candidate merges to projects" },
+    { label: "Top hotspot barangay", value: topBarangay ? `${topBarangay[0]}` : "N/A", meta: topBarangay ? `${topBarangay[1]} related reports` : "No area data yet" }
+  ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.meta)}</small></article>`).join("");
+}
+
+function renderForecastCards(reports) {
+  if (!forecastCards) return;
+  const days = Number.parseInt(forecastRange?.value || "7", 10) || 7;
+  const forecast = getForecastSummary(reports, days);
+  forecastCards.innerHTML = [
+    { label: `Projected new cases (${days}d)`, value: forecast.projected },
+    { label: "Current backlog", value: forecast.backlog },
+    { label: "Repeat roads", value: forecast.repeatRoads }
+  ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${item.value}</strong></article>`).join("");
+}
+
+function renderMapIntelligence(reports) {
+  if (!mapIntelligenceList) return;
+  const filtered = reports.filter((report) => {
+    if ((mapStatusFilter?.value || "all") !== "all" && normalizeStatus(report.status) !== mapStatusFilter.value) return false;
+    if ((mapAssigneeFilter?.value || "all") !== "all" && (report.assignedTo || "Unassigned") !== mapAssigneeFilter.value) return false;
+    if ((mapCategoryFilter?.value || "all") !== "all" && report.issueCategory !== mapCategoryFilter.value) return false;
+    const severity = getSeverityLabel(report);
+    if ((mapRiskFilter?.value || "all") === "critical" && severity !== "Critical") return false;
+    if ((mapRiskFilter?.value || "all") === "high" && !["Critical", "High"].includes(severity)) return false;
+    return true;
+  }).slice(0, 8);
+  if (mapIntelligenceSummary) mapIntelligenceSummary.textContent = `Showing ${filtered.length} mapped cases after geographic filtering.`;
+  mapIntelligenceList.innerHTML = filtered.length ? filtered.map((report) => `<li class="priorityItem"><div><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><p>${escapeHtml(report.location || "Unknown location")}</p></div><div class="priorityMeta"><span>${escapeHtml(getSeverityLabel(report))}</span><span>${escapeHtml(report.assignedTo || "Unassigned")}</span></div></li>`).join("") : '<li class="priorityItem empty">No map cases match the selected filters.</li>';
+}
+
+function renderDuplicateCaseBoard(reports) {
+  if (!duplicateCaseBoard) return;
+  const clusters = getDuplicateClusters(reports).slice(0, 6);
+  duplicateCaseBoard.innerHTML = clusters.length ? clusters.map((group, index) => `<li class="priorityItem"><div><strong>Cluster ${index + 1}</strong><p>${escapeHtml(group[0]?.location || group[0]?.barangay || "Shared area")}</p></div><div class="priorityMeta"><span>${group.length} linked reports</span><span>${escapeHtml(group[0]?.issueCategory || "Mixed")}</span></div></li>`).join("") : '<li class="priorityItem empty">No duplicate incident clusters detected.</li>';
+}
+
+function renderProjectPortfolio() {
+  if (!projectPortfolio) return;
+  const projects = getProjects();
+  projectPortfolio.innerHTML = projects.length ? projects.map((project) => `<article class="teamCard"><div class="teamCardHeader"><strong>${escapeHtml(project.name)}</strong><span class="priority-badge">${escapeHtml(project.id)}</span></div><div class="teamCardMeta"><span>${escapeHtml(project.owner)}</span><span>Budget: ${escapeHtml(project.budget || "TBD")}</span><span>${project.trackings.length} reports linked</span></div></article>`).join("") : '<p class="small">No incident projects created yet.</p>';
+}
+
+function renderModerationBoard(reports) {
+  if (!moderationBoard) return;
+  const queue = reports.filter((report) => getVerificationState(report) !== "Verified" || getSeverityLabel(report) === "Critical").slice(0, 8);
+  moderationBoard.innerHTML = queue.length ? queue.map((report) => `<li class="priorityItem ${getVerificationState(report) === "Flagged" ? "is-flagged" : ""}"><div><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><p>${escapeHtml(report.issue || "No issue details")}</p></div><div class="priorityMeta"><span>${escapeHtml(getVerificationState(report))}</span><span>${escapeHtml(getSeverityLabel(report))}</span></div></li>`).join("") : '<li class="priorityItem empty">No moderation backlog at the moment.</li>';
+}
+
+function renderRootCauseBoard(reports) {
+  if (!rootCauseBoard) return;
+  const counts = reports.reduce((acc, report) => {
+    const key = report.rootCause || getRootCause(report);
+    acc.set(key, (acc.get(key) || 0) + 1);
+    return acc;
+  }, new Map());
+  const top = Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]).slice(0, 4);
+  rootCauseBoard.innerHTML = top.length ? top.map(([label, count]) => `<article class="miniCard"><span>${escapeHtml(label)}</span><strong>${count}</strong><small>Recurring maintenance driver</small></article>`).join("") : '<article class="miniCard"><span>No root-cause trends yet</span><strong>0</strong></article>';
+}
+
+function renderFieldOpsBoard(reports) {
+  if (!fieldOpsBoard) return;
+  const cards = reports.filter((report) => normalizeStatus(report.status) !== "Repaired").sort((a,b)=>getPriorityScore(b)-getPriorityScore(a)).slice(0,6);
+  fieldOpsBoard.innerHTML = cards.length ? cards.map((report) => `<article class="teamCard fieldCard"><div class="teamCardHeader"><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><span class="priority-badge">${escapeHtml(getSeverityLabel(report))}</span></div><div class="teamCardMeta"><span>${escapeHtml(report.location || "Unknown location")}</span><span>Assignee: ${escapeHtml(report.assignedTo || "Unassigned")}</span><span>ETA: ${escapeHtml(report.publicEta || "Unset")}</span></div></article>`).join("") : '<p class="small">No active field work cards available.</p>';
+}
+
+function renderTrustCenterBoard() {
+  if (!trustCenterBoard) return;
+  const notices = getNotificationQueue().slice(0, 6);
+  trustCenterBoard.innerHTML = notices.length ? notices.map((entry) => `<li class="priorityItem"><div><strong>${escapeHtml(entry.tracking || "General update")}</strong><p>${escapeHtml(entry.message || entry.template)}</p></div><div class="priorityMeta"><span>${escapeHtml(entry.eta || "No ETA")}</span><span>${formatDueAt(entry.createdAt)}</span></div></li>`).join("") : '<li class="priorityItem empty">No queued citizen updates yet.</li>';
+  if (notificationQueueList) notificationQueueList.innerHTML = trustCenterBoard.innerHTML;
+}
+
+function renderClosureChecklist(tracking = "") {
+  if (!closureChecklist) return;
+  const report = allReports.find((item) => String(item?.tracking || "").trim() === String(tracking || timelineTrackingSelect?.value || "").trim());
+  const checks = report ? [
+    { label: "Closure proof uploaded", done: Boolean(report.closureProof) },
+    { label: "Repair summary saved", done: Boolean(report.closureDetails) },
+    { label: "Timeline updated", done: getCaseTimeline(report.tracking).length > 0 },
+    { label: "Citizen update queued", done: getNotificationQueue().some((entry) => entry.tracking === report.tracking) }
+  ] : [];
+  closureChecklist.innerHTML = checks.length ? checks.map((check) => `<article class="miniCard"><span>${escapeHtml(check.label)}</span><strong>${check.done ? "Done" : "Pending"}</strong></article>`).join("") : '<article class="miniCard"><span>Select a tracking number</span><strong>Awaiting case</strong></article>';
+}
+
+function renderPermissionsSummary() {
+  if (!permissionsSummary) return;
+  const role = roleFilterSelect?.value || "Super Admin";
+  const permissionsByRole = {
+    "Super Admin": ["Delete cases", "Assign teams", "Publish updates"],
+    Verifier: ["Validate reports", "Request evidence", "Flag abuse"],
+    Dispatcher: ["Assign crews", "Set ETA", "Escalate cases"],
+    "Field Lead": ["Upload proof", "Complete repairs", "Reopen jobs"],
+    Viewer: ["View analytics", "Export reports", "Monitor workload"]
+  };
+  permissionsSummary.innerHTML = (permissionsByRole[role] || []).map((item) => `<article class="miniCard"><span>${escapeHtml(role)}</span><strong>${escapeHtml(item)}</strong></article>`).join("");
 }
 
 function updateBulkSummary(totalVisible) {
@@ -1222,6 +1517,9 @@ function bulkAssignReports(reports, assignee) {
 function bucketLabelForDate(date, range) {
   if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
 
+  if (range === "daily") {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
   if (range === "weekly") {
     return `${date.getFullYear()}-W${String(getWeekNumber(date)).padStart(2, "0")}`;
   }
@@ -1759,6 +2057,8 @@ function renderAnalytics(reports) {
   document.getElementById("highPriorityCount").textContent = highPriorityCount;
   drawStatusChart(counts);
   renderTeamPerformanceBoard(reports);
+  renderExecutiveSummary(reports);
+  renderForecastCards(reports);
 }
 
 function populateSelectFilter(select, values, allLabel) {
@@ -1783,6 +2083,8 @@ function populateSelectFilter(select, values, allLabel) {
 function syncDynamicFilters(reports) {
   populateSelectFilter(categoryFilter, reports.map((report) => report.issueCategory), "All categories");
   populateSelectFilter(barangayFilter, reports.map((report) => report.barangay), "All barangays");
+  populateSelectFilter(mapAssigneeFilter, reports.map((report) => report.assignedTo || "Unassigned"), "All assignees");
+  populateSelectFilter(mapCategoryFilter, reports.map((report) => report.issueCategory), "All categories");
 }
 
 function getFilteredReports() {
@@ -1819,6 +2121,8 @@ function getFilteredReports() {
       if (selectedPreset === "needsVerification" && verificationState !== "Needs Verification") return false;
       if (selectedPreset === "flagged" && verificationState !== "Flagged") return false;
       if (selectedPreset === "lowQuality" && qualityScore >= 50) return false;
+      if (selectedPreset === "duplicates" && !getDuplicateClusters(allReports).some((cluster) => cluster.some((entry) => entry.tracking === report.tracking))) return false;
+      if (selectedPreset === "critical" && getSeverityLabel(report) !== "Critical") return false;
     }
 
     if (!query) return true;
@@ -1861,7 +2165,7 @@ function renderPagination(totalItems) {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="16">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="18">No reports match your current filters.</td></tr>';
     return;
   }
 
@@ -1888,9 +2192,11 @@ function renderRows(reports) {
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
       <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
+      <td><span class="severity-badge severity-${getSeverityLabel(report).toLowerCase()}">${getSeverityLabel(report)}</span></td>
       <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
       <td>${formatDueAt(report.dueAt)}</td>
       <td><span class="verification-badge ${escalationState === "Overdue" ? "is-flagged" : escalationState === "At Risk" ? "is-pending" : "is-verified"}">${escalationState}</span></td>
+      <td>${report.projectId ? escapeHtml(report.projectId) : "-"}</td>
       <td></td>
       <td></td>
       <td></td>
@@ -1914,13 +2220,13 @@ function renderRows(reports) {
 
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
-      tr.children[13].textContent = photoElement;
+      tr.children[15].textContent = photoElement;
     } else {
-      tr.children[13].appendChild(photoElement);
+      tr.children[15].appendChild(photoElement);
     }
 
-    tr.children[14].classList.add("status-cell");
-    tr.children[14].appendChild(statusSelect(effectiveStatus, report.tracking));
+    tr.children[16].classList.add("status-cell");
+    tr.children[16].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -1958,8 +2264,8 @@ function renderRows(reports) {
     viewBtn.textContent = "View";
     viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
-    tr.children[15].classList.add("action-cell");
-    tr.children[15].append(viewBtn, timelineBtn, deleteBtn);
+    tr.children[17].classList.add("action-cell");
+    tr.children[17].append(viewBtn, timelineBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -1977,6 +2283,15 @@ function applyFiltersAndRender() {
   renderSlaQueue(allReports);
   renderAuditTrail();
   refreshReportingSection(allReports);
+  renderMapIntelligence(allReports);
+  renderDuplicateCaseBoard(allReports);
+  renderProjectPortfolio();
+  renderModerationBoard(allReports);
+  renderRootCauseBoard(allReports);
+  renderFieldOpsBoard(allReports);
+  renderTrustCenterBoard();
+  renderClosureChecklist();
+  renderPermissionsSummary();
   updateSelectAllState(filtered);
   const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
   const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
@@ -1985,7 +2300,7 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="16">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="18">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
 
   try {
@@ -2002,7 +2317,7 @@ async function loadReports() {
       .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="16">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="18">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
       renderSlaQueue([]);
@@ -2017,7 +2332,7 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="16">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="18">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
     renderSlaQueue([]);
@@ -2077,6 +2392,7 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+showOperationsBtn?.addEventListener("click", () => setDashboardView("operations"));
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showActionsPaneBtn?.addEventListener("click", () => setManagementPane("actions"));
@@ -2228,6 +2544,125 @@ document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
   exportReportsToPdf(getFilteredReports());
   setFeedback("reportsFeedback", "PDF report prepared for print/export.");
 });
+
+
+bulkEscalateBtn?.addEventListener("click", () => {
+  const escalationProfile = bulkEscalationSelect?.value || "Routine";
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report to update escalation.", true);
+    return;
+  }
+  selected.forEach((report) => {
+    updateCaseMeta(report.tracking, { escalationProfile });
+    report.escalationProfile = escalationProfile;
+    addAuditEntry("Escalation Updated", report.tracking, escalationProfile);
+    addTimelineEntry(report.tracking, "Escalation Updated", escalationProfile);
+  });
+  setFeedback("reportsFeedback", `Updated escalation profile for ${selected.length} report(s).`);
+  applyFiltersAndRender();
+});
+
+queueNotificationBtn?.addEventListener("click", () => {
+  const tracking = String(timelineTrackingSelect?.value || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Choose a tracking number before queuing a citizen update.", true);
+    return;
+  }
+  const template = notificationTemplateSelect?.value || "received";
+  const eta = publicEtaInput?.value || "";
+  const message = (notificationMessageInput?.value || "").trim() || `Citizen update: ${template}.`;
+  queueNotification(tracking, template, message, eta);
+  updateCaseMeta(tracking, { publicEta: eta, publicMessage: message });
+  const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
+  if (report) {
+    report.publicEta = eta;
+    report.publicMessage = message;
+  }
+  addAuditEntry("Citizen Update Queued", tracking, template);
+  addTimelineEntry(tracking, "Citizen Update", message);
+  if (notificationMessageInput) notificationMessageInput.value = "";
+  setFeedback("reportsFeedback", `Queued citizen update for ${tracking}.`);
+  renderTrustCenterBoard();
+  renderClosureChecklist(tracking);
+});
+
+saveClosureBtn?.addEventListener("click", () => {
+  const tracking = String(timelineTrackingSelect?.value || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Choose a tracking number before saving closure evidence.", true);
+    return;
+  }
+  const closureProof = String(closureProofInput?.value || "").trim();
+  const closureDetails = String(closureDetailsInput?.value || "").trim();
+  if (!closureProof && !closureDetails) {
+    setFeedback("reportsFeedback", "Add closure proof or repair details first.", true);
+    return;
+  }
+  const verificationChecklist = [
+    { label: "Closure proof uploaded", done: Boolean(closureProof) },
+    { label: "Repair summary saved", done: Boolean(closureDetails) },
+    { label: "QA reviewed", done: true }
+  ];
+  updateCaseMeta(tracking, { closureProof, closureDetails, verificationChecklist, repairEvidenceSavedAt: new Date().toISOString() });
+  const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
+  if (report) {
+    report.closureProof = closureProof;
+    report.closureDetails = closureDetails;
+    report.verificationChecklist = verificationChecklist;
+    report.repairEvidenceSavedAt = new Date().toISOString();
+  }
+  addAuditEntry("Closure Evidence Saved", tracking, closureDetails.slice(0, 80));
+  addTimelineEntry(tracking, "Closure Evidence", closureDetails || closureProof);
+  setFeedback("reportsFeedback", `Saved closure evidence for ${tracking}.`);
+  renderClosureChecklist(tracking);
+});
+
+saveCollabNoteBtn?.addEventListener("click", () => {
+  const tracking = String(timelineTrackingSelect?.value || "").trim();
+  const mention = String(mentionInput?.value || "").trim();
+  const role = roleFilterSelect?.value || "Super Admin";
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Choose a tracking number before saving a collaboration note.", true);
+    return;
+  }
+  updateCaseMeta(tracking, { role, mention });
+  const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
+  if (report) {
+    report.role = role;
+    report.mention = mention;
+  }
+  addAuditEntry("Collaboration Note", tracking, `${role}${mention ? ` · ${mention}` : ""}`);
+  addTimelineEntry(tracking, "Collaboration Note", `${role}${mention ? ` · ${mention}` : ""}`);
+  if (mentionInput) mentionInput.value = "";
+  setFeedback("reportsFeedback", `Saved collaboration note for ${tracking}.`);
+  renderPermissionsSummary();
+});
+
+createProjectBtn?.addEventListener("click", () => {
+  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report to create a repair project.", true);
+    return;
+  }
+  const project = createProjectFromReports(selected, {
+    name: projectNameInput?.value || "Road Repair Project",
+    owner: projectOwnerSelect?.value || "City Engineering Office",
+    budget: projectBudgetInput?.value || "TBD"
+  });
+  if (!project) return;
+  allReports = allReports.map((report) => selected.some((item) => item.tracking === report.tracking) ? { ...report, projectId: project.id } : report);
+  addAuditEntry("Project Created", project.id, `${project.name} · ${project.trackings.length} reports`);
+  setFeedback("reportsFeedback", `Created ${project.id} from ${selected.length} selected report(s).`);
+  applyFiltersAndRender();
+});
+
+forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
+mapStatusFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
+mapAssigneeFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
+mapCategoryFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
+mapRiskFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
+roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
 setDashboardView("overview");
 renderCaseTimeline("");
