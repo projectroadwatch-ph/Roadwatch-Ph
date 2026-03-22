@@ -358,7 +358,7 @@
         </div>
         <div class="field-group">
           <label for="email">Email Address <span aria-hidden="true">*</span></label>
-          <input id="email" placeholder="example@email.com">
+          <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="example@email.com">
         </div>
         <div class="field-group">
           <label for="phone">Mobile Number <span aria-hidden="true">*</span></label>
@@ -720,6 +720,7 @@
       <button id="copyTrackingBtn" type="button" class="copy-btn" onclick="copyTrackingNumber()">Copy Reference #</button>
     </div>
     <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
+    <p id="emailDeliveryInfo" class="popup-meta" aria-live="polite"></p>
     <div class="popup-actions">
       <button class="submit popup-action" onclick="closePopup()">Done</button>
       <button class="submit popup-action ghost" onclick="newReport()">Submit Another</button>
