@@ -1274,3 +1274,130 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     margin-left: 0;
   }
 }
+
+/* Dashboard cleanup pass */
+.dashboard-shell {
+  border-radius: 22px;
+}
+
+.overview-shell {
+  gap: 18px;
+}
+
+.panel h3,
+.panel h4 {
+  letter-spacing: 0.01em;
+}
+
+.dashboard-header {
+  margin-top: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(165, 213, 255, 0.12);
+}
+
+.dashboard-nav {
+  margin-top: 12px;
+  padding-bottom: 4px;
+}
+
+.dashboard-view {
+  margin-top: 12px;
+}
+
+.overview-main-grid {
+  gap: 18px;
+}
+
+.overview-main-grid .panel,
+.critical-overview-panel,
+.command-pane,
+.action-drawer {
+  backdrop-filter: blur(6px);
+}
+
+.toolbar,
+.triage-toolbar {
+  gap: 12px;
+}
+
+.toolbar .inlineControl,
+.triage-toolbar .inlineControl {
+  border: 1px solid rgba(165, 213, 255, 0.14);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(6, 23, 42, 0.24);
+}
+
+.toolbar .inlineControl input,
+.toolbar .inlineControl select,
+.triage-toolbar .inlineControl input,
+.triage-toolbar .inlineControl select {
+  margin-top: 8px;
+}
+
+.tableWrap {
+  border-color: rgba(165, 213, 255, 0.2);
+  background: rgba(3, 16, 33, 0.32);
+}
+
+.management-table th,
+.overview-table th {
+  top: 0;
+  box-shadow: inset 0 -1px 0 rgba(165, 213, 255, 0.18);
+}
+
+.management-table tbody tr:nth-child(even),
+.overview-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.management-table tbody tr:hover,
+.overview-table tbody tr:hover {
+  background: rgba(41, 158, 255, 0.08);
+}
+
+.workspace-actions .queue-section {
+  margin-top: 14px;
+}
+
+.priorityQueueList {
+  gap: 10px;
+}
+
+.priorityItem {
+  border-color: rgba(165, 213, 255, 0.24);
+  background: linear-gradient(145deg, rgba(10, 33, 57, 0.92), rgba(15, 45, 74, 0.52));
+}
+
+.action-cell {
+  gap: 8px;
+}
+
+.action-cell .slim {
+  min-width: 88px;
+}
+
+@media (max-width: 1120px) {
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .toolbar > button.slim {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard-shell {
+    padding: 14px;
+  }
+
+  .console-search {
+    min-width: 0;
+  }
+
+  .toolbar .inlineControl,
+  .triage-toolbar .inlineControl {
+    padding: 9px;
+  }
+}
