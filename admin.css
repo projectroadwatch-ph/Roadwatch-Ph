@@ -866,3 +866,70 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   background: rgba(99, 230, 190, 0.14);
   color: #9ff2d7;
 }
+
+/* Overview redesign */
+.overview-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.critical-overview-panel {
+  margin-top: 14px;
+  background: linear-gradient(120deg, rgba(13, 31, 58, 0.96), rgba(16, 52, 88, 0.76));
+}
+
+.critical-overview-panel .analyticsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.analyticsCard--alert strong {
+  color: #ff9ea4;
+}
+
+.analyticsCard--warn strong {
+  color: #ffd58f;
+}
+
+.overview-main-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}
+
+.overview-main-grid .chart-stretch {
+  margin-top: 0;
+}
+
+.overview-main-grid .chart-stretch:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.compact-chart canvas {
+  height: 250px;
+}
+
+.full-width-panel {
+  margin-top: 0;
+}
+
+.data-analytics-panel {
+  margin-top: 0;
+}
+
+.analytics-bottom-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.data-analytics-panel h4 {
+  margin: 0;
+}
+
+@media (max-width: 1000px) {
+  .overview-main-grid,
+  .analytics-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}

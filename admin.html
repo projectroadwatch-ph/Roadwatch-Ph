@@ -45,154 +45,172 @@
       </nav>
 
       <section id="overviewView" class="dashboard-view">
-      <section class="dashboard-grid overview-layout">
-      <article class="panel analytics-panel">
-        <h3>Operational Snapshot</h3>
-        <div id="executiveSummary" class="executiveSummary"></div>
-        <div id="analyticsGrid" class="analyticsGrid">
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Total Reports</span>
-            <strong id="totalReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Pending</span>
-            <strong id="pendingReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Verified</span>
-            <strong id="verifiedReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">In Progress</span>
-            <strong id="inProgressReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Repaired</span>
-            <strong id="repairedReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Needs Verification</span>
-            <strong id="needsVerificationCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Flagged Reports</span>
-            <strong id="flaggedReportsCount">0</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">Avg Data Quality</span>
-            <strong id="avgQualityScore">0%</strong>
-          </div>
-          <div class="analyticsCard">
-            <span class="analyticsLabel">High Priority Cases</span>
-            <strong id="highPriorityCount">0</strong>
-          </div>
-        </div>
-      </article>
+        <section class="overview-shell">
+          <article class="panel analytics-panel critical-overview-panel">
+            <div class="row">
+              <h3>Critical Overview</h3>
+              <button type="button" class="secondary slim">Review Urgent Reports</button>
+            </div>
+            <p class="small">Crisis monitoring for high-priority and unresolved citizen reports.</p>
+            <div id="executiveSummary" class="executiveSummary"></div>
+            <div id="analyticsGrid" class="analyticsGrid">
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Total Reports</span>
+                <strong id="totalReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--alert">
+                <span class="analyticsLabel">Pending</span>
+                <strong id="pendingReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Verified</span>
+                <strong id="verifiedReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">In Progress</span>
+                <strong id="inProgressReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Repaired</span>
+                <strong id="repairedReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">Needs Verification</span>
+                <strong id="needsVerificationCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--alert">
+                <span class="analyticsLabel">Flagged Reports</span>
+                <strong id="flaggedReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Avg Data Quality</span>
+                <strong id="avgQualityScore">0%</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">High Priority Cases</span>
+                <strong id="highPriorityCount">0</strong>
+              </div>
+            </div>
+          </article>
 
-      <article class="panel chart-stretch overview-map-panel">
-        <div class="row">
-          <h3>Overview Pin Map</h3>
-          <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
-        </div>
-        <div class="mapLegend" aria-label="Pin map legend">
-          <span class="legendItem"><span class="legendDot legend-pending"></span> Pending (default)</span>
-          <span class="legendItem"><span class="legendDot legend-verified"></span> Verified</span>
-          <span class="legendItem"><span class="legendDot legend-progress"></span> In Progress</span>
-          <span class="legendItem"><span class="legendDot legend-repaired"></span> Repaired</span>
-        </div>
-        <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
-      </article>
+          <div class="overview-main-grid">
+            <article class="panel chart-stretch">
+              <div class="row">
+                <h3>Operational Snapshot</h3>
+                <p class="small">Real-time report volume and workflow state.</p>
+              </div>
+              <div class="chart-panel compact-chart">
+                <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
+              </div>
+            </article>
 
-      <article class="panel chart-stretch">
-        <div class="row">
-          <h3>Status Distribution</h3>
-          <p class="small">Visual summary of current report statuses.</p>
-        </div>
-        <div class="chart-panel">
-          <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
-        </div>
-      </article>
+            <article class="panel chart-stretch">
+              <div class="row">
+                <h3>Reports Per Barangay</h3>
+                <p class="small">Top locations with repeat issue concentration.</p>
+              </div>
+              <div class="heatmapWrap">
+                <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
+              </div>
+            </article>
 
-      <article class="panel chart-stretch">
-        <div class="row">
-          <h3>Data Analytics & Reporting</h3>
-          <label class="inlineControl compact">Report range
-            <select id="reportingRange">
-              <option value="weekly">Weekly</option>
-              <option value="monthly" selected>Monthly</option>
-              <option value="daily">Daily</option>
-            </select>
-          </label>
-          <label class="inlineControl compact">Forecast view
-            <select id="forecastRange">
-              <option value="7" selected>Next 7 days</option>
-              <option value="14">Next 14 days</option>
-              <option value="30">Next 30 days</option>
-            </select>
-          </label>
-        </div>
-        <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
-        <div class="chart-panel">
-          <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
-        </div>
-        <div class="heatmapWrap">
-          <h4>Problem Area Heat Map</h4>
-          <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
-        </div>
-        <div class="forecastPanel">
-          <h4>Forward Outlook</h4>
-          <div id="forecastCards" class="forecastCards"></div>
-        </div>
-        <div class="row export-row">
-          <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
-          <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
-        </div>
-      </article>
-      <article class="panel chart-stretch">
-        <div class="row">
-          <h3>Team Performance Board</h3>
-          <p class="small">Live workload and SLA risk by assignee.</p>
-        </div>
-        <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
-      </article>
-      <article class="panel chart-stretch">
-        <div class="row">
-          <h3>Map Intelligence</h3>
-          <p class="small">Filter hotspots, drill into hotspots, and stage field routes.</p>
-        </div>
-        <div class="toolbar triage-toolbar">
-          <label class="inlineControl">Map status
-            <select id="mapStatusFilter">
-              <option value="all">All statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="Verified">Verified</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Repaired">Repaired</option>
-            </select>
-          </label>
-          <label class="inlineControl">Map assignee
-            <select id="mapAssigneeFilter">
-              <option value="all">All assignees</option>
-            </select>
-          </label>
-          <label class="inlineControl">Map category
-            <select id="mapCategoryFilter">
-              <option value="all">All categories</option>
-            </select>
-          </label>
-          <label class="inlineControl">Map risk
-            <select id="mapRiskFilter">
-              <option value="all">All cases</option>
-              <option value="critical">Critical only</option>
-              <option value="high">High and critical</option>
-            </select>
-          </label>
-        </div>
-        <p id="mapIntelligenceSummary" class="small">Interactive geographic workload view.</p>
-        <div id="mapIntelligenceList" class="priorityQueueList"></div>
-      </article>
-      </section>
+            <article class="panel chart-stretch">
+              <div class="row">
+                <h3>Response Time</h3>
+                <label class="inlineControl compact">Report range
+                  <select id="reportingRange">
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="daily">Daily</option>
+                  </select>
+                </label>
+                <label class="inlineControl compact">Forecast view
+                  <select id="forecastRange">
+                    <option value="7" selected>Next 7 days</option>
+                    <option value="14">Next 14 days</option>
+                    <option value="30">Next 30 days</option>
+                  </select>
+                </label>
+              </div>
+              <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
+              <div class="chart-panel">
+                <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
+              </div>
+            </article>
+          </div>
 
+          <article class="panel chart-stretch overview-map-panel full-width-panel">
+            <div class="row">
+              <h3>Live Road Issue Map</h3>
+              <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
+            </div>
+            <div class="mapLegend" aria-label="Pin map legend">
+              <span class="legendItem"><span class="legendDot legend-pending"></span> Pending (default)</span>
+              <span class="legendItem"><span class="legendDot legend-verified"></span> Verified</span>
+              <span class="legendItem"><span class="legendDot legend-progress"></span> In Progress</span>
+              <span class="legendItem"><span class="legendDot legend-repaired"></span> Repaired</span>
+            </div>
+            <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
+          </article>
+
+          <article class="panel chart-stretch data-analytics-panel">
+            <div class="row">
+              <h3>Data Analytics</h3>
+              <p class="small">Forward outlook, team load, and exportable reporting snapshots.</p>
+            </div>
+            <div class="analytics-bottom-grid">
+              <div class="forecastPanel">
+                <h4>Forward Outlook</h4>
+                <div id="forecastCards" class="forecastCards"></div>
+              </div>
+              <div>
+                <h4>Team Performance Board</h4>
+                <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
+              </div>
+            </div>
+            <div class="row export-row">
+              <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
+              <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
+            </div>
+          </article>
+
+          <article class="panel chart-stretch">
+            <div class="row">
+              <h3>Map Intelligence</h3>
+              <p class="small">Filter hotspots, drill into hotspots, and stage field routes.</p>
+            </div>
+            <div class="toolbar triage-toolbar">
+              <label class="inlineControl">Map status
+                <select id="mapStatusFilter">
+                  <option value="all">All statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <label class="inlineControl">Map assignee
+                <select id="mapAssigneeFilter">
+                  <option value="all">All assignees</option>
+                </select>
+              </label>
+              <label class="inlineControl">Map category
+                <select id="mapCategoryFilter">
+                  <option value="all">All categories</option>
+                </select>
+              </label>
+              <label class="inlineControl">Map risk
+                <select id="mapRiskFilter">
+                  <option value="all">All cases</option>
+                  <option value="critical">Critical only</option>
+                  <option value="high">High and critical</option>
+                </select>
+              </label>
+            </div>
+            <p id="mapIntelligenceSummary" class="small">Interactive geographic workload view.</p>
+            <div id="mapIntelligenceList" class="priorityQueueList"></div>
+          </article>
+        </section>
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
