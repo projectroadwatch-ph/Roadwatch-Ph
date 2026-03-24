@@ -2093,6 +2093,39 @@ function renderAnalytics(reports) {
   document.getElementById("avgQualityScore").textContent = `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`;
   const highPriorityCount = reports.filter((report) => getPriorityScore(report) >= 70).length;
   document.getElementById("highPriorityCount").textContent = highPriorityCount;
+
+  const snapshotTotal = document.getElementById("snapshotTotalCount");
+  const snapshotPending = document.getElementById("snapshotPendingCount");
+  const snapshotVerified = document.getElementById("snapshotVerifiedCount");
+  if (snapshotTotal) snapshotTotal.textContent = counts.total;
+  if (snapshotPending) snapshotPending.textContent = counts.pending;
+  if (snapshotVerified) snapshotVerified.textContent = counts.verified;
+
+  const urgentCount = reports.filter((report) => getPriorityScore(report) >= 75).length;
+  const moderateCount = reports.filter((report) => {
+    const score = getPriorityScore(report);
+    return score >= 45 && score < 75;
+  }).length;
+  const lowCount = Math.max(reports.length - urgentCount - moderateCount, 0);
+  const totalForSeverity = Math.max(reports.length, 1);
+  const urgentShare = Math.round((urgentCount / totalForSeverity) * 100);
+  const moderateShare = Math.round((moderateCount / totalForSeverity) * 100);
+  const lowShare = Math.max(100 - urgentShare - moderateShare, 0);
+
+  const severityUrgentCount = document.getElementById("severityUrgentCount");
+  const severityModerateCount = document.getElementById("severityModerateCount");
+  const severityLowCount = document.getElementById("severityLowCount");
+  if (severityUrgentCount) severityUrgentCount.textContent = urgentCount;
+  if (severityModerateCount) severityModerateCount.textContent = moderateCount;
+  if (severityLowCount) severityLowCount.textContent = lowCount;
+
+  const severityUrgentMeter = document.getElementById("severityUrgentMeter");
+  const severityModerateMeter = document.getElementById("severityModerateMeter");
+  const severityLowMeter = document.getElementById("severityLowMeter");
+  if (severityUrgentMeter) severityUrgentMeter.style.width = `${urgentShare}%`;
+  if (severityModerateMeter) severityModerateMeter.style.width = `${moderateShare}%`;
+  if (severityLowMeter) severityLowMeter.style.width = `${lowShare}%`;
+
   drawStatusChart(counts);
   renderTeamPerformanceBoard(reports);
   renderExecutiveSummary(reports);
