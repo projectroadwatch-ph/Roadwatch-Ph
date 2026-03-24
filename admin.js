@@ -919,7 +919,6 @@ async function updateReportStatus(tracking, status) {
       const payload = await postStatusUpdateToEndpoint(endpoint, tracking, status);
       if (payload?.success || payload?.updated || normalizeStatus(payload?.status) === normalizeStatus(status)) {
         hasAnySuccess = true;
-        break;
       }
     } catch {
       // Try next endpoint.
@@ -949,11 +948,10 @@ async function deleteReport(tracking) {
         const payload = text ? JSON.parse(text) : {};
         if (payload?.success || Object.keys(payload).length === 0) {
           hasAnySuccess = true;
-          break;
         }
       }
     } catch {
-      // fall through
+      // Try next endpoint.
     }
   }
 
