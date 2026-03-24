@@ -3,6 +3,7 @@ const ADMIN_PASSWORD = "roadwatchph";
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbz5Z666xxZThJsMGwPCDNg8Vdku-WfQmZHeQHM6Rko4YLwnnpViqTAMX2UfBbUyk_u1/exec";
 const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
+const PUBLIC_SITE_API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
@@ -91,6 +92,7 @@ const permissionsSummary = document.getElementById("permissionsSummary");
 const createProjectBtn = document.getElementById("createProjectBtn");
 const bulkEscalationSelect = document.getElementById("bulkEscalationSelect");
 const bulkEscalateBtn = document.getElementById("bulkEscalateBtn");
+const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -100,6 +102,17 @@ const REPORTS_PER_PAGE = 15;
 let currentPage = 1;
 let overviewMap = null;
 let overviewMarkers = null;
+let activeReportsSource = "";
+
+const REPORT_ENDPOINTS = [
+  { url: PUBLIC_SITE_API_URL, label: "Public website Google Sheet" },
+  { url: API_URL, label: "Admin primary Google Sheet endpoint" },
+  { url: HOME_API_URL, label: "Admin backup Google Sheet endpoint" }
+];
+
+function getStatusWriteEndpoints() {
+  return Array.from(new Set([API_URL, HOME_API_URL, PUBLIC_SITE_API_URL]));
+}
 
 
 function buildJsonpEndpoint(endpoint) {
@@ -193,6 +206,17 @@ function setFeedback(id, message, isError = false) {
   if (!el) return;
   el.textContent = message;
   el.style.color = isError ? "#ffadb3" : "#9ce9ab";
+}
+
+function setSheetSyncStatus(message, state = "warn") {
+  if (!sheetSyncStatus) return;
+  sheetSyncStatus.textContent = message;
+  sheetSyncStatus.dataset.state = state;
+}
+
+function formatSyncTime(timestamp) {
+  if (!timestamp) return "unknown time";
+  return new Date(timestamp).toLocaleString();
 }
 
 
@@ -915,7 +939,7 @@ async function postStatusUpdateToEndpoint(endpointBase, tracking, status) {
 }
 
 async function updateReportStatus(tracking, status) {
-  const endpoints = [API_URL, HOME_API_URL];
+  const endpoints = getStatusWriteEndpoints();
   let hasAnySuccess = false;
 
   for (const endpoint of endpoints) {
@@ -942,7 +966,7 @@ async function deleteReport(tracking) {
   const trackingValue = String(tracking || "").trim();
   if (!trackingValue) throw new Error("Invalid tracking number.");
 
-  const endpoints = [API_URL, HOME_API_URL];
+  const endpoints = getStatusWriteEndpoints();
   let hasAnySuccess = false;
 
   for (const endpointBase of endpoints) {
@@ -2302,9 +2326,26 @@ function applyFiltersAndRender() {
 async function loadReports() {
   reportsBody.innerHTML = '<tr><td colspan="18">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
+  setSheetSyncStatus("Checking Google Sheets connection…", "warn");
 
   try {
-    const payload = await fetchApiPayload(`${API_URL}?action=getReports`);
+    let payload = null;
+    let sourceLabel = "";
+    let lastError = null;
+
+    for (const source of REPORT_ENDPOINTS) {
+      try {
+        payload = await fetchApiPayload(`${source.url}?action=getReports`);
+        sourceLabel = source.label;
+        break;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    if (!payload) {
+      throw lastError || new Error("Unable to connect to any Google Sheets endpoint.");
+    }
 
     selectedReports.clear();
     currentPage = 1;
@@ -2325,12 +2366,16 @@ async function loadReports() {
       renderCaseTimeline("");
       refreshReportingSection([]);
       filterSummary.textContent = "No records to filter.";
+      activeReportsSource = sourceLabel;
+      setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
       setTableLoadingState(false);
       return;
     }
 
+    activeReportsSource = sourceLabel;
+    setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
     applyFiltersAndRender();
-    setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s).`);
+    setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s) from ${sourceLabel}.`);
   } catch (error) {
     reportsBody.innerHTML = '<tr><td colspan="18">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
@@ -2341,6 +2386,14 @@ async function loadReports() {
     refreshReportingSection([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
+    if (activeReportsSource) {
+      setSheetSyncStatus(
+        `Connection problem. Showing last synced source: ${activeReportsSource}.`,
+        "error"
+      );
+    } else {
+      setSheetSyncStatus("Google Sheets is unreachable. Check Apps Script deployment and access.", "error");
+    }
   } finally {
     if (pendingStatusUpdates === 0) setTableLoadingState(false);
   }
