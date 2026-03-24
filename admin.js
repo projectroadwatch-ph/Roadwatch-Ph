@@ -942,13 +942,27 @@ async function deleteReport(tracking) {
   for (const endpointBase of endpoints) {
     try {
       const body = new URLSearchParams({ action: "deleteReport", tracking: trackingValue });
-      const response = await fetch(endpointBase, { method: "POST", body });
-      if (response.ok) {
+      let payload = {};
+
+      try {
+        const response = await fetch(endpointBase, { method: "POST", body });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const text = await response.text();
-        const payload = text ? JSON.parse(text) : {};
-        if (payload?.success || Object.keys(payload).length === 0) {
-          hasAnySuccess = true;
+        if (text) {
+          try {
+            payload = JSON.parse(text);
+          } catch {
+            payload = {};
+          }
         }
+      } catch (error) {
+        if (!isLikelyCorsBlockedRequest(endpointBase, error)) throw error;
+        const endpoint = `${endpointBase}?action=deleteReport&tracking=${encodeURIComponent(trackingValue)}`;
+        payload = await loadJsonp(endpoint);
+      }
+
+      if (payload?.success || payload?.deleted || Object.keys(payload).length === 0) {
+        hasAnySuccess = true;
       }
     } catch {
       // Try next endpoint.
