@@ -2549,6 +2549,20 @@ label {
   top: 84px;
 }
 
+/* 2026-03-24 nav sizing fix: prevent oversized dashboard tabs from forcing horizontal scroll */
+.admin-authenticated .dashboard-nav {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+}
+
+.admin-authenticated .dashboard-nav .nav-btn {
+  width: auto;
+  flex: 0 1 auto;
+  min-width: clamp(170px, 24vw, 260px);
+  white-space: nowrap;
+}
+
 /* 2026-03-24 hotfix v2: resolve overlapping overview cards/layout collisions */
 .overview-main-grid--organized {
   grid-template-columns: repeat(2, minmax(0, 1fr));
