@@ -1457,7 +1457,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 /* Readability & overflow fixes */
 .dashboard-shell {
-  overflow-x: visible;
+  overflow-x: clip;
 }
 
 .console-topbar,
