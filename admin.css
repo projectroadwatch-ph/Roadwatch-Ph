@@ -2178,3 +2178,119 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-03 layout polish: clearer hierarchy and more consistent spacing */
+.dashboard-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+.console-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.console-tools {
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.dashboard-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+}
+
+.dashboard-header .small {
+  max-width: 72ch;
+}
+
+.dashboard-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  scrollbar-width: thin;
+}
+
+.dashboard-nav .nav-btn {
+  flex: 0 0 auto;
+}
+
+.overview-shell {
+  gap: 14px;
+}
+
+.overview-main-grid--organized {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-areas:
+    "status status status status status status barangay barangay barangay barangay barangay barangay"
+    "verification verification verification verification verification verification response response response response response response"
+    "map map map map map map map map map map map map"
+    "analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics";
+}
+
+.overview-panel--status,
+.overview-panel--barangay,
+.overview-panel--verification,
+.overview-panel--response,
+.overview-panel--map,
+.overview-panel--analytics {
+  min-height: 100%;
+}
+
+#overviewPinMap.pinMap--large {
+  min-height: clamp(320px, 45vh, 520px);
+}
+
+@media (max-width: 1080px) {
+  .console-topbar,
+  .dashboard-header {
+    grid-template-columns: 1fr;
+  }
+
+  .console-tools {
+    justify-content: stretch;
+  }
+
+  .console-search {
+    min-width: 0;
+  }
+
+  .dashboard-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .dashboard-nav .nav-btn {
+    flex: 1 1 220px;
+  }
+
+  .overview-main-grid--organized {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "status"
+      "barangay"
+      "response"
+      "verification"
+      "map"
+      "analytics";
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-shell,
+  .console-topbar,
+  .dashboard-header,
+  .dashboard-nav {
+    border-radius: 12px;
+  }
+
+  .dashboard-header {
+    gap: 10px;
+  }
+}
