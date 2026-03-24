@@ -2548,3 +2548,65 @@ label {
 .admin-authenticated #triagePane.command-pane {
   top: 84px;
 }
+
+/* 2026-03-24 hotfix v2: resolve overlapping overview cards/layout collisions */
+.overview-main-grid--organized {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "snapshot status"
+    "verification barangay"
+    "response ai"
+    "map map"
+    "analytics analytics";
+  align-items: start;
+}
+
+.overview-main-grid--organized > .overview-panel {
+  width: 100%;
+  min-width: 0;
+}
+
+.overview-main-grid--organized .overview-panel .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.overview-main-grid--organized .overview-panel .header-actions {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.overview-main-grid--organized .overview-panel--verification,
+.overview-main-grid--organized .overview-panel--status,
+.overview-main-grid--organized .overview-panel--snapshot,
+.overview-main-grid--organized .overview-panel--barangay,
+.overview-main-grid--organized .overview-panel--response,
+.overview-main-grid--organized .overview-panel--ai,
+.overview-main-grid--organized .overview-panel--analytics,
+.overview-main-grid--organized .overview-panel--map {
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .overview-main-grid--organized {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "snapshot"
+      "status"
+      "verification"
+      "barangay"
+      "response"
+      "ai"
+      "map"
+      "analytics";
+  }
+
+  .overview-main-grid--organized .overview-panel .header-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
