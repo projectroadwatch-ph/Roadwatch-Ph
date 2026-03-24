@@ -2360,6 +2360,64 @@ body.admin-authenticated .wrap,
   align-items: end;
 }
 
+/* 2026-03-24 spacing hotfix: prevent crowding in verification queue cards */
+.overview-main-grid--organized {
+  grid-template-areas:
+    "snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot"
+    "status status status status status status barangay barangay barangay barangay barangay barangay"
+    "verification verification verification verification verification verification verification verification verification verification verification verification"
+    "response response response response response response response response response response response response"
+    "map map map map map map map map map map map map"
+    "analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics analytics";
+}
+
+.overview-panel--verification .row {
+  align-items: flex-start;
+}
+
+.overview-panel--verification .header-actions {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.queueCard {
+  grid-template-columns: 120px minmax(240px, 1fr) minmax(160px, auto);
+  align-items: start;
+  gap: 14px;
+}
+
+.queueCard > div {
+  min-width: 0;
+}
+
+.queueCard h4,
+.queueCard p {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) {
+  .overview-main-grid--organized {
+    grid-template-areas:
+      "snapshot"
+      "status"
+      "barangay"
+      "verification"
+      "response"
+      "map"
+      "analytics";
+  }
+}
+
+@media (max-width: 860px) {
+  .queueCard {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .overview-panel--verification .header-actions {
+    justify-content: flex-start;
+  }
+}
+
 #workspacePane .toolbar > .inlineControl {
   margin-top: 0;
 }
