@@ -2310,3 +2310,96 @@ body.admin-authenticated .wrap,
 .admin-authenticated canvas {
   max-width: 100%;
 }
+
+/* 2026-03-24 management layout + organization refinement */
+.management-header {
+  margin-top: 12px;
+  padding-top: 0;
+  border-top: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.management-header h3 {
+  margin: 0;
+}
+
+.management-header .small {
+  margin: 8px 0 0;
+  max-width: 72ch;
+}
+
+.command-center {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.6fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.command-pane {
+  margin-top: 0;
+}
+
+#triagePane.command-pane {
+  position: sticky;
+  top: 10px;
+}
+
+#workspacePane.command-pane {
+  min-width: 0;
+}
+
+#workspacePane .toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+#workspacePane .toolbar > .inlineControl {
+  margin-top: 0;
+}
+
+#workspacePane .toolbar > button.slim {
+  width: 100%;
+  margin-top: 0;
+}
+
+#workspacePane .triage-toolbar {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+#workspacePane .tableWrap {
+  overflow-x: auto;
+}
+
+@media (max-width: 1240px) {
+  .command-center {
+    grid-template-columns: 1fr;
+  }
+
+  #triagePane.command-pane {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .management-header {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  #workspacePane .toolbar,
+  #workspacePane .triage-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  #workspacePane .toolbar,
+  #workspacePane .triage-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
