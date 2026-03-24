@@ -42,7 +42,6 @@
       <nav class="dashboard-nav" aria-label="Dashboard sections">
         <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
         <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
-        <button id="showOperationsBtn" type="button" class="secondary nav-btn">Operations Suite</button>
       </nav>
 
       <section id="overviewView" class="dashboard-view">
@@ -200,7 +199,6 @@
         <nav class="dashboard-nav management-nav" aria-label="Report management panels">
           <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
           <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
-          <button id="showActionsPaneBtn" type="button" class="secondary nav-btn">Action Drawer</button>
         </nav>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
@@ -338,11 +336,9 @@
               </div>
             </div>
             <p id="reportsFeedback" class="feedback"></p>
-          </section>
-
-          <aside id="actionsPane" class="command-pane command-pane--actions analytics-panel" hidden>
-            <h3>Action Drawer</h3>
-            <p class="small">Apply actions to selected reports from this panel.</p>
+            <section id="actionsPane" class="workspace-actions queue-section">
+              <h4>Integrated Action Workspace</h4>
+              <p class="small">Apply updates without leaving Report Workspace.</p>
             <div class="toolbar stack-toolbar">
               <label class="inlineControl compact check-inline">
                 <input id="selectAllReports" type="checkbox">
@@ -455,57 +451,8 @@
               </div>
               <ul id="auditTrailList" class="priorityQueueList"></ul>
             </div>
-          </aside>
-        </section>
-      </section>
-      <section id="operationsView" class="dashboard-view" hidden>
-        <section class="dashboard-grid overview-layout">
-          <article class="panel analytics-panel">
-            <div class="row">
-              <h3>Incident & Project Console</h3>
-              <p class="small">Merge duplicates into tracked repair projects.</p>
-            </div>
-            <div id="duplicateCaseBoard" class="priorityQueueList"></div>
-            <div class="toolbar triage-toolbar">
-              <label class="inlineControl">Project name
-                <input id="projectNameInput" type="text" placeholder="e.g. JP Rizal resurfacing package">
-              </label>
-              <label class="inlineControl">Project owner
-                <select id="projectOwnerSelect">
-                  <option value="City Engineering Office">City Engineering Office</option>
-                  <option value="Barangay Engineering Team">Barangay Engineering Team</option>
-                  <option value="DPWH Coordination Desk">DPWH Coordination Desk</option>
-                </select>
-              </label>
-              <label class="inlineControl">Budget estimate
-                <input id="projectBudgetInput" type="text" placeholder="₱ 150,000">
-              </label>
-            </div>
-            <button id="createProjectBtn" type="button" class="secondary slim">Create project from selected reports</button>
-            <div id="projectPortfolio" class="teamPerformanceBoard"></div>
-          </article>
-          <article class="panel analytics-panel">
-            <div class="row">
-              <h3>Moderation & Safety Desk</h3>
-              <p class="small">Verification scorecards, fraud risk, and public safety review.</p>
-            </div>
-            <div id="moderationBoard" class="priorityQueueList"></div>
-            <div id="rootCauseBoard" class="miniCardGrid"></div>
-          </article>
-          <article class="panel chart-stretch">
-            <div class="row">
-              <h3>Field Operations Mode</h3>
-              <p class="small">Compact mobile-style dispatch cards for inspectors and crews.</p>
-            </div>
-            <div id="fieldOpsBoard" class="teamPerformanceBoard"></div>
-          </article>
-          <article class="panel chart-stretch">
-            <div class="row">
-              <h3>Citizen Trust Center</h3>
-              <p class="small">Queued public updates, ETA promises, and reopen monitoring.</p>
-            </div>
-            <div id="trustCenterBoard" class="priorityQueueList"></div>
-          </article>
+            </section>
+          </section>
         </section>
       </section>
 

@@ -129,6 +129,19 @@ body {
   border-top: 1px solid rgba(165, 213, 255, 0.2);
 }
 
+.workspace-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(165, 213, 255, 0.3);
+}
+
+.workspace-actions .queue-section {
+  background: rgba(4, 17, 32, 0.45);
+  border: 1px solid rgba(165, 213, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px;
+}
+
 .stack-toolbar {
   grid-template-columns: 1fr;
   align-items: stretch;

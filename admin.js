@@ -665,14 +665,14 @@ function applyCaseMetadata(report) {
 }
 
 function setDashboardView(view) {
-  const activeView = view === "management" || view === "operations" ? view : "overview";
+  const activeView = view === "management" ? "management" : "overview";
   if (overviewView) overviewView.hidden = activeView !== "overview";
   if (managementView) managementView.hidden = activeView !== "management";
-  if (operationsView) operationsView.hidden = activeView !== "operations";
+  if (operationsView) operationsView.hidden = true;
 
   showOverviewBtn?.classList.toggle("is-active", activeView === "overview");
   showManagementBtn?.classList.toggle("is-active", activeView === "management");
-  showOperationsBtn?.classList.toggle("is-active", activeView === "operations");
+  showOperationsBtn?.classList.remove("is-active");
 
   if (activeView === "management") {
     setManagementPane("workspace");
@@ -685,15 +685,15 @@ function setDashboardView(view) {
 }
 
 function setManagementPane(pane) {
-  const activePane = pane === "triage" || pane === "actions" ? pane : "workspace";
+  const activePane = pane === "triage" ? "triage" : "workspace";
 
   if (triagePane) triagePane.hidden = activePane !== "triage";
   if (workspacePane) workspacePane.hidden = activePane !== "workspace";
-  if (actionsPane) actionsPane.hidden = activePane !== "actions";
+  if (actionsPane) actionsPane.hidden = false;
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
-  showActionsPaneBtn?.classList.toggle("is-active", activePane === "actions");
+  showActionsPaneBtn?.classList.remove("is-active");
 }
 
 function applyAuthUI() {
@@ -2235,10 +2235,16 @@ function renderRows(reports) {
       if (!trackingValue) return;
       if (selector.checked) {
         selectedReports.add(trackingValue);
+        if (timelineTrackingSelect && !timelineTrackingSelect.value) {
+          timelineTrackingSelect.value = trackingValue;
+          renderCaseTimeline(trackingValue);
+          renderClosureChecklist(trackingValue);
+        }
       } else {
         selectedReports.delete(trackingValue);
       }
       updateSelectAllState(getFilteredReports());
+      updateBulkSummary(getFilteredReports().length);
     });
     tr.children[0].appendChild(selector);
 
@@ -2466,10 +2472,8 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
-showOperationsBtn?.addEventListener("click", () => setDashboardView("operations"));
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
-showActionsPaneBtn?.addEventListener("click", () => setManagementPane("actions"));
 
 selectAllReports?.addEventListener("change", () => {
   const filtered = getFilteredReports();
