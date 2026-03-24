@@ -351,14 +351,12 @@
           <div>
             <p class="eyebrow">Case Operations</p>
             <h3>Report Management Workspace</h3>
-            <p class="small">Use the workspace table for bulk updates, switch to triage for urgent queues, and open the action drawer for guided case workflows.</p>
+            <p class="small">Use the workspace table for report updates and bulk actions, then switch to triage when you need to focus on urgent queues.</p>
           </div>
-          <button id="toggleActionsDrawerBtn" type="button" class="secondary slim" aria-expanded="false">Open action drawer</button>
         </header>
         <nav class="dashboard-nav management-nav" aria-label="Report management panels">
           <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
           <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
-          <button id="showActionsPaneBtn" type="button" class="secondary nav-btn">Action Drawer</button>
         </nav>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
@@ -498,9 +496,9 @@
               </div>
             </div>
             <p id="reportsFeedback" class="feedback"></p>
-            <section id="actionsPane" class="workspace-actions queue-section action-drawer" hidden>
-              <h4>Action Drawer</h4>
-              <p class="small">Use these guided steps after selecting reports in the workspace table.</p>
+            <section id="actionsPane" class="workspace-actions queue-section">
+              <h4>Bulk Actions</h4>
+              <p class="small">Apply quick updates to selected reports directly from this workspace.</p>
             <div class="toolbar stack-toolbar">
               <label class="inlineControl compact check-inline">
                 <input id="selectAllReports" type="checkbox">
@@ -537,87 +535,6 @@
               <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
               <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
             </div>
-            <details class="queue-section action-group" open>
-              <summary><h4>1) Case Timeline</h4><span class="small">Track internal updates and notes</span></summary>
-              <div class="row">
-                <p class="small">Add a note so other admins can understand the latest decision.</p>
-              </div>
-              <p id="timelineSummary" class="small">Select a report to view timeline.</p>
-              <label class="inlineControl">Tracking #
-                <select id="timelineTrackingSelect">
-                  <option value="">Choose tracking #</option>
-                </select>
-              </label>
-              <label class="inlineControl">Internal note
-                <textarea id="timelineNoteInput" rows="3" placeholder="Add verification notes, escalation decisions, or dispatch updates."></textarea>
-              </label>
-              <button id="addTimelineNoteBtn" type="button" class="secondary slim">Add note</button>
-              <ul id="caseTimelineList" class="priorityQueueList"></ul>
-            </details>
-            <details class="queue-section action-group">
-              <summary><h4>2) Citizen Communication</h4><span class="small">Prepare outbound citizen updates</span></summary>
-              <div class="row">
-                <p class="small">Queue a clear citizen-facing message tied to the selected case.</p>
-              </div>
-              <label class="inlineControl">Public update template
-                <select id="notificationTemplateSelect">
-                  <option value="received">Report received</option>
-                  <option value="verification">Need more information</option>
-                  <option value="scheduled">Repair scheduled</option>
-                  <option value="resolved">Repair resolved</option>
-                </select>
-              </label>
-              <label class="inlineControl">Public ETA
-                <input id="publicEtaInput" type="text" placeholder="e.g. Within 3 working days">
-              </label>
-              <label class="inlineControl">Public message
-                <textarea id="notificationMessageInput" rows="3" placeholder="Citizen-facing status message or request for more details."></textarea>
-              </label>
-              <button id="queueNotificationBtn" type="button" class="secondary slim">Queue citizen update</button>
-              <ul id="notificationQueueList" class="priorityQueueList"></ul>
-            </details>
-            <details class="queue-section action-group">
-              <summary><h4>3) Repair Closure QA</h4><span class="small">Attach evidence before closure</span></summary>
-              <div class="row">
-                <p class="small">Store proof links and completion notes for transparency.</p>
-              </div>
-              <label class="inlineControl">Closure proof link
-                <input id="closureProofInput" type="url" placeholder="https://example.com/after-photo.jpg">
-              </label>
-              <label class="inlineControl">Repair details
-                <textarea id="closureDetailsInput" rows="3" placeholder="Summarize work completed, materials used, and field observations."></textarea>
-              </label>
-              <button id="saveClosureBtn" type="button" class="secondary slim">Save closure evidence</button>
-              <div id="closureChecklist" class="miniCardGrid"></div>
-            </details>
-            <details class="queue-section action-group">
-              <summary><h4>4) Roles & Collaboration</h4><span class="small">Coordinate handoffs and responsibilities</span></summary>
-              <div class="row">
-                <p class="small">Capture role context and mentions for the next shift.</p>
-              </div>
-              <label class="inlineControl">Active role
-                <select id="roleFilterSelect">
-                  <option value="Super Admin">Super Admin</option>
-                  <option value="Verifier">Verifier</option>
-                  <option value="Dispatcher">Dispatcher</option>
-                  <option value="Field Lead">Field Lead</option>
-                  <option value="Viewer">Viewer</option>
-                </select>
-              </label>
-              <label class="inlineControl">Mention / handoff
-                <input id="mentionInput" type="text" placeholder="@Road Team A or @City Engineer">
-              </label>
-              <button id="saveCollabNoteBtn" type="button" class="secondary slim">Save collaboration note</button>
-              <div id="permissionsSummary" class="miniCardGrid"></div>
-            </details>
-            <details class="queue-section action-group">
-              <summary><h4>5) Recent Audit Trail</h4><span class="small">Review recent local activity</span></summary>
-              <div class="row">
-                <p class="small">Quick snapshot of updates done from this browser session.</p>
-                <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
-              </div>
-              <ul id="auditTrailList" class="priorityQueueList"></ul>
-            </details>
             </section>
           </section>
         </section>
