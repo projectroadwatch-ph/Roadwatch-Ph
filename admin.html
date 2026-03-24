@@ -99,8 +99,25 @@
             <article class="panel chart-stretch">
               <div class="row">
                 <h3>Operational Snapshot</h3>
-                <span class="section-chip">Live Queue</span>
-                <p class="small">Real-time report volume and workflow state.</p>
+                <div class="header-actions">
+                  <span class="section-chip">Live Queue</span>
+                  <span class="section-chip muted-chip">Urgent Focus</span>
+                </div>
+              </div>
+              <p class="small">Real-time report volume and workflow state.</p>
+              <div class="snapshot-kpis">
+                <div class="snapshot-card">
+                  <span>Total</span>
+                  <strong id="snapshotTotalCount">0</strong>
+                </div>
+                <div class="snapshot-card snapshot-card--alert">
+                  <span>Pending</span>
+                  <strong id="snapshotPendingCount">0</strong>
+                </div>
+                <div class="snapshot-card">
+                  <span>Verified</span>
+                  <strong id="snapshotVerifiedCount">0</strong>
+                </div>
               </div>
               <div class="chart-panel compact-chart">
                 <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
@@ -110,8 +127,12 @@
             <article class="panel chart-stretch">
               <div class="row">
                 <h3>Reports Per Barangay</h3>
-                <p class="small">Top locations with repeat issue concentration.</p>
+                <div class="header-actions">
+                  <span class="section-chip muted-chip">Barangay</span>
+                  <span class="section-chip muted-chip">Ranking</span>
+                </div>
               </div>
+              <p class="small">Top locations with repeat issue concentration.</p>
               <div class="heatmapWrap">
                 <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
               </div>
@@ -120,33 +141,35 @@
             <article class="panel chart-stretch">
               <div class="row">
                 <h3>Response Time</h3>
-                <label class="inlineControl compact">Report range
-                  <select id="reportingRange">
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly" selected>Monthly</option>
-                    <option value="daily">Daily</option>
-                  </select>
-                </label>
-                <label class="inlineControl compact">Forecast view
-                  <select id="forecastRange">
-                    <option value="7" selected>Next 7 days</option>
-                    <option value="14">Next 14 days</option>
-                    <option value="30">Next 30 days</option>
-                  </select>
-                </label>
+                <div class="header-actions">
+                  <label class="inlineControl compact">Average
+                    <select id="reportingRange">
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly" selected>Monthly</option>
+                      <option value="daily">Daily</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Forecast
+                    <select id="forecastRange">
+                      <option value="7" selected>Next 7 days</option>
+                      <option value="14">Next 14 days</option>
+                      <option value="30">Next 30 days</option>
+                    </select>
+                  </label>
+                </div>
               </div>
               <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
               <div class="chart-panel">
                 <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
               </div>
             </article>
-          </div>
 
-          <article class="panel chart-stretch overview-map-panel full-width-panel">
-            <div class="row">
-              <h3>Live Road Issue Map</h3>
+            <article class="panel chart-stretch overview-map-panel full-width-panel">
+              <div class="row">
+                <h3>Live Road Issue Map</h3>
+                <p class="small">Barangay-level map markers for urgent, moderate, and low-risk reports.</p>
+              </div>
               <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
-            </div>
             <div class="mapLegend" aria-label="Pin map legend">
               <span class="legendItem"><span class="legendDot legend-pending"></span> Pending (default)</span>
               <span class="legendItem"><span class="legendDot legend-verified"></span> Verified</span>
@@ -159,8 +182,28 @@
           <article class="panel chart-stretch data-analytics-panel">
             <div class="row">
               <h3>Data Analytics</h3>
-              <span class="section-chip">Forecast & Capacity</span>
-              <p class="small">Forward outlook, team load, and exportable reporting snapshots.</p>
+              <div class="header-actions">
+                <span class="section-chip">Forecast & Capacity</span>
+                <span class="section-chip muted-chip">Severity Trends</span>
+              </div>
+            </div>
+            <p class="small">Forward outlook, team load, and exportable reporting snapshots.</p>
+            <div class="severity-strip">
+              <div class="severity-card severity-card--urgent">
+                <span>Urgent</span>
+                <strong id="severityUrgentCount">0</strong>
+                <div class="severity-meter"><span id="severityUrgentMeter"></span></div>
+              </div>
+              <div class="severity-card severity-card--moderate">
+                <span>Moderate</span>
+                <strong id="severityModerateCount">0</strong>
+                <div class="severity-meter"><span id="severityModerateMeter"></span></div>
+              </div>
+              <div class="severity-card severity-card--low">
+                <span>Low</span>
+                <strong id="severityLowCount">0</strong>
+                <div class="severity-meter"><span id="severityLowMeter"></span></div>
+              </div>
             </div>
             <div class="analytics-bottom-grid">
               <div class="forecastPanel">
