@@ -2294,3 +2294,19 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     gap: 10px;
   }
 }
+
+/* 2026-03-24 hotfix: prevent horizontal page overflow in overview dashboard */
+body.admin-authenticated,
+body.admin-authenticated .wrap,
+.admin-authenticated .dashboard-shell,
+.admin-authenticated .dashboard-view,
+.admin-authenticated .overview-shell,
+.admin-authenticated .overview-main-grid,
+.admin-authenticated .overview-main-grid--organized {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.admin-authenticated canvas {
+  max-width: 100%;
+}
