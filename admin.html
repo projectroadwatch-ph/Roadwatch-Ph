@@ -62,12 +62,14 @@
 
       <section id="overviewView" class="dashboard-view">
         <section class="overview-shell">
-          <article class="panel analytics-panel critical-overview-panel">
-            <div class="row">
-              <h3>Critical Overview</h3>
+          <article class="panel analytics-panel critical-overview-panel critical-overview-panel--hero">
+            <div class="critical-overview-top">
+              <div>
+                <h3>Critical Overview</h3>
+                <p class="small">AI-assisted command console for high-priority and unresolved citizen reports.</p>
+              </div>
               <button type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
-            <p class="small">Crisis monitoring for high-priority and unresolved citizen reports.</p>
             <div class="critical-kpi-strip" aria-label="Critical performance summary cards">
               <div class="kpi-pill analyticsCard">
                 <span class="analyticsLabel">Total Reports</span>
@@ -85,6 +87,13 @@
                 <span class="analyticsLabel">Avg Data Quality</span>
                 <strong id="avgQualityScore">0%</strong>
               </div>
+            </div>
+            <div class="ai-autopilot-bar">
+              <div>
+                <p class="eyebrow">AI Operations Copilot</p>
+                <strong id="aiAutopilotSummary">Analyzing current queue for response optimization…</strong>
+              </div>
+              <button type="button" class="secondary slim">Run Smart Dispatch</button>
             </div>
             <div id="executiveSummary" class="executiveSummary"></div>
             <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
@@ -161,24 +170,7 @@
                 </div>
               </div>
               <p class="small">Focused report validation by urgency to reduce unresolved and false-positive entries.</p>
-              <div class="tableWrap overview-table-wrap">
-                <table class="overview-table">
-                  <thead>
-                    <tr>
-                      <th>Tracking #</th>
-                      <th>Location</th>
-                      <th>Issue</th>
-                      <th>Status</th>
-                      <th>Verification</th>
-                      <th>Severity</th>
-                      <th>Priority</th>
-                      <th>Assigned To</th>
-                      <th>SLA</th>
-                    </tr>
-                  </thead>
-                  <tbody id="overviewQueueBody"></tbody>
-                </table>
-              </div>
+              <div id="overviewQueueBody" class="verificationQueueCards"></div>
             </article>
 
             <article class="panel chart-stretch overview-panel overview-panel--barangay">
@@ -236,7 +228,7 @@
             <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
           </article>
 
-          <article class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
+            <article class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
             <div class="row data-analytics-header">
               <h3>Data Analytics</h3>
               <div class="data-analytics-filters">
@@ -296,11 +288,20 @@
               </div>
               <div id="analyticsTimelineBars" class="analyticsTimelineBars" aria-live="polite"></div>
             </div>
-            <div class="row export-row">
-              <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
-              <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
-            </div>
-          </article>
+              <div class="row export-row">
+                <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
+                <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
+              </div>
+            </article>
+
+            <article class="panel chart-stretch overview-panel overview-panel--ai">
+              <div class="row">
+                <h3>AI Recommended Actions</h3>
+                <span class="section-chip">Autopilot Ready</span>
+              </div>
+              <p class="small">The dashboard continuously prioritizes probable bottlenecks and recommends next-best actions.</p>
+              <div id="aiRecommendations" class="aiRecommendationGrid"></div>
+            </article>
 
         </section>
       </section>

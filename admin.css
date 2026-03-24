@@ -2009,3 +2009,172 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     position: static;
   }
 }
+
+/* Inspiration redesign for overview dashboard */
+.critical-overview-panel--hero {
+  border: 1px solid rgba(247, 191, 82, 0.35);
+  background: linear-gradient(150deg, rgba(14, 34, 64, 0.94), rgba(9, 24, 47, 0.95));
+}
+
+.critical-overview-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hero-cta {
+  background: linear-gradient(135deg, #efb14d, #d99331);
+  color: #17253f;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.critical-kpi-strip {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.critical-kpi-strip .kpi-pill {
+  border-radius: 12px;
+  border: 1px solid rgba(165, 213, 255, 0.18);
+  background: linear-gradient(180deg, rgba(15, 37, 66, 0.9), rgba(10, 25, 47, 0.9));
+}
+
+.ai-autopilot-bar {
+  margin-top: 12px;
+  border: 1px solid rgba(99, 230, 190, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: rgba(24, 67, 82, 0.25);
+}
+
+.ai-autopilot-bar .eyebrow {
+  margin-bottom: 4px;
+}
+
+.verificationQueueCards {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.queueCard {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid rgba(165, 213, 255, 0.2);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(12, 30, 56, 0.9), rgba(8, 23, 45, 0.9));
+}
+
+.queueCard img {
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(165, 213, 255, 0.24);
+  background: rgba(2, 14, 28, 0.7);
+}
+
+.queueCard h4 {
+  margin: 0 0 4px;
+  font-size: 0.98rem;
+}
+
+.queueCard p {
+  margin: 0;
+  color: #bfd6f5;
+  font-size: 0.84rem;
+}
+
+.queueMeta,
+.queueActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.queueMeta {
+  margin-top: 8px;
+}
+
+.queueActions {
+  justify-content: flex-end;
+  align-content: center;
+}
+
+.queueActions .slim {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+}
+
+.aiRecommendationGrid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.aiRecoCard {
+  border: 1px solid rgba(165, 213, 255, 0.24);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(8, 24, 45, 0.8);
+}
+
+.aiRecoCard span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ec9ef;
+  font-size: 0.78rem;
+}
+
+.aiRecoCard strong {
+  margin-top: 8px;
+  display: block;
+}
+
+.aiRecoCard p {
+  margin: 6px 0 0;
+  color: #c8ddf7;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 1080px) {
+  .critical-kpi-strip,
+  .aiRecommendationGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .queueCard {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .queueActions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .critical-overview-top,
+  .ai-autopilot-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .critical-kpi-strip,
+  .aiRecommendationGrid {
+    grid-template-columns: 1fr;
+  }
+}

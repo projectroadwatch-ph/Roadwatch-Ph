@@ -46,6 +46,8 @@ const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 const overviewPinMap = document.getElementById("overviewPinMap");
 const overviewMapSummary = document.getElementById("overviewMapSummary");
 const overviewQueueBody = document.getElementById("overviewQueueBody");
+const aiRecommendations = document.getElementById("aiRecommendations");
+const aiAutopilotSummary = document.getElementById("aiAutopilotSummary");
 const auditTrailList = document.getElementById("auditTrailList");
 const teamPerformanceBoard = document.getElementById("teamPerformanceBoard");
 const timelineTrackingSelect = document.getElementById("timelineTrackingSelect");
@@ -1428,7 +1430,7 @@ function renderOverviewQueueTable(reports) {
     .slice(0, 8);
 
   if (!prioritized.length) {
-    overviewQueueBody.innerHTML = '<tr><td colspan="9">No reports available yet.</td></tr>';
+    overviewQueueBody.innerHTML = '<article class="aiRecoCard"><strong>No reports available yet.</strong><p>Incoming submissions will appear here for moderation and dispatch.</p></article>';
     return;
   }
 
@@ -1447,20 +1449,78 @@ function renderOverviewQueueTable(reports) {
         : "is-verified";
     const severity = getSeverityLabel(report);
 
+    const priority = getPriorityScore(report);
+    const photo = String(report?.photo || "").trim() || "assets/issues/potholes.svg";
+
     return `
-      <tr>
-        <td>${escapeHtml(report.tracking || "-")}</td>
-        <td>${escapeHtml(report.location || report.barangay || "-")}</td>
-        <td>${escapeHtml(report.issueType || report.issue || report.issueCategory || "-")}</td>
-        <td>${escapeHtml(normalizeStatus(report.status))}</td>
-        <td><span class="verification-badge ${verificationClass}">${escapeHtml(verificationState)}</span></td>
-        <td><span class="severity-badge severity-${severity.toLowerCase()}">${escapeHtml(severity)}</span></td>
-        <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
-        <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
-        <td><span class="verification-badge ${escalationClass}">${escapeHtml(escalationState)}</span></td>
-      </tr>
+      <article class="queueCard">
+        <img src="${escapeHtml(photo)}" alt="Road report preview image">
+        <div>
+          <h4>${escapeHtml(report.location || report.barangay || "Unknown location")}</h4>
+          <p>${escapeHtml(report.issueType || report.issue || report.issueCategory || "-")} • Tracking ${escapeHtml(report.tracking || "-")}</p>
+          <div class="queueMeta">
+            <span class="verification-badge ${verificationClass}">${escapeHtml(verificationState)}</span>
+            <span class="severity-badge severity-${severity.toLowerCase()}">${escapeHtml(severity)}</span>
+            <span class="priority-badge">P${priority}</span>
+            <span class="verification-badge ${escalationClass}">${escapeHtml(escalationState)}</span>
+          </div>
+        </div>
+        <div class="queueActions">
+          <button type="button" class="secondary slim" data-focus-timeline="${escapeHtml(report.tracking || "")}">Verify</button>
+          <button type="button" class="secondary slim">View Details</button>
+        </div>
+      </article>
     `;
   }).join("");
+
+  overviewQueueBody.querySelectorAll("[data-focus-timeline]").forEach((button) => {
+    button.addEventListener("click", () => focusTimeline(button.dataset.focusTimeline || ""));
+  });
+}
+
+function renderAiRecommendations(reports) {
+  if (!aiRecommendations) return;
+
+  const openReports = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
+  const highRisk = openReports.filter((report) => getPriorityScore(report) >= 75);
+  const overdue = openReports.filter((report) => getEscalationState(report) === "Overdue");
+  const flagged = reports.filter((report) => getVerificationState(report) === "Flagged");
+  const topBarangay = getTopBarangay(reports);
+
+  if (aiAutopilotSummary) {
+    aiAutopilotSummary.textContent = `${highRisk.length} high-risk cases and ${overdue.length} overdue reports detected. Autopilot suggests dispatch rebalancing now.`;
+  }
+
+  const recommendations = [
+    {
+      title: "Escalate high-risk queue",
+      detail: `${highRisk.length} report(s) scored ≥ P75. Batch-assign to field team with nearest capacity.`,
+      meta: "Priority Engine"
+    },
+    {
+      title: "Recover SLA breaches",
+      detail: `${overdue.length} overdue case(s). Trigger automated citizen ETA update before reassignment.`,
+      meta: "SLA Guardian"
+    },
+    {
+      title: "Flag potential abuse patterns",
+      detail: `${flagged.length} report(s) need moderation review to reduce false-positive handling time.`,
+      meta: "Trust Shield"
+    },
+    {
+      title: "Barangay surge forecasting",
+      detail: topBarangay ? `${topBarangay[0]} has ${topBarangay[1]} incidents; prepare materials for probable repeat requests.` : "Waiting for enough area data to predict surge.",
+      meta: "Forecast AI"
+    }
+  ];
+
+  aiRecommendations.innerHTML = recommendations.map((item) => `
+    <article class="aiRecoCard">
+      <span>🤖 ${escapeHtml(item.meta)}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <p>${escapeHtml(item.detail)}</p>
+    </article>
+  `).join("");
 }
 
 function renderDuplicateCaseBoard(reports) {
@@ -2189,6 +2249,7 @@ function renderAnalytics(reports) {
   renderTeamPerformanceBoard(reports);
   renderExecutiveSummary(reports);
   renderForecastCards(reports);
+  renderAiRecommendations(reports);
   renderAnalyticsTimeline(analyticsReports);
 }
 
