@@ -4,8 +4,6 @@ const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbz5Z666xxZThJsMGwPCDNg8Vdku-WfQmZHeQHM6Rko4YLwnnpViqTAMX2UfBbUyk_u1/exec";
 const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 const PUBLIC_SITE_API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
-const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
-const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
@@ -279,70 +277,6 @@ function drawStatusChart(counts) {
   });
 }
 
-function getStatusOverrides() {
-  try {
-    const raw = localStorage.getItem(ADMIN_STATUS_OVERRIDES_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveStatusOverrides(overrides) {
-  localStorage.setItem(ADMIN_STATUS_OVERRIDES_KEY, JSON.stringify(overrides || {}));
-}
-
-function persistStatusOverride(tracking, status) {
-  const key = String(tracking || "").trim();
-  if (!key) return;
-
-  const overrides = getStatusOverrides();
-  overrides[key] = status;
-  saveStatusOverrides(overrides);
-}
-
-function clearStatusOverride(tracking) {
-  const key = String(tracking || "").trim();
-  if (!key) return;
-
-  const overrides = getStatusOverrides();
-  delete overrides[key];
-
-  Object.keys(overrides).forEach((overrideKey) => {
-    if (overrideKey.trim().toLowerCase() === key.toLowerCase()) {
-      delete overrides[overrideKey];
-    }
-  });
-
-  saveStatusOverrides(overrides);
-}
-
-function getDeletedReports() {
-  try {
-    const raw = localStorage.getItem(ADMIN_DELETED_REPORTS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveDeletedReports(list) {
-  localStorage.setItem(ADMIN_DELETED_REPORTS_KEY, JSON.stringify(Array.from(new Set(list))));
-}
-
-function markReportDeleted(tracking) {
-  const key = String(tracking || "").trim();
-  if (!key) return;
-
-  const list = getDeletedReports();
-  list.push(key);
-  saveDeletedReports(list);
-}
-
 function getCaseMetaStore() {
   try {
     const raw = localStorage.getItem(ADMIN_CASE_META_KEY);
@@ -606,12 +540,6 @@ function getPriorityScore(report) {
   return Math.round(Math.min(100, escalationWeight + ageWeight + dataPenalty));
 }
 
-function shouldHideReport(tracking) {
-  const key = String(tracking || "").trim().toLowerCase();
-  if (!key) return false;
-  return getDeletedReports().some((item) => String(item).trim().toLowerCase() === key);
-}
-
 function dedupeReports(reports) {
   const seen = new Set();
   const deduped = [];
@@ -628,20 +556,6 @@ function dedupeReports(reports) {
   });
 
   return deduped;
-}
-
-function applyLocalStatusOverrides(report) {
-  const tracking = String(report?.tracking || "").trim();
-  if (!tracking) return report;
-
-  const overrides = getStatusOverrides();
-  const direct = overrides[tracking];
-  if (direct) return { ...report, status: normalizeStatus(direct) };
-
-  const match = Object.keys(overrides).find((key) => key.trim().toLowerCase() === tracking.toLowerCase());
-  if (!match) return report;
-
-  return { ...report, status: normalizeStatus(overrides[match]) };
 }
 
 function applyCaseMetadata(report) {
@@ -958,7 +872,6 @@ async function updateReportStatus(tracking, status) {
     throw new Error("Unable to update report status.");
   }
 
-  persistStatusOverride(tracking, status);
   return { success: true };
 }
 
@@ -990,9 +903,6 @@ async function deleteReport(tracking) {
     throw new Error("Unable to delete report.");
   }
 
-  markReportDeleted(trackingValue);
-  clearStatusOverride(trackingValue);
-  updateCaseMeta(trackingValue, { assignedTo: "Unassigned", dueAt: "" });
   return { success: true };
 }
 
@@ -2380,9 +2290,7 @@ async function loadReports() {
     allReports = dedupeReports(
       selectedParsedReports
       .map(normalizeReport)
-      .map(applyLocalStatusOverrides)
       .map(applyCaseMetadata)
-      .filter((report) => !shouldHideReport(report.tracking))
     );
     if (allReports.length === 0) {
       reportsBody.innerHTML = '<tr><td colspan="18">No reports found.</td></tr>';
