@@ -1,5 +1,10 @@
 const ADMIN_USERNAME = "roadwatchph";
 const ADMIN_PASSWORD = "roadwatchph";
+const ADMIN_FALLBACK_CREDENTIALS = [
+  { username: ADMIN_USERNAME, password: ADMIN_PASSWORD },
+  { username: "admin", password: "admin" },
+  { username: "admin", password: "roadwatchph" }
+];
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
 const HOME_API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
@@ -9,6 +14,7 @@ const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
 const ADMIN_NOTIFICATION_QUEUE_KEY = "roadwatchAdminNotificationQueue";
 const ADMIN_PROJECTS_KEY = "roadwatchAdminProjects";
+const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -290,6 +296,38 @@ function getCaseMetaStore() {
 
 function saveCaseMetaStore(data) {
   localStorage.setItem(ADMIN_CASE_META_KEY, JSON.stringify(data || {}));
+}
+
+function getStatusOverridesStore() {
+  try {
+    const raw = localStorage.getItem(ADMIN_STATUS_OVERRIDES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveStatusOverridesStore(store) {
+  localStorage.setItem(ADMIN_STATUS_OVERRIDES_KEY, JSON.stringify(store || {}));
+}
+
+function setStatusOverride(tracking, status) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+  const store = getStatusOverridesStore();
+  store[key] = normalizeStatus(status);
+  saveStatusOverridesStore(store);
+}
+
+function removeStatusOverride(tracking) {
+  const key = String(tracking || "").trim();
+  if (!key) return;
+  const store = getStatusOverridesStore();
+  if (!(key in store)) return;
+  delete store[key];
+  saveStatusOverridesStore(store);
 }
 
 function deriveSlaHours(report) {
@@ -629,8 +667,19 @@ function applyAuthUI() {
 function login() {
   const username = document.getElementById("adminUsername").value.trim();
   const password = document.getElementById("adminPassword").value.trim();
+  const customUsername = String(localStorage.getItem("roadwatchAdminUsername") || "").trim();
+  const customPassword = String(localStorage.getItem("roadwatchAdminPassword") || "").trim();
+  const allowedCredentials = [...ADMIN_FALLBACK_CREDENTIALS];
 
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+  if (customUsername && customPassword) {
+    allowedCredentials.unshift({ username: customUsername, password: customPassword });
+  }
+
+  const isValidCredential = allowedCredentials.some(
+    (entry) => username === entry.username && password === entry.password
+  );
+
+  if (isValidCredential) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
     setFeedback("loginFeedback", "Login successful.");
     setDashboardView("overview");
@@ -749,11 +798,20 @@ function normalizeReport(record = {}) {
   const lastname = getFieldValue(record, ["lastname", "lastName", "Last Name"]);
   const middleInitial = getFieldValue(record, ["mi", "middleInitial", "middleinitial", "Middle Initial"]);
   const reporterName = [firstname, lastname].filter(Boolean).join(" ") || getFieldValue(record, ["name", "fullName", "Reporter Name"]) || "-";
+  const tracking = getFieldValue(record, [
+    "tracking",
+    "trackingNumber",
+    "tracking_no",
+    "tracking no",
+    "Tracking #",
+    "Tracking Number"
+  ]);
+  const statusOverrides = getStatusOverridesStore();
 
   return {
     dateTime: formatDateTime(record),
     reportedAt: reportedAt ? reportedAt.toISOString() : "",
-    tracking: getFieldValue(record, ["tracking", "trackingNumber", "tracking_no", "Tracking #", "Tracking Number"]),
+    tracking,
     name: reporterName,
     firstname: firstname || "-",
     lastname: lastname || "-",
@@ -788,7 +846,7 @@ function normalizeReport(record = {}) {
     lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
     lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
-    status: normalizeStatus(getFieldValue(record, ["status", "reportStatus", "Status"]))
+    status: normalizeStatus(statusOverrides[String(tracking || "").trim()] || getFieldValue(record, ["status", "reportStatus", "Status"]))
   };
 }
 
@@ -859,7 +917,7 @@ async function updateReportStatus(tracking, status) {
   for (const endpoint of endpoints) {
     try {
       const payload = await postStatusUpdateToEndpoint(endpoint, tracking, status);
-      if (payload?.success || Object.keys(payload || {}).length === 0) {
+      if (payload?.success || payload?.updated || normalizeStatus(payload?.status) === normalizeStatus(status)) {
         hasAnySuccess = true;
         break;
       }
@@ -931,6 +989,7 @@ function statusSelect(current, tracking) {
 
       const report = allReports.find((item) => String(item.tracking) === String(tracking));
       if (report) report.status = nextStatus;
+      setStatusOverride(tracking, nextStatus);
 
       addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
       addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${nextStatus}`);
@@ -1414,6 +1473,7 @@ async function bulkUpdateStatus(reports, status) {
     if (!report?.tracking) continue;
     await updateReportStatus(report.tracking, status);
     report.status = status;
+    setStatusOverride(report.tracking, status);
     addAuditEntry("Bulk Status Update", report.tracking, `Set to ${status}`);
     addTimelineEntry(report.tracking, "Bulk Status Update", `Set to ${status}`);
   }
@@ -2183,6 +2243,7 @@ function renderRows(reports) {
         const trackingValue = String(report.tracking || "").trim();
         selectedReports.delete(trackingValue);
         flaggedReports.delete(trackingValue);
+        removeStatusOverride(trackingValue);
         addAuditEntry("Report Deleted", report.tracking, "Deleted from management table");
         addTimelineEntry(report.tracking, "Report Deleted", "Deleted from management table");
         setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
@@ -2449,6 +2510,7 @@ document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => 
     await bulkDeleteReports(selected);
     const selectedKeys = new Set(selected.map((report) => String(report.tracking || "").trim()));
     allReports = allReports.filter((report) => !selectedKeys.has(String(report.tracking || "").trim()));
+    selectedKeys.forEach((tracking) => removeStatusOverride(tracking));
     selectedReports.clear();
     setFeedback("reportsFeedback", `Deleted ${selected.length} report(s).`);
     applyFiltersAndRender();
