@@ -2243,6 +2243,12 @@ function renderAnalytics(reports) {
   if (severityUrgentMeter) severityUrgentMeter.style.width = `${urgentShare}%`;
   if (severityModerateMeter) severityModerateMeter.style.width = `${moderateShare}%`;
   if (severityLowMeter) severityLowMeter.style.width = `${lowShare}%`;
+  const severityUrgentMeta = document.getElementById("severityUrgentMeta");
+  const severityModerateMeta = document.getElementById("severityModerateMeta");
+  const severityLowMeta = document.getElementById("severityLowMeta");
+  if (severityUrgentMeta) severityUrgentMeta.textContent = `${urgentShare}% share • ${describeSeverityAge(reports, (score) => score >= 75)}`;
+  if (severityModerateMeta) severityModerateMeta.textContent = `${moderateShare}% share • ${describeSeverityAge(reports, (score) => score >= 45 && score < 75)}`;
+  if (severityLowMeta) severityLowMeta.textContent = `${lowShare}% share • ${describeSeverityAge(reports, (score) => score < 45)}`;
 
   drawStatusChart(counts);
   renderTeamPerformanceBoard(reports);
@@ -2250,6 +2256,21 @@ function renderAnalytics(reports) {
   renderForecastCards(reports);
   renderAnalyticsTimeline(reports);
   renderAiCommandCenter(reports);
+}
+
+function describeSeverityAge(reports, matcher) {
+  const matchingReports = reports.filter((report) => matcher(getPriorityScore(report)));
+  if (!matchingReports.length) return "No aging data";
+
+  const now = Date.now();
+  const totalDays = matchingReports.reduce((sum, report) => {
+    const date = parseReportDate(report);
+    if (!date) return sum;
+    return sum + Math.max(0, (now - date.getTime()) / 86400000);
+  }, 0);
+
+  const averageDays = Math.max(1, Math.round(totalDays / matchingReports.length));
+  return `~${averageDays} day${averageDays === 1 ? "" : "s"} old`;
 }
 
 function renderAnalyticsTimeline(reports) {
