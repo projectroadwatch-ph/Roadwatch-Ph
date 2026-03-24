@@ -49,19 +49,29 @@
           <article class="panel analytics-panel critical-overview-panel">
             <div class="row">
               <h3>Critical Overview</h3>
-              <button type="button" class="secondary slim">Review Urgent Reports</button>
+              <button type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
             <p class="small">Crisis monitoring for high-priority and unresolved citizen reports.</p>
-            <div id="executiveSummary" class="executiveSummary"></div>
-            <div id="analyticsGrid" class="analyticsGrid">
-              <div class="analyticsCard">
+            <div class="critical-kpi-strip" aria-label="Critical performance summary cards">
+              <div class="kpi-pill analyticsCard">
                 <span class="analyticsLabel">Total Reports</span>
                 <strong id="totalReportsCount">0</strong>
               </div>
-              <div class="analyticsCard analyticsCard--alert">
+              <div class="kpi-pill analyticsCard analyticsCard--alert">
                 <span class="analyticsLabel">Pending</span>
                 <strong id="pendingReportsCount">0</strong>
               </div>
+              <div class="kpi-pill analyticsCard">
+                <span class="analyticsLabel">Resolved</span>
+                <strong id="repairedReportsCount">0</strong>
+              </div>
+              <div class="kpi-pill analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">Avg Data Quality</span>
+                <strong id="avgQualityScore">0%</strong>
+              </div>
+            </div>
+            <div id="executiveSummary" class="executiveSummary"></div>
+            <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
               <div class="analyticsCard">
                 <span class="analyticsLabel">Verified</span>
                 <strong id="verifiedReportsCount">0</strong>
@@ -70,10 +80,6 @@
                 <span class="analyticsLabel">In Progress</span>
                 <strong id="inProgressReportsCount">0</strong>
               </div>
-              <div class="analyticsCard">
-                <span class="analyticsLabel">Repaired</span>
-                <strong id="repairedReportsCount">0</strong>
-              </div>
               <div class="analyticsCard analyticsCard--warn">
                 <span class="analyticsLabel">Needs Verification</span>
                 <strong id="needsVerificationCount">0</strong>
@@ -81,10 +87,6 @@
               <div class="analyticsCard analyticsCard--alert">
                 <span class="analyticsLabel">Flagged Reports</span>
                 <strong id="flaggedReportsCount">0</strong>
-              </div>
-              <div class="analyticsCard">
-                <span class="analyticsLabel">Avg Data Quality</span>
-                <strong id="avgQualityScore">0%</strong>
               </div>
               <div class="analyticsCard analyticsCard--warn">
                 <span class="analyticsLabel">High Priority Cases</span>
@@ -97,6 +99,7 @@
             <article class="panel chart-stretch">
               <div class="row">
                 <h3>Operational Snapshot</h3>
+                <span class="section-chip">Live Queue</span>
                 <p class="small">Real-time report volume and workflow state.</p>
               </div>
               <div class="chart-panel compact-chart">
@@ -156,6 +159,7 @@
           <article class="panel chart-stretch data-analytics-panel">
             <div class="row">
               <h3>Data Analytics</h3>
+              <span class="section-chip">Forecast & Capacity</span>
               <p class="small">Forward outlook, team load, and exportable reporting snapshots.</p>
             </div>
             <div class="analytics-bottom-grid">

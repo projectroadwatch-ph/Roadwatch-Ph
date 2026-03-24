@@ -299,6 +299,44 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   min-width: 0;
 }
 
+
+.section-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(41, 158, 255, 0.16);
+  border: 1px solid rgba(122, 190, 250, 0.32);
+  color: #c9e8ff;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-cta {
+  max-width: 240px;
+  margin-left: auto;
+  background: linear-gradient(120deg, #f5d37c, #ffc65a);
+  color: #2d2101;
+  border-color: rgba(255, 223, 140, 0.7);
+  font-weight: 700;
+}
+
+.critical-kpi-strip {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kpi-pill {
+  background: linear-gradient(165deg, rgba(14, 33, 58, 0.94), rgba(22, 57, 98, 0.75));
+}
+
+.analyticsGrid--supporting {
+  border-top: 1px solid rgba(165, 213, 255, 0.2);
+  padding-top: 12px;
+}
 .analyticsGrid {
   margin-top: 10px;
   display: grid;
@@ -875,7 +913,9 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .critical-overview-panel {
   margin-top: 14px;
-  background: linear-gradient(120deg, rgba(13, 31, 58, 0.96), rgba(16, 52, 88, 0.76));
+  background:
+    radial-gradient(circle at 8% 18%, rgba(255, 203, 103, 0.12), transparent 35%),
+    linear-gradient(120deg, rgba(10, 28, 52, 0.98), rgba(18, 52, 86, 0.82));
 }
 
 .critical-overview-panel .analyticsGrid {
@@ -894,6 +934,10 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 16px;
+}
+
+.overview-main-grid .panel {
+  background: linear-gradient(175deg, rgba(14, 33, 58, 0.95), rgba(8, 27, 49, 0.95));
 }
 
 .overview-main-grid .chart-stretch {
@@ -928,8 +972,23 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 @media (max-width: 1000px) {
+  .critical-kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .overview-main-grid,
   .analytics-bottom-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .critical-kpi-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-cta {
+    max-width: none;
+    margin-left: 0;
   }
 }
