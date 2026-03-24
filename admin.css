@@ -1591,3 +1591,107 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     min-width: 580px;
   }
 }
+
+/* Admin dashboard layout refinement */
+.dashboard-shell {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.console-topbar,
+.dashboard-header,
+.dashboard-nav {
+  background: rgba(3, 18, 35, 0.82);
+  border: 1px solid rgba(165, 213, 255, 0.14);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.console-topbar {
+  position: sticky;
+  top: 8px;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+}
+
+.dashboard-header {
+  margin-top: 0;
+  position: sticky;
+  top: 82px;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+}
+
+.dashboard-nav {
+  margin-top: 0;
+  position: sticky;
+  top: 192px;
+  z-index: 15;
+}
+
+.dashboard-view {
+  margin-top: 0;
+}
+
+.overview-main-grid {
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  align-items: stretch;
+}
+
+.overview-main-grid .panel {
+  height: 100%;
+}
+
+.panel {
+  display: grid;
+  gap: 10px;
+}
+
+.panel > .row:first-child {
+  margin-bottom: -2px;
+}
+
+.toolbar {
+  grid-template-columns: minmax(240px, 2fr) repeat(2, minmax(190px, 1fr));
+}
+
+.triage-toolbar {
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+}
+
+.command-pane--workspace {
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 1080px) {
+  .dashboard-header,
+  .dashboard-nav,
+  .console-topbar {
+    position: static;
+  }
+
+  .overview-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar,
+  .triage-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .toolbar,
+  .triage-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .console-topbar,
+  .dashboard-header,
+  .dashboard-nav {
+    border-radius: 12px;
+    padding: 10px;
+  }
+}
