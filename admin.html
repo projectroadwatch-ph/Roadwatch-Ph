@@ -112,15 +112,16 @@
           </article>
 
           <div class="overview-main-grid overview-main-grid--organized">
-            <article class="panel chart-stretch overview-panel overview-panel--status">
+            <article class="panel chart-stretch overview-panel overview-panel--snapshot">
               <div class="row">
-                <h3>Status Distribution</h3>
+                <h3>Operational Snapshot</h3>
                 <div class="header-actions">
-                  <span class="section-chip">Live Queue</span>
-                  <span class="section-chip muted-chip">Urgent Focus</span>
+                  <span class="section-chip">All</span>
+                  <span class="section-chip muted-chip">Urgent</span>
+                  <span class="section-chip muted-chip">Barangay</span>
                 </div>
               </div>
-              <p class="small">Real-time report volume and workflow state across pending, verification, and resolved queues.</p>
+              <p class="small">Manage status detection and active issue routing before field dispatch.</p>
               <div class="snapshot-kpis">
                 <div class="snapshot-card">
                   <span>Total</span>
@@ -130,13 +131,53 @@
                   <span>Pending</span>
                   <strong id="snapshotPendingCount">0</strong>
                 </div>
-                <div class="snapshot-card">
+                <div class="snapshot-card snapshot-card--verified">
                   <span>Verified</span>
                   <strong id="snapshotVerifiedCount">0</strong>
                 </div>
               </div>
+            </article>
+
+            <article class="panel chart-stretch overview-panel overview-panel--status">
+              <div class="row">
+                <h3>Status Distribution</h3>
+                <div class="header-actions">
+                  <span class="section-chip muted-chip">All Barangay</span>
+                  <span class="section-chip muted-chip">Issue Type</span>
+                </div>
+              </div>
+              <p class="small">Workflow state across pending, verification, in-progress, and repaired queues.</p>
               <div class="chart-panel compact-chart">
                 <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
+              </div>
+            </article>
+
+            <article class="panel chart-stretch full-width-panel overview-panel overview-panel--verification">
+              <div class="row">
+                <h3>Verification & Moderation Queue</h3>
+                <div class="header-actions">
+                  <span class="section-chip">Queue</span>
+                  <span class="section-chip muted-chip">Issue</span>
+                </div>
+              </div>
+              <p class="small">Focused report validation by urgency to reduce unresolved and false-positive entries.</p>
+              <div class="tableWrap overview-table-wrap">
+                <table class="overview-table">
+                  <thead>
+                    <tr>
+                      <th>Tracking #</th>
+                      <th>Location</th>
+                      <th>Issue</th>
+                      <th>Status</th>
+                      <th>Verification</th>
+                      <th>Severity</th>
+                      <th>Priority</th>
+                      <th>Assigned To</th>
+                      <th>SLA</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overviewQueueBody"></tbody>
+                </table>
               </div>
             </article>
 
@@ -144,11 +185,11 @@
               <div class="row">
                 <h3>Reports Per Barangay</h3>
                 <div class="header-actions">
-                  <span class="section-chip muted-chip">Barangay</span>
-                  <span class="section-chip muted-chip">Ranking</span>
+                  <span class="section-chip muted-chip">All Barangay</span>
+                  <span class="section-chip muted-chip">Frequency</span>
                 </div>
               </div>
-              <p class="small">Top locations with repeat issue concentration.</p>
+              <p class="small">Top locations with recurring issue concentration and response load.</p>
               <div class="heatmapWrap">
                 <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
               </div>
@@ -177,35 +218,6 @@
               <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
               <div class="chart-panel">
                 <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
-              </div>
-            </article>
-
-            <article class="panel chart-stretch full-width-panel overview-panel overview-panel--verification">
-              <div class="row">
-                <h3>Verification & Moderation Queue</h3>
-                <div class="header-actions">
-                  <span class="section-chip">Live Cases</span>
-                  <span class="section-chip muted-chip">Priority Sorted</span>
-                </div>
-              </div>
-              <p class="small">Top field cases from the admin dataset, ranked by urgency and verification risk.</p>
-              <div class="tableWrap overview-table-wrap">
-                <table class="overview-table">
-                  <thead>
-                    <tr>
-                      <th>Tracking #</th>
-                      <th>Location</th>
-                      <th>Issue</th>
-                      <th>Status</th>
-                      <th>Verification</th>
-                      <th>Severity</th>
-                      <th>Priority</th>
-                      <th>Assigned To</th>
-                      <th>SLA</th>
-                    </tr>
-                  </thead>
-                  <tbody id="overviewQueueBody"></tbody>
-                </table>
               </div>
             </article>
 
