@@ -2671,3 +2671,52 @@ label {
     justify-content: flex-start;
   }
 }
+
+/* 2026-03-24 follow-up fix: keep report management inside viewport without page-level x-scroll */
+body.admin-authenticated,
+body.admin-authenticated .wrap,
+body.admin-authenticated .dashboard-shell,
+body.admin-authenticated .dashboard-view,
+body.admin-authenticated #managementView,
+body.admin-authenticated #managementView .command-center,
+body.admin-authenticated #managementView .command-pane {
+  max-width: 100%;
+}
+
+body.admin-authenticated .dashboard-shell,
+body.admin-authenticated .dashboard-view,
+body.admin-authenticated #managementView {
+  overflow-x: clip;
+}
+
+body.admin-authenticated #managementView .command-center,
+body.admin-authenticated #managementView .command-pane,
+body.admin-authenticated #managementView .analytics-panel,
+body.admin-authenticated #managementView .workspace-summary,
+body.admin-authenticated #managementView .toolbar > *,
+body.admin-authenticated #managementView .triage-toolbar > * {
+  min-width: 0;
+}
+
+body.admin-authenticated #managementView .tableWrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+body.admin-authenticated #managementView .management-table {
+  width: max-content;
+  min-width: 100%;
+}
+
+@media (max-width: 900px) {
+  body.admin-authenticated #managementView .dashboard-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  body.admin-authenticated #managementView .dashboard-nav .nav-btn {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+}
