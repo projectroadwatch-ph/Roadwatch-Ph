@@ -73,6 +73,7 @@ body {
 .dashboard-shell {
   width: 100%;
   padding: 18px;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 50% -30%, rgba(60, 120, 255, 0.24), transparent 58%),
     linear-gradient(160deg, rgba(7, 24, 47, 0.98), rgba(6, 20, 39, 0.98));
@@ -340,7 +341,8 @@ button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 }
 .link { color: #9ad4ff; display: inline-block; margin-top: 10px; }
 .tableWrap { overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
-table { width: 100%; border-collapse: collapse; min-width: 1520px; }
+table { width: 100%; border-collapse: collapse; min-width: 100%; }
+.management-table { min-width: 1520px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
 th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .paginationBar {
