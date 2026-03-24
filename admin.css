@@ -1904,3 +1904,108 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
       "analytics";
   }
 }
+
+/* Admin dashboard layout polish */
+.admin-authenticated .wrap {
+  max-width: 1440px;
+}
+
+.dashboard-shell {
+  gap: 16px;
+}
+
+.console-topbar,
+.dashboard-header,
+.dashboard-nav {
+  position: sticky;
+  top: 10px;
+  z-index: 15;
+}
+
+.dashboard-header {
+  top: 76px;
+  z-index: 14;
+}
+
+.dashboard-nav {
+  top: 188px;
+  z-index: 13;
+}
+
+.dashboard-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.dashboard-nav .nav-btn {
+  width: 100%;
+  justify-self: stretch;
+}
+
+.dashboard-view {
+  padding-top: 2px;
+}
+
+.command-center {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.command-pane {
+  margin-top: 0;
+}
+
+.command-pane--triage {
+  position: sticky;
+  top: 250px;
+}
+
+.command-pane--workspace {
+  min-width: 0;
+}
+
+.workspace-actions {
+  border-top: none;
+  padding-top: 0;
+}
+
+#workspacePane .tableWrap {
+  max-height: 62vh;
+}
+
+.overview-main-grid--organized {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.overview-panel--verification .overview-table-wrap {
+  max-height: 380px;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-header,
+  .dashboard-nav {
+    top: 10px;
+  }
+
+  .command-center {
+    grid-template-columns: 1fr;
+  }
+
+  .command-pane--triage {
+    position: static;
+  }
+
+  #workspacePane .tableWrap {
+    max-height: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .console-topbar,
+  .dashboard-header,
+  .dashboard-nav {
+    position: static;
+  }
+}
