@@ -32,10 +32,6 @@ const verificationQueueList = document.getElementById("verificationQueueList");
 const verificationFilter = document.getElementById("verificationFilter");
 const slaQueueList = document.getElementById("slaQueueList");
 const slaFilter = document.getElementById("slaFilter");
-const selectAllReports = document.getElementById("selectAllReports");
-const bulkStatusSelect = document.getElementById("bulkStatusSelect");
-const bulkAssigneeSelect = document.getElementById("bulkAssigneeSelect");
-const bulkSummary = document.getElementById("bulkSummary");
 const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const analyticsBarangayFilter = document.getElementById("analyticsBarangayFilter");
@@ -60,7 +56,6 @@ const showOverviewBtn = document.getElementById("showOverviewBtn");
 const showManagementBtn = document.getElementById("showManagementBtn");
 const triagePane = document.getElementById("triagePane");
 const workspacePane = document.getElementById("workspacePane");
-const actionsPane = document.getElementById("actionsPane");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
@@ -95,8 +90,6 @@ const mentionInput = document.getElementById("mentionInput");
 const saveCollabNoteBtn = document.getElementById("saveCollabNoteBtn");
 const permissionsSummary = document.getElementById("permissionsSummary");
 const createProjectBtn = document.getElementById("createProjectBtn");
-const bulkEscalationSelect = document.getElementById("bulkEscalationSelect");
-const bulkEscalateBtn = document.getElementById("bulkEscalateBtn");
 const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 
 let allReports = [];
@@ -642,37 +635,11 @@ function setManagementPane(pane) {
 
   if (triagePane) triagePane.hidden = activePane !== "triage";
   if (workspacePane) workspacePane.hidden = activePane !== "workspace";
-  if (actionsPane) actionsPane.hidden = false;
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
 }
 
-function setActionsDrawer(isOpen) {
-  if (!actionsPane) return;
-  actionsPane.hidden = false;
-}
-
-function openActionDrawerForReport(tracking) {
-  const trackingValue = String(tracking || "").trim();
-  if (!trackingValue) return;
-
-  setDashboardView("management");
-  setManagementPane("workspace");
-  setActionsDrawer();
-  selectedReports.add(trackingValue);
-
-  if (timelineTrackingSelect) {
-    timelineTrackingSelect.value = trackingValue;
-  }
-
-  renderCaseTimeline(trackingValue);
-  renderClosureChecklist(trackingValue);
-  applyFiltersAndRender();
-
-  actionsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
-  setFeedback("reportsFeedback", `Bulk actions focused for ${trackingValue}.`);
-}
 
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
@@ -1583,38 +1550,6 @@ function renderPermissionsSummary() {
   permissionsSummary.innerHTML = (permissionsByRole[role] || []).map((item) => `<article class="miniCard"><span>${escapeHtml(role)}</span><strong>${escapeHtml(item)}</strong></article>`).join("");
 }
 
-function updateBulkSummary(totalVisible) {
-  if (!bulkSummary) return;
-  const selectedCount = selectedReports.size;
-  bulkSummary.textContent = `${selectedCount} selected${totalVisible ? ` out of ${totalVisible} visible report(s).` : "."}`;
-}
-
-function updateSelectAllState(visibleReports) {
-  if (!selectAllReports) return;
-  const visibleIds = visibleReports.map((report) => String(report.tracking || "").trim()).filter(Boolean);
-  if (visibleIds.length === 0) {
-    selectAllReports.checked = false;
-    selectAllReports.indeterminate = false;
-    updateBulkSummary(0);
-    return;
-  }
-
-  const selectedVisible = visibleIds.filter((id) => selectedReports.has(id)).length;
-  selectAllReports.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
-  selectAllReports.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
-  updateBulkSummary(visibleIds.length);
-}
-
-async function bulkUpdateStatus(reports, status) {
-  for (const report of reports) {
-    if (!report?.tracking) continue;
-    await updateReportStatus(report.tracking, status);
-    report.status = status;
-    setStatusOverride(report.tracking, status);
-    addAuditEntry("Bulk Status Update", report.tracking, `Set to ${status}`);
-    addTimelineEntry(report.tracking, "Bulk Status Update", `Set to ${status}`);
-  }
-}
 
 function markReportsFlagged(reports) {
   reports.forEach((report) => {
@@ -1626,24 +1561,6 @@ function markReportsFlagged(reports) {
   });
 }
 
-async function bulkDeleteReports(reports) {
-  for (const report of reports) {
-    if (!report?.tracking) continue;
-    await deleteReport(report.tracking);
-    addAuditEntry("Bulk Delete", report.tracking, "Deleted via bulk action");
-  }
-}
-
-function bulkAssignReports(reports, assignee) {
-  reports.forEach((report) => {
-    const tracking = String(report?.tracking || "").trim();
-    if (!tracking) return;
-    updateCaseMeta(tracking, { assignedTo: assignee || "Unassigned" });
-    report.assignedTo = assignee || "Unassigned";
-    addAuditEntry("Assignment Updated", tracking, `Assigned to ${assignee || "Unassigned"}`);
-    addTimelineEntry(tracking, "Assignment Updated", `Assigned to ${assignee || "Unassigned"}`);
-  });
-}
 
 function bucketLabelForDate(date, range) {
   if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
@@ -2473,8 +2390,6 @@ function renderRows(reports) {
       } else {
         selectedReports.delete(trackingValue);
       }
-      updateSelectAllState(getFilteredReports());
-      updateBulkSummary(getFilteredReports().length);
     });
     tr.children[0].appendChild(selector);
 
@@ -2524,14 +2439,8 @@ function renderRows(reports) {
     viewBtn.className = "secondary slim";
     viewBtn.textContent = "View";
     viewBtn.addEventListener("click", () => openReportFormPreview(report));
-    const actionsBtn = document.createElement("button");
-    actionsBtn.type = "button";
-    actionsBtn.className = "secondary slim action-cell__drawer-btn";
-    actionsBtn.textContent = "Actions";
-    actionsBtn.addEventListener("click", () => openActionDrawerForReport(report.tracking));
-
     tr.children[17].classList.add("action-cell");
-    tr.children[17].append(viewBtn, timelineBtn, actionsBtn, deleteBtn);
+    tr.children[17].append(viewBtn, timelineBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -2559,7 +2468,6 @@ function applyFiltersAndRender() {
   renderTrustCenterBoard();
   renderClosureChecklist();
   renderPermissionsSummary();
-  updateSelectAllState(filtered);
   const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
   const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
   filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.`;
@@ -2720,100 +2628,6 @@ openTriageFromOverviewBtn?.addEventListener("click", () => {
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 
-selectAllReports?.addEventListener("change", () => {
-  const filtered = getFilteredReports();
-  filtered.forEach((report) => {
-    const tracking = String(report?.tracking || "").trim();
-    if (!tracking) return;
-    if (selectAllReports.checked) {
-      selectedReports.add(tracking);
-    } else {
-      selectedReports.delete(tracking);
-    }
-  });
-  applyFiltersAndRender();
-});
-
-document.getElementById("bulkUpdateBtn")?.addEventListener("click", async () => {
-  const selectedStatus = bulkStatusSelect?.value;
-  if (!selectedStatus) {
-    setFeedback("reportsFeedback", "Choose a bulk status before applying updates.", true);
-    return;
-  }
-
-  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
-  if (selected.length === 0) {
-    setFeedback("reportsFeedback", "Select at least one report for bulk status update.", true);
-    return;
-  }
-
-  setTableLoadingState(true, `Applying ${selectedStatus} to ${selected.length} report(s)...`);
-  try {
-    await bulkUpdateStatus(selected, selectedStatus);
-    setFeedback("reportsFeedback", `Bulk updated ${selected.length} report(s) to ${selectedStatus}.`);
-    applyFiltersAndRender();
-  } catch (error) {
-    setFeedback("reportsFeedback", error.message || "Unable to complete bulk status update.", true);
-  } finally {
-    setTableLoadingState(false);
-  }
-});
-
-document.getElementById("bulkFlagBtn")?.addEventListener("click", () => {
-  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
-  if (selected.length === 0) {
-    setFeedback("reportsFeedback", "Select at least one report to flag for spam/abuse review.", true);
-    return;
-  }
-
-  markReportsFlagged(selected);
-  setFeedback("reportsFeedback", `Flagged ${selected.length} report(s) for spam/abuse review.`);
-  applyFiltersAndRender();
-});
-
-document.getElementById("bulkDeleteBtn")?.addEventListener("click", async () => {
-  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
-  if (selected.length === 0) {
-    setFeedback("reportsFeedback", "Select at least one report to delete.", true);
-    return;
-  }
-
-  const confirmed = window.confirm(`Delete ${selected.length} selected report(s)? This cannot be undone.`);
-  if (!confirmed) return;
-
-  setTableLoadingState(true, `Deleting ${selected.length} report(s)...`);
-  try {
-    await bulkDeleteReports(selected);
-    const selectedKeys = new Set(selected.map((report) => String(report.tracking || "").trim()));
-    allReports = allReports.filter((report) => !selectedKeys.has(String(report.tracking || "").trim()));
-    selectedKeys.forEach((tracking) => removeStatusOverride(tracking));
-    selectedReports.clear();
-    setFeedback("reportsFeedback", `Deleted ${selected.length} report(s).`);
-    applyFiltersAndRender();
-  } catch (error) {
-    setFeedback("reportsFeedback", error.message || "Unable to delete selected reports.", true);
-  } finally {
-    setTableLoadingState(false);
-  }
-});
-
-document.getElementById("bulkAssignBtn")?.addEventListener("click", () => {
-  const assignee = bulkAssigneeSelect?.value || "";
-  if (!assignee) {
-    setFeedback("reportsFeedback", "Choose an assignee before applying bulk assignment.", true);
-    return;
-  }
-
-  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
-  if (selected.length === 0) {
-    setFeedback("reportsFeedback", "Select at least one report to assign.", true);
-    return;
-  }
-
-  bulkAssignReports(selected, assignee);
-  setFeedback("reportsFeedback", `Assigned ${selected.length} report(s) to ${assignee}.`);
-  applyFiltersAndRender();
-});
 
 document.getElementById("clearAuditTrailBtn")?.addEventListener("click", () => {
   saveAuditTrail([]);
@@ -2869,23 +2683,6 @@ document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
   setFeedback("reportsFeedback", "PDF report prepared for print/export.");
 });
 
-
-bulkEscalateBtn?.addEventListener("click", () => {
-  const escalationProfile = bulkEscalationSelect?.value || "Routine";
-  const selected = allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
-  if (selected.length === 0) {
-    setFeedback("reportsFeedback", "Select at least one report to update escalation.", true);
-    return;
-  }
-  selected.forEach((report) => {
-    updateCaseMeta(report.tracking, { escalationProfile });
-    report.escalationProfile = escalationProfile;
-    addAuditEntry("Escalation Updated", report.tracking, escalationProfile);
-    addTimelineEntry(report.tracking, "Escalation Updated", escalationProfile);
-  });
-  setFeedback("reportsFeedback", `Updated escalation profile for ${selected.length} report(s).`);
-  applyFiltersAndRender();
-});
 
 queueNotificationBtn?.addEventListener("click", () => {
   const tracking = String(timelineTrackingSelect?.value || "").trim();
@@ -2984,7 +2781,6 @@ createProjectBtn?.addEventListener("click", () => {
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
-setActionsDrawer(false);
 setDashboardView("overview");
 renderCaseTimeline("");
 applyAuthUI();
