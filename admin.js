@@ -2248,7 +2248,42 @@ function renderAnalytics(reports) {
   renderTeamPerformanceBoard(reports);
   renderExecutiveSummary(reports);
   renderForecastCards(reports);
+  renderAnalyticsTimeline(reports);
   renderAiCommandCenter(reports);
+}
+
+function renderAnalyticsTimeline(reports) {
+  const timelineBars = document.getElementById("analyticsTimelineBars");
+  if (!timelineBars) return;
+
+  const bucketMap = new Map();
+  reports.forEach((report) => {
+    const date = parseReportDate(report);
+    if (!date) return;
+    const key = date.toISOString().slice(0, 10);
+    bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
+  });
+
+  const entries = Array.from(bucketMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-10);
+
+  if (!entries.length) {
+    timelineBars.innerHTML = '<p class="small">No dated reports available for timeline analytics yet.</p>';
+    return;
+  }
+
+  const maxValue = Math.max(...entries.map(([, count]) => count), 1);
+  timelineBars.innerHTML = entries.map(([isoDate, count]) => {
+    const heightPercent = Math.max(16, Math.round((count / maxValue) * 100));
+    const label = new Date(`${isoDate}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    return `
+      <div class="timelineBar" role="img" aria-label="${label}: ${count} report${count === 1 ? "" : "s"}">
+        <span class="timelineBarValue">${count}</span>
+        <span class="timelineBarFill" style="height:${heightPercent}%"></span>
+        <span class="timelineBarLabel">${label}</span>
+      </div>`;
+  }).join("");
 }
 
 function populateSelectFilter(select, values, allLabel) {

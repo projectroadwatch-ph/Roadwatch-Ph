@@ -1018,6 +1018,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-top: 14px;
   background:
     radial-gradient(circle at 8% 18%, rgba(255, 203, 103, 0.12), transparent 35%),
+    radial-gradient(circle at 92% 50%, rgba(74, 157, 255, 0.12), transparent 34%),
     linear-gradient(120deg, rgba(11, 30, 56, 0.98), rgba(18, 52, 86, 0.82));
   border-radius: 16px;
   box-shadow: inset 0 0 0 1px rgba(138, 179, 250, 0.16), 0 12px 28px rgba(0, 0, 0, 0.28);
@@ -1135,6 +1136,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .snapshot-card strong {
   font-size: 1.8rem;
   line-height: 1;
+  text-shadow: 0 0 14px rgba(73, 165, 255, 0.25);
 }
 
 .snapshot-card--alert strong {
@@ -1182,6 +1184,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   background: linear-gradient(150deg, rgba(8, 30, 54, 0.95), rgba(22, 54, 88, 0.52));
   display: grid;
   gap: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
 .severity-card span {
@@ -1242,6 +1245,55 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .data-analytics-panel h4 {
   margin: 0;
+}
+
+.analytics-timeline {
+  margin-top: 14px;
+  border: 1px solid rgba(165, 213, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px;
+  background: linear-gradient(170deg, rgba(5, 22, 44, 0.86), rgba(11, 34, 61, 0.72));
+}
+
+.analyticsTimelineBars {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.timelineBar {
+  min-height: 130px;
+  display: grid;
+  align-items: end;
+  gap: 6px;
+}
+
+.timelineBarFill {
+  min-height: 12px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, rgba(125, 196, 255, 0.95), rgba(77, 139, 253, 0.45));
+  border: 1px solid rgba(176, 219, 255, 0.3);
+  box-shadow: 0 0 20px rgba(79, 174, 255, 0.2);
+}
+
+.timelineBar:nth-child(3n) .timelineBarFill {
+  background: linear-gradient(180deg, rgba(255, 209, 102, 0.95), rgba(255, 181, 77, 0.46));
+}
+
+.timelineBar:nth-child(4n) .timelineBarFill {
+  background: linear-gradient(180deg, rgba(146, 235, 197, 0.95), rgba(88, 200, 162, 0.42));
+}
+
+.timelineBarLabel {
+  font-size: 0.72rem;
+  color: #a9caef;
+}
+
+.timelineBarValue {
+  font-size: 0.78rem;
+  color: #d5e8ff;
 }
 
 @media (max-width: 1000px) {
