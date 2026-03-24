@@ -658,6 +658,27 @@ function setActionsDrawer(isOpen) {
   }
 }
 
+function openActionDrawerForReport(tracking) {
+  const trackingValue = String(tracking || "").trim();
+  if (!trackingValue) return;
+
+  setDashboardView("management");
+  setManagementPane("workspace");
+  setActionsDrawer(true);
+  selectedReports.add(trackingValue);
+
+  if (timelineTrackingSelect) {
+    timelineTrackingSelect.value = trackingValue;
+  }
+
+  renderCaseTimeline(trackingValue);
+  renderClosureChecklist(trackingValue);
+  applyFiltersAndRender();
+
+  actionsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
+  setFeedback("reportsFeedback", `Action drawer opened for ${trackingValue}.`);
+}
+
 function applyAuthUI() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
 
@@ -2287,9 +2308,14 @@ function renderRows(reports) {
     viewBtn.className = "secondary slim";
     viewBtn.textContent = "View";
     viewBtn.addEventListener("click", () => openReportFormPreview(report));
+    const actionsBtn = document.createElement("button");
+    actionsBtn.type = "button";
+    actionsBtn.className = "secondary slim action-cell__drawer-btn";
+    actionsBtn.textContent = "Actions";
+    actionsBtn.addEventListener("click", () => openActionDrawerForReport(report.tracking));
 
     tr.children[17].classList.add("action-cell");
-    tr.children[17].append(viewBtn, timelineBtn, deleteBtn);
+    tr.children[17].append(viewBtn, timelineBtn, actionsBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
