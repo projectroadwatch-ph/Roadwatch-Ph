@@ -2228,6 +2228,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .overview-main-grid--organized {
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-areas:
+    "snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot snapshot"
     "status status status status status status barangay barangay barangay barangay barangay barangay"
     "verification verification verification verification verification verification response response response response response response"
     "map map map map map map map map map map map map"
@@ -2273,6 +2274,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   .overview-main-grid--organized {
     grid-template-columns: 1fr;
     grid-template-areas:
+      "snapshot"
       "status"
       "barangay"
       "response"
