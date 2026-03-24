@@ -66,6 +66,19 @@ function doGet(e) {
     }, e);
   }
 
+  if (action === 'deleteReport') {
+    const tracking = params.tracking || '';
+    const result = deleteReportByTracking_(tracking);
+
+    return buildJsonResponse_({
+      success: result.success,
+      tracking: tracking,
+      deleted: result.deleted,
+      error: result.error || '',
+      allowedOrigin: ALLOWED_ORIGIN
+    }, e);
+  }
+
   return buildJsonResponse_({ error: 'Unknown action.', allowedOrigin: ALLOWED_ORIGIN }, e);
 }
 
@@ -82,6 +95,19 @@ function doPost(e) {
       tracking: tracking,
       status: result.status,
       updated: result.updated,
+      error: result.error || '',
+      allowedOrigin: ALLOWED_ORIGIN
+    }, e);
+  }
+
+  if (params.action === 'deleteReport') {
+    const tracking = params.tracking || '';
+    const result = deleteReportByTracking_(tracking);
+
+    return buildJsonResponse_({
+      success: result.success,
+      tracking: tracking,
+      deleted: result.deleted,
       error: result.error || '',
       allowedOrigin: ALLOWED_ORIGIN
     }, e);
@@ -317,6 +343,36 @@ function normalizeStatus_(status) {
   if (raw === 'in progress' || raw === 'inprogress') return 'In Progress';
   if (raw === 'repaired') return 'Repaired';
   return 'Pending';
+}
+
+function deleteReportByTracking_(tracking) {
+  const trackingValue = String(tracking || '').trim();
+  if (!trackingValue) {
+    return { success: false, deleted: false, error: 'Tracking is required.' };
+  }
+
+  const sheet = getSheet_();
+  const values = sheet.getDataRange().getValues();
+  if (values.length <= 1) {
+    return { success: false, deleted: false, error: 'No reports found.' };
+  }
+
+  const headers = values[0].map(function (header) { return String(header || '').trim().toLowerCase(); });
+  const trackingColumnIndex = headers.indexOf('tracking');
+  if (trackingColumnIndex === -1) {
+    return { success: false, deleted: false, error: 'Missing tracking column in sheet.' };
+  }
+
+  const targetTracking = trackingValue.toLowerCase();
+  for (var rowIndex = 1; rowIndex < values.length; rowIndex += 1) {
+    var rowTracking = String(values[rowIndex][trackingColumnIndex] || '').trim().toLowerCase();
+    if (rowTracking === targetTracking) {
+      sheet.deleteRow(rowIndex + 1);
+      return { success: true, deleted: true };
+    }
+  }
+
+  return { success: false, deleted: false, error: 'Tracking number not found.' };
 }
 
 function buildJsonResponse_(payload, e) {
