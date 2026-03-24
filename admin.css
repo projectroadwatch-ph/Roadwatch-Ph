@@ -185,6 +185,30 @@ button.slim { width: auto; padding: 10px 14px; white-space: nowrap; }
 }
 .feedback { min-height: 1.2rem; color: #9ce9ab; margin-top: 8px; font-size: 0.9rem; }
 .small { color: var(--muted); font-size: 0.9rem; }
+.sync-status {
+  margin: 10px 0 0;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(165, 213, 255, 0.35);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+.sync-status[data-state=\"ok\"] {
+  color: #9ce9ab;
+  border-color: rgba(156, 233, 171, 0.45);
+  background: rgba(49, 158, 78, 0.2);
+}
+.sync-status[data-state=\"warn\"] {
+  color: #ffd58f;
+  border-color: rgba(255, 213, 143, 0.4);
+  background: rgba(184, 123, 16, 0.25);
+}
+.sync-status[data-state=\"error\"] {
+  color: #ffadb3;
+  border-color: rgba(255, 173, 179, 0.4);
+  background: rgba(173, 57, 67, 0.25);
+}
 .link { color: #9ad4ff; display: inline-block; margin-top: 10px; }
 .tableWrap { overflow: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
 table { width: 100%; border-collapse: collapse; min-width: 1520px; }
