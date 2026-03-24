@@ -227,28 +227,52 @@
           <article class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
             <div class="row data-analytics-header">
               <h3>Data Analytics</h3>
-              <div class="data-analytics-filters" aria-hidden="true">
-                <span class="analytics-filter-pill">Barangay</span>
-                <span class="analytics-filter-pill">Issue Type</span>
-                <span class="analytics-filter-pill">All Types</span>
+              <div class="data-analytics-filters">
+                <label class="analytics-filter-control">
+                  Barangay
+                  <select id="analyticsBarangayFilter">
+                    <option value="all">All barangays</option>
+                  </select>
+                </label>
+                <label class="analytics-filter-control">
+                  Issue Type
+                  <select id="analyticsIssueTypeFilter">
+                    <option value="all">All issue types</option>
+                  </select>
+                </label>
+                <label class="analytics-filter-control">
+                  Severity
+                  <select id="analyticsSeverityFilter">
+                    <option value="all">All levels</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
               </div>
             </div>
-            <div class="severity-strip">
+            <div class="severity-strip dashboard-severity-strip">
               <div class="severity-card severity-card--urgent">
-                <span>Urgent</span>
-                <strong id="severityUrgentCount">0</strong>
+                <div class="severity-card-top">
+                  <span>Urgent</span>
+                  <strong id="severityUrgentCount">0</strong>
+                </div>
                 <div class="severity-meter"><span id="severityUrgentMeter"></span></div>
                 <small id="severityUrgentMeta">No data yet</small>
               </div>
               <div class="severity-card severity-card--moderate">
-                <span>Moderate</span>
-                <strong id="severityModerateCount">0</strong>
+                <div class="severity-card-top">
+                  <span>Moderate</span>
+                  <strong id="severityModerateCount">0</strong>
+                </div>
                 <div class="severity-meter"><span id="severityModerateMeter"></span></div>
                 <small id="severityModerateMeta">No data yet</small>
               </div>
               <div class="severity-card severity-card--low">
-                <span>Low</span>
-                <strong id="severityLowCount">0</strong>
+                <div class="severity-card-top">
+                  <span>Low</span>
+                  <strong id="severityLowCount">0</strong>
+                </div>
                 <div class="severity-meter"><span id="severityLowMeter"></span></div>
                 <small id="severityLowMeta">No data yet</small>
               </div>
@@ -256,7 +280,7 @@
             <div class="analytics-timeline">
               <div class="row">
                 <h4>Issue Volume Timeline</h4>
-                <p class="small">Daily trend of logged reports for rapid hotspot spotting.</p>
+                <p class="small" id="analyticsTimelineSummary">Daily trend of logged reports for rapid hotspot spotting.</p>
               </div>
               <div id="analyticsTimelineBars" class="analyticsTimelineBars" aria-live="polite"></div>
             </div>
