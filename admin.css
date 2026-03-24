@@ -2527,3 +2527,24 @@ label {
       "analytics";
   }
 }
+
+/* 2026-03-24 overlap fix: stop stacked sticky panes from covering dashboard content */
+.admin-authenticated .dashboard-shell {
+  overflow: visible;
+}
+
+.admin-authenticated .dashboard-header,
+.admin-authenticated .dashboard-nav {
+  position: static;
+  top: auto;
+}
+
+.admin-authenticated .dashboard-view {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-authenticated .command-pane--triage,
+.admin-authenticated #triagePane.command-pane {
+  top: 84px;
+}
