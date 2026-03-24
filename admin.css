@@ -73,9 +73,8 @@ body {
 .dashboard-shell {
   width: 100%;
   padding: 18px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: calc(100vh - 24px);
+  overflow: visible;
+  max-height: none;
   max-width: 100%;
   background:
     radial-gradient(circle at 50% -30%, rgba(60, 120, 255, 0.24), transparent 58%),

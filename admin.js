@@ -67,15 +67,6 @@ const showOperationsBtn = document.getElementById("showOperationsBtn");
 const executiveSummary = document.getElementById("executiveSummary");
 const forecastRange = document.getElementById("forecastRange");
 const forecastCards = document.getElementById("forecastCards");
-const aiRecommendationList = document.getElementById("aiRecommendationList");
-const aiCommandInput = document.getElementById("aiCommandInput");
-const generateAiInsightBtn = document.getElementById("generateAiInsightBtn");
-const mapStatusFilter = document.getElementById("mapStatusFilter");
-const mapAssigneeFilter = document.getElementById("mapAssigneeFilter");
-const mapCategoryFilter = document.getElementById("mapCategoryFilter");
-const mapRiskFilter = document.getElementById("mapRiskFilter");
-const mapIntelligenceSummary = document.getElementById("mapIntelligenceSummary");
-const mapIntelligenceList = document.getElementById("mapIntelligenceList");
 const duplicateCaseBoard = document.getElementById("duplicateCaseBoard");
 const projectNameInput = document.getElementById("projectNameInput");
 const projectOwnerSelect = document.getElementById("projectOwnerSelect");
@@ -1420,79 +1411,6 @@ function getTopBarangay(reports) {
   }, new Map()).entries()).sort((a, b) => b[1] - a[1])[0];
 }
 
-function getAiInsightCards(reports, promptText = "") {
-  const openReports = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
-  const overdue = openReports.filter((report) => getEscalationState(report) === "Overdue").length;
-  const criticalCases = reports.filter((report) => getSeverityLabel(report) === "Critical");
-  const duplicateClusters = getDuplicateClusters(reports);
-  const topBarangay = getTopBarangay(reports);
-  const triageTarget = criticalCases[0] || openReports[0];
-  const promptHint = String(promptText || "").trim();
-
-  const baseCards = [
-    {
-      label: "AI Priority Alert",
-      title: `${overdue} overdue case(s) need intervention`,
-      detail: overdue
-        ? "Deploy verification teams first to high-risk unresolved reports to avoid SLA breach."
-        : "SLA risk is controlled; keep monitoring new urgent submissions."
-    },
-    {
-      label: "AI Hotspot Routing",
-      title: topBarangay ? `Focus ${topBarangay[0]} (${topBarangay[1]} reports)` : "No hotspot data yet",
-      detail: topBarangay
-        ? "Suggested action: assign one team lead to this barangay for clustered road fixes."
-        : "Collect more geotagged reports to unlock hotspot-based routing recommendations."
-    },
-    {
-      label: "AI Program Suggestion",
-      title: `${duplicateClusters.length} duplicate cluster(s) detected`,
-      detail: duplicateClusters.length
-        ? "Convert repeated incidents into a single project ticket for faster execution and budgeting."
-        : "No active duplicate pattern detected in current records."
-    }
-  ];
-
-  if (promptHint) {
-    baseCards.push({
-      label: "AI Prompt Response",
-      title: promptHint.length > 54 ? `${promptHint.slice(0, 54)}…` : promptHint,
-      detail: triageTarget
-        ? `Recommendation: prioritize ${triageTarget.tracking || "top case"} at ${triageTarget.location || triageTarget.barangay || "priority location"} (${getSeverityLabel(triageTarget)} severity).`
-        : "No report records available yet to produce a recommendation."
-    });
-  }
-
-  return baseCards;
-}
-
-function renderAiCommandCenter(reports, promptText = "") {
-  if (!aiRecommendationList) return;
-  const cards = getAiInsightCards(reports, promptText);
-  aiRecommendationList.innerHTML = cards.map((item) => `
-    <article class="aiRecommendation">
-      <small>${escapeHtml(item.label)}</small>
-      <strong>${escapeHtml(item.title)}</strong>
-      <p>${escapeHtml(item.detail)}</p>
-    </article>
-  `).join("");
-}
-
-function renderMapIntelligence(reports) {
-  if (!mapIntelligenceList) return;
-  const filtered = reports.filter((report) => {
-    if ((mapStatusFilter?.value || "all") !== "all" && normalizeStatus(report.status) !== mapStatusFilter.value) return false;
-    if ((mapAssigneeFilter?.value || "all") !== "all" && (report.assignedTo || "Unassigned") !== mapAssigneeFilter.value) return false;
-    if ((mapCategoryFilter?.value || "all") !== "all" && report.issueCategory !== mapCategoryFilter.value) return false;
-    const severity = getSeverityLabel(report);
-    if ((mapRiskFilter?.value || "all") === "critical" && severity !== "Critical") return false;
-    if ((mapRiskFilter?.value || "all") === "high" && !["Critical", "High"].includes(severity)) return false;
-    return true;
-  }).slice(0, 8);
-  if (mapIntelligenceSummary) mapIntelligenceSummary.textContent = `Showing ${filtered.length} mapped cases after geographic filtering.`;
-  mapIntelligenceList.innerHTML = filtered.length ? filtered.map((report) => `<li class="priorityItem"><div><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><p>${escapeHtml(report.location || "Unknown location")}</p></div><div class="priorityMeta"><span>${escapeHtml(getSeverityLabel(report))}</span><span>${escapeHtml(report.assignedTo || "Unassigned")}</span></div></li>`).join("") : '<li class="priorityItem empty">No map cases match the selected filters.</li>';
-}
-
 function renderOverviewQueueTable(reports) {
   if (!overviewQueueBody) return;
 
@@ -2255,7 +2173,6 @@ function renderAnalytics(reports) {
   renderExecutiveSummary(reports);
   renderForecastCards(reports);
   renderAnalyticsTimeline(reports);
-  renderAiCommandCenter(reports);
 }
 
 function describeSeverityAge(reports, matcher) {
@@ -2329,8 +2246,6 @@ function populateSelectFilter(select, values, allLabel) {
 function syncDynamicFilters(reports) {
   populateSelectFilter(categoryFilter, reports.map((report) => report.issueCategory), "All categories");
   populateSelectFilter(barangayFilter, reports.map((report) => report.barangay), "All barangays");
-  populateSelectFilter(mapAssigneeFilter, reports.map((report) => report.assignedTo || "Unassigned"), "All assignees");
-  populateSelectFilter(mapCategoryFilter, reports.map((report) => report.issueCategory), "All categories");
 }
 
 function getFilteredReports() {
@@ -2542,7 +2457,6 @@ function applyFiltersAndRender() {
   renderOverviewQueueTable(allReports);
   renderAuditTrail();
   refreshReportingSection(allReports);
-  renderMapIntelligence(allReports);
   renderDuplicateCaseBoard(allReports);
   renderProjectPortfolio();
   renderModerationBoard(allReports);
@@ -2967,21 +2881,6 @@ createProjectBtn?.addEventListener("click", () => {
 });
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
-generateAiInsightBtn?.addEventListener("click", () => {
-  const prompt = String(aiCommandInput?.value || "").trim();
-  renderAiCommandCenter(allReports, prompt);
-});
-document.querySelectorAll(".aiPromptBtn").forEach((button) => {
-  button.addEventListener("click", () => {
-    const prompt = String(button.dataset.prompt || "").trim();
-    if (aiCommandInput) aiCommandInput.value = prompt;
-    renderAiCommandCenter(allReports, prompt);
-  });
-});
-mapStatusFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
-mapAssigneeFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
-mapCategoryFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
-mapRiskFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
 setActionsDrawer(false);
