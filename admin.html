@@ -62,6 +62,21 @@
 
       <section id="overviewView" class="dashboard-view">
         <section class="overview-shell">
+          <article class="panel chart-stretch operations-alert-strip">
+            <div class="row">
+              <div>
+                <h3>Priority Action Center</h3>
+                <p class="small">Start here to immediately address unresolved, high-risk, and verification-blocked cases.</p>
+              </div>
+              <button id="openTriageFromOverviewBtn" type="button" class="secondary slim hero-cta">Open Triage Inbox</button>
+            </div>
+            <div class="operations-pill-grid">
+              <p class="section-chip">1) Validate new submissions</p>
+              <p class="section-chip">2) Escalate high-priority hazards</p>
+              <p class="section-chip">3) Publish citizen updates</p>
+            </div>
+          </article>
+
           <article class="panel analytics-panel critical-overview-panel critical-overview-panel--hero">
             <div class="critical-overview-top">
               <div>
@@ -125,9 +140,18 @@
               <div class="row">
                 <h3>Operational Snapshot</h3>
                 <div class="header-actions">
-                  <span class="section-chip">All</span>
-                  <span class="section-chip muted-chip">Urgent</span>
-                  <span class="section-chip muted-chip">Barangay</span>
+                  <label class="inlineControl compact">Scope
+                    <select>
+                      <option>All reports</option>
+                      <option>Urgent only</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Location
+                    <select>
+                      <option>All barangays</option>
+                      <option>Top hotspots</option>
+                    </select>
+                  </label>
                 </div>
               </div>
               <p class="small">Manage status detection and active issue routing before field dispatch.</p>
@@ -151,8 +175,19 @@
               <div class="row">
                 <h3>Status Distribution</h3>
                 <div class="header-actions">
-                  <span class="section-chip muted-chip">All Barangay</span>
-                  <span class="section-chip muted-chip">Issue Type</span>
+                  <label class="inlineControl compact">Barangay
+                    <select>
+                      <option>All barangays</option>
+                      <option>Top 5 hotspots</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Type
+                    <select>
+                      <option>All issue types</option>
+                      <option>Potholes</option>
+                      <option>Flooded street</option>
+                    </select>
+                  </label>
                 </div>
               </div>
               <p class="small">Workflow state across pending, verification, in-progress, and repaired queues.</p>
@@ -165,8 +200,13 @@
               <div class="row">
                 <h3>Verification & Moderation Queue</h3>
                 <div class="header-actions">
-                  <span class="section-chip">Queue</span>
-                  <span class="section-chip muted-chip">Issue</span>
+                  <label class="inlineControl compact">Queue
+                    <select>
+                      <option>Needs verification</option>
+                      <option>Flagged entries</option>
+                      <option>All unresolved</option>
+                    </select>
+                  </label>
                 </div>
               </div>
               <p class="small">Focused report validation by urgency to reduce unresolved and false-positive entries.</p>

@@ -65,6 +65,7 @@ const toggleActionsDrawerBtn = document.getElementById("toggleActionsDrawerBtn")
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const showActionsPaneBtn = document.getElementById("showActionsPaneBtn");
+const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
@@ -2721,6 +2722,10 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+openTriageFromOverviewBtn?.addEventListener("click", () => {
+  setDashboardView("management");
+  setManagementPane("triage");
+});
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showActionsPaneBtn?.addEventListener("click", () => {

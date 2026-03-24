@@ -2403,3 +2403,67 @@ body.admin-authenticated .wrap,
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026 dashboard readability + organization refinements */
+.console-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(8, 25, 44, 0.96), rgba(8, 25, 44, 0.82));
+}
+
+label {
+  font-size: 0.95rem;
+}
+
+.small {
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.operations-alert-strip {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 209, 102, 0.36);
+  background: linear-gradient(145deg, rgba(38, 30, 14, 0.55), rgba(23, 43, 74, 0.5));
+}
+
+.operations-pill-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.operations-pill-grid .section-chip {
+  margin: 0;
+  justify-content: center;
+  padding: 8px 10px;
+  font-size: 0.76rem;
+}
+
+.overview-main-grid--organized {
+  grid-template-areas:
+    "verification status"
+    "response barangay"
+    "ai ai"
+    "map map"
+    "analytics analytics";
+}
+
+.inlineControl.compact {
+  font-size: 0.88rem;
+}
+
+@media (max-width: 900px) {
+  .overview-main-grid--organized {
+    grid-template-areas:
+      "verification"
+      "status"
+      "response"
+      "barangay"
+      "ai"
+      "map"
+      "analytics";
+  }
+}
