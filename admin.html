@@ -114,13 +114,13 @@
           <div class="overview-main-grid">
             <article class="panel chart-stretch">
               <div class="row">
-                <h3>Operational Snapshot</h3>
+                <h3>Status Distribution</h3>
                 <div class="header-actions">
                   <span class="section-chip">Live Queue</span>
                   <span class="section-chip muted-chip">Urgent Focus</span>
                 </div>
               </div>
-              <p class="small">Real-time report volume and workflow state.</p>
+              <p class="small">Real-time report volume and workflow state across pending, verification, and resolved queues.</p>
               <div class="snapshot-kpis">
                 <div class="snapshot-card">
                   <span>Total</span>
@@ -252,8 +252,8 @@
           </article>
 
           <article class="panel chart-stretch data-analytics-panel">
-            <div class="row">
-              <h3>Data Analytics</h3>
+              <div class="row">
+                <h3>Data Analytics</h3>
               <div class="header-actions">
                 <span class="section-chip">Forecast & Capacity</span>
                 <span class="section-chip muted-chip">Severity Trends</span>
@@ -286,6 +286,13 @@
                 <h4>Team Performance Board</h4>
                 <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
               </div>
+            </div>
+            <div class="analytics-timeline">
+              <div class="row">
+                <h4>Issue Volume Timeline</h4>
+                <p class="small">Daily trend of logged reports for rapid hotspot spotting.</p>
+              </div>
+              <div id="analyticsTimelineBars" class="analyticsTimelineBars" aria-live="polite"></div>
             </div>
             <div class="row export-row">
               <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
