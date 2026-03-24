@@ -2483,6 +2483,34 @@ body.admin-authenticated .wrap,
   }
 }
 
+/* 2026-03-24 report management declutter: remove drawer pattern and relax crowded controls */
+#managementView .management-nav {
+  flex-wrap: wrap;
+}
+
+#workspacePane .toolbar,
+#workspacePane .triage-toolbar {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+#actionsPane.workspace-actions {
+  margin-top: 18px;
+  border: 1px solid rgba(165, 213, 255, 0.24);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(6, 23, 42, 0.36);
+}
+
+#actionsPane .stack-toolbar {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+#actionsPane .stack-toolbar .check-inline {
+  grid-column: 1 / -1;
+}
+
 /* 2026 dashboard readability + organization refinements */
 .console-topbar {
   position: sticky;

@@ -61,10 +61,8 @@ const showManagementBtn = document.getElementById("showManagementBtn");
 const triagePane = document.getElementById("triagePane");
 const workspacePane = document.getElementById("workspacePane");
 const actionsPane = document.getElementById("actionsPane");
-const toggleActionsDrawerBtn = document.getElementById("toggleActionsDrawerBtn");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
-const showActionsPaneBtn = document.getElementById("showActionsPaneBtn");
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
@@ -644,21 +642,15 @@ function setManagementPane(pane) {
 
   if (triagePane) triagePane.hidden = activePane !== "triage";
   if (workspacePane) workspacePane.hidden = activePane !== "workspace";
-  if (activePane === "triage") setActionsDrawer(false);
+  if (actionsPane) actionsPane.hidden = false;
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
-  showActionsPaneBtn?.classList.toggle("is-active", !actionsPane?.hidden && activePane === "workspace");
 }
 
 function setActionsDrawer(isOpen) {
   if (!actionsPane) return;
-  actionsPane.hidden = !isOpen;
-  showActionsPaneBtn?.classList.toggle("is-active", isOpen && !workspacePane?.hidden);
-  if (toggleActionsDrawerBtn) {
-    toggleActionsDrawerBtn.textContent = isOpen ? "Close action drawer" : "Open action drawer";
-    toggleActionsDrawerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  }
+  actionsPane.hidden = false;
 }
 
 function openActionDrawerForReport(tracking) {
@@ -667,7 +659,7 @@ function openActionDrawerForReport(tracking) {
 
   setDashboardView("management");
   setManagementPane("workspace");
-  setActionsDrawer(true);
+  setActionsDrawer();
   selectedReports.add(trackingValue);
 
   if (timelineTrackingSelect) {
@@ -679,7 +671,7 @@ function openActionDrawerForReport(tracking) {
   applyFiltersAndRender();
 
   actionsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
-  setFeedback("reportsFeedback", `Action drawer opened for ${trackingValue}.`);
+  setFeedback("reportsFeedback", `Bulk actions focused for ${trackingValue}.`);
 }
 
 function applyAuthUI() {
@@ -1351,7 +1343,6 @@ function renderCaseTimeline(tracking) {
 function focusTimeline(tracking) {
   const key = String(tracking || "").trim();
   if (!key || !timelineTrackingSelect) return;
-  setActionsDrawer(true);
   timelineTrackingSelect.value = key;
   renderCaseTimeline(key);
 }
@@ -2728,14 +2719,6 @@ openTriageFromOverviewBtn?.addEventListener("click", () => {
 });
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
-showActionsPaneBtn?.addEventListener("click", () => {
-  setManagementPane("workspace");
-  setActionsDrawer(true);
-  actionsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
-});
-toggleActionsDrawerBtn?.addEventListener("click", () => {
-  setActionsDrawer(actionsPane?.hidden);
-});
 
 selectAllReports?.addEventListener("change", () => {
   const filtered = getFilteredReports();
