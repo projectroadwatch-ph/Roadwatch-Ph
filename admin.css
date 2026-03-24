@@ -1174,6 +1174,31 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .data-analytics-panel {
   margin-top: 0;
   grid-column: 1 / -1;
+  border: 1px solid rgba(130, 176, 229, 0.26);
+  background:
+    radial-gradient(circle at 15% -20%, rgba(101, 158, 231, 0.35), transparent 45%),
+    radial-gradient(circle at 90% 0%, rgba(80, 138, 220, 0.2), transparent 38%),
+    linear-gradient(165deg, #101f36 0%, #0a1a31 55%, #0b1e3e 100%);
+  box-shadow: inset 0 0 0 1px rgba(190, 220, 255, 0.03), 0 20px 30px rgba(2, 8, 20, 0.55);
+}
+
+.data-analytics-header {
+  align-items: center;
+}
+
+.data-analytics-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.analytics-filter-pill {
+  border: 1px solid rgba(154, 191, 236, 0.34);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  color: #c2dcfb;
+  background: rgba(120, 158, 208, 0.12);
 }
 
 .severity-strip {
@@ -1184,35 +1209,42 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .severity-card {
-  border: 1px solid rgba(165, 213, 255, 0.24);
+  border: 1px solid rgba(165, 213, 255, 0.2);
   border-radius: 12px;
-  padding: 12px;
-  background: linear-gradient(150deg, rgba(8, 30, 54, 0.95), rgba(22, 54, 88, 0.52));
+  padding: 12px 14px;
+  background: linear-gradient(145deg, rgba(8, 25, 45, 0.95), rgba(27, 51, 86, 0.56));
   display: grid;
-  gap: 8px;
+  gap: 7px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
 .severity-card span {
-  font-size: 0.84rem;
-  color: var(--muted);
+  font-size: 0.82rem;
+  color: #e4edf9;
+  font-weight: 600;
 }
 
 .severity-card strong {
-  font-size: 1.85rem;
+  font-size: 1.65rem;
   line-height: 1;
+  justify-self: end;
+}
+
+.severity-card small {
+  font-size: 0.73rem;
+  color: #8eb0d7;
 }
 
 .severity-card--urgent strong {
-  color: #ff9ea4;
+  color: #ffa4ad;
 }
 
 .severity-card--moderate strong {
-  color: #ffd58f;
+  color: #ffde9b;
 }
 
 .severity-card--low strong {
-  color: #9ff2d7;
+  color: #abefda;
 }
 
 .severity-meter {
@@ -1231,23 +1263,15 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .severity-card--urgent .severity-meter span {
-  background: linear-gradient(90deg, #ff9ea4, #ff7f89);
+  background: linear-gradient(90deg, #ff8e9a, #ff7b8a);
 }
 
 .severity-card--moderate .severity-meter span {
-  background: linear-gradient(90deg, #ffe29a, #ffc86d);
+  background: linear-gradient(90deg, #ffe3a1, #ffc96b);
 }
 
 .severity-card--low .severity-meter span {
-  background: linear-gradient(90deg, #b9f8d8, #77deb4);
-}
-
-.analytics-bottom-grid {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  min-width: 0;
+  background: linear-gradient(90deg, #baf6dd, #75d8b2);
 }
 
 .data-analytics-panel h4 {
@@ -1256,25 +1280,25 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .analytics-timeline {
   margin-top: 14px;
-  border: 1px solid rgba(165, 213, 255, 0.2);
+  border: 1px solid rgba(165, 213, 255, 0.18);
   border-radius: 12px;
   padding: 12px;
-  background: linear-gradient(170deg, rgba(5, 22, 44, 0.86), rgba(11, 34, 61, 0.72));
+  background: linear-gradient(170deg, rgba(6, 23, 45, 0.92), rgba(13, 31, 58, 0.82));
 }
 
 .analyticsTimelineBars {
   margin-top: 10px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+  gap: 10px;
   align-items: end;
 }
 
 .timelineBar {
-  min-height: 130px;
+  min-height: 120px;
   display: grid;
   align-items: end;
-  gap: 6px;
+  gap: 5px;
 }
 
 .timelineBarFill {
@@ -1294,13 +1318,13 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .timelineBarLabel {
-  font-size: 0.72rem;
-  color: #a9caef;
+  font-size: 0.68rem;
+  color: #8fb0d5;
 }
 
 .timelineBarValue {
-  font-size: 0.78rem;
-  color: #d5e8ff;
+  font-size: 0.72rem;
+  color: #c4dbf6;
 }
 
 @media (max-width: 1000px) {
@@ -1313,8 +1337,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
     grid-template-columns: 1fr;
   }
 
-  .overview-main-grid,
-  .analytics-bottom-grid {
+  .overview-main-grid {
     grid-template-columns: 1fr;
   }
 

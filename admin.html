@@ -252,39 +252,32 @@
           </article>
 
           <article class="panel chart-stretch data-analytics-panel">
-              <div class="row">
-                <h3>Data Analytics</h3>
-              <div class="header-actions">
-                <span class="section-chip">Forecast & Capacity</span>
-                <span class="section-chip muted-chip">Severity Trends</span>
+            <div class="row data-analytics-header">
+              <h3>Data Analytics</h3>
+              <div class="data-analytics-filters" aria-hidden="true">
+                <span class="analytics-filter-pill">Barangay</span>
+                <span class="analytics-filter-pill">Issue Type</span>
+                <span class="analytics-filter-pill">All Types</span>
               </div>
             </div>
-            <p class="small">Forward outlook, team load, and exportable reporting snapshots.</p>
             <div class="severity-strip">
               <div class="severity-card severity-card--urgent">
                 <span>Urgent</span>
                 <strong id="severityUrgentCount">0</strong>
                 <div class="severity-meter"><span id="severityUrgentMeter"></span></div>
+                <small id="severityUrgentMeta">No data yet</small>
               </div>
               <div class="severity-card severity-card--moderate">
                 <span>Moderate</span>
                 <strong id="severityModerateCount">0</strong>
                 <div class="severity-meter"><span id="severityModerateMeter"></span></div>
+                <small id="severityModerateMeta">No data yet</small>
               </div>
               <div class="severity-card severity-card--low">
                 <span>Low</span>
                 <strong id="severityLowCount">0</strong>
                 <div class="severity-meter"><span id="severityLowMeter"></span></div>
-              </div>
-            </div>
-            <div class="analytics-bottom-grid">
-              <div class="forecastPanel">
-                <h4>Forward Outlook</h4>
-                <div id="forecastCards" class="forecastCards"></div>
-              </div>
-              <div>
-                <h4>Team Performance Board</h4>
-                <div id="teamPerformanceBoard" class="teamPerformanceBoard"></div>
+                <small id="severityLowMeta">No data yet</small>
               </div>
             </div>
             <div class="analytics-timeline">
