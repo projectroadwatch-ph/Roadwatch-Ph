@@ -2329,21 +2329,42 @@ async function loadReports() {
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
 
   try {
-    let payload = null;
+    let selectedPayload = null;
+    let selectedParsedReports = [];
     let sourceLabel = "";
     let lastError = null;
+    let fallbackPayload = null;
+    let fallbackLabel = "";
+    let fallbackParsedReports = [];
 
     for (const source of REPORT_ENDPOINTS) {
       try {
-        payload = await fetchApiPayload(`${source.url}?action=getReports`);
-        sourceLabel = source.label;
-        break;
+        const payload = await fetchApiPayload(`${source.url}?action=getReports`);
+        const parsedReports = parseReports(payload);
+
+        if (!fallbackPayload) {
+          fallbackPayload = payload;
+          fallbackLabel = source.label;
+          fallbackParsedReports = parsedReports;
+        }
+
+        if (parsedReports.length > selectedParsedReports.length) {
+          selectedPayload = payload;
+          selectedParsedReports = parsedReports;
+          sourceLabel = source.label;
+        }
       } catch (error) {
         lastError = error;
       }
     }
 
-    if (!payload) {
+    if (!selectedPayload && fallbackPayload) {
+      selectedPayload = fallbackPayload;
+      selectedParsedReports = fallbackParsedReports;
+      sourceLabel = fallbackLabel;
+    }
+
+    if (!selectedPayload) {
       throw lastError || new Error("Unable to connect to any Google Sheets endpoint.");
     }
 
@@ -2351,7 +2372,7 @@ async function loadReports() {
     currentPage = 1;
 
     allReports = dedupeReports(
-      parseReports(payload)
+      selectedParsedReports
       .map(normalizeReport)
       .map(applyLocalStatusOverrides)
       .map(applyCaseMetadata)
