@@ -180,6 +180,33 @@
               </div>
             </article>
 
+            <article class="panel chart-stretch ai-command-panel">
+              <div class="row">
+                <h3>AI Command Center</h3>
+                <div class="header-actions">
+                  <span class="section-chip">RoadWatch Copilot</span>
+                  <span class="section-chip muted-chip">Operational Suggestions</span>
+                </div>
+              </div>
+              <p class="small">AI-assisted triage insights based on live report patterns, hotspots, and status backlog.</p>
+              <div class="ai-layout">
+                <div>
+                  <div id="aiRecommendationList" class="aiRecommendationList" aria-live="polite"></div>
+                </div>
+                <div class="ai-controls">
+                  <label class="inlineControl">Ask AI
+                    <textarea id="aiCommandInput" rows="3" placeholder="Example: Which barangay should we prioritize this week?"></textarea>
+                  </label>
+                  <div class="ai-quick-prompts" id="aiQuickPrompts">
+                    <button type="button" class="secondary slim aiPromptBtn" data-prompt="Summarize urgent incidents and overdue risks.">Urgent summary</button>
+                    <button type="button" class="secondary slim aiPromptBtn" data-prompt="Give me dispatch priorities for the next 24 hours.">Dispatch plan</button>
+                    <button type="button" class="secondary slim aiPromptBtn" data-prompt="Which repeat hotspots need project conversion?">Project candidates</button>
+                  </div>
+                  <button id="generateAiInsightBtn" type="button" class="secondary">Generate AI Insight</button>
+                </div>
+              </div>
+            </article>
+
             <article class="panel chart-stretch full-width-panel">
               <div class="row">
                 <h3>Verification & Moderation Queue</h3>

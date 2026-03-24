@@ -67,6 +67,9 @@ const showOperationsBtn = document.getElementById("showOperationsBtn");
 const executiveSummary = document.getElementById("executiveSummary");
 const forecastRange = document.getElementById("forecastRange");
 const forecastCards = document.getElementById("forecastCards");
+const aiRecommendationList = document.getElementById("aiRecommendationList");
+const aiCommandInput = document.getElementById("aiCommandInput");
+const generateAiInsightBtn = document.getElementById("generateAiInsightBtn");
 const mapStatusFilter = document.getElementById("mapStatusFilter");
 const mapAssigneeFilter = document.getElementById("mapAssigneeFilter");
 const mapCategoryFilter = document.getElementById("mapCategoryFilter");
@@ -1409,6 +1412,72 @@ function renderForecastCards(reports) {
   ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${item.value}</strong></article>`).join("");
 }
 
+function getTopBarangay(reports) {
+  return Array.from(reports.reduce((acc, report) => {
+    const key = String(report?.barangay || "Unknown").trim() || "Unknown";
+    acc.set(key, (acc.get(key) || 0) + 1);
+    return acc;
+  }, new Map()).entries()).sort((a, b) => b[1] - a[1])[0];
+}
+
+function getAiInsightCards(reports, promptText = "") {
+  const openReports = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
+  const overdue = openReports.filter((report) => getEscalationState(report) === "Overdue").length;
+  const criticalCases = reports.filter((report) => getSeverityLabel(report) === "Critical");
+  const duplicateClusters = getDuplicateClusters(reports);
+  const topBarangay = getTopBarangay(reports);
+  const triageTarget = criticalCases[0] || openReports[0];
+  const promptHint = String(promptText || "").trim();
+
+  const baseCards = [
+    {
+      label: "AI Priority Alert",
+      title: `${overdue} overdue case(s) need intervention`,
+      detail: overdue
+        ? "Deploy verification teams first to high-risk unresolved reports to avoid SLA breach."
+        : "SLA risk is controlled; keep monitoring new urgent submissions."
+    },
+    {
+      label: "AI Hotspot Routing",
+      title: topBarangay ? `Focus ${topBarangay[0]} (${topBarangay[1]} reports)` : "No hotspot data yet",
+      detail: topBarangay
+        ? "Suggested action: assign one team lead to this barangay for clustered road fixes."
+        : "Collect more geotagged reports to unlock hotspot-based routing recommendations."
+    },
+    {
+      label: "AI Program Suggestion",
+      title: `${duplicateClusters.length} duplicate cluster(s) detected`,
+      detail: duplicateClusters.length
+        ? "Convert repeated incidents into a single project ticket for faster execution and budgeting."
+        : "No active duplicate pattern detected in current records."
+    }
+  ];
+
+  if (promptHint) {
+    baseCards.push({
+      label: "AI Prompt Response",
+      title: promptHint.length > 54 ? `${promptHint.slice(0, 54)}…` : promptHint,
+      detail: triageTarget
+        ? `Recommendation: prioritize ${triageTarget.tracking || "top case"} at ${triageTarget.location || triageTarget.barangay || "priority location"} (${getSeverityLabel(triageTarget)} severity).`
+        : "No report records available yet to produce a recommendation."
+    });
+  }
+
+  return baseCards;
+}
+
+function renderAiCommandCenter(reports, promptText = "") {
+  if (!aiRecommendationList) return;
+  const cards = getAiInsightCards(reports, promptText);
+  aiRecommendationList.innerHTML = cards.map((item) => `
+    <article class="aiRecommendation">
+      <small>${escapeHtml(item.label)}</small>
+      <strong>${escapeHtml(item.title)}</strong>
+      <p>${escapeHtml(item.detail)}</p>
+    </article>
+  `).join("");
+}
+
 function renderMapIntelligence(reports) {
   if (!mapIntelligenceList) return;
   const filtered = reports.filter((report) => {
@@ -2179,6 +2248,7 @@ function renderAnalytics(reports) {
   renderTeamPerformanceBoard(reports);
   renderExecutiveSummary(reports);
   renderForecastCards(reports);
+  renderAiCommandCenter(reports);
 }
 
 function populateSelectFilter(select, values, allLabel) {
@@ -2841,6 +2911,17 @@ createProjectBtn?.addEventListener("click", () => {
 });
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
+generateAiInsightBtn?.addEventListener("click", () => {
+  const prompt = String(aiCommandInput?.value || "").trim();
+  renderAiCommandCenter(allReports, prompt);
+});
+document.querySelectorAll(".aiPromptBtn").forEach((button) => {
+  button.addEventListener("click", () => {
+    const prompt = String(button.dataset.prompt || "").trim();
+    if (aiCommandInput) aiCommandInput.value = prompt;
+    renderAiCommandCenter(allReports, prompt);
+  });
+});
 mapStatusFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
 mapAssigneeFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
 mapCategoryFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
