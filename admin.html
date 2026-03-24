@@ -307,9 +307,18 @@
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
+        <header class="management-header panel">
+          <div>
+            <p class="eyebrow">Case Operations</p>
+            <h3>Report Management Workspace</h3>
+            <p class="small">Use the workspace table for bulk updates, switch to triage for urgent queues, and open the action drawer for guided case workflows.</p>
+          </div>
+          <button id="toggleActionsDrawerBtn" type="button" class="secondary slim" aria-expanded="false">Open action drawer</button>
+        </header>
         <nav class="dashboard-nav management-nav" aria-label="Report management panels">
           <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
           <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
+          <button id="showActionsPaneBtn" type="button" class="secondary nav-btn">Action Drawer</button>
         </nav>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>

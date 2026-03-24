@@ -647,12 +647,13 @@ function setManagementPane(pane) {
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
-  showActionsPaneBtn?.classList.remove("is-active");
+  showActionsPaneBtn?.classList.toggle("is-active", !actionsPane?.hidden && activePane === "workspace");
 }
 
 function setActionsDrawer(isOpen) {
   if (!actionsPane) return;
   actionsPane.hidden = !isOpen;
+  showActionsPaneBtn?.classList.toggle("is-active", isOpen && !workspacePane?.hidden);
   if (toggleActionsDrawerBtn) {
     toggleActionsDrawerBtn.textContent = isOpen ? "Close action drawer" : "Open action drawer";
     toggleActionsDrawerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
@@ -2722,6 +2723,11 @@ showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
+showActionsPaneBtn?.addEventListener("click", () => {
+  setManagementPane("workspace");
+  setActionsDrawer(true);
+  actionsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 toggleActionsDrawerBtn?.addEventListener("click", () => {
   setActionsDrawer(actionsPane?.hidden);
 });
