@@ -7,7 +7,7 @@ const ADMIN_FALLBACK_CREDENTIALS = [
 ];
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
-const HOME_API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
+const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
 const PUBLIC_SITE_API_URL = "https://script.google.com/macros/s/AKfycbxlfYUSRj3g6FwoErAmJLhTKzWGF3ypsp5tP61qxQuC7EyVT2ehvKub998GX8epTl3C/exec";
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
