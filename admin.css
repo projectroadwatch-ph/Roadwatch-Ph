@@ -167,14 +167,19 @@ body {
 .dashboard-header .small { margin: 6px 0 0; max-width: 640px; }
 .dashboard-nav {
   margin-top: 8px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 10px;
-  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
 }
 
 .nav-btn {
-  width: auto;
-  padding: 10px 14px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  white-space: normal;
+  text-align: center;
 }
 
 .nav-btn.is-active {
@@ -187,6 +192,14 @@ body {
 
 .management-nav {
   margin-top: 14px;
+}
+
+.management-header {
+  min-width: 0;
+}
+
+.management-header .small {
+  max-width: 68ch;
 }
 
 .command-center {
@@ -745,11 +758,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   }
 
   .dashboard-nav {
-    flex-direction: column;
-  }
-
-  .nav-btn {
-    width: 100%;
+    grid-template-columns: 1fr;
   }
 
   .dashboard-grid {
@@ -774,6 +783,16 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 @media (max-width: 1120px) {
   .command-center { display: block; }
+
+  .management-header {
+    display: grid;
+    gap: 10px;
+  }
+
+  .management-header .secondary.slim {
+    justify-self: start;
+    width: auto;
+  }
 }
 
 @media (max-width: 760px) {
