@@ -2359,6 +2359,12 @@ body.admin-authenticated .wrap,
   align-items: start;
 }
 
+/* Stretch active management pane across the full command-center width. */
+#workspacePane.command-pane,
+#triagePane.command-pane {
+  grid-column: 1 / -1;
+}
+
 .command-pane {
   margin-top: 0;
 }
