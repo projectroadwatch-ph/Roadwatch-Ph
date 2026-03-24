@@ -1057,8 +1057,27 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-top: 0;
 }
 
-.overview-main-grid .chart-stretch:nth-child(3) {
-  grid-column: 1 / -1;
+.overview-main-grid--organized {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-areas:
+    "status barangay"
+    "verification response"
+    "ai ai"
+    "map map"
+    "analytics analytics";
+}
+
+.overview-panel--status { grid-area: status; }
+.overview-panel--barangay { grid-area: barangay; }
+.overview-panel--response { grid-area: response; }
+.overview-panel--verification { grid-area: verification; }
+.overview-panel--ai { grid-area: ai; }
+.overview-panel--map { grid-area: map; }
+.overview-panel--analytics { grid-area: analytics; }
+
+.overview-panel--verification .overview-table-wrap {
+  max-height: 350px;
+  overflow: auto;
 }
 
 .ai-command-panel {
@@ -1339,6 +1358,17 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
   .overview-main-grid {
     grid-template-columns: 1fr;
+  }
+
+  .overview-main-grid--organized {
+    grid-template-areas:
+      "status"
+      "barangay"
+      "response"
+      "verification"
+      "ai"
+      "map"
+      "analytics";
   }
 
   .ai-layout {
@@ -1701,6 +1731,17 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
   .overview-main-grid {
     grid-template-columns: 1fr;
+  }
+
+  .overview-main-grid--organized {
+    grid-template-areas:
+      "status"
+      "barangay"
+      "response"
+      "verification"
+      "ai"
+      "map"
+      "analytics";
   }
 
   .toolbar,
