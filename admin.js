@@ -54,6 +54,7 @@ const showManagementBtn = document.getElementById("showManagementBtn");
 const triagePane = document.getElementById("triagePane");
 const workspacePane = document.getElementById("workspacePane");
 const actionsPane = document.getElementById("actionsPane");
+const toggleActionsDrawerBtn = document.getElementById("toggleActionsDrawerBtn");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const showActionsPaneBtn = document.getElementById("showActionsPaneBtn");
@@ -641,11 +642,20 @@ function setManagementPane(pane) {
 
   if (triagePane) triagePane.hidden = activePane !== "triage";
   if (workspacePane) workspacePane.hidden = activePane !== "workspace";
-  if (actionsPane) actionsPane.hidden = false;
+  if (activePane === "triage") setActionsDrawer(false);
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
   showActionsPaneBtn?.classList.remove("is-active");
+}
+
+function setActionsDrawer(isOpen) {
+  if (!actionsPane) return;
+  actionsPane.hidden = !isOpen;
+  if (toggleActionsDrawerBtn) {
+    toggleActionsDrawerBtn.textContent = isOpen ? "Close action drawer" : "Open action drawer";
+    toggleActionsDrawerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  }
 }
 
 function applyAuthUI() {
@@ -1317,6 +1327,7 @@ function renderCaseTimeline(tracking) {
 function focusTimeline(tracking) {
   const key = String(tracking || "").trim();
   if (!key || !timelineTrackingSelect) return;
+  setActionsDrawer(true);
   timelineTrackingSelect.value = key;
   renderCaseTimeline(key);
 }
@@ -2455,6 +2466,9 @@ showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
+toggleActionsDrawerBtn?.addEventListener("click", () => {
+  setActionsDrawer(actionsPane?.hidden);
+});
 
 selectAllReports?.addEventListener("change", () => {
   const filtered = getFilteredReports();
@@ -2724,6 +2738,7 @@ mapCategoryFilter?.addEventListener("change", () => renderMapIntelligence(allRep
 mapRiskFilter?.addEventListener("change", () => renderMapIntelligence(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
+setActionsDrawer(false);
 setDashboardView("overview");
 renderCaseTimeline("");
 applyAuthUI();

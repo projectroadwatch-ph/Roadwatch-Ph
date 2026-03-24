@@ -250,7 +250,10 @@
           <section id="workspacePane" class="command-pane command-pane--workspace analytics-panel">
             <div class="row">
               <h3>Report Workspace</h3>
-              <p id="bulkSummary" class="small">No reports selected.</p>
+              <div class="workspace-summary">
+                <p id="bulkSummary" class="small">No reports selected.</p>
+                <button id="toggleActionsDrawerBtn" type="button" class="secondary slim" aria-expanded="false" aria-controls="actionsPane">Open action drawer</button>
+              </div>
             </div>
             <div class="toolbar">
               <label class="inlineControl">Search
@@ -336,9 +339,9 @@
               </div>
             </div>
             <p id="reportsFeedback" class="feedback"></p>
-            <section id="actionsPane" class="workspace-actions queue-section">
-              <h4>Integrated Action Workspace</h4>
-              <p class="small">Apply updates without leaving Report Workspace.</p>
+            <section id="actionsPane" class="workspace-actions queue-section action-drawer" hidden>
+              <h4>Action Drawer</h4>
+              <p class="small">Use these guided steps after selecting reports in the workspace table.</p>
             <div class="toolbar stack-toolbar">
               <label class="inlineControl compact check-inline">
                 <input id="selectAllReports" type="checkbox">
@@ -375,9 +378,10 @@
               <button id="bulkFlagBtn" type="button" class="secondary slim">Flag spam/abuse</button>
               <button id="bulkDeleteBtn" type="button" class="secondary slim">Delete selected</button>
             </div>
-            <div class="queue-section">
+            <details class="queue-section action-group" open>
+              <summary><h4>1) Case Timeline</h4><span class="small">Track internal updates and notes</span></summary>
               <div class="row">
-                <h4>Case Timeline</h4>
+                <p class="small">Add a note so other admins can understand the latest decision.</p>
               </div>
               <p id="timelineSummary" class="small">Select a report to view timeline.</p>
               <label class="inlineControl">Tracking #
@@ -390,10 +394,11 @@
               </label>
               <button id="addTimelineNoteBtn" type="button" class="secondary slim">Add note</button>
               <ul id="caseTimelineList" class="priorityQueueList"></ul>
-            </div>
-            <div class="queue-section">
+            </details>
+            <details class="queue-section action-group">
+              <summary><h4>2) Citizen Communication</h4><span class="small">Prepare outbound citizen updates</span></summary>
               <div class="row">
-                <h4>Citizen Communication</h4>
+                <p class="small">Queue a clear citizen-facing message tied to the selected case.</p>
               </div>
               <label class="inlineControl">Public update template
                 <select id="notificationTemplateSelect">
@@ -411,10 +416,11 @@
               </label>
               <button id="queueNotificationBtn" type="button" class="secondary slim">Queue citizen update</button>
               <ul id="notificationQueueList" class="priorityQueueList"></ul>
-            </div>
-            <div class="queue-section">
+            </details>
+            <details class="queue-section action-group">
+              <summary><h4>3) Repair Closure QA</h4><span class="small">Attach evidence before closure</span></summary>
               <div class="row">
-                <h4>Repair Closure QA</h4>
+                <p class="small">Store proof links and completion notes for transparency.</p>
               </div>
               <label class="inlineControl">Closure proof link
                 <input id="closureProofInput" type="url" placeholder="https://example.com/after-photo.jpg">
@@ -424,10 +430,11 @@
               </label>
               <button id="saveClosureBtn" type="button" class="secondary slim">Save closure evidence</button>
               <div id="closureChecklist" class="miniCardGrid"></div>
-            </div>
-            <div class="queue-section">
+            </details>
+            <details class="queue-section action-group">
+              <summary><h4>4) Roles & Collaboration</h4><span class="small">Coordinate handoffs and responsibilities</span></summary>
               <div class="row">
-                <h4>Roles & Collaboration</h4>
+                <p class="small">Capture role context and mentions for the next shift.</p>
               </div>
               <label class="inlineControl">Active role
                 <select id="roleFilterSelect">
@@ -443,14 +450,15 @@
               </label>
               <button id="saveCollabNoteBtn" type="button" class="secondary slim">Save collaboration note</button>
               <div id="permissionsSummary" class="miniCardGrid"></div>
-            </div>
-            <div class="queue-section">
+            </details>
+            <details class="queue-section action-group">
+              <summary><h4>5) Recent Audit Trail</h4><span class="small">Review recent local activity</span></summary>
               <div class="row">
-                <h4>Recent Audit Trail</h4>
+                <p class="small">Quick snapshot of updates done from this browser session.</p>
                 <button id="clearAuditTrailBtn" type="button" class="secondary slim">Clear local log</button>
               </div>
               <ul id="auditTrailList" class="priorityQueueList"></ul>
-            </div>
+            </details>
             </section>
           </section>
         </section>
