@@ -26,9 +26,9 @@ body {
 }
 
 .admin-authenticated .wrap {
-  width: min(1240px, 96%);
-  min-height: initial;
-  margin: 28px auto;
+  width: min(1320px, 98%);
+  min-height: calc(100vh - 24px);
+  margin: 12px auto;
   display: block;
 }
 .card {
@@ -73,7 +73,9 @@ body {
 .dashboard-shell {
   width: 100%;
   padding: 18px;
-  overflow-x: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - 24px);
   max-width: 100%;
   background:
     radial-gradient(circle at 50% -30%, rgba(60, 120, 255, 0.24), transparent 58%),
@@ -1635,7 +1637,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 }
 
 .overview-main-grid {
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
 }
 
@@ -1646,18 +1648,20 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 .panel {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 
 .panel > .row:first-child {
   margin-bottom: -2px;
+  align-items: flex-start;
 }
 
 .toolbar {
-  grid-template-columns: minmax(240px, 2fr) repeat(2, minmax(190px, 1fr));
+  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(0, 1fr));
 }
 
 .triage-toolbar {
-  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .command-pane--workspace {
@@ -1679,6 +1683,18 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   .toolbar,
   .triage-toolbar {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-height: 900px) {
+  .admin-authenticated .wrap {
+    min-height: calc(100vh - 12px);
+    margin: 6px auto;
+  }
+
+  .dashboard-shell {
+    max-height: calc(100vh - 12px);
+    padding: 14px;
   }
 }
 
