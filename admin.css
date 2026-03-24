@@ -999,6 +999,20 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   margin-top: 0;
 }
 
+.overview-table-wrap {
+  margin-top: 12px;
+}
+
+.overview-table {
+  min-width: 980px;
+}
+
+.overview-table th,
+.overview-table td {
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
 .data-analytics-panel {
   margin-top: 0;
 }

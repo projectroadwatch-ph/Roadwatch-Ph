@@ -41,6 +41,7 @@ const reportingSummary = document.getElementById("reportingSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 const overviewPinMap = document.getElementById("overviewPinMap");
 const overviewMapSummary = document.getElementById("overviewMapSummary");
+const overviewQueueBody = document.getElementById("overviewQueueBody");
 const auditTrailList = document.getElementById("auditTrailList");
 const teamPerformanceBoard = document.getElementById("teamPerformanceBoard");
 const timelineTrackingSelect = document.getElementById("timelineTrackingSelect");
@@ -1423,6 +1424,54 @@ function renderMapIntelligence(reports) {
   mapIntelligenceList.innerHTML = filtered.length ? filtered.map((report) => `<li class="priorityItem"><div><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><p>${escapeHtml(report.location || "Unknown location")}</p></div><div class="priorityMeta"><span>${escapeHtml(getSeverityLabel(report))}</span><span>${escapeHtml(report.assignedTo || "Unassigned")}</span></div></li>`).join("") : '<li class="priorityItem empty">No map cases match the selected filters.</li>';
 }
 
+function renderOverviewQueueTable(reports) {
+  if (!overviewQueueBody) return;
+
+  const prioritized = reports
+    .slice()
+    .sort((a, b) => {
+      const openDiff = Number(normalizeStatus(a.status) === "Repaired") - Number(normalizeStatus(b.status) === "Repaired");
+      if (openDiff !== 0) return openDiff;
+      return getPriorityScore(b) - getPriorityScore(a);
+    })
+    .slice(0, 8);
+
+  if (!prioritized.length) {
+    overviewQueueBody.innerHTML = '<tr><td colspan="9">No reports available yet.</td></tr>';
+    return;
+  }
+
+  overviewQueueBody.innerHTML = prioritized.map((report) => {
+    const verificationState = getVerificationState(report);
+    const escalationState = getEscalationState(report);
+    const verificationClass = verificationState === "Flagged"
+      ? "is-flagged"
+      : verificationState === "Needs Verification"
+        ? "is-pending"
+        : "is-verified";
+    const escalationClass = escalationState === "Overdue"
+      ? "is-flagged"
+      : escalationState === "At Risk"
+        ? "is-pending"
+        : "is-verified";
+    const severity = getSeverityLabel(report);
+
+    return `
+      <tr>
+        <td>${escapeHtml(report.tracking || "-")}</td>
+        <td>${escapeHtml(report.location || report.barangay || "-")}</td>
+        <td>${escapeHtml(report.issueType || report.issue || report.issueCategory || "-")}</td>
+        <td>${escapeHtml(normalizeStatus(report.status))}</td>
+        <td><span class="verification-badge ${verificationClass}">${escapeHtml(verificationState)}</span></td>
+        <td><span class="severity-badge severity-${severity.toLowerCase()}">${escapeHtml(severity)}</span></td>
+        <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
+        <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
+        <td><span class="verification-badge ${escalationClass}">${escapeHtml(escalationState)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
 function renderDuplicateCaseBoard(reports) {
   if (!duplicateCaseBoard) return;
   const clusters = getDuplicateClusters(reports).slice(0, 6);
@@ -2364,6 +2413,7 @@ function applyFiltersAndRender() {
   renderPriorityQueue(allReports);
   renderVerificationQueue(allReports);
   renderSlaQueue(allReports);
+  renderOverviewQueueTable(allReports);
   renderAuditTrail();
   refreshReportingSection(allReports);
   renderMapIntelligence(allReports);
