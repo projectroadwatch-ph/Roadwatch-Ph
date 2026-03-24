@@ -38,6 +38,10 @@ const bulkAssigneeSelect = document.getElementById("bulkAssigneeSelect");
 const bulkSummary = document.getElementById("bulkSummary");
 const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
+const analyticsBarangayFilter = document.getElementById("analyticsBarangayFilter");
+const analyticsIssueTypeFilter = document.getElementById("analyticsIssueTypeFilter");
+const analyticsSeverityFilter = document.getElementById("analyticsSeverityFilter");
+const analyticsTimelineSummary = document.getElementById("analyticsTimelineSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
 const overviewPinMap = document.getElementById("overviewPinMap");
 const overviewMapSummary = document.getElementById("overviewMapSummary");
@@ -2097,6 +2101,7 @@ function openReportFormPreview(report) {
 }
 
 function renderAnalytics(reports) {
+  const analyticsReports = getAnalyticsFilteredReports(reports);
   const counts = {
     total: reports.length,
     pending: 0,
@@ -2137,13 +2142,13 @@ function renderAnalytics(reports) {
   if (snapshotPending) snapshotPending.textContent = counts.pending;
   if (snapshotVerified) snapshotVerified.textContent = counts.verified;
 
-  const urgentCount = reports.filter((report) => getPriorityScore(report) >= 75).length;
-  const moderateCount = reports.filter((report) => {
+  const urgentCount = analyticsReports.filter((report) => getPriorityScore(report) >= 75).length;
+  const moderateCount = analyticsReports.filter((report) => {
     const score = getPriorityScore(report);
     return score >= 45 && score < 75;
   }).length;
-  const lowCount = Math.max(reports.length - urgentCount - moderateCount, 0);
-  const totalForSeverity = Math.max(reports.length, 1);
+  const lowCount = Math.max(analyticsReports.length - urgentCount - moderateCount, 0);
+  const totalForSeverity = Math.max(analyticsReports.length, 1);
   const urgentShare = Math.round((urgentCount / totalForSeverity) * 100);
   const moderateShare = Math.round((moderateCount / totalForSeverity) * 100);
   const lowShare = Math.max(100 - urgentShare - moderateShare, 0);
@@ -2164,15 +2169,27 @@ function renderAnalytics(reports) {
   const severityUrgentMeta = document.getElementById("severityUrgentMeta");
   const severityModerateMeta = document.getElementById("severityModerateMeta");
   const severityLowMeta = document.getElementById("severityLowMeta");
-  if (severityUrgentMeta) severityUrgentMeta.textContent = `${urgentShare}% share • ${describeSeverityAge(reports, (score) => score >= 75)}`;
-  if (severityModerateMeta) severityModerateMeta.textContent = `${moderateShare}% share • ${describeSeverityAge(reports, (score) => score >= 45 && score < 75)}`;
-  if (severityLowMeta) severityLowMeta.textContent = `${lowShare}% share • ${describeSeverityAge(reports, (score) => score < 45)}`;
+  if (severityUrgentMeta) severityUrgentMeta.textContent = `${urgentShare}% share • ${describeSeverityAge(analyticsReports, (score) => score >= 75)}`;
+  if (severityModerateMeta) severityModerateMeta.textContent = `${moderateShare}% share • ${describeSeverityAge(analyticsReports, (score) => score >= 45 && score < 75)}`;
+  if (severityLowMeta) severityLowMeta.textContent = `${lowShare}% share • ${describeSeverityAge(analyticsReports, (score) => score < 45)}`;
+
+  if (analyticsTimelineSummary) {
+    const selectedBarangay = analyticsBarangayFilter?.value || "all";
+    const selectedIssueType = analyticsIssueTypeFilter?.value || "all";
+    const selectedSeverity = analyticsSeverityFilter?.value || "all";
+    const labels = [];
+    if (selectedBarangay !== "all") labels.push(selectedBarangay);
+    if (selectedIssueType !== "all") labels.push(selectedIssueType);
+    if (selectedSeverity !== "all") labels.push(selectedSeverity.charAt(0).toUpperCase() + selectedSeverity.slice(1));
+    const filterText = labels.length ? labels.join(" • ") : "All reports";
+    analyticsTimelineSummary.textContent = `${filterText} • ${analyticsReports.length} matching report(s).`;
+  }
 
   drawStatusChart(counts);
   renderTeamPerformanceBoard(reports);
   renderExecutiveSummary(reports);
   renderForecastCards(reports);
-  renderAnalyticsTimeline(reports);
+  renderAnalyticsTimeline(analyticsReports);
 }
 
 function describeSeverityAge(reports, matcher) {
@@ -2246,6 +2263,28 @@ function populateSelectFilter(select, values, allLabel) {
 function syncDynamicFilters(reports) {
   populateSelectFilter(categoryFilter, reports.map((report) => report.issueCategory), "All categories");
   populateSelectFilter(barangayFilter, reports.map((report) => report.barangay), "All barangays");
+}
+
+function syncAnalyticsFilters(reports) {
+  populateSelectFilter(analyticsBarangayFilter, reports.map((report) => report.barangay), "All barangays");
+  populateSelectFilter(analyticsIssueTypeFilter, reports.map((report) => report.issueType), "All issue types");
+}
+
+function getAnalyticsFilteredReports(reports) {
+  const selectedBarangay = analyticsBarangayFilter?.value || "all";
+  const selectedIssueType = analyticsIssueTypeFilter?.value || "all";
+  const selectedSeverity = analyticsSeverityFilter?.value || "all";
+
+  return reports.filter((report) => {
+    if (selectedBarangay !== "all" && String(report.barangay || "").trim() !== selectedBarangay) return false;
+    if (selectedIssueType !== "all" && String(report.issueType || "").trim() !== selectedIssueType) return false;
+    if (selectedSeverity !== "all") {
+      const score = getPriorityScore(report);
+      const severity = score >= 75 ? "urgent" : score >= 45 ? "moderate" : "low";
+      if (severity !== selectedSeverity) return false;
+    }
+    return true;
+  });
 }
 
 function getFilteredReports() {
@@ -2446,6 +2485,7 @@ function renderRows(reports) {
 
 function applyFiltersAndRender() {
   syncDynamicFilters(allReports);
+  syncAnalyticsFilters(allReports);
   syncTimelineTrackingOptions(allReports);
   const filtered = getFilteredReports();
   const paginated = getPaginatedReports(filtered);
@@ -2578,6 +2618,9 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   if (barangayFilter) barangayFilter.value = "all";
   if (qualityFilter) qualityFilter.value = "all";
   if (triagePreset) triagePreset.value = "all";
+  if (analyticsBarangayFilter) analyticsBarangayFilter.value = "all";
+  if (analyticsIssueTypeFilter) analyticsIssueTypeFilter.value = "all";
+  if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
   currentPage = 1;
   applyFiltersAndRender();
 });
@@ -2605,6 +2648,9 @@ triagePreset?.addEventListener("change", () => {
   currentPage = 1;
   applyFiltersAndRender();
 });
+analyticsBarangayFilter?.addEventListener("change", () => renderAnalytics(allReports));
+analyticsIssueTypeFilter?.addEventListener("change", () => renderAnalytics(allReports));
+analyticsSeverityFilter?.addEventListener("change", () => renderAnalytics(allReports));
 urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allReports));
 window.addEventListener("resize", () => renderAnalytics(allReports));
 
