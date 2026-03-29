@@ -99,6 +99,11 @@ const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
+const strategicScenario = document.getElementById("strategicScenario");
+const strategicHealthCards = document.getElementById("strategicHealthCards");
+const strategicBottlenecks = document.getElementById("strategicBottlenecks");
+const strategicDispatchPlan = document.getElementById("strategicDispatchPlan");
+const applySmartPlanBtn = document.getElementById("applySmartPlanBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -1655,6 +1660,85 @@ function renderFieldOpsBoard(reports) {
   fieldOpsBoard.innerHTML = cards.length ? cards.map((report) => `<article class="teamCard fieldCard"><div class="teamCardHeader"><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><span class="priority-badge">${escapeHtml(getSeverityLabel(report))}</span></div><div class="teamCardMeta"><span>${escapeHtml(report.location || "Unknown location")}</span><span>Assignee: ${escapeHtml(report.assignedTo || "Unassigned")}</span><span>ETA: ${escapeHtml(report.publicEta || "Unset")}</span></div></article>`).join("") : '<p class="small">No active field work cards available.</p>';
 }
 
+function renderStrategicIntelligence(reports) {
+  if (!strategicHealthCards || !strategicBottlenecks || !strategicDispatchPlan) return;
+
+  const scenario = strategicScenario?.value || "balanced";
+  const unresolved = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
+  const repaired = reports.filter((report) => normalizeStatus(report.status) === "Repaired");
+  const urgent = unresolved.filter((report) => getPriorityScore(report) >= 75);
+  const atRisk = unresolved.filter((report) => {
+    const escalation = getEscalationState(report);
+    return escalation === "At Risk" || escalation === "Overdue";
+  });
+  const throughput = Math.max(repaired.length || 1, 1);
+  const backlogDays = Math.max(1, Math.round((unresolved.length / throughput) * 7));
+
+  const scenarioMultipliers = {
+    aggressive: { crew: 1.3, clearance: 0.75, comms: "Higher outbound updates and weekend shifts recommended." },
+    balanced: { crew: 1, clearance: 1, comms: "Standard weekday dispatch with proactive citizen ETAs." },
+    conservative: { crew: 0.82, clearance: 1.2, comms: "Maintain current staffing and protect budget utilization." }
+  };
+  const scenarioProfile = scenarioMultipliers[scenario] || scenarioMultipliers.balanced;
+
+  const recommendedCrews = Math.max(2, Math.round((urgent.length / 3) * scenarioProfile.crew));
+  const projectedClearance = Math.max(2, Math.round(backlogDays * scenarioProfile.clearance));
+  const healthScore = Math.max(0, Math.min(100, Math.round(100 - ((urgent.length * 3) + (atRisk.length * 2) + unresolved.length) / Math.max(reports.length || 1, 1) * 10)));
+
+  strategicHealthCards.innerHTML = [
+    { label: "Service Health Score", value: `${healthScore}%`, meta: "Queue stability index" },
+    { label: "Unresolved Backlog", value: `${unresolved.length}`, meta: `${urgent.length} urgent cases` },
+    { label: "Projected Clearance", value: `${projectedClearance} days`, meta: `${scenario} scenario` },
+    { label: "Recommended Crews", value: `${recommendedCrews}`, meta: "Concurrent field teams" }
+  ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.meta)}</small></article>`).join("");
+
+  const bottleneckBuckets = unresolved.reduce((acc, report) => {
+    const key = String(report.issueType || report.issue || report.issueCategory || "Unclassified").trim() || "Unclassified";
+    const entry = acc.get(key) || { count: 0, urgent: 0, atRisk: 0 };
+    entry.count += 1;
+    if (getPriorityScore(report) >= 75) entry.urgent += 1;
+    if (getEscalationState(report) === "Overdue") entry.atRisk += 1;
+    acc.set(key, entry);
+    return acc;
+  }, new Map());
+
+  const bottlenecks = Array.from(bottleneckBuckets.entries())
+    .sort((a, b) => (b[1].urgent * 2 + b[1].count) - (a[1].urgent * 2 + a[1].count))
+    .slice(0, 5);
+
+  strategicBottlenecks.innerHTML = bottlenecks.length
+    ? bottlenecks.map(([label, info]) => `<li class="priorityItem"><div><strong>${escapeHtml(label)}</strong><p>${info.count} unresolved incident(s)</p></div><div class="priorityMeta"><span>${info.urgent} urgent</span><span>${info.atRisk} overdue</span></div></li>`).join("")
+    : '<li class="priorityItem empty">No active bottlenecks detected.</li>';
+
+  const dispatchByBarangay = unresolved.reduce((acc, report) => {
+    const barangay = String(report.barangay || "Unknown Barangay").trim() || "Unknown Barangay";
+    const entry = acc.get(barangay) || { count: 0, urgent: 0, topTracking: "" };
+    entry.count += 1;
+    if (getPriorityScore(report) >= 75) entry.urgent += 1;
+    if (!entry.topTracking) entry.topTracking = String(report.tracking || "").trim();
+    acc.set(barangay, entry);
+    return acc;
+  }, new Map());
+
+  const waves = Array.from(dispatchByBarangay.entries())
+    .sort((a, b) => (b[1].urgent * 3 + b[1].count) - (a[1].urgent * 3 + a[1].count))
+    .slice(0, 4);
+
+  strategicDispatchPlan.innerHTML = waves.length
+    ? waves.map(([barangay, info], index) => `
+      <article class="aiRecoCard">
+        <span>Wave ${index + 1}</span>
+        <strong>${escapeHtml(barangay)}</strong>
+        <p>${info.count} unresolved report(s), ${info.urgent} urgent. Prioritize tracking ${escapeHtml(info.topTracking || "N/A")} first.</p>
+      </article>
+    `).join("")
+    : '<article class="aiRecoCard"><strong>No dispatch waves required.</strong><p>All reports are resolved or in stable state.</p></article>';
+
+  if (aiAutopilotSummary) {
+    aiAutopilotSummary.textContent = `${scenarioProfile.comms} Estimated ${projectedClearance} day(s) to stabilize backlog.`;
+  }
+}
+
 function renderTrustCenterBoard() {
   if (!trustCenterBoard) return;
   const notices = getNotificationQueue().slice(0, 6);
@@ -2606,6 +2690,7 @@ function applyFiltersAndRender() {
   renderModerationBoard(allReports);
   renderRootCauseBoard(allReports);
   renderFieldOpsBoard(allReports);
+  renderStrategicIntelligence(allReports);
   renderTrustCenterBoard();
   renderClosureChecklist();
   renderPermissionsSummary();
@@ -2678,6 +2763,7 @@ async function loadReports() {
       renderAuditTrail();
       renderCaseTimeline("");
       refreshReportingSection([]);
+      renderStrategicIntelligence([]);
       filterSummary.textContent = "No records to filter.";
       activeReportsSource = sourceLabel;
       setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
@@ -2697,6 +2783,7 @@ async function loadReports() {
     renderAuditTrail();
     renderCaseTimeline("");
     refreshReportingSection([]);
+    renderStrategicIntelligence([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
     if (activeReportsSource) {
@@ -2951,6 +3038,11 @@ createProjectBtn?.addEventListener("click", () => {
 });
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
+strategicScenario?.addEventListener("change", () => renderStrategicIntelligence(allReports));
+applySmartPlanBtn?.addEventListener("click", () => {
+  renderStrategicIntelligence(allReports);
+  setFeedback("reportsFeedback", "Smart dispatch plan updated from the selected scenario.");
+});
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
 setDashboardView("overview");
