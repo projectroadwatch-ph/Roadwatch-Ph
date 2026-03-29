@@ -3271,3 +3271,128 @@ textarea:focus-visible,
     width: fit-content;
   }
 }
+
+/* 2026 UI refresh: depth, hierarchy, and cleaner data density */
+:root {
+  --glass-surface: rgba(7, 26, 48, 0.68);
+  --glass-border: rgba(148, 211, 255, 0.22);
+  --shadow-soft: 0 10px 30px rgba(2, 10, 24, 0.32);
+  --shadow-strong: 0 20px 48px rgba(2, 10, 24, 0.42);
+}
+
+.dashboard-shell {
+  border-radius: 22px;
+  border-color: rgba(125, 211, 252, 0.26);
+  box-shadow: var(--shadow-strong);
+}
+
+.panel,
+.command-pane,
+.action-drawer,
+.management-table-wrap,
+.chart-panel,
+.dashboard-nav,
+.quick-actions {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.panel {
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(150deg, var(--glass-surface), rgba(4, 18, 35, 0.84));
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-header,
+.console-topbar {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-soft);
+}
+
+.quick-action-pill,
+.nav-btn,
+.secondary,
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.quick-action-pill:hover,
+.nav-btn:hover,
+.secondary:hover,
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(2, 12, 30, 0.32);
+}
+
+.nav-btn.is-active {
+  border-color: rgba(191, 219, 254, 0.75);
+  box-shadow: 0 10px 22px rgba(24, 116, 205, 0.35);
+}
+
+.analyticsCard,
+.kpi-pill,
+.snapshot-card {
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  background: linear-gradient(160deg, rgba(7, 28, 53, 0.88), rgba(6, 21, 40, 0.82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.analyticsCard strong,
+.kpi-pill strong,
+.snapshot-card strong {
+  letter-spacing: 0.01em;
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+}
+
+.section-chip {
+  border: 1px solid rgba(125, 211, 252, 0.26);
+  background: rgba(8, 35, 66, 0.44);
+}
+
+.management-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.management-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: linear-gradient(180deg, rgba(9, 34, 62, 0.98), rgba(7, 27, 48, 0.98));
+  border-bottom: 1px solid rgba(147, 197, 253, 0.28);
+}
+
+.management-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.management-table tbody tr:hover {
+  background: rgba(30, 64, 175, 0.16);
+}
+
+.management-table td {
+  border-bottom: 1px solid rgba(147, 197, 253, 0.16);
+}
+
+input,
+select,
+textarea {
+  border-color: rgba(125, 211, 252, 0.32);
+  background: rgba(5, 18, 36, 0.72);
+}
+
+@media (max-width: 900px) {
+  .dashboard-shell {
+    border-radius: 18px;
+    padding: 16px;
+  }
+
+  .panel {
+    border-radius: 14px;
+  }
+
+  .analyticsCard strong,
+  .kpi-pill strong,
+  .snapshot-card strong {
+    font-size: 1.25rem;
+  }
+}
