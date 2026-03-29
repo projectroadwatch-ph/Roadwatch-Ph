@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadwatch Admin Dashboard</title>
+
+  <script type="module">
+    import { requireAuth } from "./src/js/auth.js";
+    requireAuth();
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+    }
+
+    .header {
+      background: #1e2a38;
+      color: white;
+      padding: 16px 24px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    input, select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f0f2f5;
+    }
+
+    tr:hover {
+      background: #f9fbfd;
+    }
+
+    .status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .pending { background: #ffe08a; }
+    .progress { background: #9bd1ff; }
+    .resolved { background: #b7f5c5; }
+
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">Roadwatch PH - Admin Dashboard</div>
+
+  <div class="container">
+
+    <div class="controls">
+      <input type="text" placeholder="Search reports...">
+      <select>
+        <option>All</option>
+        <option>Pending</option>
+        <option>In Progress</option>
+        <option>Resolved</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tracking</th>
+          <th>Name</th>
+          <th>Issue</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RW-001</td>
+          <td>Juan Dela Cruz</td>
+          <td>Pothole</td>
+          <td><span class="status pending">Pending</span></td>
+          <td><button>Update</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</body>
+</html>
