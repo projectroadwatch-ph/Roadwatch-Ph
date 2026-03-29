@@ -8,6 +8,10 @@
   --accent: #66d9ff;
   --accent-strong: #2a9dff;
   --success: #79ffd4;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 10px 28px rgba(1, 15, 32, 0.28);
+  --shadow-strong: 0 18px 42px rgba(0, 0, 0, 0.38);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -145,10 +149,21 @@ header h2 {
 .menuBtn {
   font-size: 26px;
   cursor: pointer;
-  background: none;
-  border: none;
+  background: rgba(14, 45, 78, 0.72);
+  border: 1px solid rgba(140, 200, 255, 0.28);
+  border-radius: 999px;
+  min-width: 46px;
+  height: 46px;
   color: var(--text);
   line-height: 1;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+}
+
+.menuBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(22, 61, 104, 0.88);
+  border-color: rgba(159, 214, 255, 0.55);
+  box-shadow: var(--shadow-soft);
 }
 
 .sidebar {
@@ -172,14 +187,17 @@ header h2 {
   display: block;
   width: calc(100% - 18px);
   margin: 4px 9px;
-  padding: 13px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(9, 35, 63, 0.12);
   color: var(--text);
   cursor: pointer;
   text-align: left;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.15px;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sidebar .closeSidebarBtn {
@@ -191,7 +209,19 @@ header h2 {
 }
 
 .sidebar button:hover {
-  background: rgba(62, 125, 196, 0.3);
+  background: linear-gradient(120deg, rgba(63, 139, 222, 0.42), rgba(67, 188, 255, 0.18));
+  border-color: rgba(149, 215, 255, 0.56);
+  transform: translateX(4px);
+  box-shadow: 0 8px 18px rgba(1, 18, 34, 0.35);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(121, 213, 255, 0.95);
+  outline-offset: 2px;
 }
 
 section {
@@ -1796,9 +1826,10 @@ textarea {
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-soft);
 }
 
 .detectBtn::after,
@@ -1847,7 +1878,7 @@ textarea {
 
 .resetBtn:hover {
   background: rgba(15, 60, 104, 0.95);
-  box-shadow: 0 8px 20px rgba(3, 19, 38, 0.4);
+  box-shadow: var(--shadow-strong);
   transform: translateY(-1px);
 }
 
@@ -1860,6 +1891,18 @@ textarea {
   background: #51f2ca;
   box-shadow: 0 10px 24px rgba(48, 224, 184, 0.33);
   transform: translateY(-1px);
+}
+
+.detectBtn:hover,
+.submitBtn:hover,
+.resetBtn:hover {
+  filter: saturate(1.05);
+}
+
+.detectBtn:active,
+.submitBtn:active,
+.resetBtn:active {
+  transform: translateY(1px) scale(0.996);
 }
 
 
