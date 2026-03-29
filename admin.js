@@ -1661,7 +1661,7 @@ function renderFieldOpsBoard(reports) {
 }
 
 function renderStrategicIntelligence(reports) {
-  if (!strategicHealthCards || !strategicBottlenecks || !strategicDispatchPlan) return;
+  if (!strategicHealthCards) return;
 
   const scenario = strategicScenario?.value || "balanced";
   const unresolved = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
@@ -1691,48 +1691,6 @@ function renderStrategicIntelligence(reports) {
     { label: "Projected Clearance", value: `${projectedClearance} days`, meta: `${scenario} scenario` },
     { label: "Recommended Crews", value: `${recommendedCrews}`, meta: "Concurrent field teams" }
   ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.meta)}</small></article>`).join("");
-
-  const bottleneckBuckets = unresolved.reduce((acc, report) => {
-    const key = String(report.issueType || report.issue || report.issueCategory || "Unclassified").trim() || "Unclassified";
-    const entry = acc.get(key) || { count: 0, urgent: 0, atRisk: 0 };
-    entry.count += 1;
-    if (getPriorityScore(report) >= 75) entry.urgent += 1;
-    if (getEscalationState(report) === "Overdue") entry.atRisk += 1;
-    acc.set(key, entry);
-    return acc;
-  }, new Map());
-
-  const bottlenecks = Array.from(bottleneckBuckets.entries())
-    .sort((a, b) => (b[1].urgent * 2 + b[1].count) - (a[1].urgent * 2 + a[1].count))
-    .slice(0, 5);
-
-  strategicBottlenecks.innerHTML = bottlenecks.length
-    ? bottlenecks.map(([label, info]) => `<li class="priorityItem"><div><strong>${escapeHtml(label)}</strong><p>${info.count} unresolved incident(s)</p></div><div class="priorityMeta"><span>${info.urgent} urgent</span><span>${info.atRisk} overdue</span></div></li>`).join("")
-    : '<li class="priorityItem empty">No active bottlenecks detected.</li>';
-
-  const dispatchByBarangay = unresolved.reduce((acc, report) => {
-    const barangay = String(report.barangay || "Unknown Barangay").trim() || "Unknown Barangay";
-    const entry = acc.get(barangay) || { count: 0, urgent: 0, topTracking: "" };
-    entry.count += 1;
-    if (getPriorityScore(report) >= 75) entry.urgent += 1;
-    if (!entry.topTracking) entry.topTracking = String(report.tracking || "").trim();
-    acc.set(barangay, entry);
-    return acc;
-  }, new Map());
-
-  const waves = Array.from(dispatchByBarangay.entries())
-    .sort((a, b) => (b[1].urgent * 3 + b[1].count) - (a[1].urgent * 3 + a[1].count))
-    .slice(0, 4);
-
-  strategicDispatchPlan.innerHTML = waves.length
-    ? waves.map(([barangay, info], index) => `
-      <article class="aiRecoCard">
-        <span>Wave ${index + 1}</span>
-        <strong>${escapeHtml(barangay)}</strong>
-        <p>${info.count} unresolved report(s), ${info.urgent} urgent. Prioritize tracking ${escapeHtml(info.topTracking || "N/A")} first.</p>
-      </article>
-    `).join("")
-    : '<article class="aiRecoCard"><strong>No dispatch waves required.</strong><p>All reports are resolved or in stable state.</p></article>';
 
   if (aiAutopilotSummary) {
     aiAutopilotSummary.textContent = `${scenarioProfile.comms} Estimated ${projectedClearance} day(s) to stabilize backlog.`;
