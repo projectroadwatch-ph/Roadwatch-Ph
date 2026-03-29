@@ -3692,3 +3692,62 @@ tr:hover td {
   border-color: rgba(147, 233, 255, 0.75);
   outline: none;
 }
+
+/* Layout organization improvements */
+.dashboard-control-deck {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-control-deck .dashboard-nav,
+.dashboard-control-deck .quick-actions {
+  margin-top: 0;
+}
+
+.quick-action-pill {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  text-align: left;
+}
+
+.quick-action-pill strong {
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.quick-action-pill span {
+  font-size: 0.78rem;
+  color: #b9d6f2;
+  line-height: 1.35;
+}
+
+.management-shell-head {
+  position: sticky;
+  top: 10px;
+  z-index: 8;
+  margin-top: 6px;
+  display: grid;
+  gap: 10px;
+  padding-bottom: 8px;
+  background: linear-gradient(180deg, rgba(7, 24, 47, 0.96), rgba(7, 24, 47, 0.82) 70%, rgba(7, 24, 47, 0));
+}
+
+.management-shell-head .management-header,
+.management-shell-head .management-nav {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .management-shell-head {
+    position: static;
+    background: transparent;
+    padding-bottom: 0;
+  }
+
+  .quick-action-pill {
+    justify-items: center;
+    text-align: center;
+  }
+}

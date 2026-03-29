@@ -69,15 +69,26 @@
         </div>
       </div>
 
-      <nav class="dashboard-nav" aria-label="Dashboard sections">
-        <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
-        <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
-      </nav>
+      <section class="dashboard-control-deck" aria-label="Dashboard controls">
+        <nav class="dashboard-nav" aria-label="Dashboard sections">
+          <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
+          <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
+        </nav>
 
-      <section class="quick-actions" aria-label="Quick administrative actions">
-        <button type="button" class="quick-action-pill" id="openTriageShortcutBtn">Open Triage Queue</button>
-        <button type="button" class="quick-action-pill" id="focusUrgentShortcutBtn">Focus Urgent Cases</button>
-        <button type="button" class="quick-action-pill" id="syncDataShortcutBtn">Refresh Dashboard Data</button>
+        <section class="quick-actions" aria-label="Quick administrative actions">
+          <button type="button" class="quick-action-pill" id="openTriageShortcutBtn">
+            <strong>Open Triage Queue</strong>
+            <span>Review high-priority and overdue reports.</span>
+          </button>
+          <button type="button" class="quick-action-pill" id="focusUrgentShortcutBtn">
+            <strong>Focus Urgent Cases</strong>
+            <span>Filter the workspace to urgent incidents only.</span>
+          </button>
+          <button type="button" class="quick-action-pill" id="syncDataShortcutBtn">
+            <strong>Refresh Dashboard Data</strong>
+            <span>Sync from Google Sheets and update metrics.</span>
+          </button>
+        </section>
       </section>
 
       <section id="overviewView" class="dashboard-view">
@@ -367,17 +378,19 @@
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
-        <header class="management-header panel">
-          <div>
-            <p class="eyebrow">Case Operations</p>
-            <h3>Report Management Workspace</h3>
-            <p class="small">Use the workspace table for report updates, then switch to triage when you need to focus on urgent queues.</p>
-          </div>
-        </header>
-        <nav class="dashboard-nav management-nav" aria-label="Report management panels">
-          <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
-          <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
-        </nav>
+        <section class="management-shell-head">
+          <header class="management-header panel">
+            <div>
+              <p class="eyebrow">Case Operations</p>
+              <h3>Report Management Workspace</h3>
+              <p class="small">Use the workspace table for report updates, then switch to triage when you need to focus on urgent queues.</p>
+            </div>
+          </header>
+          <nav class="dashboard-nav management-nav" aria-label="Report management panels">
+            <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
+            <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
+          </nav>
+        </section>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
             <div class="row">
