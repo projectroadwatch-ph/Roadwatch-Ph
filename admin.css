@@ -3396,3 +3396,94 @@ textarea {
     font-size: 1.25rem;
   }
 }
+
+/* 2026 polish pass: stronger visual hierarchy + accessibility */
+:root {
+  --focus-ring: 0 0 0 3px rgba(56, 167, 255, 0.32);
+}
+
+button,
+.quick-action-pill,
+.nav-btn,
+.analyticsCard,
+.priorityItem,
+.sync-status,
+.live-indicator {
+  will-change: transform;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.quick-action-pill:focus-visible,
+.nav-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.dashboard-shell {
+  background:
+    radial-gradient(circle at 88% -8%, rgba(79, 195, 247, 0.2), transparent 46%),
+    radial-gradient(circle at -8% 110%, rgba(56, 189, 248, 0.14), transparent 44%),
+    linear-gradient(160deg, rgba(6, 22, 44, 0.98), rgba(4, 16, 33, 0.98));
+}
+
+.console-topbar,
+.dashboard-header,
+.quick-actions,
+.dashboard-nav {
+  border-color: rgba(186, 230, 253, 0.24);
+}
+
+.quick-action-pill {
+  border-color: rgba(147, 197, 253, 0.46);
+  background: linear-gradient(140deg, rgba(8, 34, 63, 0.9), rgba(21, 72, 117, 0.58));
+}
+
+.quick-action-pill:hover {
+  border-color: rgba(186, 230, 253, 0.72);
+}
+
+.analyticsCard {
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.2s ease;
+}
+
+.analyticsCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(186, 230, 253, 0.34);
+  background: linear-gradient(160deg, rgba(8, 34, 63, 0.95), rgba(9, 45, 76, 0.85));
+}
+
+.priorityItem {
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.priorityItem:hover {
+  transform: translateY(-1px);
+  border-color: rgba(186, 230, 253, 0.32);
+  background: rgba(16, 53, 89, 0.3);
+}
+
+.tableWrap,
+.management-table-wrap {
+  border-color: rgba(147, 197, 253, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.management-table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.management-table tbody tr:hover {
+  background: rgba(56, 167, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
