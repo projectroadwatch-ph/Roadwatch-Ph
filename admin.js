@@ -94,6 +94,10 @@ const saveCollabNoteBtn = document.getElementById("saveCollabNoteBtn");
 const permissionsSummary = document.getElementById("permissionsSummary");
 const createProjectBtn = document.getElementById("createProjectBtn");
 const sheetSyncStatus = document.getElementById("sheetSyncStatus");
+const retrySyncBtn = document.getElementById("retrySyncBtn");
+const dashboardSearch = document.getElementById("dashboardSearch");
+const adminIdentityChip = document.getElementById("adminIdentityChip");
+const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -104,6 +108,7 @@ let currentPage = 1;
 let overviewMap = null;
 let overviewMarkers = null;
 let activeReportsSource = "";
+let urgentOnlyMode = false;
 
 const REPORT_ENDPOINTS = [
   { url: PUBLIC_SITE_API_URL, label: "Public website Google Sheet" },
@@ -213,6 +218,29 @@ function setSheetSyncStatus(message, state = "warn") {
   if (!sheetSyncStatus) return;
   sheetSyncStatus.textContent = message;
   sheetSyncStatus.dataset.state = state;
+}
+
+function renderAdminIdentity() {
+  if (!adminIdentityChip) return;
+  const activeUser = String(localStorage.getItem("roadwatchAdminActiveUser") || "Admin").trim() || "Admin";
+  adminIdentityChip.textContent = activeUser;
+  adminIdentityChip.title = `Signed in as ${activeUser}`;
+}
+
+function syncSearchInputs(source = "workspace") {
+  if (!dashboardSearch || !reportSearch) return;
+  if (source === "topbar") {
+    reportSearch.value = dashboardSearch.value;
+  } else {
+    dashboardSearch.value = reportSearch.value;
+  }
+}
+
+function setUrgentOnlyMode(nextValue) {
+  urgentOnlyMode = Boolean(nextValue);
+  if (!urgentOnlyToggleBtn) return;
+  urgentOnlyToggleBtn.setAttribute("aria-pressed", String(urgentOnlyMode));
+  urgentOnlyToggleBtn.textContent = `Urgent only: ${urgentOnlyMode ? "On" : "Off"}`;
 }
 
 function formatSyncTime(timestamp) {
@@ -656,8 +684,13 @@ function applyAuthUI() {
 
   if (isAuthed) {
     document.getElementById("adminPassword").value = "";
+    renderAdminIdentity();
     loadReports();
+    return;
   }
+
+  localStorage.removeItem("roadwatchAdminActiveUser");
+  renderAdminIdentity();
 }
 
 function login() {
@@ -677,6 +710,7 @@ function login() {
 
   if (isValidCredential) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
+    localStorage.setItem("roadwatchAdminActiveUser", username || "Admin");
     setFeedback("loginFeedback", "Login successful.");
     setDashboardView("overview");
     applyAuthUI();
@@ -688,6 +722,7 @@ function login() {
 
 function logout() {
   localStorage.removeItem(ADMIN_SESSION_KEY);
+  localStorage.removeItem("roadwatchAdminActiveUser");
   applyAuthUI();
 }
 
@@ -2299,6 +2334,8 @@ function getFilteredReports() {
       if (selectedPreset === "critical" && getSeverityLabel(report) !== "Critical") return false;
     }
 
+    if (urgentOnlyMode && getPriorityScore(report) < 75) return false;
+
     if (!query) return true;
     const haystack = [
       report.dateTime,
@@ -2354,6 +2391,8 @@ function renderRows(reports) {
     const qualityScore = getDataQualityScore(report);
     const qualityBand = getQualityBand(qualityScore);
     const escalationState = getEscalationState(report);
+
+    if (getPriorityScore(report) >= 75) tr.classList.add("is-urgent-row");
 
     tr.innerHTML = `
       <td></td>
@@ -2473,7 +2512,8 @@ function applyFiltersAndRender() {
   renderPermissionsSummary();
   const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
   const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
-  filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.`;
+  const urgentLabel = urgentOnlyMode ? " • Urgent-only mode enabled" : "";
+  filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.${urgentLabel}`;
   renderPagination(filtered.length);
 }
 
@@ -2586,10 +2626,25 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   if (analyticsBarangayFilter) analyticsBarangayFilter.value = "all";
   if (analyticsIssueTypeFilter) analyticsIssueTypeFilter.value = "all";
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
+  setUrgentOnlyMode(false);
+  syncSearchInputs("workspace");
   currentPage = 1;
   applyFiltersAndRender();
 });
 reportSearch.addEventListener("input", () => {
+  syncSearchInputs("workspace");
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+dashboardSearch?.addEventListener("input", () => {
+  syncSearchInputs("topbar");
+  setDashboardView("management");
+  setManagementPane("workspace");
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+urgentOnlyToggleBtn?.addEventListener("click", () => {
+  setUrgentOnlyMode(!urgentOnlyMode);
   currentPage = 1;
   applyFiltersAndRender();
 });
@@ -2801,3 +2856,10 @@ roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 setDashboardView("overview");
 renderCaseTimeline("");
 applyAuthUI();
+
+retrySyncBtn?.addEventListener("click", () => {
+  loadReports();
+});
+
+setUrgentOnlyMode(false);
+renderAdminIdentity();

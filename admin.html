@@ -39,9 +39,9 @@
         <div class="console-tools">
           <label class="console-search">
             <span>🔎</span>
-            <input type="search" placeholder="Search" aria-label="Search dashboard content">
+            <input id="dashboardSearch" type="search" placeholder="Search reports, barangays, issues" aria-label="Search dashboard content">
           </label>
-          <button type="button" class="secondary slim console-chip">Admin</button>
+          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin</button>
         </div>
       </div>
 
@@ -50,7 +50,10 @@
           <p class="eyebrow">Operations Center</p>
           <h2>Admin Dashboard</h2>
           <p class="small">Track report flow, prioritize urgent road concerns, and publish accurate status updates for citizens.</p>
-          <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
+          <div class="sync-status-row">
+            <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
+            <button id="retrySyncBtn" type="button" class="secondary slim">Retry Sync</button>
+          </div>
         </div>
         <div class="header-actions-right">
           <div class="live-indicator" aria-live="polite">
@@ -435,6 +438,7 @@
                   <option value="Repaired">Repaired</option>
                 </select>
               </label>
+              <button id="urgentOnlyToggleBtn" type="button" class="secondary slim" aria-pressed="false">Urgent only: Off</button>
               <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
             </div>
             <div class="toolbar triage-toolbar">
