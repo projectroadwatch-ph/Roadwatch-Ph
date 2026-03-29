@@ -3487,3 +3487,101 @@ textarea:focus-visible,
     scroll-behavior: auto !important;
   }
 }
+
+/* March 2026 visual tune-up: clearer hierarchy and richer dashboard chrome */
+.dashboard-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(147, 197, 253, 0.1) 49%, transparent 100%),
+    radial-gradient(circle at 84% 2%, rgba(52, 211, 153, 0.12), transparent 38%);
+  opacity: 0.85;
+}
+
+.console-topbar,
+.dashboard-header,
+.quick-actions {
+  position: relative;
+  overflow: hidden;
+}
+
+.console-topbar::after,
+.dashboard-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(191, 219, 254, 0.62), transparent);
+  pointer-events: none;
+}
+
+.console-title {
+  font-weight: 700;
+  color: #d5e9ff;
+}
+
+.console-search {
+  min-height: 42px;
+  border-color: rgba(147, 197, 253, 0.54);
+  box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.08);
+}
+
+.console-search span {
+  color: #93c5fd;
+}
+
+.console-search input {
+  color: #f0f7ff;
+}
+
+.dashboard-header h2 {
+  letter-spacing: -0.02em;
+}
+
+.dashboard-header .small {
+  color: #c1d7f0;
+  line-height: 1.55;
+}
+
+.sync-status {
+  border-color: rgba(125, 211, 252, 0.56);
+  background: linear-gradient(135deg, rgba(11, 51, 86, 0.66), rgba(9, 34, 59, 0.66));
+}
+
+.live-indicator {
+  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.22), 0 0 24px rgba(52, 211, 153, 0.1);
+}
+
+.quick-actions {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  border-color: rgba(147, 197, 253, 0.24);
+  background: linear-gradient(145deg, rgba(6, 23, 43, 0.74), rgba(8, 31, 55, 0.58));
+}
+
+.quick-action-pill {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.quick-action-pill:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .console-tools {
+    gap: 10px;
+  }
+}
