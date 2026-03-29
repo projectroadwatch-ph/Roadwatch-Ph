@@ -3201,3 +3201,73 @@ tr:nth-child(even) td {
     grid-template-columns: 1fr;
   }
 }
+
+/* UX improvements: focus visibility, sync controls, urgent filtering, and table ergonomics */
+.sync-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+#retrySyncBtn {
+  margin-top: 0;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.quick-action-pill:focus-visible,
+.nav-btn:focus-visible {
+  outline: 2px solid rgba(148, 211, 255, 0.95);
+  outline-offset: 2px;
+}
+
+.management-table th,
+.management-table td {
+  white-space: nowrap;
+}
+
+.management-table th:nth-child(3),
+.management-table td:nth-child(3),
+.management-table th:nth-child(17),
+.management-table td:nth-child(17),
+.management-table th:nth-child(18),
+.management-table td:nth-child(18) {
+  position: sticky;
+  background: rgba(7, 27, 48, 0.98);
+  z-index: 2;
+}
+
+.management-table th:nth-child(3),
+.management-table td:nth-child(3) {
+  left: 0;
+  z-index: 3;
+}
+
+.management-table th:nth-child(17),
+.management-table td:nth-child(17) {
+  right: 128px;
+}
+
+.management-table th:nth-child(18),
+.management-table td:nth-child(18) {
+  right: 0;
+}
+
+.management-table tr.is-urgent-row {
+  box-shadow: inset 4px 0 0 #fb7185;
+  background: rgba(131, 24, 67, 0.16);
+}
+
+@media (max-width: 900px) {
+  .sync-status-row {
+    align-items: stretch;
+  }
+
+  #retrySyncBtn {
+    width: fit-content;
+  }
+}
