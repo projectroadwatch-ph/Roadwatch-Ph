@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <script type="module">
+    import { requireAuth } from "../js/auth.js";
+    requireAuth();
+  </script>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <input type="text" placeholder="Search..." />
+  <table border="1" width="100%">
+    <tr>
+      <th>Tracking</th>
+      <th>Name</th>
+      <th>Issue</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>RW-123</td>
+      <td>Juan</td>
+      <td>Pothole</td>
+      <td>Pending</td>
+    </tr>
+  </table>
+</body>
+</html>
