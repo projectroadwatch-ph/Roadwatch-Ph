@@ -26,6 +26,7 @@ const barangayFilter = document.getElementById("barangayFilter");
 const qualityFilter = document.getElementById("qualityFilter");
 const triagePreset = document.getElementById("triagePreset");
 const filterSummary = document.getElementById("filterSummary");
+const activeFilterChips = document.getElementById("activeFilterChips");
 const urgencyThresholdDays = document.getElementById("urgencyThresholdDays");
 const priorityQueueList = document.getElementById("priorityQueueList");
 const verificationQueueList = document.getElementById("verificationQueueList");
@@ -241,6 +242,104 @@ function setUrgentOnlyMode(nextValue) {
   if (!urgentOnlyToggleBtn) return;
   urgentOnlyToggleBtn.setAttribute("aria-pressed", String(urgentOnlyMode));
   urgentOnlyToggleBtn.textContent = `Urgent only: ${urgentOnlyMode ? "On" : "Off"}`;
+}
+
+function getActiveFilterDescriptors() {
+  const descriptors = [];
+  const searchValue = (reportSearch?.value || "").trim();
+  if (searchValue) descriptors.push({ key: "search", label: `Search: ${searchValue}` });
+
+  if (statusFilter?.value && statusFilter.value !== "all") {
+    descriptors.push({ key: "status", label: `Status: ${statusFilter.value}` });
+  }
+
+  if (categoryFilter?.value && categoryFilter.value !== "all") {
+    descriptors.push({ key: "category", label: `Category: ${categoryFilter.value}` });
+  }
+
+  if (barangayFilter?.value && barangayFilter.value !== "all") {
+    descriptors.push({ key: "barangay", label: `Barangay: ${barangayFilter.value}` });
+  }
+
+  if (qualityFilter?.value && qualityFilter.value !== "all") {
+    const qualityLabels = {
+      high: "High (80-100)",
+      medium: "Medium (50-79)",
+      low: "Low (0-49)"
+    };
+    descriptors.push({ key: "quality", label: `Data Quality: ${qualityLabels[qualityFilter.value] || qualityFilter.value}` });
+  }
+
+  if (triagePreset?.value && triagePreset.value !== "all") {
+    const option = triagePreset.options[triagePreset.selectedIndex];
+    descriptors.push({ key: "triage", label: `Preset: ${option?.textContent || triagePreset.value}` });
+  }
+
+  if (urgentOnlyMode) {
+    descriptors.push({ key: "urgent", label: "Urgent only" });
+  }
+
+  return descriptors;
+}
+
+function clearFilterByKey(key) {
+  switch (key) {
+    case "search":
+      if (reportSearch) reportSearch.value = "";
+      syncSearchInputs("workspace");
+      break;
+    case "status":
+      if (statusFilter) statusFilter.value = "all";
+      break;
+    case "category":
+      if (categoryFilter) categoryFilter.value = "all";
+      break;
+    case "barangay":
+      if (barangayFilter) barangayFilter.value = "all";
+      break;
+    case "quality":
+      if (qualityFilter) qualityFilter.value = "all";
+      break;
+    case "triage":
+      if (triagePreset) triagePreset.value = "all";
+      break;
+    case "urgent":
+      setUrgentOnlyMode(false);
+      break;
+    default:
+      break;
+  }
+
+  currentPage = 1;
+  applyFiltersAndRender();
+}
+
+function renderActiveFilterChips() {
+  if (!activeFilterChips) return;
+
+  const descriptors = getActiveFilterDescriptors();
+  activeFilterChips.innerHTML = "";
+
+  if (descriptors.length === 0) {
+    activeFilterChips.hidden = true;
+    return;
+  }
+
+  activeFilterChips.hidden = false;
+  const label = document.createElement("span");
+  label.className = "active-filter-chips__label";
+  label.textContent = "Active filters:";
+  activeFilterChips.appendChild(label);
+
+  descriptors.forEach((descriptor) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "active-filter-chip";
+    chip.textContent = `${descriptor.label} ×`;
+    chip.setAttribute("aria-label", `Remove ${descriptor.label} filter`);
+    chip.addEventListener("click", () => clearFilterByKey(descriptor.key));
+    activeFilterChips.appendChild(chip);
+  });
 }
 
 function formatSyncTime(timestamp) {
@@ -2510,6 +2609,7 @@ function applyFiltersAndRender() {
   renderTrustCenterBoard();
   renderClosureChecklist();
   renderPermissionsSummary();
+  renderActiveFilterChips();
   const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
   const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
   const urgentLabel = urgentOnlyMode ? " • Urgent-only mode enabled" : "";

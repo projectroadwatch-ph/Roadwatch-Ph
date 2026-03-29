@@ -3661,3 +3661,34 @@ th {
 tr:hover td {
   background: rgba(83, 164, 255, 0.08);
 }
+
+/* Active filter chips */
+.active-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.active-filter-chips__label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.active-filter-chip {
+  border: 1px solid rgba(119, 221, 255, 0.45);
+  background: rgba(8, 45, 79, 0.55);
+  color: #d4f4ff;
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.active-filter-chip:hover,
+.active-filter-chip:focus-visible {
+  background: rgba(45, 124, 184, 0.55);
+  border-color: rgba(147, 233, 255, 0.75);
+  outline: none;
+}
