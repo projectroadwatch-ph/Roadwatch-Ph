@@ -52,13 +52,25 @@
           <p class="small">Track report flow, prioritize urgent road concerns, and publish accurate status updates for citizens.</p>
           <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
         </div>
-        <button id="logoutBtn" type="button" class="secondary">Log out</button>
+        <div class="header-actions-right">
+          <div class="live-indicator" aria-live="polite">
+            <span class="dot"></span>
+            <span>Live Monitoring</span>
+          </div>
+          <button id="logoutBtn" type="button" class="secondary">Log out</button>
+        </div>
       </div>
 
       <nav class="dashboard-nav" aria-label="Dashboard sections">
         <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
         <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
       </nav>
+
+      <section class="quick-actions" aria-label="Quick administrative actions">
+        <button type="button" class="quick-action-pill" id="openTriageShortcutBtn">Open Triage Queue</button>
+        <button type="button" class="quick-action-pill" id="focusUrgentShortcutBtn">Focus Urgent Cases</button>
+        <button type="button" class="quick-action-pill" id="syncDataShortcutBtn">Refresh Dashboard Data</button>
+      </section>
 
       <section id="overviewView" class="dashboard-view">
         <section class="overview-shell">
