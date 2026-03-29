@@ -59,6 +59,9 @@ const workspacePane = document.getElementById("workspacePane");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
+const openTriageShortcutBtn = document.getElementById("openTriageShortcutBtn");
+const focusUrgentShortcutBtn = document.getElementById("focusUrgentShortcutBtn");
+const syncDataShortcutBtn = document.getElementById("syncDataShortcutBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
@@ -2624,6 +2627,20 @@ showManagementBtn?.addEventListener("click", () => setDashboardView("management"
 openTriageFromOverviewBtn?.addEventListener("click", () => {
   setDashboardView("management");
   setManagementPane("triage");
+});
+openTriageShortcutBtn?.addEventListener("click", () => {
+  setDashboardView("management");
+  setManagementPane("triage");
+});
+focusUrgentShortcutBtn?.addEventListener("click", () => {
+  if (triagePreset) triagePreset.value = "critical";
+  setDashboardView("management");
+  setManagementPane("triage");
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+syncDataShortcutBtn?.addEventListener("click", () => {
+  loadReports();
 });
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
