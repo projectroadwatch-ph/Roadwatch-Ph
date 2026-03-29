@@ -1,19 +1,29 @@
-// Centralized API handler for Roadwatch
+// Centralized API handler for RoadWatch
 
-const API_BASE = "YOUR_GOOGLE_APPS_SCRIPT_URL";
+const API_BASE = "https://script.google.com/macros/s/AKfycbxYlQ3G8gtAgoTm3BgF1DMfI0LDv5OdcWVr6cEElW5vfNjAu3zKvTYlHK7RgDFLVCfB/exec";
 
 export async function submitReport(data) {
-  const res = await fetch(`${API_BASE}?action=submitReport`, {
+  const payload = new URLSearchParams(data || {});
+  const res = await fetch(API_BASE, {
     method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    }
+    body: payload,
+    redirect: "follow"
   });
 
-  return res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to submit report (HTTP ${res.status}).`);
+  }
+
+  const text = await res.text();
+  if (!text) return { success: true };
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { success: true, raw: text };
+  }
 }
 
 export function generateTrackingNumber() {
-  return "RW-" + Date.now();
+  return "RW" + Date.now();
 }
