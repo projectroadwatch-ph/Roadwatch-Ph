@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roadwatch Admin Dashboard</title>
+  <title>Roadwatch Admin Dashboard (V2)</title>
 
   <script type="module">
     import { requireAuth } from "./src/js/auth.js";
@@ -13,8 +13,9 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Inter, Arial, sans-serif;
       background: #f4f6f9;
+      color: #1e2a38;
     }
 
     .header {
@@ -23,6 +24,10 @@
       padding: 16px 24px;
       font-size: 20px;
       font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     .container {
@@ -33,30 +38,48 @@
       display: flex;
       gap: 10px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     input, select {
       padding: 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      background: #fff;
+    }
+
+    .statline {
+      margin: 0 0 12px;
+      color: #4d6277;
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 8px 25px rgba(22, 40, 62, 0.08);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
+      min-width: 860px;
     }
 
     th, td {
       padding: 12px;
       text-align: left;
       border-bottom: 1px solid #eee;
+      vertical-align: top;
     }
 
     th {
       background: #f0f2f5;
+      font-size: 13px;
+      color: #334a61;
+      text-transform: uppercase;
+      letter-spacing: .03em;
     }
 
     tr:hover {
@@ -65,60 +88,244 @@
 
     .status {
       padding: 4px 8px;
-      border-radius: 6px;
+      border-radius: 999px;
       font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
     }
 
-    .pending { background: #ffe08a; }
-    .progress { background: #9bd1ff; }
-    .resolved { background: #b7f5c5; }
+    .pending { background: #ffe08a; color: #6b5500; }
+    .progress { background: #9bd1ff; color: #0d4168; }
+    .resolved { background: #b7f5c5; color: #0a5530; }
 
     button {
-      padding: 6px 10px;
+      padding: 7px 10px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      background: #1e2a38;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    button.secondary {
+      background: #dbe4ee;
+      color: #1e2a38;
+    }
+
+    .muted {
+      color: #61778f;
+      font-size: 13px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #61778f;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">Roadwatch PH - Admin Dashboard</div>
+  <div class="header">
+    <span>Roadwatch PH — Admin Dashboard V2</span>
+    <div>
+      <button id="refreshBtn" class="secondary" type="button">Refresh</button>
+      <button id="logoutBtn" type="button">Logout</button>
+    </div>
+  </div>
 
   <div class="container">
 
     <div class="controls">
-      <input type="text" placeholder="Search reports...">
-      <select>
-        <option>All</option>
-        <option>Pending</option>
-        <option>In Progress</option>
-        <option>Resolved</option>
+      <input id="searchInput" type="text" placeholder="Search reports...">
+      <select id="statusFilter">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="in progress">In Progress</option>
+        <option value="verified">Verified</option>
+        <option value="repaired">Repaired</option>
       </select>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Tracking</th>
-          <th>Name</th>
-          <th>Issue</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>RW-001</td>
-          <td>Juan Dela Cruz</td>
-          <td>Pothole</td>
-          <td><span class="status pending">Pending</span></td>
-          <td><button>Update</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <p id="statline" class="statline">Loading reports…</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tracking</th>
+            <th>Name</th>
+            <th>Issue</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="reportsBody"></tbody>
+      </table>
+    </div>
 
   </div>
+
+  <script>
+    const REPORT_ENDPOINTS = [
+      "https://script.google.com/macros/s/AKfycbxYlQ3G8gtAgoTm3BgF1DMfI0LDv5OdcWVr6cEElW5vfNjAu3zKvTYlHK7RgDFLVCfB/exec",
+      "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec"
+    ];
+
+    const STATUS_OVERRIDE_KEY = "roadwatchAdminStatusOverrides";
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const reportsBody = document.getElementById("reportsBody");
+    const statline = document.getElementById("statline");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    let allReports = [];
+
+    function normalizeText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function parseReports(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (payload && Array.isArray(payload.reports)) return payload.reports;
+      if (payload && Array.isArray(payload.data)) return payload.data;
+      if (payload && Array.isArray(payload.items)) return payload.items;
+      return [];
+    }
+
+    function getOverrides() {
+      try {
+        return JSON.parse(localStorage.getItem(STATUS_OVERRIDE_KEY) || "{}") || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function setOverride(tracking, status) {
+      const map = getOverrides();
+      map[tracking] = status;
+      localStorage.setItem(STATUS_OVERRIDE_KEY, JSON.stringify(map));
+    }
+
+    async function fetchEndpoint(endpoint) {
+      const response = await fetch(endpoint, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }
+
+    async function fetchReports() {
+      let lastError = null;
+      for (const endpoint of REPORT_ENDPOINTS) {
+        try {
+          const payload = await fetchEndpoint(endpoint);
+          const reports = parseReports(payload);
+          if (reports.length) return reports;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      if (lastError) throw lastError;
+      return [];
+    }
+
+    function extractReportFields(report, index) {
+      const tracking = report.tracking || report.trackingNumber || report.id || `RW-${index + 1}`;
+      const fullName = report.fullName || report.name || report.reporter || "Unknown";
+      const issue = report.issueType || report.issue || report.type || report.category || "Unspecified";
+      const location = report.location || report.barangay || report.address || "—";
+      const submittedStatus = report.status || "Pending";
+      const status = getOverrides()[tracking] || submittedStatus;
+
+      return { tracking, fullName, issue, location, status };
+    }
+
+    function statusClass(status) {
+      const s = normalizeText(status);
+      if (s.includes("repair") || s.includes("resolve")) return "resolved";
+      if (s.includes("progress") || s.includes("verify")) return "progress";
+      return "pending";
+    }
+
+    function renderTable() {
+      const query = normalizeText(searchInput.value);
+      const selectedStatus = normalizeText(statusFilter.value);
+
+      const normalized = allReports.map(extractReportFields);
+      const filtered = normalized.filter((report) => {
+        const matchesQuery = !query || [report.tracking, report.fullName, report.issue, report.location, report.status]
+          .some((value) => normalizeText(value).includes(query));
+
+        const matchesStatus = selectedStatus === "all" || normalizeText(report.status).includes(selectedStatus);
+
+        return matchesQuery && matchesStatus;
+      });
+
+      statline.textContent = `Showing ${filtered.length} of ${normalized.length} reports`;
+
+      if (!filtered.length) {
+        reportsBody.innerHTML = `<tr><td colspan="6" class="empty">No reports found.</td></tr>`;
+        return;
+      }
+
+      reportsBody.innerHTML = filtered.map((report) => `
+        <tr>
+          <td><strong>${report.tracking}</strong></td>
+          <td>${report.fullName}</td>
+          <td>${report.issue}</td>
+          <td class="muted">${report.location}</td>
+          <td><span class="status ${statusClass(report.status)}">${report.status}</span></td>
+          <td>
+            <select data-tracking="${report.tracking}" class="inline-status">
+              <option ${normalizeText(report.status).includes("pending") ? "selected" : ""}>Pending</option>
+              <option ${normalizeText(report.status).includes("verify") ? "selected" : ""}>Verified</option>
+              <option ${normalizeText(report.status).includes("progress") ? "selected" : ""}>In Progress</option>
+              <option ${(normalizeText(report.status).includes("repair") || normalizeText(report.status).includes("resolve")) ? "selected" : ""}>Repaired</option>
+            </select>
+            <button type="button" class="secondary save-status-btn" data-tracking="${report.tracking}">Save</button>
+          </td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll(".save-status-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tracking = btn.dataset.tracking;
+          const picker = document.querySelector(`select.inline-status[data-tracking=\"${tracking}\"]`);
+          if (!picker) return;
+          setOverride(tracking, picker.value);
+          renderTable();
+        });
+      });
+    }
+
+    async function loadAndRender() {
+      statline.textContent = "Loading reports…";
+      reportsBody.innerHTML = `<tr><td colspan="6" class="empty">Loading data from Google Sheets endpoints…</td></tr>`;
+
+      try {
+        allReports = await fetchReports();
+      } catch (error) {
+        console.error(error);
+        statline.textContent = "Unable to fetch live reports right now.";
+        reportsBody.innerHTML = `<tr><td colspan="6" class="empty">Failed to load reports. Please try again later.</td></tr>`;
+        return;
+      }
+
+      renderTable();
+    }
+
+    searchInput.addEventListener("input", renderTable);
+    statusFilter.addEventListener("change", renderTable);
+    refreshBtn.addEventListener("click", loadAndRender);
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("authToken");
+      window.location.href = "./login.html";
+    });
+
+    loadAndRender();
+  </script>
 
 </body>
 </html>
