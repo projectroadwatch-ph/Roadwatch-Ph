@@ -1,28 +1,443 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoadWatch PH · Admin Dashboard</title>
   <script type="module">
     import { requireAuth } from "../js/auth.js";
     requireAuth();
   </script>
+  <style>
+    :root {
+      --bg: #f2f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --line: #d9e3ef;
+      --text: #122033;
+      --muted: #5f6f83;
+      --primary: #1f6feb;
+      --primary-soft: #eaf2ff;
+      --danger: #d83a52;
+      --warning: #f59f00;
+      --success: #2a9d62;
+      --shadow: 0 8px 20px rgba(16, 34, 58, 0.08);
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top right, #e8f2ff, transparent 40%), var(--bg);
+      color: var(--text);
+    }
+
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .sidebar,
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      padding: 16px;
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      position: sticky;
+      top: 18px;
+      height: calc(100vh - 36px);
+    }
+
+    .brand {
+      padding: 10px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #f4f8ff, #e9f2ff);
+      border: 1px solid #d7e4f8;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      text-align: left;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .nav button.active {
+      border-color: #b8d0f6;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .content {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input,
+    select {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+      color: var(--text);
+      min-height: 40px;
+    }
+
+    .search {
+      width: min(320px, 48vw);
+    }
+
+    .btn {
+      border: 1px solid #c8d8f0;
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      padding: 14px;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.5rem;
+    }
+
+    .kpi.pending strong { color: var(--warning); }
+    .kpi.urgent strong { color: var(--danger); }
+    .kpi.resolved strong { color: var(--success); }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .section-head p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid;
+    }
+
+    .badge.pending { background: #fff8e7; color: #9a6400; border-color: #f6d28a; }
+    .badge.in-progress { background: #eef4ff; color: #355ea7; border-color: #bfd2f5; }
+    .badge.resolved { background: #e8fbf1; color: #1b7a4f; border-color: #b7e8ce; }
+
+    .queue {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .queue li {
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      border-radius: 10px;
+    }
+
+    .queue li strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .queue li span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls {
+        flex-wrap: wrap;
+      }
+
+      .search { width: 100%; }
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Admin Dashboard</h1>
-  <input type="text" placeholder="Search..." />
-  <table border="1" width="100%">
-    <tr>
-      <th>Tracking</th>
-      <th>Name</th>
-      <th>Issue</th>
-      <th>Status</th>
-    </tr>
-    <tr>
-      <td>RW-123</td>
-      <td>Juan</td>
-      <td>Pothole</td>
-      <td>Pending</td>
-    </tr>
-  </table>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>RoadWatch PH Admin</h1>
+        <p>Organized operations workspace</p>
+      </div>
+      <nav class="nav" aria-label="Admin sections">
+        <button class="active" type="button">Overview</button>
+        <button type="button">Reports</button>
+        <button type="button">Verification Queue</button>
+        <button type="button">Analytics</button>
+        <button type="button">Settings</button>
+      </nav>
+      <button class="btn" type="button">Log out</button>
+    </aside>
+
+    <main class="content">
+      <section class="panel topbar">
+        <div>
+          <h2>Dashboard</h2>
+          <p>Clear sections for triage, tracking, and report updates.</p>
+        </div>
+        <div class="controls">
+          <input class="search" type="search" placeholder="Search by tracking #, issue, barangay" />
+          <select aria-label="Filter status">
+            <option>All statuses</option>
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+          <button class="btn primary" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <article class="panel kpi">
+          <span>Total Reports</span>
+          <strong>128</strong>
+        </article>
+        <article class="panel kpi pending">
+          <span>Pending</span>
+          <strong>34</strong>
+        </article>
+        <article class="panel kpi urgent">
+          <span>Urgent Cases</span>
+          <strong>9</strong>
+        </article>
+        <article class="panel kpi resolved">
+          <span>Resolved (7d)</span>
+          <strong>46</strong>
+        </article>
+      </section>
+
+      <section class="split">
+        <article class="panel" style="padding: 14px;">
+          <div class="section-head">
+            <div>
+              <h3>Recent Reports</h3>
+              <p>Improved table hierarchy with clearer status tags.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tracking</th>
+                  <th>Reporter</th>
+                  <th>Issue</th>
+                  <th>Barangay</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>RW-2419</td>
+                  <td>Juan Dela Cruz</td>
+                  <td>Pothole</td>
+                  <td>San Isidro</td>
+                  <td><span class="badge pending">Pending</span></td>
+                  <td>08:21 AM</td>
+                </tr>
+                <tr>
+                  <td>RW-2420</td>
+                  <td>Maria Santos</td>
+                  <td>Flooded Street</td>
+                  <td>Maligaya</td>
+                  <td><span class="badge in-progress">In Progress</span></td>
+                  <td>08:55 AM</td>
+                </tr>
+                <tr>
+                  <td>RW-2421</td>
+                  <td>Lito Reyes</td>
+                  <td>Rough Pavement</td>
+                  <td>Mabini</td>
+                  <td><span class="badge resolved">Resolved</span></td>
+                  <td>09:13 AM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel" style="padding: 14px;">
+          <div class="section-head">
+            <div>
+              <h3>Triage Queue</h3>
+              <p>Priority-first queue for faster decisions.</p>
+            </div>
+          </div>
+          <ul class="queue">
+            <li>
+              <strong>RW-2418 · Major pothole near school</strong>
+              <span>High urgency · Pending verification · 42 mins ago</span>
+            </li>
+            <li>
+              <strong>RW-2417 · Flooded intersection</strong>
+              <span>Urgent · Dispatch needed · 1 hr ago</span>
+            </li>
+            <li>
+              <strong>RW-2415 · Construction obstruction</strong>
+              <span>Moderate · In progress · 2 hrs ago</span>
+            </li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
 </body>
 </html>
