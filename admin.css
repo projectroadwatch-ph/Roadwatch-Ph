@@ -3029,3 +3029,105 @@ tr:nth-child(even) td {
     width: 100%;
   }
 }
+
+/* Dashboard header polish */
+.dashboard-shell {
+  border-radius: 22px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  box-shadow:
+    0 18px 44px rgba(2, 10, 23, 0.5),
+    inset 0 1px 0 rgba(191, 219, 254, 0.08);
+}
+
+.console-topbar {
+  padding: 14px 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(10, 28, 54, 0.9), rgba(7, 22, 43, 0.86));
+}
+
+.console-brand-mark {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  border: 1px solid rgba(125, 211, 252, 0.48);
+  background: radial-gradient(circle at 30% 25%, rgba(110, 231, 183, 0.65), rgba(2, 132, 199, 0.55) 58%, rgba(6, 24, 50, 0.95));
+  box-shadow: 0 8px 18px rgba(2, 12, 30, 0.35);
+}
+
+.console-brand-mark span {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #f0f9ff;
+}
+
+.console-title {
+  font-weight: 600;
+}
+
+.console-search {
+  min-height: 38px;
+  border-color: rgba(125, 211, 252, 0.4);
+  background: rgba(5, 18, 36, 0.88);
+}
+
+.console-search input {
+  color: #dbeafe;
+  font-size: 0.9rem;
+}
+
+.console-search input::placeholder {
+  color: rgba(191, 219, 254, 0.72);
+}
+
+.dashboard-header {
+  padding: 16px 14px;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(5, 20, 42, 0.84), rgba(3, 15, 32, 0.82));
+}
+
+.dashboard-header h2 {
+  font-size: clamp(1.65rem, 3vw, 2.1rem);
+  line-height: 1.1;
+}
+
+.sync-status {
+  margin-top: 14px;
+  border-radius: 999px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 13px;
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  background: rgba(8, 36, 68, 0.5);
+  font-size: 0.78rem;
+}
+
+#logoutBtn.secondary {
+  min-height: 40px;
+  border-radius: 12px;
+  padding-inline: 16px;
+  background: linear-gradient(140deg, rgba(15, 67, 112, 0.78), rgba(12, 84, 136, 0.7));
+}
+
+@media (max-width: 900px) {
+  .console-topbar,
+  .dashboard-header {
+    padding: 12px;
+  }
+
+  .console-brand {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .header-actions-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
