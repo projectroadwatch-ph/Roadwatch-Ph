@@ -2,6 +2,10 @@ function goToHomepage() {
   window.location.href = "index.html";
 }
 
+function goToDashboard() {
+  window.location.href = "admin.html";
+}
+
 function getCredentials() {
   const email = document.getElementById("email")?.value.trim();
   const password = document.getElementById("password")?.value.trim();
@@ -16,7 +20,7 @@ function login() {
     return;
   }
 
-  goToHomepage();
+  goToDashboard();
 }
 
 function register() {
@@ -28,10 +32,10 @@ function register() {
   }
 
   alert("Registration successful. You may now continue to RoadWatch PH.");
-  goToHomepage();
+  goToDashboard();
 }
 
 function googleLogin() {
-  alert("Google sign-in is not configured yet. Redirecting to homepage.");
-  goToHomepage();
+  alert("Google sign-in is not configured yet. Redirecting to dashboard login.");
+  goToDashboard();
 }
