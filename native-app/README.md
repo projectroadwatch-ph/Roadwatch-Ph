@@ -4,21 +4,21 @@ This folder contains the **native mobile application** codebase for Roadwatch PH
 
 It is intentionally separated from the `website/` folder so mobile code and web code do not mix.
 
-## Is this acceptable in Android Studio?
+## Android Studio compatibility
 
-**Yes.** This Expo-based native app works with Android Studio for emulator/device testing.
+**Yes — this app works with Android Studio.**
 
-You have two workflows:
+You can run it in two ways:
 
-1. **Expo Go workflow (fast start)**
-   - Use `npm run start`
-   - Launch an Android emulator from Android Studio
+1. **Expo Go / Dev workflow (quickest for UI testing)**
+   - `npm run start`
+   - Start an Android emulator from Android Studio Device Manager
    - Press `a` in the Expo terminal
 
-2. **Android Studio project workflow (full Android project)**
-   - Run `npm run prebuild` once to generate the `android/` directory
+2. **Native Android Studio workflow (Gradle project)**
+   - `npm run prebuild` (first time, or after native config changes)
    - Open `native-app/android` in Android Studio
-   - Build/run like a standard Gradle Android project
+   - Build/run from Android Studio, or use `npm run android:studio`
 
 ## Stack
 
@@ -59,6 +59,15 @@ npm run android
 - `npm run android` – run on Android device/emulator
 - `npm run prebuild` – generate native `android/` and `ios/` folders
 - `npm run android:studio` – prebuild + run Android app
+
+## UI updates in this starter screen
+
+The current `App.tsx` now includes:
+
+- A polished hero card with call-to-action buttons
+- Quick action tiles for core Roadwatch user actions
+- A built-in Android Studio setup checklist for onboarding/testing
+- Scroll-safe layout for smaller Android devices
 
 ## Folder structure
 
