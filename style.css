@@ -35,11 +35,6 @@ body {
   overflow-x: hidden;
 }
 
-body.app-standalone {
-  overscroll-behavior-y: contain;
-  -webkit-tap-highlight-color: transparent;
-}
-
 .mobile-tabbar {
   display: none;
 }
