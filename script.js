@@ -1479,29 +1479,9 @@ function getInstallInstructions() {
 }
 
 
-
-function isMobileViewport() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
-function isMobileDevice() {
-  return /android|iphone|ipad|ipod|mobile/i.test(window.navigator.userAgent || "");
-}
-
-function isMobileAppContext() {
-  const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-  return standalone && (isMobileViewport() || isMobileDevice());
-}
-
-function syncAdminPortalVisibility() {
-  const adminPortalBtn = document.getElementById("adminPortalBtn");
-  if (!adminPortalBtn) return;
-  adminPortalBtn.hidden = isMobileAppContext();
-}
-
 function applyMobileAppMode() {
-  document.body.classList.toggle("app-standalone", isMobileAppContext());
-  syncAdminPortalVisibility();
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  document.body.classList.toggle("app-standalone", Boolean(isStandalone));
 }
 
 function watchServiceWorkerUpdates(registration) {
@@ -1636,15 +1616,11 @@ document.addEventListener("DOMContentLoaded", () => {
   setHomepageQrCode();
   applyMobileAppMode();
   window.matchMedia("(display-mode: standalone)").addEventListener("change", applyMobileAppMode);
-  window.addEventListener("resize", applyMobileAppMode);
-  window.addEventListener("orientationchange", applyMobileAppMode);
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("./sw.js").then((registration) => {
-        if (isMobileAppContext()) {
-          watchServiceWorkerUpdates(registration);
-        }
+        watchServiceWorkerUpdates(registration);
       }).catch((error) => {
         console.warn("Service worker registration failed", error);
       });
