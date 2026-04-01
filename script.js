@@ -1478,6 +1478,57 @@ function getInstallInstructions() {
   return "Open browser menu (⋮) and tap “Install app” or “Add to Home screen”.";
 }
 
+
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function isMobileDevice() {
+  return /android|iphone|ipad|ipod|mobile/i.test(window.navigator.userAgent || "");
+}
+
+function isMobileAppContext() {
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  return standalone && (isMobileViewport() || isMobileDevice());
+}
+
+function syncAdminPortalVisibility() {
+  const adminPortalBtn = document.getElementById("adminPortalBtn");
+  if (!adminPortalBtn) return;
+  adminPortalBtn.hidden = isMobileAppContext();
+}
+
+function applyMobileAppMode() {
+  document.body.classList.toggle("app-standalone", isMobileAppContext());
+  syncAdminPortalVisibility();
+}
+
+function watchServiceWorkerUpdates(registration) {
+  if (!registration) return;
+
+  registration.addEventListener("updatefound", () => {
+    const installingWorker = registration.installing;
+    if (!installingWorker) return;
+
+    installingWorker.addEventListener("statechange", () => {
+      if (installingWorker.state === "installed" && navigator.serviceWorker.controller) {
+        window.location.reload();
+      }
+    });
+  });
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
+
+  setInterval(() => {
+    registration.update().catch(() => {
+      // Silent fail; browser will retry on next interval.
+    });
+  }, 60 * 1000);
+}
+
 function wireInstallPrompt() {
   const installBtn = document.getElementById("installAppBtn");
   const installHelp = document.getElementById("installAppHelp");
@@ -1583,9 +1634,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialPage = resolveInitialPage();
   showPage(initialPage);
   setHomepageQrCode();
+  applyMobileAppMode();
+  window.matchMedia("(display-mode: standalone)").addEventListener("change", applyMobileAppMode);
+  window.addEventListener("resize", applyMobileAppMode);
+  window.addEventListener("orientationchange", applyMobileAppMode);
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch((error) => {
+      navigator.serviceWorker.register("./sw.js").then((registration) => {
+        if (isMobileAppContext()) {
+          watchServiceWorkerUpdates(registration);
+        }
+      }).catch((error) => {
         console.warn("Service worker registration failed", error);
       });
     });
