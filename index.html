@@ -33,15 +33,19 @@
     <h2>RoadWatch PH</h2>
     <p>Citizen-powered Road Safety Dashboard</p>
   </div>
+  <div class="header-actions" aria-label="Quick actions">
+    <button type="button" class="header-icon-btn" onclick="showPage('home')" aria-label="Open home feed">⌂</button>
+    <button type="button" class="header-icon-btn" onclick="showPage('submit')" aria-label="Create report">＋</button>
+  </div>
 </header>
 
 <div class="sidebar" id="menu" aria-hidden="true">
   <button class="closeSidebarBtn" type="button" onclick="closeMenu()" aria-label="Close sidebar">✕</button>
-  <button onclick="showPage('home')">Home</button>
-  <button onclick="showPage('submit')">Submit Report</button>
-  <button onclick="showPage('about')">About</button>
-  <button onclick="showPage('contact')">Contact</button>
-  <button onclick="window.location.href='login.html'">Admin Portal</button>
+  <button onclick="showPage('home')"><span>🏠</span>Home Feed</button>
+  <button onclick="showPage('submit')"><span>📝</span>Create Report</button>
+  <button onclick="showPage('about')"><span>ℹ️</span>About</button>
+  <button onclick="showPage('contact')"><span>📞</span>Contact</button>
+  <button onclick="window.location.href='login.html'"><span>🛡️</span>Admin Portal</button>
 </div>
 
 <!-- HOME -->
@@ -54,6 +58,11 @@
     <div class="hero-cta-row" role="group" aria-label="Primary quick actions">
       <button type="button" class="hero-primary-cta" id="heroReportCta">Report an Issue Now</button>
       <button type="button" class="hero-secondary-cta" id="heroTrackCta">Track a Report</button>
+    </div>
+    <div class="mobile-action-strip" aria-label="Quick mobile actions">
+      <button type="button" onclick="showPage('submit')">⚡ Report Now</button>
+      <button type="button" onclick="showPage('home')">📍 Live Map</button>
+      <button type="button" onclick="showPage('contact')">☎ Hotlines</button>
     </div>
     <button type="button" class="install-app-btn" id="installAppBtn" hidden>Install RoadWatch PH App</button>
     <p class="install-app-help" id="installAppHelp" aria-live="polite"></p>
@@ -752,6 +761,7 @@
     <small>Contact</small>
   </button>
 </nav>
+<button type="button" class="mobile-fab" onclick="showPage('submit')" aria-label="Create a new road report">＋ Report</button>
 
 <script src="script.js"></script>
 </body>
