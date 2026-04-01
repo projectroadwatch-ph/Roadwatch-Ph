@@ -9,7 +9,6 @@ let isSubmittingReport = false;
 let locationSuggestionAbortController = null;
 let locationSuggestionDebounceTimer = null;
 let leafletReadyPromise = null;
-let deferredInstallPrompt = null;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
 const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
@@ -1470,51 +1469,6 @@ function wireHomepageQuickActions() {
   });
 }
 
-function getInstallInstructions() {
-  const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent || "");
-  if (isIOS) {
-    return "On iPhone/iPad: tap Share, then choose “Add to Home Screen”.";
-  }
-  return "Open browser menu (⋮) and tap “Install app” or “Add to Home screen”.";
-}
-
-function wireInstallPrompt() {
-  const installBtn = document.getElementById("installAppBtn");
-  const installHelp = document.getElementById("installAppHelp");
-  if (!installBtn || !installHelp) return;
-
-  installHelp.textContent = getInstallInstructions();
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    installBtn.hidden = false;
-    installHelp.textContent = "Tap Install to add RoadWatch PH to your phone.";
-  });
-
-  window.addEventListener("appinstalled", () => {
-    deferredInstallPrompt = null;
-    installBtn.hidden = true;
-    installHelp.textContent = "RoadWatch PH is installed. You can open it from your home screen.";
-  });
-
-  installBtn.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) {
-      installHelp.textContent = getInstallInstructions();
-      return;
-    }
-
-    deferredInstallPrompt.prompt();
-    const choice = await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    installBtn.hidden = true;
-    installHelp.textContent =
-      choice?.outcome === "accepted"
-        ? "Installing RoadWatch PH..."
-        : "Install canceled. You can install anytime from your browser menu.";
-  });
-}
-
 async function handleTrackingSearch(event) {
   event.preventDefault();
 
@@ -1583,15 +1537,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialPage = resolveInitialPage();
   showPage(initialPage);
   setHomepageQrCode();
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch((error) => {
-        console.warn("Service worker registration failed", error);
-      });
-    });
-  }
   wireHomepageQuickActions();
-  wireInstallPrompt();
   syncHomeReportViews();
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");
