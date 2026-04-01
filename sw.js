@@ -1,4 +1,5 @@
-const CACHE_NAME = "roadwatch-ph-v1";
+const CACHE_VERSION = "v2";
+const CACHE_NAME = `roadwatch-ph-${CACHE_VERSION}`;
 const APP_SHELL_FILES = [
   "./",
   "./index.html",
@@ -19,23 +20,42 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+function isNavigationRequest(request) {
+  return request.mode === "navigate";
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  if (isNavigationRequest(event.request)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", responseClone));
+          return response;
+        })
+        .catch(async () => {
+          const cachedPage = await caches.match("./index.html");
+          return cachedPage || Response.error();
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
+      const networkFetch = fetch(event.request)
         .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== "basic") {
-            return networkResponse;
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
           }
-
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
           return networkResponse;
         })
-        .catch(() => caches.match("./index.html"));
+        .catch(() => cached);
+
+      return cached || networkFetch;
     })
   );
 });
