@@ -54,6 +54,7 @@
     <div class="hero-cta-row" role="group" aria-label="Primary quick actions">
       <button type="button" class="hero-primary-cta" id="heroReportCta">Report an Issue Now</button>
       <button type="button" class="hero-secondary-cta" id="heroTrackCta">Track a Report</button>
+      <button type="button" class="hero-secondary-cta" onclick="window.location.href='login.html'">Admin Portal</button>
     </div>
     <button type="button" class="install-app-btn" id="installAppBtn" hidden>Install RoadWatch PH App</button>
     <p class="install-app-help" id="installAppHelp" aria-live="polite"></p>
@@ -750,6 +751,10 @@
   <button type="button" class="mobile-tab" data-page="contact" onclick="showPage('contact')">
     <span aria-hidden="true">📞</span>
     <small>Contact</small>
+  </button>
+  <button type="button" class="mobile-tab" onclick="window.location.href='login.html'">
+    <span aria-hidden="true">🔐</span>
+    <small>Admin</small>
   </button>
 </nav>
 
