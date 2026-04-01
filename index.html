@@ -34,11 +34,11 @@
 
 <div class="sidebar" id="menu" aria-hidden="true">
   <button class="closeSidebarBtn" type="button" onclick="closeMenu()" aria-label="Close sidebar">✕</button>
-  <button onclick="showPage('home')">Home</button>
-  <button onclick="showPage('submit')">Submit Report</button>
+  <button data-page="home" onclick="showPage('home')">Home</button>
+  <button data-page="submit" onclick="showPage('submit')">Submit Report</button>
+  <button data-page="about" onclick="showPage('about')">About</button>
+  <button data-page="contact" onclick="showPage('contact')">Contact</button>
   <button class="sidebar-admin-entry" onclick="window.location.href='login.html'">Admin Portal</button>
-  <button onclick="showPage('about')">About</button>
-  <button onclick="showPage('contact')">Contact</button>
 </div>
 
 <!-- HOME -->
