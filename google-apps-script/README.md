@@ -7,7 +7,7 @@
 3. Deploy as a **Web app**:
    - **Execute as**: Me
    - **Who has access**: Anyone
-4. After deployment, copy the new `/exec` URL and update `API_URL` in `script.js` if the deployment ID changed.
+4. After deployment, copy the new `/exec` URL and update `API_URL` in `website/script.js` if the deployment ID changed.
 
 ## Verification from your deployed site
 
