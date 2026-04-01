@@ -35,6 +35,10 @@ body {
   overflow-x: hidden;
 }
 
+.mobile-tabbar {
+  display: none;
+}
+
 
 
 .bg-orb {
@@ -2297,6 +2301,52 @@ textarea {
   .hero-qr {
     width: 190px;
     height: 190px;
+  }
+}
+
+@media (max-width: 760px) {
+  .mobile-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1300;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px calc(10px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(10px + var(--safe-left));
+    background: rgba(4, 19, 36, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(162, 208, 255, 0.3);
+  }
+
+  .mobile-tab {
+    border: 1px solid rgba(123, 181, 236, 0.24);
+    background: rgba(11, 40, 71, 0.78);
+    color: #d7efff;
+    border-radius: 12px;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+  }
+
+  .mobile-tab small {
+    font-size: 0.69rem;
+    line-height: 1;
+  }
+
+  .mobile-tab.active {
+    border-color: rgba(114, 227, 255, 0.85);
+    background: linear-gradient(135deg, rgba(39, 122, 209, 0.78), rgba(20, 90, 158, 0.88));
+    box-shadow: 0 10px 20px rgba(1, 10, 20, 0.32);
+  }
+
+  section {
+    padding-bottom: calc(96px + var(--safe-bottom));
   }
 }
 

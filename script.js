@@ -792,6 +792,18 @@ function toggleMenu() {
   openMenu();
 }
 
+function setActiveMobileTab(page) {
+  document.querySelectorAll(".mobile-tab").forEach((tab) => {
+    const isActive = tab.dataset.page === page;
+    tab.classList.toggle("active", isActive);
+    if (isActive) {
+      tab.setAttribute("aria-current", "page");
+    } else {
+      tab.removeAttribute("aria-current");
+    }
+  });
+}
+
 // Show specific page/section
 function showPage(page) {
   document.querySelectorAll("section").forEach((sec) => sec.classList.remove("active"));
@@ -799,6 +811,7 @@ function showPage(page) {
   if (!selectedPage) return;
 
   selectedPage.classList.add("active");
+  setActiveMobileTab(page);
   closeMenu();
 
   requestAnimationFrame(() => {
@@ -1524,6 +1537,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialPage = resolveInitialPage();
   showPage(initialPage);
   setHomepageQrCode();
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch((error) => {
+        console.warn("Service worker registration failed", error);
+      });
+    });
+  }
   wireHomepageQuickActions();
   syncHomeReportViews();
 
