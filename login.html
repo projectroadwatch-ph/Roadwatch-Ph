@@ -1,26 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Roadwatch Admin Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadWatch PH Admin Login</title>
+  <style>
+    :root {
+      font-family: "Inter", "Segoe UI", sans-serif;
+      color: #10223a;
+      background: #f3f7fd;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 10% 10%, #e4efff 0, transparent 35%), #f3f7fd;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(420px, 100%);
+      background: #fff;
+      border: 1px solid #dbe6f5;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(16, 34, 58, 0.12);
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    p { margin: 0; color: #5a6b80; }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      border: 1px solid #cfddef;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #2463eb;
+      color: white;
+      font-weight: 700;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .feedback {
+      min-height: 1.2em;
+      font-size: 0.92rem;
+    }
+
+    a {
+      color: #2463eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-  <h2>Admin Login</h2>
+  <main class="card">
+    <h1>RoadWatch PH Admin Login</h1>
+    <p>Use your admin credentials to open the command center dashboard.</p>
 
-  <form id="loginForm">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
+    <form id="loginForm">
+      <label for="username">Username
+        <input type="text" id="username" autocomplete="username" required>
+      </label>
+      <label for="password">Password
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit">Continue to Admin Dashboard</button>
+    </form>
 
-  <script type="module">
-    import { login } from "./src/js/auth.js";
+    <p id="loginFeedback" class="feedback" role="status" aria-live="polite"></p>
+    <a href="index.html">← Back to homepage</a>
+  </main>
 
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      login(
-        document.getElementById("username").value,
-        document.getElementById("password").value
-      );
+  <script>
+    const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
+    const ADMIN_FALLBACK_CREDENTIALS = [
+      { username: "roadwatchph", password: "roadwatchph" },
+      { username: "admin", password: "admin" },
+      { username: "admin", password: "roadwatchph" }
+    ];
+
+    function getCustomCredentials() {
+      const customUsername = String(localStorage.getItem("roadwatchAdminUsername") || "").trim();
+      const customPassword = String(localStorage.getItem("roadwatchAdminPassword") || "").trim();
+
+      return customUsername && customPassword
+        ? { username: customUsername, password: customPassword }
+        : null;
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const credentials = [...ADMIN_FALLBACK_CREDENTIALS];
+      const custom = getCustomCredentials();
+      if (custom) credentials.unshift(custom);
+
+      const isValid = credentials.some((entry) => entry.username === username && entry.password === password);
+      const feedback = document.getElementById("loginFeedback");
+
+      if (!isValid) {
+        feedback.textContent = "Invalid username or password.";
+        feedback.style.color = "#d83a52";
+        return;
+      }
+
+      localStorage.setItem(ADMIN_SESSION_KEY, "true");
+      localStorage.setItem("roadwatchAdminActiveUser", username || "Admin");
+      window.location.href = "admin.html";
     });
   </script>
 </body>
