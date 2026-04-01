@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Roadwatch PH",
+    "slug": "roadwatch-ph-native",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "ph.roadwatch.nativeapp"
+    }
+  }
+}
