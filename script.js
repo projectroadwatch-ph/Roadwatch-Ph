@@ -804,6 +804,18 @@ function setActiveMobileTab(page) {
   });
 }
 
+function setActiveSidebarButton(page) {
+  document.querySelectorAll(".sidebar button[data-page]").forEach((button) => {
+    const isActive = button.dataset.page === page;
+    button.classList.toggle("active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
+}
+
 // Show specific page/section
 function showPage(page) {
   document.querySelectorAll("section").forEach((sec) => sec.classList.remove("active"));
@@ -812,6 +824,7 @@ function showPage(page) {
 
   selectedPage.classList.add("active");
   setActiveMobileTab(page);
+  setActiveSidebarButton(page);
   closeMenu();
 
   requestAnimationFrame(() => {

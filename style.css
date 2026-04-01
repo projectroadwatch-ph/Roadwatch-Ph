@@ -219,7 +219,7 @@ header h2 {
   box-shadow: 0 8px 18px rgba(1, 18, 34, 0.35);
 }
 
-.sidebar .sidebar-admin-entry {
+.sidebar button.active {
   border-color: rgba(149, 215, 255, 0.45);
   background: linear-gradient(120deg, rgba(53, 124, 209, 0.4), rgba(44, 176, 232, 0.22));
 }
