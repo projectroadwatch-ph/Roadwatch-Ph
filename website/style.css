@@ -554,6 +554,43 @@ section.active {
   line-height: 1.45;
 }
 
+.hero-impact-strip {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.hero-impact-card {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(157, 220, 255, 0.32);
+  background: linear-gradient(145deg, rgba(9, 43, 71, 0.64), rgba(7, 26, 46, 0.58));
+  text-align: left;
+}
+
+.hero-impact-card p {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9fd8ff;
+}
+
+.hero-impact-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  color: #f4fbff;
+}
+
+.hero-impact-card small {
+  display: block;
+  margin-top: 4px;
+  color: #c9e9ff;
+  line-height: 1.4;
+}
+
 .hero-qr-wrap {
   margin: 18px auto 0;
   padding: 16px;

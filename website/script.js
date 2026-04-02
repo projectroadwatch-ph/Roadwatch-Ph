@@ -1183,6 +1183,112 @@ function buildDisplayNameForFixedRoad(report) {
   return `${location} – ${issue}`;
 }
 
+function parseDateValue(rawValue) {
+  if (!rawValue) return null;
+  const parsed = new Date(rawValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getSubmissionDate(report) {
+  const rawValue = getFieldValue(report, ["timestamp", "time", "submittedAt", "submissionTime", "Submission Time", "date", "createdAt", "Submitted At"]);
+  return parseDateValue(rawValue);
+}
+
+function getResolutionDate(report) {
+  const rawValue = getFieldValue(report, [
+    "resolvedAt",
+    "repairedAt",
+    "resolved_at",
+    "repaired_at",
+    "resolutionTime",
+    "statusUpdatedAt",
+    "updatedAt",
+    "updated_at",
+    "dateResolved",
+    "Date Resolved"
+  ]);
+  return parseDateValue(rawValue);
+}
+
+function getLocationAreaLabel(report) {
+  const rawLocation = (report.location || report.address || "").toString().trim();
+  if (!rawLocation) return "Unknown Area";
+  const [firstSegment] = rawLocation.split(",");
+  return firstSegment?.trim() || rawLocation;
+}
+
+function formatAverageResolution(hours) {
+  if (!Number.isFinite(hours) || hours <= 0) return "N/A";
+  if (hours < 24) return `${Math.round(hours)}h`;
+  const days = hours / 24;
+  if (days < 7) return `${days.toFixed(1)}d`;
+  return `${Math.round(days)}d`;
+}
+
+function computeHomeImpactMetrics(reports) {
+  const safeReports = Array.isArray(reports) ? reports : [];
+  const now = new Date();
+  const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+
+  let reportsToday = 0;
+  let resolvedThisWeek = 0;
+  let resolutionHoursTotal = 0;
+  let resolutionSampleCount = 0;
+  const activeAreaCounts = {};
+
+  safeReports.forEach((report) => {
+    const normalizedStatus = normalizeStatus(report.status).toLowerCase();
+    const submissionDate = getSubmissionDate(report);
+    const resolutionDate = getResolutionDate(report);
+
+    if (submissionDate && submissionDate >= oneDayAgo) reportsToday += 1;
+
+    if (normalizedStatus === "repaired") {
+      const resolvedDateToUse = resolutionDate || submissionDate;
+      if (resolvedDateToUse && resolvedDateToUse >= weekStart) {
+        resolvedThisWeek += 1;
+      }
+      if (submissionDate && resolutionDate && resolutionDate >= submissionDate) {
+        resolutionHoursTotal += (resolutionDate.getTime() - submissionDate.getTime()) / (1000 * 60 * 60);
+        resolutionSampleCount += 1;
+      }
+    }
+
+    if (normalizedStatus === "pending" || normalizedStatus === "in progress") {
+      const area = getLocationAreaLabel(report);
+      activeAreaCounts[area] = (activeAreaCounts[area] || 0) + 1;
+    }
+  });
+
+  const topActiveAreaEntry = Object.entries(activeAreaCounts).sort((a, b) => b[1] - a[1])[0];
+  const topActiveArea = topActiveAreaEntry ? `${topActiveAreaEntry[0]} (${topActiveAreaEntry[1]})` : "No active reports";
+  const averageResolutionHours = resolutionSampleCount > 0 ? (resolutionHoursTotal / resolutionSampleCount) : NaN;
+
+  return {
+    reportsToday,
+    resolvedThisWeek,
+    averageResolutionLabel: formatAverageResolution(averageResolutionHours),
+    topActiveArea
+  };
+}
+
+function renderHomeImpactMetrics(reports) {
+  const reportsTodayEl = document.getElementById("homeImpactReportsToday");
+  const resolvedWeekEl = document.getElementById("homeImpactResolvedWeek");
+  const avgResolutionEl = document.getElementById("homeImpactAvgResolution");
+  const topAreaEl = document.getElementById("homeImpactTopArea");
+  if (!reportsTodayEl || !resolvedWeekEl || !avgResolutionEl || !topAreaEl) return;
+
+  const metrics = computeHomeImpactMetrics(reports);
+  reportsTodayEl.textContent = metrics.reportsToday.toLocaleString("en-PH");
+  resolvedWeekEl.textContent = metrics.resolvedThisWeek.toLocaleString("en-PH");
+  avgResolutionEl.textContent = metrics.averageResolutionLabel;
+  topAreaEl.textContent = metrics.topActiveArea;
+}
+
 function renderReportStatistics(reports) {
   const totalEl = document.getElementById("statsTotalReports");
   const pendingEl = document.getElementById("statsPending");
@@ -1300,12 +1406,14 @@ async function loadStatistics(options = {}) {
       ? cachedReports
       : await fetchReports();
     renderReportStatistics(reports);
+    renderHomeImpactMetrics(reports);
     await renderCitizenReportsMap(reports);
   } catch (error) {
     console.warn("Error loading statistics", error);
     // Keep the homepage map visible even when the remote report API is
     // temporarily unavailable (e.g., CORS or network issues).
     const localReports = getLocalReports();
+    renderHomeImpactMetrics(localReports);
     await renderCitizenReportsMap(localReports);
     renderReportStatisticsError(error);
   }
