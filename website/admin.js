@@ -2592,12 +2592,12 @@ function renderRows(reports) {
 
     tr.innerHTML = `
       <td></td>
-      <td>${report.dateTime || "-"}</td>
-      <td>${report.tracking || "-"}</td>
-      <td>${report.name}</td>
-      <td>${report.location}</td>
-      <td>${report.issueCategory || "-"}</td>
-      <td>${report.issueType || report.issue || "-"}</td>
+      <td>${escapeHtml(report.dateTime || "-")}</td>
+      <td>${escapeHtml(report.tracking || "-")}</td>
+      <td>${escapeHtml(report.name || "-")}</td>
+      <td>${escapeHtml(report.location || "-")}</td>
+      <td>${escapeHtml(report.issueCategory || "-")}</td>
+      <td>${escapeHtml(report.issueType || report.issue || "-")}</td>
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
       <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
