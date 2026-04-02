@@ -11,6 +11,9 @@
   --shadow-lg: 0 28px 70px rgba(1, 7, 16, 0.55);
   --management-action-col-width: 300px;
   --management-status-col-width: 160px;
+  --management-select-col-width: 74px;
+  --management-submission-col-width: 170px;
+  --management-tracking-col-width: 170px;
 }
 * { box-sizing: border-box; }
 html {
@@ -3270,6 +3273,8 @@ textarea:focus-visible,
   white-space: nowrap;
 }
 
+.management-table th:nth-child(1),
+.management-table td:nth-child(1),
 .management-table th:nth-child(2),
 .management-table td:nth-child(2),
 .management-table th:nth-child(3),
@@ -3283,18 +3288,28 @@ textarea:focus-visible,
   z-index: 2;
 }
 
-.management-table th:nth-child(2),
-.management-table td:nth-child(2) {
+.management-table th:nth-child(1),
+.management-table td:nth-child(1) {
   left: 0;
   z-index: 3;
-  min-width: 165px;
+  min-width: var(--management-select-col-width);
+  width: var(--management-select-col-width);
+}
+
+.management-table th:nth-child(2),
+.management-table td:nth-child(2) {
+  left: var(--management-select-col-width);
+  z-index: 3;
+  min-width: var(--management-submission-col-width);
+  width: var(--management-submission-col-width);
 }
 
 .management-table th:nth-child(3),
 .management-table td:nth-child(3) {
-  left: 165px;
+  left: calc(var(--management-select-col-width) + var(--management-submission-col-width));
   z-index: 3;
-  min-width: 165px;
+  min-width: var(--management-tracking-col-width);
+  width: var(--management-tracking-col-width);
 }
 
 .management-table th:nth-child(17),
@@ -3425,6 +3440,17 @@ button:hover {
 
 .management-table td {
   border-bottom: 1px solid rgba(147, 197, 253, 0.16);
+}
+
+.management-table .status-cell {
+  min-width: var(--management-status-col-width);
+}
+
+.management-table .action-cell {
+  min-width: var(--management-action-col-width);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 input,
