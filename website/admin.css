@@ -3278,7 +3278,11 @@ textarea:focus-visible,
 .management-table th:nth-child(2),
 .management-table td:nth-child(2),
 .management-table th:nth-child(3),
-.management-table td:nth-child(3) {
+.management-table td:nth-child(3),
+.management-table th:nth-child(17),
+.management-table td:nth-child(17),
+.management-table th:nth-child(18),
+.management-table td:nth-child(18) {
   position: sticky;
   background: rgba(7, 27, 48, 0.98);
   z-index: 2;
@@ -3306,6 +3310,20 @@ textarea:focus-visible,
   z-index: 3;
   min-width: var(--management-tracking-col-width);
   width: var(--management-tracking-col-width);
+}
+
+.management-table th:nth-child(17),
+.management-table td:nth-child(17) {
+  right: var(--management-action-col-width);
+  min-width: var(--management-status-col-width);
+  width: var(--management-status-col-width);
+}
+
+.management-table th:nth-child(18),
+.management-table td:nth-child(18) {
+  right: 0;
+  min-width: var(--management-action-col-width);
+  width: var(--management-action-col-width);
 }
 
 .management-table tr.is-urgent-row {

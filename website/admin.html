@@ -454,7 +454,6 @@
               <label class="inlineControl">Search
                 <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
               </label>
-              <button id="toggleAdvancedFiltersBtn" type="button" class="secondary slim" aria-expanded="true" aria-controls="advancedFiltersRow">Advanced filters: On</button>
               <label class="inlineControl">Status Filter
                 <select id="statusFilter">
                   <option value="all">All statuses</option>
@@ -467,7 +466,7 @@
               <button id="urgentOnlyToggleBtn" type="button" class="secondary slim" aria-pressed="false">Urgent only: Off</button>
               <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
             </div>
-            <div id="advancedFiltersRow" class="toolbar triage-toolbar">
+            <div class="toolbar triage-toolbar">
               <label class="inlineControl">Category
                 <select id="categoryFilter">
                   <option value="all">All categories</option>
@@ -522,21 +521,21 @@
                     <th>Select</th>
                     <th>Submission Time</th>
                     <th>Tracking #</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Assigned To</th>
-                    <th>Priority</th>
-                    <th>Action</th>
                     <th>Reporter</th>
+                    <th>Location</th>
                     <th>Category</th>
                     <th>Issue Type</th>
                     <th>Data Quality</th>
+                    <th>Priority</th>
                     <th>Verification</th>
                     <th>Severity</th>
+                    <th>Assigned To</th>
                     <th>SLA Due</th>
                     <th>Escalation</th>
                     <th>Project</th>
                     <th>Photo</th>
+                    <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="reportsBody"></tbody>
@@ -545,14 +544,6 @@
             <div class="paginationBar">
               <p id="paginationSummary" class="small">Page 1 of 1</p>
               <div class="paginationControls">
-                <label class="inlineControl compact">Show
-                  <select id="pageSizeSelect">
-                    <option value="15" selected>15</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </label>
                 <button id="prevPageBtn" type="button" class="secondary slim">Previous</button>
                 <button id="nextPageBtn" type="button" class="secondary slim">Next</button>
               </div>
