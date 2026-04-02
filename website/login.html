@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoadWatch PH Admin Login</title>
+  <title>RoadWatch PH Secure Admin Login</title>
   <style>
     :root {
       font-family: "Inter", "Segoe UI", sans-serif;
@@ -31,6 +31,15 @@
       padding: 22px;
       display: grid;
       gap: 14px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2463eb;
+      font-size: 0.74rem;
     }
 
     h1 {
@@ -74,12 +83,25 @@
       text-decoration: none;
       font-weight: 600;
     }
+
+    .trust-note {
+      margin: 2px 0 0;
+      border: 1px solid #dbe6f5;
+      background: #f8fbff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      color: #41556f;
+      line-height: 1.35;
+    }
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>RoadWatch PH Admin Login</h1>
-    <p>Use your admin credentials to open the command center dashboard.</p>
+    <p class="eyebrow">Official RoadWatch PH Portal</p>
+    <h1>Secure Admin Login</h1>
+    <p>Only authorized RoadWatch PH admins can sign in and manage report workflows.</p>
+    <p class="trust-note">For security, this screen only accepts the admin credentials configured by your deployment team.</p>
 
     <form id="loginForm">
       <label for="username">Username
@@ -88,7 +110,7 @@
       <label for="password">Password
         <input type="password" id="password" autocomplete="current-password" required>
       </label>
-      <button type="submit">Continue to Admin Dashboard</button>
+      <button type="submit">Sign In to Admin Dashboard</button>
     </form>
 
     <p id="loginFeedback" class="feedback" role="status" aria-live="polite"></p>
@@ -97,11 +119,7 @@
 
   <script>
     const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
-    const ADMIN_FALLBACK_CREDENTIALS = [
-      { username: "roadwatchph", password: "roadwatchph" },
-      { username: "admin", password: "admin" },
-      { username: "admin", password: "roadwatchph" }
-    ];
+    const DEFAULT_ADMIN_CREDENTIALS = { username: "roadwatchph", password: "roadwatchph" };
 
     function getCustomCredentials() {
       const customUsername = String(localStorage.getItem("roadwatchAdminUsername") || "").trim();
@@ -117,11 +135,10 @@
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
-      const credentials = [...ADMIN_FALLBACK_CREDENTIALS];
       const custom = getCustomCredentials();
-      if (custom) credentials.unshift(custom);
+      const credential = custom || DEFAULT_ADMIN_CREDENTIALS;
 
-      const isValid = credentials.some((entry) => entry.username === username && entry.password === password);
+      const isValid = credential.username === username && credential.password === password;
       const feedback = document.getElementById("loginFeedback");
 
       if (!isValid) {
