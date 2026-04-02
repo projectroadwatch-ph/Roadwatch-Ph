@@ -60,6 +60,9 @@ const syncDataShortcutBtn = document.getElementById("syncDataShortcutBtn");
 const paginationSummary = document.getElementById("paginationSummary");
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
+const pageSizeSelect = document.getElementById("pageSizeSelect");
+const toggleAdvancedFiltersBtn = document.getElementById("toggleAdvancedFiltersBtn");
+const advancedFiltersRow = document.getElementById("advancedFiltersRow");
 const operationsView = document.getElementById("operationsView");
 const showOperationsBtn = document.getElementById("showOperationsBtn");
 const executiveSummary = document.getElementById("executiveSummary");
@@ -107,7 +110,7 @@ let allReports = [];
 let pendingStatusUpdates = 0;
 const selectedReports = new Set();
 const flaggedReports = new Set();
-const REPORTS_PER_PAGE = 15;
+let reportsPerPage = Number.parseInt(pageSizeSelect?.value || "15", 10) || 15;
 let currentPage = 1;
 let overviewMap = null;
 let overviewMarkers = null;
@@ -1119,6 +1122,14 @@ function statusSelect(current, tracking) {
   select.addEventListener("change", async () => {
     const nextStatus = select.value;
     const previousStatus = select.dataset.previous || current;
+    if (nextStatus !== previousStatus) {
+      const reason = window.prompt(`Why is ${tracking} changing from ${previousStatus} to ${nextStatus}?`, "");
+      if (reason === null) {
+        select.value = previousStatus;
+        return;
+      }
+      select.dataset.reason = String(reason || "").trim() || "No reason provided";
+    }
     select.disabled = true;
     select.classList.add("is-updating");
     pendingStatusUpdates += 1;
@@ -1132,8 +1143,9 @@ function statusSelect(current, tracking) {
       if (report) report.status = nextStatus;
       setStatusOverride(tracking, nextStatus);
 
-      addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
-      addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${nextStatus}`);
+      const note = select.dataset.reason ? ` (${select.dataset.reason})` : "";
+      addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}${note}`);
+      addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${nextStatus}${note}`);
       setFeedback("reportsFeedback", `Updated ${tracking} to ${nextStatus}.`);
       applyFiltersAndRender();
     } catch (error) {
@@ -2547,7 +2559,7 @@ function getFilteredReports() {
 }
 
 function getTotalPages(totalItems) {
-  return Math.max(1, Math.ceil(totalItems / REPORTS_PER_PAGE));
+  return Math.max(1, Math.ceil(totalItems / reportsPerPage));
 }
 
 function getPaginatedReports(reports) {
@@ -2555,14 +2567,16 @@ function getPaginatedReports(reports) {
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
 
-  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
-  return reports.slice(startIndex, startIndex + REPORTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * reportsPerPage;
+  return reports.slice(startIndex, startIndex + reportsPerPage);
 }
 
 function renderPagination(totalItems) {
   const totalPages = getTotalPages(totalItems);
   if (paginationSummary) {
-    paginationSummary.textContent = `Page ${currentPage} of ${totalPages}`;
+    const startItem = totalItems === 0 ? 0 : ((currentPage - 1) * reportsPerPage) + 1;
+    const endItem = Math.min(currentPage * reportsPerPage, totalItems);
+    paginationSummary.textContent = `Showing ${startItem}-${endItem} of ${totalItems} • Page ${currentPage} of ${totalPages}`;
   }
 
   if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
@@ -2594,20 +2608,20 @@ function renderRows(reports) {
       <td></td>
       <td>${escapeHtml(report.dateTime || "-")}</td>
       <td>${escapeHtml(report.tracking || "-")}</td>
-      <td>${escapeHtml(report.name || "-")}</td>
       <td>${escapeHtml(report.location || "-")}</td>
+      <td></td>
+      <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
+      <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
+      <td></td>
+      <td>${escapeHtml(report.name || "-")}</td>
       <td>${escapeHtml(report.issueCategory || "-")}</td>
       <td>${escapeHtml(report.issueType || report.issue || "-")}</td>
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
-      <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
       <td><span class="severity-badge severity-${getSeverityLabel(report).toLowerCase()}">${getSeverityLabel(report)}</span></td>
-      <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
       <td>${formatDueAt(report.dueAt)}</td>
       <td><span class="verification-badge ${escalationState === "Overdue" ? "is-flagged" : escalationState === "At Risk" ? "is-pending" : "is-verified"}">${escalationState}</span></td>
       <td>${report.projectId ? escapeHtml(report.projectId) : "-"}</td>
-      <td></td>
-      <td></td>
       <td></td>
     `;
 
@@ -2632,15 +2646,15 @@ function renderRows(reports) {
     });
     tr.children[0].appendChild(selector);
 
+    tr.children[4].classList.add("status-cell");
+    tr.children[4].appendChild(statusSelect(effectiveStatus, report.tracking));
+
     const photoElement = photoCell(report.photo);
     if (typeof photoElement === "string") {
       tr.children[15].textContent = photoElement;
     } else {
       tr.children[15].appendChild(photoElement);
     }
-
-    tr.children[16].classList.add("status-cell");
-    tr.children[16].appendChild(statusSelect(effectiveStatus, report.tracking));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
@@ -2678,8 +2692,8 @@ function renderRows(reports) {
     viewBtn.className = "secondary slim";
     viewBtn.textContent = "View";
     viewBtn.addEventListener("click", () => openReportFormPreview(report));
-    tr.children[17].classList.add("action-cell");
-    tr.children[17].append(viewBtn, timelineBtn, deleteBtn);
+    tr.children[7].classList.add("action-cell");
+    tr.children[7].append(viewBtn, timelineBtn, deleteBtn);
 
     reportsBody.appendChild(tr);
   });
@@ -2710,8 +2724,8 @@ function applyFiltersAndRender() {
   renderClosureChecklist();
   renderPermissionsSummary();
   renderActiveFilterChips();
-  const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
-  const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
+  const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * reportsPerPage) + 1;
+  const endItem = Math.min(currentPage * reportsPerPage, filtered.length);
   const urgentLabel = urgentOnlyMode ? " • Urgent-only mode enabled" : "";
   filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.${urgentLabel}`;
   renderPagination(filtered.length);
@@ -2831,6 +2845,19 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
   setUrgentOnlyMode(false);
   syncSearchInputs("workspace");
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+toggleAdvancedFiltersBtn?.addEventListener("click", () => {
+  if (!advancedFiltersRow || !toggleAdvancedFiltersBtn) return;
+  const nextHidden = !advancedFiltersRow.hidden;
+  advancedFiltersRow.hidden = nextHidden;
+  toggleAdvancedFiltersBtn.setAttribute("aria-expanded", String(!nextHidden));
+  toggleAdvancedFiltersBtn.textContent = `Advanced filters: ${nextHidden ? "Off" : "On"}`;
+});
+pageSizeSelect?.addEventListener("change", () => {
+  const nextSize = Number.parseInt(pageSizeSelect.value || "15", 10);
+  reportsPerPage = [15, 25, 50, 100].includes(nextSize) ? nextSize : 15;
   currentPage = 1;
   applyFiltersAndRender();
 });
