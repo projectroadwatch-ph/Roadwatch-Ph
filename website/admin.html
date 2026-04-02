@@ -497,6 +497,19 @@
                 </select>
               </label>
             </div>
+            <div class="toolbar selection-toolbar">
+              <label class="inlineControl">Bulk Status
+                <select id="bulkStatusValue">
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <button id="applyBulkStatusBtn" type="button" class="secondary slim">Apply to selected</button>
+              <button id="clearSelectionBtn" type="button" class="secondary slim">Clear selection</button>
+              <p id="selectionSummary" class="small">0 selected</p>
+            </div>
             <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
             <p id="filterSummary" class="small"></p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
