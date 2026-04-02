@@ -1,10 +1,4 @@
-const ADMIN_USERNAME = "roadwatchph";
-const ADMIN_PASSWORD = "roadwatchph";
-const ADMIN_FALLBACK_CREDENTIALS = [
-  { username: ADMIN_USERNAME, password: ADMIN_PASSWORD },
-  { username: "admin", password: "admin" },
-  { username: "admin", password: "roadwatchph" }
-];
+const DEFAULT_ADMIN_CREDENTIALS = { username: "roadwatchph", password: "roadwatchph" };
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const API_URL = "https://script.google.com/macros/s/AKfycbxYlQ3G8gtAgoTm3BgF1DMfI0LDv5OdcWVr6cEElW5vfNjAu3zKvTYlHK7RgDFLVCfB/exec";
 const HOME_API_URL = "https://script.google.com/macros/s/AKfycbzqpHKNyPUTsRPd4UKVVu8M1EH1xRK6io3eYoefMRGhNA0sfHaRlgeRlZSWfH8dQoFx/exec";
@@ -802,15 +796,10 @@ function login() {
   const password = document.getElementById("adminPassword").value.trim();
   const customUsername = String(localStorage.getItem("roadwatchAdminUsername") || "").trim();
   const customPassword = String(localStorage.getItem("roadwatchAdminPassword") || "").trim();
-  const allowedCredentials = [...ADMIN_FALLBACK_CREDENTIALS];
-
-  if (customUsername && customPassword) {
-    allowedCredentials.unshift({ username: customUsername, password: customPassword });
-  }
-
-  const isValidCredential = allowedCredentials.some(
-    (entry) => username === entry.username && password === entry.password
-  );
+  const allowedCredential = customUsername && customPassword
+    ? { username: customUsername, password: customPassword }
+    : DEFAULT_ADMIN_CREDENTIALS;
+  const isValidCredential = username === allowedCredential.username && password === allowedCredential.password;
 
   if (isValidCredential) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
