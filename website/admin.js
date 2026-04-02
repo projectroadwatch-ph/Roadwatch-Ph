@@ -98,6 +98,10 @@ const strategicHealthCards = document.getElementById("strategicHealthCards");
 const strategicBottlenecks = document.getElementById("strategicBottlenecks");
 const strategicDispatchPlan = document.getElementById("strategicDispatchPlan");
 const applySmartPlanBtn = document.getElementById("applySmartPlanBtn");
+const bulkStatusValue = document.getElementById("bulkStatusValue");
+const applyBulkStatusBtn = document.getElementById("applyBulkStatusBtn");
+const clearSelectionBtn = document.getElementById("clearSelectionBtn");
+const selectionSummary = document.getElementById("selectionSummary");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -115,6 +119,7 @@ const REPORT_ENDPOINTS = [
   { url: API_URL, label: "Admin primary Google Sheet endpoint" },
   { url: HOME_API_URL, label: "Admin backup Google Sheet endpoint" }
 ];
+const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
 
 function getStatusWriteEndpoints() {
   return Array.from(new Set([API_URL, HOME_API_URL, PUBLIC_SITE_API_URL]));
@@ -1103,7 +1108,7 @@ async function deleteReport(tracking) {
 function statusSelect(current, tracking) {
   const select = document.createElement("select");
   select.className = "status-select";
-  ["Pending", "Verified", "In Progress", "Repaired"].forEach((label) => {
+  STATUS_OPTIONS.forEach((label) => {
     const option = document.createElement("option");
     option.value = label;
     option.textContent = label;
@@ -1144,6 +1149,66 @@ function statusSelect(current, tracking) {
 
   select.dataset.previous = current;
   return select;
+}
+
+function renderSelectionSummary() {
+  if (!selectionSummary) return;
+  const count = selectedReports.size;
+  selectionSummary.textContent = `${count} selected`;
+}
+
+function getSelectedReports() {
+  return allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
+}
+
+async function applyBulkStatusUpdate() {
+  const selected = getSelectedReports();
+  if (selected.length === 0) {
+    setFeedback("reportsFeedback", "Select at least one report before applying a bulk status update.", true);
+    return;
+  }
+
+  const nextStatus = STATUS_OPTIONS.includes(bulkStatusValue?.value || "") ? bulkStatusValue.value : "Pending";
+  const trackingList = selected.map((report) => String(report.tracking || "").trim()).filter(Boolean);
+  if (trackingList.length === 0) {
+    setFeedback("reportsFeedback", "Selected reports are missing valid tracking numbers.", true);
+    return;
+  }
+
+  applyBulkStatusBtn.disabled = true;
+  pendingStatusUpdates += trackingList.length;
+  setTableLoadingState(true, `Updating ${trackingList.length} report(s) to ${nextStatus}...`);
+
+  const updates = await Promise.allSettled(trackingList.map((tracking) => updateReportStatus(tracking, nextStatus)));
+  const failures = [];
+  updates.forEach((result, index) => {
+    const tracking = trackingList[index];
+    if (result.status === "fulfilled") {
+      const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
+      const previousStatus = normalizeStatus(report?.status);
+      if (report) report.status = nextStatus;
+      setStatusOverride(tracking, nextStatus);
+      addAuditEntry("Bulk Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
+      addTimelineEntry(tracking, "Bulk Status Updated", `${previousStatus} → ${nextStatus}`);
+      return;
+    }
+    failures.push(tracking);
+  });
+
+  pendingStatusUpdates = Math.max(0, pendingStatusUpdates - trackingList.length);
+  setTableLoadingState(pendingStatusUpdates > 0, failures.length ? "Some updates failed." : "");
+  applyBulkStatusBtn.disabled = false;
+
+  if (failures.length > 0) {
+    setFeedback(
+      "reportsFeedback",
+      `Updated ${trackingList.length - failures.length}/${trackingList.length} report(s). Failed: ${failures.join(", ")}.`,
+      true
+    );
+  } else {
+    setFeedback("reportsFeedback", `Updated ${trackingList.length} report(s) to ${nextStatus}.`);
+  }
+  applyFiltersAndRender();
 }
 
 function photoCell(photo) {
@@ -2507,6 +2572,7 @@ function renderPagination(totalItems) {
 function renderRows(reports) {
   if (reports.length === 0) {
     reportsBody.innerHTML = '<tr><td colspan="18">No reports match your current filters.</td></tr>';
+    renderSelectionSummary();
     return;
   }
 
@@ -2562,6 +2628,7 @@ function renderRows(reports) {
       } else {
         selectedReports.delete(trackingValue);
       }
+      renderSelectionSummary();
     });
     tr.children[0].appendChild(selector);
 
@@ -2616,6 +2683,7 @@ function renderRows(reports) {
 
     reportsBody.appendChild(tr);
   });
+  renderSelectionSummary();
 }
 
 function applyFiltersAndRender() {
@@ -2695,6 +2763,7 @@ async function loadReports() {
     }
 
     selectedReports.clear();
+    renderSelectionSummary();
     currentPage = 1;
 
     allReports = dedupeReports(
@@ -2833,6 +2902,14 @@ syncDataShortcutBtn?.addEventListener("click", () => {
 });
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
+applyBulkStatusBtn?.addEventListener("click", () => {
+  applyBulkStatusUpdate();
+});
+clearSelectionBtn?.addEventListener("click", () => {
+  selectedReports.clear();
+  renderSelectionSummary();
+  applyFiltersAndRender();
+});
 
 
 document.getElementById("clearAuditTrailBtn")?.addEventListener("click", () => {
