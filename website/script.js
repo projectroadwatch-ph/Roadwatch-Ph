@@ -1289,6 +1289,109 @@ function renderHomeImpactMetrics(reports) {
   topAreaEl.textContent = metrics.topActiveArea;
 }
 
+function formatCommandCenterTimestamp(dateValue = new Date()) {
+  return dateValue.toLocaleString("en-PH", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
+function computeCommandCenterData(reports) {
+  const safeReports = Array.isArray(reports) ? reports : [];
+  const issueCounts = {};
+  const hotspotCounts = {};
+
+  const unresolvedReports = safeReports.filter((report) => {
+    const status = normalizeStatus(report?.status).toLowerCase();
+    return status === "pending" || status === "in progress" || status === "verified";
+  });
+
+  unresolvedReports.forEach((report) => {
+    const issueType = (report.issueType || report.issueCategory || report.issue || "Unspecified issue").toString().trim();
+    issueCounts[issueType] = (issueCounts[issueType] || 0) + 1;
+
+    const area = getLocationAreaLabel(report);
+    hotspotCounts[area] = (hotspotCounts[area] || 0) + 1;
+  });
+
+  const issueHeatmap = Object.entries(issueCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const hotspotAreas = Object.entries(hotspotCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const priorityQueue = unresolvedReports
+    .map((report) => ({
+      tracking: (report.tracking || "").toString().trim() || "N/A",
+      location: (report.location || "Location unavailable").toString().trim(),
+      issue: (report.issue || report.issueType || "Issue details unavailable").toString().trim(),
+      status: normalizeStatus(report.status),
+      submittedAt: getSubmissionDate(report)
+    }))
+    .filter((report) => report.submittedAt)
+    .sort((a, b) => a.submittedAt - b.submittedAt)
+    .slice(0, 4);
+
+  return { issueHeatmap, hotspotAreas, priorityQueue };
+}
+
+function renderHomeCommandCenter(reports) {
+  const issueHeatmapBarsEl = document.getElementById("issueHeatmapBars");
+  const hotspotAreaListEl = document.getElementById("hotspotAreaList");
+  const priorityQueueListEl = document.getElementById("priorityQueueList");
+  const lastUpdatedEl = document.getElementById("commandCenterLastUpdated");
+  if (!issueHeatmapBarsEl || !hotspotAreaListEl || !priorityQueueListEl || !lastUpdatedEl) return;
+
+  const data = computeCommandCenterData(reports);
+  const topIssueCount = data.issueHeatmap[0]?.[1] || 0;
+
+  if (data.issueHeatmap.length === 0) {
+    issueHeatmapBarsEl.innerHTML = '<p class="command-center-empty">No unresolved reports yet.</p>';
+  } else {
+    issueHeatmapBarsEl.innerHTML = data.issueHeatmap
+      .map(([issue, count]) => {
+        const widthPct = topIssueCount > 0 ? Math.max((count / topIssueCount) * 100, 10) : 0;
+        return `
+          <div class="heatmap-row">
+            <div class="heatmap-row-head">
+              <span>${escapeHtml(issue)}</span>
+              <strong>${count.toLocaleString("en-PH")}</strong>
+            </div>
+            <div class="heatmap-track"><span class="heatmap-fill" style="width:${widthPct.toFixed(1)}%"></span></div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  if (data.hotspotAreas.length === 0) {
+    hotspotAreaListEl.innerHTML = '<li class="command-center-empty">No hotspot areas yet.</li>';
+  } else {
+    hotspotAreaListEl.innerHTML = data.hotspotAreas
+      .map(([area, count]) => `<li><strong>${escapeHtml(area)}</strong> — ${count.toLocaleString("en-PH")} active report${count === 1 ? "" : "s"}</li>`)
+      .join("");
+  }
+
+  if (data.priorityQueue.length === 0) {
+    priorityQueueListEl.innerHTML = '<li class="command-center-empty">No pending queue right now.</li>';
+  } else {
+    priorityQueueListEl.innerHTML = data.priorityQueue
+      .map((item) => {
+        const submittedLabel = item.submittedAt.toLocaleDateString("en-PH", { month: "short", day: "2-digit", year: "numeric" });
+        return `<li><strong>${escapeHtml(item.tracking)}</strong> — ${escapeHtml(item.location)}<br><small>${escapeHtml(item.issue)} • ${escapeHtml(item.status)} • since ${submittedLabel}</small></li>`;
+      })
+      .join("");
+  }
+
+  lastUpdatedEl.textContent = `Last updated: ${formatCommandCenterTimestamp(new Date())}`;
+}
+
 function renderReportStatistics(reports) {
   const totalEl = document.getElementById("statsTotalReports");
   const pendingEl = document.getElementById("statsPending");
@@ -1407,6 +1510,7 @@ async function loadStatistics(options = {}) {
       : await fetchReports();
     renderReportStatistics(reports);
     renderHomeImpactMetrics(reports);
+    renderHomeCommandCenter(reports);
     await renderCitizenReportsMap(reports);
   } catch (error) {
     console.warn("Error loading statistics", error);
@@ -1414,6 +1518,7 @@ async function loadStatistics(options = {}) {
     // temporarily unavailable (e.g., CORS or network issues).
     const localReports = getLocalReports();
     renderHomeImpactMetrics(localReports);
+    renderHomeCommandCenter(localReports);
     await renderCitizenReportsMap(localReports);
     renderReportStatisticsError(error);
   }
