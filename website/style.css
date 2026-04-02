@@ -224,6 +224,125 @@ header h2 {
   background: linear-gradient(120deg, rgba(53, 124, 209, 0.4), rgba(44, 176, 232, 0.22));
 }
 
+.home-command-center {
+  margin-top: 4px;
+  border: 1px solid rgba(134, 202, 255, 0.25);
+  background: linear-gradient(145deg, rgba(9, 30, 54, 0.94), rgba(8, 27, 49, 0.88));
+}
+
+.command-center-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.command-center-head h3 {
+  margin: 4px 0 6px;
+}
+
+.command-center-subcopy {
+  margin: 0;
+  color: rgba(205, 231, 255, 0.84);
+}
+
+.command-center-last-updated {
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(157, 218, 255, 0.33);
+  background: rgba(10, 40, 70, 0.75);
+  color: #d7eeff;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.command-center-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.command-panel {
+  border: 1px solid rgba(120, 188, 244, 0.3);
+  border-radius: 14px;
+  background: rgba(5, 22, 42, 0.78);
+  padding: 14px;
+  min-height: 220px;
+}
+
+.command-panel h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.command-panel-copy {
+  margin: 6px 0 12px;
+  font-size: 0.86rem;
+  color: #b8d9f8;
+}
+
+.heatmap-bars {
+  display: grid;
+  gap: 10px;
+}
+
+.heatmap-row {
+  display: grid;
+  gap: 5px;
+}
+
+.heatmap-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #e6f5ff;
+}
+
+.heatmap-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(112, 166, 214, 0.24);
+  overflow: hidden;
+}
+
+.heatmap-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(120deg, #40b5ff, #7dffd7);
+}
+
+.hotspot-list,
+.priority-queue-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.hotspot-list li,
+.priority-queue-list li {
+  color: #e8f7ff;
+  font-size: 0.9rem;
+}
+
+.priority-queue-list strong {
+  color: #fff7d1;
+}
+
+.priority-queue-list small {
+  color: #badbf9;
+}
+
+.command-center-empty {
+  color: #afcde9;
+  list-style: none;
+}
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,

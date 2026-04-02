@@ -98,6 +98,43 @@
 
   </div>
 
+  <section class="home-command-center card" aria-labelledby="homeCommandCenterHeading">
+    <div class="command-center-head">
+      <div>
+        <p class="journey-eyebrow">Biggest Homepage Upgrade</p>
+        <h3 id="homeCommandCenterHeading">RoadWatch Command Center</h3>
+        <p class="command-center-subcopy">A live operational snapshot of hotspots, response pressure, and high-priority pending reports.</p>
+      </div>
+      <p id="commandCenterLastUpdated" class="command-center-last-updated">Last updated: --</p>
+    </div>
+
+    <div class="command-center-grid">
+      <article class="command-panel">
+        <h4>Issue Type Heatmap</h4>
+        <p class="command-panel-copy">Most frequently reported issue categories from all active reports.</p>
+        <div id="issueHeatmapBars" class="heatmap-bars">
+          <p class="command-center-empty">Waiting for report data…</p>
+        </div>
+      </article>
+
+      <article class="command-panel">
+        <h4>Hotspot Areas</h4>
+        <p class="command-panel-copy">Areas with the highest unresolved report concentration.</p>
+        <ol id="hotspotAreaList" class="hotspot-list">
+          <li class="command-center-empty">Waiting for report data…</li>
+        </ol>
+      </article>
+
+      <article class="command-panel">
+        <h4>Priority Queue</h4>
+        <p class="command-panel-copy">Oldest pending reports that may require immediate LGU follow-up.</p>
+        <ul id="priorityQueueList" class="priority-queue-list">
+          <li class="command-center-empty">Waiting for report data…</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
   <div class="home-main-stack">
 
     <div class="journey-guide card">
