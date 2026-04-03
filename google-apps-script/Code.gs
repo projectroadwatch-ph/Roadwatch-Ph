@@ -28,6 +28,9 @@ const DEFAULT_REPORT_HEADERS = [
   'status'
 ];
 
+const SUBMISSION_EMAIL_SENDER = 'projectroadwatch23@gmail.com';
+const SUBMISSION_EMAIL_SENDER_NAME = 'RoadWATCH PH Team';
+
 function doGet(e) {
   const params = extractRequestParams_(e);
   const action = params.action || '';
@@ -281,7 +284,11 @@ function sendSubmissionReceiptEmail_(row, appendResult) {
   ].join('\n');
 
   try {
-    MailApp.sendEmail(recipientEmail, subject, body);
+    GmailApp.sendEmail(recipientEmail, subject, body, {
+      from: SUBMISSION_EMAIL_SENDER,
+      name: SUBMISSION_EMAIL_SENDER_NAME,
+      replyTo: SUBMISSION_EMAIL_SENDER
+    });
     return { sent: true, error: '' };
   } catch (error) {
     return {
