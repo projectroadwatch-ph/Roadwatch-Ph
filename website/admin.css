@@ -98,6 +98,9 @@ body {
 }
 
 .console-topbar {
+  position: sticky;
+  top: 10px;
+  z-index: 12;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -232,6 +235,10 @@ body {
   min-width: 0;
 }
 
+.dashboard-control-deck {
+  margin-top: 8px;
+}
+
 .nav-btn {
   width: 100%;
   min-width: 0;
@@ -259,6 +266,11 @@ body {
   background: rgba(5, 22, 41, 0.4);
 }
 
+.quick-actions--dashboard {
+  border-color: rgba(165, 213, 255, 0.24);
+  background: linear-gradient(145deg, rgba(6, 22, 41, 0.88), rgba(11, 35, 62, 0.66));
+}
+
 .quick-action-pill {
   margin-top: 0;
   border: 1px solid rgba(122, 190, 250, 0.38);
@@ -268,11 +280,19 @@ body {
   color: #d8edff;
   text-align: center;
   font-size: 0.85rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.quick-action-pill::after {
+  content: "→";
+  margin-left: 8px;
+  opacity: 0.68;
 }
 
 .quick-action-pill:hover {
   border-color: rgba(182, 223, 255, 0.6);
   transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgba(2, 12, 25, 0.35);
 }
 
 .quick-action-pill:focus-visible,
@@ -915,6 +935,7 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   }
 
   .console-topbar {
+    position: static;
     flex-direction: column;
     align-items: stretch;
   }

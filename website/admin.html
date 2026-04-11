@@ -77,6 +77,11 @@
           <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Overview & Analytics</button>
           <button id="showManagementBtn" type="button" class="secondary nav-btn">Report Management</button>
         </nav>
+        <div class="quick-actions quick-actions--dashboard" aria-label="Command shortcuts">
+          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill">Open Unified Triage Inbox</button>
+          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill">Focus Critical Cases</button>
+          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill">Refresh Live Data</button>
+        </div>
 
       </section>
 
@@ -103,7 +108,7 @@
                 <h3>Critical Overview</h3>
                 <p class="small">A compact mission panel for unresolved reports, response tempo, and quality health.</p>
               </div>
-              <button type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
+              <button id="openTriageHeroBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
             <div class="critical-kpi-strip" aria-label="Critical performance summary cards">
               <div class="kpi-pill analyticsCard">

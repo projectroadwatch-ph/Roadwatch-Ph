@@ -54,6 +54,7 @@ const workspacePane = document.getElementById("workspacePane");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
+const openTriageHeroBtn = document.getElementById("openTriageHeroBtn");
 const openTriageShortcutBtn = document.getElementById("openTriageShortcutBtn");
 const focusUrgentShortcutBtn = document.getElementById("focusUrgentShortcutBtn");
 const syncDataShortcutBtn = document.getElementById("syncDataShortcutBtn");
@@ -2744,6 +2745,10 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
 openTriageFromOverviewBtn?.addEventListener("click", () => {
+  setDashboardView("management");
+  setManagementPane("triage");
+});
+openTriageHeroBtn?.addEventListener("click", () => {
   setDashboardView("management");
   setManagementPane("triage");
 });
