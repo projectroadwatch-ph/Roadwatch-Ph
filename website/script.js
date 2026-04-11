@@ -635,7 +635,17 @@ function toReportModel(report) {
   const coordinates = getCoordinatePair(report);
 
   return {
-    tracking: getFieldValue(report, ["tracking", "trackingNumber", "tracking_no", "Tracking Number", "Tracking #", "Reference Number"]),
+    tracking: getFieldValue(report, [
+      "tracking",
+      "trackingNumber",
+      "tracking_no",
+      "tracking no",
+      "tracking number",
+      "Tracking Number",
+      "Tracking #",
+      "reference number",
+      "Reference Number"
+    ]),
     name: getFieldValue(report, ["name", "fullName", "Full Name", "Reporter Name"]),
     lastname: getFieldValue(report, ["lastname", "lastName", "surname", "Last Name"]),
     firstname: getFieldValue(report, ["firstname", "firstName", "givenName", "First Name"]),
@@ -662,7 +672,7 @@ function toReportModel(report) {
       "Report Details"
     ]),
     issueCategory: getFieldValue(report, ["issueCategory", "issue_category", "Issue Category", "category"]),
-    status: getFieldValue(report, ["status", "reportStatus", "Status"]),
+    status: getFieldValue(report, ["status", "reportStatus", "report status", "reportstatus", "Status", "Report Status"]),
     roadType: getFieldValue(report, ["roadType", "road_type", "Road Type"]),
     roadClass: getFieldValue(report, ["roadClass", "road_class", "Road Class"]),
     barangay: getFieldValue(report, ["barangay", "Barangay"]),

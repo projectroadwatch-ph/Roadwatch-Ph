@@ -931,10 +931,13 @@ function normalizeReport(record = {}) {
     "trackingNumber",
     "tracking_no",
     "tracking no",
+    "tracking number",
     "Tracking #",
-    "Tracking Number"
+    "Tracking Number",
+    "reference number",
+    "Reference Number"
   ]);
-  const sheetStatus = getFieldValue(record, ["status", "reportStatus", "Status"]);
+  const sheetStatus = getFieldValue(record, ["status", "reportStatus", "report status", "reportstatus", "Status", "Report Status"]);
   const normalizedSheetStatus = String(sheetStatus || "").trim();
   const resolvedLocation = getFieldValue(record, ["location", "address", "road", "Road Location", "incidentLocation", "Incident Location"])
     || getFieldValue(record, ["roadName", "Road Name"])
