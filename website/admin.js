@@ -936,7 +936,13 @@ function normalizeReport(record = {}) {
   ]);
   const statusOverrides = getStatusOverridesStore();
   const sheetStatus = getFieldValue(record, ["status", "reportStatus", "Status"]);
+  const normalizedSheetStatus = String(sheetStatus || "").trim();
   const fallbackOverride = statusOverrides[String(tracking || "").trim()];
+  const resolvedLocation = getFieldValue(record, ["location", "address", "road", "Road Location", "incidentLocation", "Incident Location"])
+    || getFieldValue(record, ["roadName", "Road Name"])
+    || "-";
+  const resolvedCity = getFieldValue(record, ["city", "City", "municipality", "cityMunicipality", "City / Municipality", "incidentCity", "Incident City"]) || "-";
+  const resolvedBarangay = getFieldValue(record, ["barangay", "Barangay", "incidentBarangay", "Incident Barangay"]) || "-";
 
   return {
     dateTime: formatDateTime(record),
@@ -954,7 +960,7 @@ function normalizeReport(record = {}) {
     reporterStreetAddress: getFieldValue(record, ["reporterStreetAddress", "Reporter Street Address", "streetAddress", "Street Address"]) || "-",
     region: getFieldValue(record, ["region", "Region"]) || "-",
     province: getFieldValue(record, ["province", "Province"]) || "-",
-    location: getFieldValue(record, ["location", "address", "road", "Road Location"]) || "-",
+    location: resolvedLocation,
     roadName: getFieldValue(record, ["roadName", "Road Name"]) || "-",
     issue: getFieldValue(record, [
       "issue",
@@ -969,14 +975,14 @@ function normalizeReport(record = {}) {
     issueCategory: getFieldValue(record, ["issueCategory", "issue_category", "Issue Category", "category"]) || "-",
     issueType: issueType || "-",
     issueTypeOption: getFieldValue(record, ["issueTypeOption", "issue_type_option", "Issue Type Option"]) || "-",
-    barangay: getFieldValue(record, ["barangay", "Barangay", "reporterBarangay", "Reporter Barangay"]) || "-",
-    city: getFieldValue(record, ["city", "City", "municipality", "cityMunicipality", "City / Municipality"]) || "-",
+    barangay: resolvedBarangay,
+    city: resolvedCity,
     nearestLandmark: getFieldValue(record, ["nearestLandmark", "nearest_landmark", "Nearest Landmark"]) || "-",
     coordinatesText: getFieldValue(record, ["coordinatesDisplay", "coordinates", "Coordinates", "Selected Location", "selectedLocation"]) || "",
     lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
     lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
-    status: normalizeStatus(sheetStatus || fallbackOverride)
+    status: normalizeStatus(normalizedSheetStatus || fallbackOverride)
   };
 }
 
