@@ -208,6 +208,8 @@ function parseReports(payload) {
   if (payload && Array.isArray(payload.reports)) return payload.reports;
   if (payload && Array.isArray(payload.data)) return payload.data;
   if (payload && Array.isArray(payload.items)) return payload.items;
+  if (payload && Array.isArray(payload.rows)) return payload.rows;
+  if (payload && Array.isArray(payload.values)) return payload.values;
   return [];
 }
 
