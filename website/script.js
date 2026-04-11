@@ -38,8 +38,11 @@ const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
 
 function buildHomepageUrl() {
   const { origin, pathname } = window.location;
-  const normalizedPath = pathname && pathname !== "/" ? pathname : "/";
-  return `${origin}${normalizedPath}`;
+  const hasFileName = /\.[a-zA-Z0-9]+$/.test(pathname || "");
+  const basePath = hasFileName
+    ? pathname.replace(/[^/]+$/, "")
+    : (pathname || "/");
+  return `${origin}${basePath}index.html`;
 }
 
 function setHomepageQrCode() {
@@ -788,6 +791,11 @@ function showPage(page) {
   const selectedPage = document.getElementById(page);
   if (!selectedPage) return;
 
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set("page", page);
+  nextUrl.hash = "";
+  window.history.replaceState({}, "", nextUrl.toString());
+
   selectedPage.classList.add("active");
   setActiveMobileTab(page);
   setActiveSidebarButton(page);
@@ -816,7 +824,9 @@ function resolveInitialPage() {
   const params = new URLSearchParams(window.location.search);
   const requestedPage = params.get("page");
   const hashPage = window.location.hash.replace("#", "");
-  if (requestedPage === "submit" || hashPage === "submit") return "submit";
+  const validPages = new Set(["home", "submit", "about", "contact"]);
+  if (validPages.has(requestedPage)) return requestedPage;
+  if (validPages.has(hashPage)) return hashPage;
   return "home";
 }
 
