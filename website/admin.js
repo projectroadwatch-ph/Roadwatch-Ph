@@ -934,10 +934,8 @@ function normalizeReport(record = {}) {
     "Tracking #",
     "Tracking Number"
   ]);
-  const statusOverrides = getStatusOverridesStore();
   const sheetStatus = getFieldValue(record, ["status", "reportStatus", "Status"]);
   const normalizedSheetStatus = String(sheetStatus || "").trim();
-  const fallbackOverride = statusOverrides[String(tracking || "").trim()];
   const resolvedLocation = getFieldValue(record, ["location", "address", "road", "Road Location", "incidentLocation", "Incident Location"])
     || getFieldValue(record, ["roadName", "Road Name"])
     || "-";
@@ -982,7 +980,7 @@ function normalizeReport(record = {}) {
     lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
     lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
-    status: normalizeStatus(normalizedSheetStatus || fallbackOverride)
+    status: normalizeStatus(normalizedSheetStatus)
   };
 }
 
@@ -1137,7 +1135,6 @@ function statusSelect(current, tracking) {
 
       const report = allReports.find((item) => String(item.tracking) === String(tracking));
       if (report) report.status = nextStatus;
-      setStatusOverride(tracking, nextStatus);
 
       addAuditEntry("Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
       addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${nextStatus}`);
@@ -1206,7 +1203,6 @@ async function applyBulkStatusUpdate() {
       const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
       const previousStatus = normalizeStatus(report?.status);
       if (report) report.status = nextStatus;
-      setStatusOverride(tracking, nextStatus);
       addAuditEntry("Bulk Status Updated", tracking, `${previousStatus} → ${nextStatus}`);
       addTimelineEntry(tracking, "Bulk Status Updated", `${previousStatus} → ${nextStatus}`);
       return;
@@ -2703,6 +2699,9 @@ async function loadReports() {
   reportsBody.innerHTML = '<tr><td colspan="18">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
+
+  // Use Google Sheet values as the single source of truth to avoid stale local status mismatches.
+  localStorage.removeItem(ADMIN_STATUS_OVERRIDES_KEY);
 
   try {
     let selectedPayload = null;
