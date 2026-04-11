@@ -1,6 +1,15 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
-const TRACKING_HEADER_ALIASES = ['tracking', 'tracking number', 'tracking #', 'tracking no', 'tracking_no', 'reference number'];
-const STATUS_HEADER_ALIASES = ['status', 'report status', 'reportstatus'];
+const TRACKING_HEADER_ALIASES = [
+  'tracking',
+  'trackingnumber',
+  'tracking number',
+  'tracking #',
+  'tracking no',
+  'tracking_no',
+  'reference number',
+  'referencenumber'
+];
+const STATUS_HEADER_ALIASES = ['status', 'report status', 'reportstatus', 'report_status'];
 const DEFAULT_REPORT_HEADERS = [
   'timestamp',
   'tracking',
@@ -438,15 +447,16 @@ function appendReport_(row) {
 
   if (trackingValue) {
     const trackingColumnIndex = findColumnIndexByAliases_(headers, TRACKING_HEADER_ALIASES);
+    const normalizedTrackingValue = normalizeLookupValue_(trackingValue);
 
     const existingTrackings = dataValues
       .map(function (rowValues) {
         if (trackingColumnIndex === -1) return '';
-        return String(rowValues[trackingColumnIndex] || '').trim();
+        return normalizeLookupValue_(rowValues[trackingColumnIndex]);
       })
       .filter(function (value) { return value !== ''; });
 
-    if (existingTrackings.includes(trackingValue)) {
+    if (existingTrackings.includes(normalizedTrackingValue)) {
       return { duplicate: true };
     }
   }
@@ -541,7 +551,16 @@ function readReportByTracking_(tracking) {
 }
 
 function normalizeHeader_(header) {
-  return String(header || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  return String(header || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s?#\s?/g, ' number');
+}
+
+function normalizeLookupValue_(value) {
+  return String(value || '').trim().toLowerCase();
 }
 
 function findColumnIndexByAliases_(headers, aliases) {
