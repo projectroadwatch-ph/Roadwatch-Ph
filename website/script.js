@@ -165,6 +165,9 @@ function applyAdminStatusOverride(report) {
   const trackingKey = (normalizedReport.tracking || "").toString().trim();
   if (!trackingKey) return normalizedReport;
 
+  const sheetStatus = (normalizedReport.status || "").toString().trim();
+  if (sheetStatus) return normalizedReport;
+
   const override = getStatusOverrideByTracking(trackingKey, getAdminStatusOverrides());
   if (!override) return normalizedReport;
 
