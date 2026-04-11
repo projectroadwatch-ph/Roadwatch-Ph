@@ -2220,6 +2220,12 @@ function renderAnalytics(reports) {
   if (snapshotTotal) snapshotTotal.textContent = counts.total;
   if (snapshotPending) snapshotPending.textContent = counts.pending;
   if (snapshotVerified) snapshotVerified.textContent = counts.verified;
+  const missionCriticalCount = document.getElementById("missionCriticalCount");
+  const missionVerificationCount = document.getElementById("missionVerificationCount");
+  const missionResolvedCount = document.getElementById("missionResolvedCount");
+  if (missionCriticalCount) missionCriticalCount.textContent = reports.filter((report) => getPriorityScore(report) >= 75).length;
+  if (missionVerificationCount) missionVerificationCount.textContent = counts.needsVerification;
+  if (missionResolvedCount) missionResolvedCount.textContent = counts.repaired;
 
   const urgentCount = analyticsReports.filter((report) => getPriorityScore(report) >= 75).length;
   const moderateCount = analyticsReports.filter((report) => {

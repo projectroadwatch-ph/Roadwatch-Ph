@@ -62,6 +62,20 @@
             <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
             <button id="retrySyncBtn" type="button" class="secondary slim">Retry Sync</button>
           </div>
+          <div class="mission-strip" aria-label="Mission control summary">
+            <article class="mission-chip">
+              <span class="mission-chip__label">Critical Cases</span>
+              <strong id="missionCriticalCount">0</strong>
+            </article>
+            <article class="mission-chip">
+              <span class="mission-chip__label">Needs Verification</span>
+              <strong id="missionVerificationCount">0</strong>
+            </article>
+            <article class="mission-chip">
+              <span class="mission-chip__label">Resolved</span>
+              <strong id="missionResolvedCount">0</strong>
+            </article>
+          </div>
         </div>
         <div class="header-actions-right">
           <div class="live-indicator" aria-live="polite">

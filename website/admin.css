@@ -226,6 +226,36 @@ body {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.mission-strip {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 620px;
+}
+
+.mission-chip {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 213, 255, 0.22);
+  background: linear-gradient(135deg, rgba(8, 31, 57, 0.88), rgba(13, 41, 71, 0.62));
+  display: grid;
+  gap: 3px;
+}
+
+.mission-chip__label {
+  font-size: 0.69rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9dc2e4;
+}
+
+.mission-chip strong {
+  font-size: 1.15rem;
+  color: #eef7ff;
+}
 .dashboard-nav {
   margin-top: 12px;
   display: grid;
@@ -954,6 +984,11 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
   .quick-actions {
     grid-template-columns: 1fr;
+  }
+
+  .mission-strip {
+    grid-template-columns: 1fr;
+    max-width: 100%;
   }
 
   .dashboard-grid {
