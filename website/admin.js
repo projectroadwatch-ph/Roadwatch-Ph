@@ -2709,35 +2709,18 @@ async function loadReports() {
     let selectedParsedReports = [];
     let sourceLabel = "";
     let lastError = null;
-    let fallbackPayload = null;
-    let fallbackLabel = "";
-    let fallbackParsedReports = [];
 
     for (const source of REPORT_ENDPOINTS) {
       try {
         const payload = await fetchApiPayload(`${source.url}?action=getReports`);
         const parsedReports = parseReports(payload);
-
-        if (!fallbackPayload) {
-          fallbackPayload = payload;
-          fallbackLabel = source.label;
-          fallbackParsedReports = parsedReports;
-        }
-
-        if (parsedReports.length > selectedParsedReports.length) {
-          selectedPayload = payload;
-          selectedParsedReports = parsedReports;
-          sourceLabel = source.label;
-        }
+        selectedPayload = payload;
+        selectedParsedReports = parsedReports;
+        sourceLabel = source.label;
+        break;
       } catch (error) {
         lastError = error;
       }
-    }
-
-    if (!selectedPayload && fallbackPayload) {
-      selectedPayload = fallbackPayload;
-      selectedParsedReports = fallbackParsedReports;
-      sourceLabel = fallbackLabel;
     }
 
     if (!selectedPayload) {
