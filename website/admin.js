@@ -940,6 +940,8 @@ function normalizeReport(record = {}) {
     "Tracking Number"
   ]);
   const statusOverrides = getStatusOverridesStore();
+  const sheetStatus = getFieldValue(record, ["status", "reportStatus", "Status"]);
+  const fallbackOverride = statusOverrides[String(tracking || "").trim()];
 
   return {
     dateTime: formatDateTime(record),
@@ -979,7 +981,7 @@ function normalizeReport(record = {}) {
     lat: getFieldValue(record, ["lat", "latitude", "Latitude", "pinLat", "pin_lat"]),
     lng: getFieldValue(record, ["lng", "lon", "long", "longitude", "Longitude", "pinLng", "pin_lng"]),
     photo: getFieldValue(record, ["photo", "image", "photoUrl", "Photo"]) || "",
-    status: normalizeStatus(statusOverrides[String(tracking || "").trim()] || getFieldValue(record, ["status", "reportStatus", "Status"]))
+    status: normalizeStatus(sheetStatus || fallbackOverride)
   };
 }
 
