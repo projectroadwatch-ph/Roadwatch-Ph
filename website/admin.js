@@ -114,9 +114,9 @@ let activeReportsSource = "";
 let urgentOnlyMode = false;
 
 const REPORT_ENDPOINTS = [
-  { url: PUBLIC_SITE_API_URL, label: "Public website Google Sheet" },
   { url: API_URL, label: "Admin primary Google Sheet endpoint" },
-  { url: HOME_API_URL, label: "Admin backup Google Sheet endpoint" }
+  { url: HOME_API_URL, label: "Admin backup Google Sheet endpoint" },
+  { url: PUBLIC_SITE_API_URL, label: "Public website Google Sheet" }
 ];
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
 
