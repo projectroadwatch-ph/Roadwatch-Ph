@@ -915,9 +915,9 @@ function formatDateTime(record) {
 
 function normalizeStatus(status) {
   const raw = String(status || "").trim().toLowerCase();
-  if (raw === "verified") return "Verified";
-  if (raw === "in progress" || raw === "inprogress") return "In Progress";
-  if (raw === "repaired") return "Repaired";
+  if (["verified", "for verification", "needs verification"].includes(raw)) return "Verified";
+  if (["in progress", "inprogress", "ongoing", "on-going", "working"].includes(raw)) return "In Progress";
+  if (["repaired", "resolved", "completed", "complete", "done", "fixed"].includes(raw)) return "Repaired";
   return "Pending";
 }
 
@@ -939,7 +939,15 @@ function normalizeReport(record = {}) {
     "reference number",
     "Reference Number"
   ]);
-  const sheetStatus = getFieldValue(record, ["status", "reportStatus", "report status", "reportstatus", "Status", "Report Status"]);
+  const sheetStatus = getFieldValue(record, [
+    "status",
+    "reportStatus",
+    "report_status",
+    "report status",
+    "reportstatus",
+    "Status",
+    "Report Status"
+  ]);
   const normalizedSheetStatus = String(sheetStatus || "").trim();
   const resolvedLocation = getFieldValue(record, ["location", "address", "road", "Road Location", "incidentLocation", "Incident Location"])
     || getFieldValue(record, ["roadName", "Road Name"])
@@ -2714,9 +2722,11 @@ async function loadReports() {
     let sourceLabel = "";
     let lastError = null;
 
+    const cacheBust = `cb=${Date.now()}`;
     for (const source of REPORT_ENDPOINTS) {
       try {
-        const payload = await fetchApiPayload(`${source.url}?action=getReports`);
+        const separator = source.url.includes("?") ? "&" : "?";
+        const payload = await fetchApiPayload(`${source.url}${separator}action=getReports&${cacheBust}`);
         const parsedReports = parseReports(payload);
         selectedPayload = payload;
         selectedParsedReports = parsedReports;
