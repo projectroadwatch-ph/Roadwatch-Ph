@@ -342,7 +342,21 @@ function mergeReportsByTracking(primaryReports, secondaryReports) {
   const merged = [];
   const indexByTracking = new Map();
 
-  const append = (report) => {
+  const mergeKeepingPreferredValues = (preferred, fallback) => {
+    const result = { ...preferred };
+    Object.keys(fallback || {}).forEach((key) => {
+      const preferredValue = result[key];
+      const hasPreferredValue = preferredValue !== undefined
+        && preferredValue !== null
+        && String(preferredValue).trim() !== "";
+      if (!hasPreferredValue) {
+        result[key] = fallback[key];
+      }
+    });
+    return result;
+  };
+
+  const append = (report, source = "secondary") => {
     const normalizedReport = applyAdminStatusOverride(report);
     const trackingKey = (normalizedReport.tracking || "").toString().trim().toLowerCase();
 
@@ -354,10 +368,10 @@ function mergeReportsByTracking(primaryReports, secondaryReports) {
     }
 
     if (indexByTracking.has(trackingKey)) {
-      merged[indexByTracking.get(trackingKey)] = {
-        ...merged[indexByTracking.get(trackingKey)],
-        ...normalizedReport
-      };
+      const existing = merged[indexByTracking.get(trackingKey)];
+      merged[indexByTracking.get(trackingKey)] = source === "primary"
+        ? mergeKeepingPreferredValues(normalizedReport, existing)
+        : mergeKeepingPreferredValues(existing, normalizedReport);
       return;
     }
 
@@ -365,8 +379,8 @@ function mergeReportsByTracking(primaryReports, secondaryReports) {
     merged.push(normalizedReport);
   };
 
-  (Array.isArray(primaryReports) ? primaryReports : []).forEach(append);
-  (Array.isArray(secondaryReports) ? secondaryReports : []).forEach(append);
+  (Array.isArray(primaryReports) ? primaryReports : []).forEach((report) => append(report, "primary"));
+  (Array.isArray(secondaryReports) ? secondaryReports : []).forEach((report) => append(report, "secondary"));
 
   return merged;
 }
