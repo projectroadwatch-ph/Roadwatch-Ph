@@ -93,11 +93,6 @@ const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
-const strategicScenario = document.getElementById("strategicScenario");
-const strategicHealthCards = document.getElementById("strategicHealthCards");
-const strategicBottlenecks = document.getElementById("strategicBottlenecks");
-const strategicDispatchPlan = document.getElementById("strategicDispatchPlan");
-const applySmartPlanBtn = document.getElementById("applySmartPlanBtn");
 const bulkStatusValue = document.getElementById("bulkStatusValue");
 const applyBulkStatusBtn = document.getElementById("applyBulkStatusBtn");
 const clearSelectionBtn = document.getElementById("clearSelectionBtn");
@@ -1732,43 +1727,6 @@ function renderFieldOpsBoard(reports) {
   fieldOpsBoard.innerHTML = cards.length ? cards.map((report) => `<article class="teamCard fieldCard"><div class="teamCardHeader"><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><span class="priority-badge">${escapeHtml(getSeverityLabel(report))}</span></div><div class="teamCardMeta"><span>${escapeHtml(report.location || "Unknown location")}</span><span>Assignee: ${escapeHtml(report.assignedTo || "Unassigned")}</span><span>ETA: ${escapeHtml(report.publicEta || "Unset")}</span></div></article>`).join("") : '<p class="small">No active field work cards available.</p>';
 }
 
-function renderStrategicIntelligence(reports) {
-  if (!strategicHealthCards) return;
-
-  const scenario = strategicScenario?.value || "balanced";
-  const unresolved = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
-  const repaired = reports.filter((report) => normalizeStatus(report.status) === "Repaired");
-  const urgent = unresolved.filter((report) => getPriorityScore(report) >= 75);
-  const atRisk = unresolved.filter((report) => {
-    const escalation = getEscalationState(report);
-    return escalation === "At Risk" || escalation === "Overdue";
-  });
-  const throughput = Math.max(repaired.length || 1, 1);
-  const backlogDays = Math.max(1, Math.round((unresolved.length / throughput) * 7));
-
-  const scenarioMultipliers = {
-    aggressive: { crew: 1.3, clearance: 0.75, comms: "Higher outbound updates and weekend shifts recommended." },
-    balanced: { crew: 1, clearance: 1, comms: "Standard weekday dispatch with proactive citizen ETAs." },
-    conservative: { crew: 0.82, clearance: 1.2, comms: "Maintain current staffing and protect budget utilization." }
-  };
-  const scenarioProfile = scenarioMultipliers[scenario] || scenarioMultipliers.balanced;
-
-  const recommendedCrews = Math.max(2, Math.round((urgent.length / 3) * scenarioProfile.crew));
-  const projectedClearance = Math.max(2, Math.round(backlogDays * scenarioProfile.clearance));
-  const healthScore = Math.max(0, Math.min(100, Math.round(100 - ((urgent.length * 3) + (atRisk.length * 2) + unresolved.length) / Math.max(reports.length || 1, 1) * 10)));
-
-  strategicHealthCards.innerHTML = [
-    { label: "Service Health Score", value: `${healthScore}%`, meta: "Queue stability index" },
-    { label: "Unresolved Backlog", value: `${unresolved.length}`, meta: `${urgent.length} urgent cases` },
-    { label: "Projected Clearance", value: `${projectedClearance} days`, meta: `${scenario} scenario` },
-    { label: "Recommended Crews", value: `${recommendedCrews}`, meta: "Concurrent field teams" }
-  ].map((item) => `<article class="miniCard"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.meta)}</small></article>`).join("");
-
-  if (aiAutopilotSummary) {
-    aiAutopilotSummary.textContent = `${scenarioProfile.comms} Estimated ${projectedClearance} day(s) to stabilize backlog.`;
-  }
-}
-
 function renderTrustCenterBoard() {
   if (!trustCenterBoard) return;
   const notices = getNotificationQueue().slice(0, 6);
@@ -2724,7 +2682,6 @@ function applyFiltersAndRender() {
   renderModerationBoard(allReports);
   renderRootCauseBoard(allReports);
   renderFieldOpsBoard(allReports);
-  renderStrategicIntelligence(allReports);
   renderTrustCenterBoard();
   renderClosureChecklist();
   renderPermissionsSummary();
@@ -2798,7 +2755,6 @@ async function loadReports() {
       renderAuditTrail();
       renderCaseTimeline("");
       refreshReportingSection([]);
-      renderStrategicIntelligence([]);
       filterSummary.textContent = "No records to filter.";
       activeReportsSource = sourceLabel;
       setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
@@ -2818,7 +2774,6 @@ async function loadReports() {
     renderAuditTrail();
     renderCaseTimeline("");
     refreshReportingSection([]);
-    renderStrategicIntelligence([]);
     filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
     if (activeReportsSource) {
@@ -3081,11 +3036,6 @@ createProjectBtn?.addEventListener("click", () => {
 });
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
-strategicScenario?.addEventListener("change", () => renderStrategicIntelligence(allReports));
-applySmartPlanBtn?.addEventListener("click", () => {
-  renderStrategicIntelligence(allReports);
-  setFeedback("reportsFeedback", "Smart dispatch plan updated from the selected scenario.");
-});
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 
 setDashboardView("overview");

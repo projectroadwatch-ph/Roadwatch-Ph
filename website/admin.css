@@ -3870,41 +3870,6 @@ tr:hover td {
   }
 }
 
-.strategic-header-row {
-  align-items: flex-start;
-}
-
-.strategic-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.strategic-health-grid {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 10px;
-}
-
-.strategic-grid {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
-}
-
-.strategic-grid h4 {
-  margin: 0 0 8px;
-}
-
-@media (max-width: 900px) {
-  .strategic-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 900px) {
   .workspace-organizer {
     grid-template-columns: 1fr;
