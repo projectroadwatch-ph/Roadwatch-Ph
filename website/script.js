@@ -674,10 +674,7 @@ function parseReportsFromApi(payload) {
 }
 
 async function fetchReports() {
-  const localReports = getLocalReports();
-
   if (isCorsRetryCooldownActive()) {
-    if (localReports.length > 0) return localReports;
     throw new Error(buildCorsErrorMessage(API_URL));
   }
 
@@ -694,7 +691,7 @@ async function fetchReports() {
       const parsedReports = parseReportsFromApi(payload);
 
       if (parsedReports.length > 0) {
-        cachedReports = mergeReportsByTracking(parsedReports, localReports);
+        cachedReports = parsedReports;
         return cachedReports;
       }
     } catch (error) {
@@ -709,29 +706,19 @@ async function fetchReports() {
 
   cachedReports = [];
   if (corsBlocked) {
-    if (localReports.length > 0) {
-      cachedReports = localReports;
-      return cachedReports;
-    }
     activateCorsRetryCooldown();
     const corsError = new Error(buildCorsErrorMessage(corsBlockedEndpoint));
     reportCorsTroubleshootingContext();
     throw corsError;
   }
   if (lastError instanceof TypeError) {
-    if (localReports.length > 0) {
-      cachedReports = localReports;
-      return cachedReports;
-    }
     throw new Error(buildNetworkErrorMessage());
   }
   if (isJsonpTransportError(lastError)) {
-    cachedReports = localReports;
-    return cachedReports;
+    return [];
   }
   if (lastError) throw lastError;
-  cachedReports = localReports;
-  return cachedReports;
+  return [];
 }
 
 // Sidebar toggle
@@ -1495,10 +1482,9 @@ async function loadStatistics(options = {}) {
     console.warn("Error loading statistics", error);
     // Keep the homepage map visible even when the remote report API is
     // temporarily unavailable (e.g., CORS or network issues).
-    const localReports = getLocalReports();
-    renderHomeImpactMetrics(localReports);
-    renderHomeCommandCenter(localReports);
-    await renderCitizenReportsMap(localReports);
+    renderHomeImpactMetrics([]);
+    renderHomeCommandCenter([]);
+    await renderCitizenReportsMap([]);
     renderReportStatisticsError(error);
   }
 }
@@ -1535,7 +1521,7 @@ async function fetchReportByTracking(trackingNumber) {
           : null;
 
         if (matchedReport && matchedReport.tracking) {
-          cachedReports = mergeReportsByTracking([matchedReport], localReports);
+          cachedReports = [matchedReport];
           return applyAdminStatusOverride(matchedReport);
         }
       }
@@ -1543,7 +1529,7 @@ async function fetchReportByTracking(trackingNumber) {
       const reports = parseReportsFromApi(payload);
       const matchedReport = findReportByTracking(reports, trackingNumber);
       if (matchedReport) {
-        cachedReports = mergeReportsByTracking(reports, localReports);
+        cachedReports = reports;
         return applyAdminStatusOverride(matchedReport);
       }
     } catch (error) {
