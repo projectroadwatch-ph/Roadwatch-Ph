@@ -149,32 +149,12 @@ function ensureLeafletReady() {
 
 
 function getAdminStatusOverrides() {
-  try {
-    const raw = localStorage.getItem(ADMIN_STATUS_OVERRIDES_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (error) {
-    console.warn("Unable to read admin status overrides", error);
-    return {};
-  }
+  return {};
 }
 
 function applyAdminStatusOverride(report) {
-  const normalizedReport = toReportModel(report);
-  const trackingKey = (normalizedReport.tracking || "").toString().trim();
-  if (!trackingKey) return normalizedReport;
-
-  const sheetStatus = (normalizedReport.status || "").toString().trim();
-  if (sheetStatus) return normalizedReport;
-
-  const override = getStatusOverrideByTracking(trackingKey, getAdminStatusOverrides());
-  if (!override) return normalizedReport;
-
-  return {
-    ...normalizedReport,
-    status: override
-  };
+  // Keep Google Sheet/API data as the source of truth for status values.
+  return toReportModel(report);
 }
 
 function getStatusOverrideByTracking(tracking, overrides) {
@@ -190,21 +170,12 @@ function getStatusOverrideByTracking(tracking, overrides) {
 
 
 function getDeletedReports() {
-  try {
-    const raw = localStorage.getItem(ADMIN_DELETED_REPORTS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.warn("Unable to read deleted reports", error);
-    return [];
-  }
+  return [];
 }
 
 function isDeletedByTracking(tracking) {
-  const target = (tracking || "").toString().trim().toLowerCase();
-  if (!target) return false;
-  return getDeletedReports().some((value) => String(value || "").trim().toLowerCase() === target);
+  void tracking;
+  return false;
 }
 
 function getSiteSettings() {
@@ -1797,6 +1768,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setHomepageQrCode();
   wireHomepageQuickActions();
   syncHomeReportViews();
+  localStorage.removeItem(ADMIN_STATUS_OVERRIDES_KEY);
+  localStorage.removeItem(ADMIN_DELETED_REPORTS_KEY);
 
   const revealTargets = document.querySelectorAll(".hero-card, .card, .issue-card");
   revealTargets.forEach((el) => el.classList.add("reveal-target"));
@@ -1914,7 +1887,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.addEventListener("storage", (event) => {
-    if (![ADMIN_STATUS_OVERRIDES_KEY, ADMIN_DELETED_REPORTS_KEY, LOCAL_REPORTS_KEY].includes(event.key)) return;
+    if (event.key !== LOCAL_REPORTS_KEY) return;
     syncHomeReportViews({ forceRefresh: true });
   });
 
