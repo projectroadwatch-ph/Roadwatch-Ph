@@ -9,12 +9,12 @@ let isSubmittingReport = false;
 let locationSuggestionAbortController = null;
 let locationSuggestionDebounceTimer = null;
 let leafletReadyPromise = null;
+const dataLayer = window.RoadwatchDataLayer;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
-const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
+const { API_URL, LOCAL_REPORTS_KEY } = dataLayer.constants;
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
-const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -28,7 +28,6 @@ const LEAFLET_STYLE_SOURCES = [
   "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 ];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxZ7aoLwshceT4N_BCgOmYxkW6IL2Y-w0bF5ArLuOxehNBJl_PW05ze6RbYfB8E4JZ1/exec";
 const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
   "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Other"],
   "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Other"],
@@ -179,19 +178,11 @@ function isDeletedByTracking(tracking) {
 }
 
 function getSiteSettings() {
-  try {
-    const raw = localStorage.getItem(SITE_SETTINGS_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (error) {
-    console.warn("Unable to read site settings", error);
-    return {};
-  }
+  return dataLayer.getSiteSettings();
 }
 
 function applyAdminWebsiteSettings() {
-  const settings = getSiteSettings();
+  const settings = dataLayer.getSiteSettings();
 
   const subheader = document.getElementById("heroSubheader");
   if (subheader && settings.heroSubheader) subheader.textContent = settings.heroSubheader;
@@ -205,22 +196,17 @@ function applyAdminWebsiteSettings() {
 }
 
 function withCacheBust(endpoint) {
-  const separator = endpoint.includes("?") ? "&" : "?";
-  return `${endpoint}${separator}cb=${Date.now()}`;
+  return dataLayer.withCacheBust(endpoint);
 }
 
 function getReportEndpoints() {
   // Keep a short endpoint list to avoid spamming repeated browser CORS errors
   // when the Apps Script deployment is not configured for cross-origin access.
-  return [withCacheBust(API_URL), withCacheBust(`${API_URL}?action=getReports`)];
+  return dataLayer.getReportEndpoints();
 }
 
 function buildTrackingLookupEndpoints(trackingNumber) {
-  const tracking = encodeURIComponent((trackingNumber || "").trim());
-  return [
-    withCacheBust(`${API_URL}?action=getReportByTracking&tracking=${tracking}`),
-    withCacheBust(`${API_URL}?action=getReports`)
-  ];
+  return dataLayer.buildTrackingLookupEndpoints(trackingNumber);
 }
 
 function buildJsonpEndpoint(endpoint, callbackName) {
@@ -294,24 +280,14 @@ function isCrossOriginEndpoint(endpoint) {
 }
 
 function getLocalReports() {
-  try {
-    const raw = localStorage.getItem(LOCAL_REPORTS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map(toReportModel).filter((report) => !isDeletedByTracking(report.tracking));
-  } catch (error) {
-    console.warn("Unable to read local reports cache", error);
-    return [];
-  }
+  return dataLayer
+    .getLocalReports()
+    .map(toReportModel)
+    .filter((report) => !isDeletedByTracking(report.tracking));
 }
 
 function saveLocalReports(reports) {
-  try {
-    localStorage.setItem(LOCAL_REPORTS_KEY, JSON.stringify(reports));
-  } catch (error) {
-    console.warn("Unable to persist local reports cache", error);
-  }
+  dataLayer.saveLocalReports(reports);
 }
 
 function mergeReportsByTracking(primaryReports, secondaryReports) {
