@@ -1,4 +1,6 @@
 const ALLOWED_ORIGIN = 'https://philippine-roadwatch.github.io';
+const TRACKING_HEADER_ALIASES = ['tracking', 'tracking number', 'tracking #', 'tracking no', 'tracking_no', 'reference number'];
+const STATUS_HEADER_ALIASES = ['status', 'report status', 'reportstatus'];
 const DEFAULT_REPORT_HEADERS = [
   'timestamp',
   'tracking',
@@ -310,9 +312,9 @@ function updateReportStatusByTracking_(tracking, status) {
     return { success: false, updated: false, status: normalizedStatus, error: 'No reports found.' };
   }
 
-  const headers = values[0].map(function (header) { return String(header || '').trim().toLowerCase(); });
-  const trackingColumnIndex = headers.indexOf('tracking');
-  const statusColumnIndex = headers.indexOf('status');
+  const headers = values[0].map(function (header) { return String(header || '').trim(); });
+  const trackingColumnIndex = findColumnIndexByAliases_(headers, TRACKING_HEADER_ALIASES);
+  const statusColumnIndex = findColumnIndexByAliases_(headers, STATUS_HEADER_ALIASES);
 
   if (trackingColumnIndex === -1 || statusColumnIndex === -1) {
     return {
@@ -355,8 +357,8 @@ function deleteReportByTracking_(tracking) {
     return { success: false, deleted: false, error: 'No reports found.' };
   }
 
-  const headers = values[0].map(function (header) { return String(header || '').trim().toLowerCase(); });
-  const trackingColumnIndex = headers.indexOf('tracking');
+  const headers = values[0].map(function (header) { return String(header || '').trim(); });
+  const trackingColumnIndex = findColumnIndexByAliases_(headers, TRACKING_HEADER_ALIASES);
   if (trackingColumnIndex === -1) {
     return { success: false, deleted: false, error: 'Missing tracking column in sheet.' };
   }
@@ -435,9 +437,7 @@ function appendReport_(row) {
     : [];
 
   if (trackingValue) {
-    const trackingColumnIndex = headers.findIndex(function (header) {
-      return String(header || '').trim().toLowerCase() === 'tracking';
-    });
+    const trackingColumnIndex = findColumnIndexByAliases_(headers, TRACKING_HEADER_ALIASES);
 
     const existingTrackings = dataValues
       .map(function (rowValues) {
@@ -531,11 +531,47 @@ function readReportByTracking_(tracking) {
 
   const reports = readReports_();
   for (var i = 0; i < reports.length; i += 1) {
-    var rowTracking = String(reports[i].tracking || '').trim().toLowerCase();
+    var rowTracking = String(getObjectValueByAliases_(reports[i], TRACKING_HEADER_ALIASES) || '').trim().toLowerCase();
     if (rowTracking === trackingValue) {
       return reports[i];
     }
   }
 
   return null;
+}
+
+function normalizeHeader_(header) {
+  return String(header || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function findColumnIndexByAliases_(headers, aliases) {
+  const normalizedAliases = (aliases || []).map(function (alias) {
+    return normalizeHeader_(alias);
+  });
+
+  for (var index = 0; index < (headers || []).length; index += 1) {
+    var normalizedHeader = normalizeHeader_(headers[index]);
+    if (normalizedAliases.indexOf(normalizedHeader) !== -1) {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+function getObjectValueByAliases_(obj, aliases) {
+  if (!obj || typeof obj !== 'object') return '';
+
+  var entries = Object.keys(obj);
+  for (var i = 0; i < entries.length; i += 1) {
+    var key = entries[i];
+    var normalizedKey = normalizeHeader_(key);
+    for (var j = 0; j < (aliases || []).length; j += 1) {
+      if (normalizedKey === normalizeHeader_(aliases[j])) {
+        return obj[key];
+      }
+    }
+  }
+
+  return '';
 }
