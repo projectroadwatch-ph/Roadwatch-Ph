@@ -725,21 +725,68 @@ function getPriorityScore(report) {
 }
 
 function dedupeReports(reports) {
-  const seen = new Set();
-  const deduped = [];
+  const byTracking = new Map();
+  const fallbackReports = [];
 
-  reports.forEach((report, index) => {
+  reports.forEach((report) => {
     const tracking = String(report?.tracking || "").trim();
-    const key = tracking
-      ? `tracking:${tracking.toLowerCase()}`
-      : `fallback:${String(report?.dateTime || "").trim().toLowerCase()}|${String(report?.name || "").trim().toLowerCase()}|${String(report?.location || "").trim().toLowerCase()}|${String(report?.issue || "").trim().toLowerCase()}|${index}`;
+    if (!tracking) {
+      fallbackReports.push(report);
+      return;
+    }
 
-    if (seen.has(key)) return;
-    seen.add(key);
-    deduped.push(report);
+    const key = tracking.toLowerCase();
+    const existing = byTracking.get(key);
+    if (!existing) {
+      byTracking.set(key, report);
+      return;
+    }
+
+    byTracking.set(key, pickPreferredReport(existing, report));
   });
 
-  return deduped;
+  return [...byTracking.values(), ...fallbackReports];
+}
+
+function pickPreferredReport(current, next) {
+  const currentStatus = normalizeStatus(current?.status);
+  const nextStatus = normalizeStatus(next?.status);
+  const currentScore = getReportCompletenessScore(current);
+  const nextScore = getReportCompletenessScore(next);
+  const currentDate = parseReportDate(current);
+  const nextDate = parseReportDate(next);
+  const currentTime = currentDate ? currentDate.getTime() : 0;
+  const nextTime = nextDate ? nextDate.getTime() : 0;
+
+  if (currentStatus === "Pending" && nextStatus !== "Pending") return next;
+  if (nextStatus === "Pending" && currentStatus !== "Pending") return current;
+
+  if (nextScore > currentScore) return next;
+  if (currentScore > nextScore) return current;
+
+  if (nextTime > currentTime) return next;
+  return current;
+}
+
+function getReportCompletenessScore(report) {
+  const fields = [
+    report?.status,
+    report?.issue,
+    report?.issueType,
+    report?.issueCategory,
+    report?.location,
+    report?.barangay,
+    report?.city,
+    report?.lat,
+    report?.lng,
+    report?.photo
+  ];
+
+  return fields.reduce((score, value) => {
+    const normalized = String(value || "").trim();
+    if (!normalized || normalized === "-") return score;
+    return score + 1;
+  }, 0);
 }
 
 function applyCaseMetadata(report) {
