@@ -272,9 +272,7 @@ function sendSubmissionReceiptEmail_(row, appendResult) {
     '',
     'Reference/Tracking Number: ' + trackingNumber,
     '',
-    'Kindly keep this information for your records and future follow-ups.',
-    '',
-    'Thank you once again for your support and cooperation.',
+    'Kindly keep this information for your records and future follow-ups. Thank you once again for your support and cooperation.',
     '',
     'Sincerely,',
     'RoadWATCH PH Team'
@@ -295,7 +293,7 @@ function buildRecipientName_(row) {
   const firstName = String((row && row.firstname) || '').trim();
   const lastName = String((row && row.lastname) || '').trim();
   const fullName = [firstName, lastName].filter(function (namePart) { return namePart !== ''; }).join(' ');
-  return fullName || 'RoadWATCH PH User';
+  return fullName || 'Project Roadwatch';
 }
 
 function updateReportStatusByTracking_(tracking, status) {
