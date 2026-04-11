@@ -3887,3 +3887,48 @@ tr:hover td {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Inspired overview + analytics polish */
+.operations-alert-strip {
+  background:
+    radial-gradient(circle at 15% -20%, rgba(255, 206, 113, 0.18), transparent 42%),
+    linear-gradient(120deg, rgba(18, 39, 72, 0.94), rgba(9, 24, 48, 0.9));
+  border: 1px solid rgba(255, 210, 126, 0.26);
+}
+
+.operations-pill-grid .section-chip {
+  background: rgba(255, 205, 120, 0.12);
+  border-color: rgba(255, 204, 125, 0.32);
+  color: #ffe4bb;
+}
+
+.critical-kpi-strip .kpi-pill {
+  min-height: 88px;
+  border-radius: 12px;
+  background: linear-gradient(150deg, rgba(10, 30, 55, 0.92), rgba(21, 45, 80, 0.56));
+  border: 1px solid rgba(152, 196, 255, 0.2);
+}
+
+.overview-panel--status .chart-panel,
+.overview-panel--response .chart-panel,
+.analytics-timeline {
+  border: 1px solid rgba(130, 176, 240, 0.2);
+  background: linear-gradient(170deg, rgba(8, 24, 45, 0.78), rgba(10, 29, 56, 0.58));
+}
+
+.overview-panel--verification {
+  background:
+    radial-gradient(circle at 10% -25%, rgba(132, 186, 255, 0.16), transparent 48%),
+    linear-gradient(165deg, rgba(9, 28, 52, 0.94), rgba(8, 22, 44, 0.94));
+}
+
+.data-analytics-panel .severity-card {
+  border-color: rgba(163, 200, 244, 0.24);
+}
+
+.data-analytics-panel .export-row {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(156, 196, 244, 0.18);
+}

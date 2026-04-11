@@ -82,15 +82,15 @@
           <article class="panel chart-stretch operations-alert-strip">
             <div class="row">
               <div>
-                <h3>Priority Action Center</h3>
-                <p class="small">Start here to immediately address unresolved, high-risk, and verification-blocked cases.</p>
+                <h3>Critical Overview Deck</h3>
+                <p class="small">Inspired command strip for urgent triage, moderation, and publication workflows.</p>
               </div>
-              <button id="openTriageFromOverviewBtn" type="button" class="secondary slim hero-cta">Open Triage Inbox</button>
+              <button id="openTriageFromOverviewBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
             <div class="operations-pill-grid">
-              <p class="section-chip">1) Validate new submissions</p>
-              <p class="section-chip">2) Escalate high-priority hazards</p>
-              <p class="section-chip">3) Publish citizen updates</p>
+              <p class="section-chip">Overview Focus · Validate New Submissions</p>
+              <p class="section-chip">Analytics Focus · Escalate High-Priority Hazards</p>
+              <p class="section-chip">Ops Focus · Publish Citizen Updates</p>
             </div>
           </article>
 
@@ -98,7 +98,7 @@
             <div class="critical-overview-top">
               <div>
                 <h3>Critical Overview</h3>
-                <p class="small">AI-assisted command console for high-priority and unresolved citizen reports.</p>
+                <p class="small">A compact mission panel for unresolved reports, response tempo, and quality health.</p>
               </div>
               <button type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
@@ -108,21 +108,21 @@
                 <strong id="totalReportsCount">0</strong>
               </div>
               <div class="kpi-pill analyticsCard analyticsCard--alert">
-                <span class="analyticsLabel">Pending</span>
+                <span class="analyticsLabel">Ongoing Reports</span>
                 <strong id="pendingReportsCount">0</strong>
               </div>
               <div class="kpi-pill analyticsCard">
-                <span class="analyticsLabel">Resolved</span>
+                <span class="analyticsLabel">Resolved Today</span>
                 <strong id="repairedReportsCount">0</strong>
               </div>
               <div class="kpi-pill analyticsCard analyticsCard--warn">
-                <span class="analyticsLabel">Avg Data Quality</span>
+                <span class="analyticsLabel">Avg Response (days)</span>
                 <strong id="avgQualityScore">0%</strong>
               </div>
             </div>
             <div class="ai-autopilot-bar">
               <div>
-                <p class="eyebrow">AI Operations Copilot</p>
+                <p class="eyebrow">Operations Copilot</p>
                 <strong id="aiAutopilotSummary">Analyzing current queue for response optimization…</strong>
               </div>
               <button type="button" class="secondary slim">Run Smart Dispatch</button>
@@ -171,14 +171,14 @@
                   </label>
                 </div>
               </div>
-              <p class="small">Manage status detection and active issue routing before field dispatch.</p>
+              <p class="small">Quick status pulse for total, pending, and verified entries in the queue.</p>
               <div class="snapshot-kpis">
                 <div class="snapshot-card">
-                  <span>Total</span>
+                  <span>Total Reports</span>
                   <strong id="snapshotTotalCount">0</strong>
                 </div>
                 <div class="snapshot-card snapshot-card--alert">
-                  <span>Pending</span>
+                  <span>Pending Review</span>
                   <strong id="snapshotPendingCount">0</strong>
                 </div>
                 <div class="snapshot-card snapshot-card--verified">
@@ -226,7 +226,7 @@
                   </label>
                 </div>
               </div>
-              <p class="small">Focused report validation by urgency to reduce unresolved and false-positive entries.</p>
+              <p class="small">Moderation lane styled for urgent verifications and false-positive filtering.</p>
               <div id="overviewQueueBody" class="verificationQueueCards"></div>
             </article>
 
@@ -238,7 +238,7 @@
                   <span class="section-chip muted-chip">Frequency</span>
                 </div>
               </div>
-              <p class="small">Top locations with recurring issue concentration and response load.</p>
+              <p class="small">Barangay hotspots inspired by dashboard-style horizontal load bars.</p>
               <div class="heatmapWrap">
                 <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
               </div>
@@ -287,7 +287,7 @@
 
             <article class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
             <div class="row data-analytics-header">
-              <h3>Data Analytics</h3>
+              <h3>Data Analytics Overview</h3>
               <div class="data-analytics-filters">
                 <label class="analytics-filter-control">
                   Barangay
@@ -340,7 +340,7 @@
             </div>
             <div class="analytics-timeline">
               <div class="row">
-                <h4>Issue Volume Timeline</h4>
+                <h4>Issue Volume Timeline (Overview + Analytics)</h4>
                 <p class="small" id="analyticsTimelineSummary">Daily trend of logged reports for rapid hotspot spotting.</p>
               </div>
               <div id="analyticsTimelineBars" class="analyticsTimelineBars" aria-live="polite"></div>
