@@ -193,6 +193,23 @@ async function fetchApiPayload(endpoint) {
 }
 
 function parseReports(payload) {
+  const toObjectRows = (rows) => {
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+    if (!Array.isArray(rows[0])) return rows;
+
+    const headers = rows[0].map((header) => String(header || "").trim());
+    return rows.slice(1)
+      .filter((row) => Array.isArray(row) && row.some((value) => String(value || "").trim() !== ""))
+      .map((row) => {
+        const record = {};
+        headers.forEach((header, index) => {
+          if (!header) return;
+          record[header] = row[index];
+        });
+        return record;
+      });
+  };
+
   if (typeof payload === "string") {
     const trimmed = payload.trim();
     if (!trimmed) return [];
@@ -204,12 +221,12 @@ function parseReports(payload) {
     }
   }
 
-  if (Array.isArray(payload)) return payload;
-  if (payload && Array.isArray(payload.reports)) return payload.reports;
-  if (payload && Array.isArray(payload.data)) return payload.data;
-  if (payload && Array.isArray(payload.items)) return payload.items;
-  if (payload && Array.isArray(payload.rows)) return payload.rows;
-  if (payload && Array.isArray(payload.values)) return payload.values;
+  if (Array.isArray(payload)) return toObjectRows(payload);
+  if (payload && Array.isArray(payload.reports)) return toObjectRows(payload.reports);
+  if (payload && Array.isArray(payload.data)) return toObjectRows(payload.data);
+  if (payload && Array.isArray(payload.items)) return toObjectRows(payload.items);
+  if (payload && Array.isArray(payload.rows)) return toObjectRows(payload.rows);
+  if (payload && Array.isArray(payload.values)) return toObjectRows(payload.values);
   return [];
 }
 
