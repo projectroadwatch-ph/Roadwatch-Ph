@@ -398,6 +398,28 @@
             <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
           </nav>
         </section>
+        <section class="management-kpi-grid" aria-label="Management workspace summary">
+          <article class="management-kpi-card">
+            <p>Filtered Queue</p>
+            <strong id="managementFilteredCount">0</strong>
+            <small>Reports that match your current filters.</small>
+          </article>
+          <article class="management-kpi-card management-kpi-card--warn">
+            <p>Urgent in View</p>
+            <strong id="managementUrgentCount">0</strong>
+            <small>Priority score 75+ reports requiring immediate action.</small>
+          </article>
+          <article class="management-kpi-card">
+            <p>Needs Verification</p>
+            <strong id="managementVerificationCount">0</strong>
+            <small>Reports missing proof, details, or location confidence.</small>
+          </article>
+          <article class="management-kpi-card">
+            <p>Selected Cases</p>
+            <strong id="managementSelectedCount">0</strong>
+            <small>Cases staged for bulk updates or project grouping.</small>
+          </article>
+        </section>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
             <div class="row">
@@ -449,6 +471,20 @@
             <div class="row">
               <h3>Report Workspace</h3>
 
+            </div>
+            <div class="workspace-organizer">
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 1 · Filter and prioritize</p>
+                <p class="small">Use search, status, quality, and triage presets to narrow into your action queue.</p>
+              </article>
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 2 · Review and select</p>
+                <p class="small">Select records that share a workflow objective before running a bulk operation.</p>
+              </article>
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 3 · Update and publish</p>
+                <p class="small">Save status updates, timeline notes, and closure proof to keep the public feed accurate.</p>
+              </article>
             </div>
             <div class="toolbar">
               <label class="inlineControl">Search

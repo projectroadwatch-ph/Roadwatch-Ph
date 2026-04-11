@@ -296,6 +296,44 @@ textarea:focus-visible {
   max-width: 68ch;
 }
 
+.management-kpi-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.management-kpi-card {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(165, 213, 255, 0.2);
+  background: linear-gradient(155deg, rgba(7, 26, 48, 0.86), rgba(8, 30, 54, 0.58));
+}
+
+.management-kpi-card p,
+.management-kpi-card small {
+  margin: 0;
+}
+
+.management-kpi-card strong {
+  margin-top: 4px;
+  display: block;
+  font-size: 1.45rem;
+  color: #f3f9ff;
+}
+
+.management-kpi-card small {
+  display: block;
+  margin-top: 4px;
+  color: #b3c6df;
+}
+
+.management-kpi-card--warn {
+  border-color: rgba(255, 207, 120, 0.46);
+  background: linear-gradient(160deg, rgba(41, 31, 9, 0.65), rgba(17, 27, 45, 0.62));
+}
+
 .command-center {
   margin-top: 14px;
   display: block;
@@ -311,6 +349,34 @@ textarea:focus-visible {
 .command-pane h3,
 .command-pane h4 {
   margin: 0;
+}
+
+.workspace-organizer {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.workspace-lane {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(165, 213, 255, 0.32);
+  background: rgba(6, 24, 46, 0.35);
+}
+
+.workspace-lane__label {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8ecbff;
+}
+
+.workspace-lane .small {
+  margin: 4px 0 0;
 }
 
 .queue-section {
@@ -3835,6 +3901,24 @@ tr:hover td {
 
 @media (max-width: 900px) {
   .strategic-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace-organizer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .management-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .management-kpi-grid {
     grid-template-columns: 1fr;
   }
 }

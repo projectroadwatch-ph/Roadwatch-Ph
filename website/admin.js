@@ -102,6 +102,10 @@ const bulkStatusValue = document.getElementById("bulkStatusValue");
 const applyBulkStatusBtn = document.getElementById("applyBulkStatusBtn");
 const clearSelectionBtn = document.getElementById("clearSelectionBtn");
 const selectionSummary = document.getElementById("selectionSummary");
+const managementFilteredCount = document.getElementById("managementFilteredCount");
+const managementUrgentCount = document.getElementById("managementUrgentCount");
+const managementVerificationCount = document.getElementById("managementVerificationCount");
+const managementSelectedCount = document.getElementById("managementSelectedCount");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -1155,6 +1159,18 @@ function renderSelectionSummary() {
   if (!selectionSummary) return;
   const count = selectedReports.size;
   selectionSummary.textContent = `${count} selected`;
+  if (managementSelectedCount) managementSelectedCount.textContent = String(count);
+}
+
+function renderManagementSnapshot(filteredReports) {
+  const reports = Array.isArray(filteredReports) ? filteredReports : [];
+  const urgentCount = reports.filter((report) => getPriorityScore(report) >= 75).length;
+  const verificationCount = reports.filter((report) => getVerificationState(report) !== "Verified").length;
+
+  if (managementFilteredCount) managementFilteredCount.textContent = String(reports.length);
+  if (managementUrgentCount) managementUrgentCount.textContent = String(urgentCount);
+  if (managementVerificationCount) managementVerificationCount.textContent = String(verificationCount);
+  if (managementSelectedCount) managementSelectedCount.textContent = String(selectedReports.size);
 }
 
 function getSelectedReports() {
@@ -2692,6 +2708,7 @@ function applyFiltersAndRender() {
   syncTimelineTrackingOptions(allReports);
   const filtered = getFilteredReports();
   const paginated = getPaginatedReports(filtered);
+  renderManagementSnapshot(filtered);
   renderRows(paginated);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
