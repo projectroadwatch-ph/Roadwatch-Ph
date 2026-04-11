@@ -233,17 +233,22 @@ function applyAdminWebsiteSettings() {
     : null;
 }
 
+function withCacheBust(endpoint) {
+  const separator = endpoint.includes("?") ? "&" : "?";
+  return `${endpoint}${separator}cb=${Date.now()}`;
+}
+
 function getReportEndpoints() {
   // Keep a short endpoint list to avoid spamming repeated browser CORS errors
   // when the Apps Script deployment is not configured for cross-origin access.
-  return [API_URL, `${API_URL}?action=getReports`];
+  return [withCacheBust(API_URL), withCacheBust(`${API_URL}?action=getReports`)];
 }
 
 function buildTrackingLookupEndpoints(trackingNumber) {
   const tracking = encodeURIComponent((trackingNumber || "").trim());
   return [
-    `${API_URL}?action=getReportByTracking&tracking=${tracking}`,
-    `${API_URL}?action=getReports`
+    withCacheBust(`${API_URL}?action=getReportByTracking&tracking=${tracking}`),
+    withCacheBust(`${API_URL}?action=getReports`)
   ];
 }
 
