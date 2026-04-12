@@ -1477,6 +1477,15 @@ function renderKanbanBoard(reports) {
   if (kanbanCountInProgress) kanbanCountInProgress.textContent = String(counts["In Progress"] || 0);
   if (kanbanCountRepaired) kanbanCountRepaired.textContent = String(counts.Repaired || 0);
 
+  Object.entries(columns).forEach(([status, col]) => {
+    if (col.childElementCount === 0) {
+      const hint = document.createElement("p");
+      hint.className = "small kanban-empty-hint";
+      hint.textContent = `No ${status.toLowerCase()} cards in this view.`;
+      col.appendChild(hint);
+    }
+  });
+
   const selected = safeReports.find((report) => String(report.tracking || "").trim() === activeKanbanTracking);
   renderKanbanDrawer(selected || null);
 }

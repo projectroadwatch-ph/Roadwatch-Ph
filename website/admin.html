@@ -493,9 +493,16 @@
           </aside>
 
           <section id="workspacePane" class="command-pane command-pane--workspace analytics-panel">
-            <div class="row">
-              <h3>Report Workspace</h3>
-
+            <div class="row workspace-pane-header">
+              <div>
+                <h3>Report Workspace</h3>
+                <p class="small">Run focused queue operations with quick filters, saved views, and bulk actions.</p>
+              </div>
+              <div class="workspace-header-badges" aria-label="Workspace highlights">
+                <span class="section-chip">Live Filters</span>
+                <span class="section-chip">Bulk Actions</span>
+                <span class="section-chip">Kanban + Table</span>
+              </div>
             </div>
             <div class="workspace-organizer">
               <article class="workspace-lane">
@@ -511,8 +518,9 @@
                 <p class="small">Save status updates, timeline notes, and closure proof to keep the public feed accurate.</p>
               </article>
             </div>
-            <div class="toolbar">
-              <label class="inlineControl">Search
+            <div class="workspace-toolbar-shell">
+            <div class="toolbar toolbar--primary">
+              <label class="inlineControl workspace-search-control">Search
                 <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
               </label>
               <label class="inlineControl">Status Filter
@@ -586,6 +594,7 @@
               <button id="clearSelectionBtn" type="button" class="secondary slim">Clear selection</button>
               <p id="selectionSummary" class="small">0 selected</p>
             </div>
+            </div>
             <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
             <p id="filterSummary" class="small"></p>
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
@@ -598,19 +607,19 @@
               <div class="kanban-board">
                 <article class="kanban-column" data-status="Pending">
                   <header><h4>Pending</h4><span id="kanbanCountPending">0</span></header>
-                  <div id="kanbanPending" class="kanban-column-body"></div>
+                  <div id="kanbanPending" class="kanban-column-body"><p class="small kanban-empty-hint">No pending cards in this view.</p></div>
                 </article>
                 <article class="kanban-column" data-status="Verified">
                   <header><h4>Verified</h4><span id="kanbanCountVerified">0</span></header>
-                  <div id="kanbanVerified" class="kanban-column-body"></div>
+                  <div id="kanbanVerified" class="kanban-column-body"><p class="small kanban-empty-hint">No verified cards in this view.</p></div>
                 </article>
                 <article class="kanban-column" data-status="In Progress">
                   <header><h4>In Progress</h4><span id="kanbanCountInProgress">0</span></header>
-                  <div id="kanbanInProgress" class="kanban-column-body"></div>
+                  <div id="kanbanInProgress" class="kanban-column-body"><p class="small kanban-empty-hint">No in-progress cards in this view.</p></div>
                 </article>
                 <article class="kanban-column" data-status="Repaired">
                   <header><h4>Repaired</h4><span id="kanbanCountRepaired">0</span></header>
-                  <div id="kanbanRepaired" class="kanban-column-body"></div>
+                  <div id="kanbanRepaired" class="kanban-column-body"><p class="small kanban-empty-hint">No repaired cards in this view.</p></div>
                 </article>
               </div>
               <aside id="kanbanDetailDrawer" class="kanban-drawer" aria-live="polite">
@@ -637,7 +646,7 @@
               </aside>
             </section>
             <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
-            <div id="tableWorkspace" class="tableWrap" hidden>
+            <div id="tableWorkspace" class="tableWrap management-table-wrap" hidden>
               <table class="management-table">
                 <thead>
                   <tr>

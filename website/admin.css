@@ -5123,3 +5123,95 @@ body.admin-authenticated .dashboard-header {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* 2026-04-12 admin workspace UI refresh */
+.workspace-pane-header {
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.workspace-header-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.workspace-header-badges .section-chip {
+  background: rgba(77, 160, 244, 0.15);
+  border: 1px solid rgba(131, 196, 255, 0.34);
+}
+
+.workspace-toolbar-shell {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(164, 212, 255, 0.2);
+  background: linear-gradient(140deg, rgba(8, 26, 47, 0.78), rgba(8, 22, 40, 0.58));
+}
+
+#workspacePane .toolbar--primary {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(3, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+#workspacePane .workspace-search-control {
+  min-width: 0;
+}
+
+.management-table-wrap {
+  border-radius: 12px;
+  border-color: rgba(159, 210, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.kanban-column[data-status="Pending"] { border-top: 3px solid #fca5a5; }
+.kanban-column[data-status="Verified"] { border-top: 3px solid #60a5fa; }
+.kanban-column[data-status="In Progress"] { border-top: 3px solid #facc15; }
+.kanban-column[data-status="Repaired"] { border-top: 3px solid #34d399; }
+
+.kanban-card {
+  border-color: rgba(156, 187, 219, 0.5);
+  box-shadow: 0 6px 16px rgba(4, 18, 34, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(4, 18, 34, 0.16);
+  border-color: rgba(29, 78, 216, 0.45);
+}
+
+.kanban-empty-hint {
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed #c9daea;
+  background: #f3f8fd;
+  color: #4f6b86;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  #workspacePane .toolbar--primary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .workspace-pane-header {
+    flex-direction: column;
+  }
+
+  .workspace-header-badges {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  #workspacePane .toolbar--primary {
+    grid-template-columns: 1fr;
+  }
+}
