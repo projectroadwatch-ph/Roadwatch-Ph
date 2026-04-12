@@ -4927,6 +4927,58 @@ body.admin-authenticated .dashboard-nav {
   top: auto;
 }
 
+.sync-meta-status {
+  margin-top: 6px;
+}
+
+.stale-data-banner {
+  margin: 6px 0 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: #8b2f00;
+  background: #fff0e6;
+  border: 1px solid rgba(190, 120, 67, 0.35);
+}
+
+.urgency-reason {
+  display: inline-block;
+  max-width: 210px;
+  font-size: 0.78rem;
+  color: #4a6280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.management-table th:nth-child(1),
+.management-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: inherit;
+}
+
+.management-table th:nth-child(3),
+.management-table td:nth-child(3) {
+  position: sticky;
+  left: 44px;
+  z-index: 3;
+  background: inherit;
+}
+
+.management-table.view-triage th:nth-child(4),
+.management-table.view-triage td:nth-child(4),
+.management-table.view-triage th:nth-child(5),
+.management-table.view-triage td:nth-child(5),
+.management-table.view-triage th:nth-child(12),
+.management-table.view-triage td:nth-child(12),
+.management-table.view-triage th:nth-child(15),
+.management-table.view-triage td:nth-child(15),
+.management-table.view-triage th:nth-child(16),
+.management-table.view-triage td:nth-child(16) {
+  display: none;
+}
+
 body.admin-authenticated .admin-console-layout {
   grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
   align-items: start;
