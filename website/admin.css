@@ -3034,7 +3034,7 @@ label {
   grid-template-areas:
     "snapshot status"
     "verification barangay"
-    "response ai"
+    "verification response"
     "map map"
     "analytics analytics";
   align-items: start;
@@ -3063,10 +3063,28 @@ label {
 .overview-main-grid--organized .overview-panel--snapshot,
 .overview-main-grid--organized .overview-panel--barangay,
 .overview-main-grid--organized .overview-panel--response,
-.overview-main-grid--organized .overview-panel--ai,
 .overview-main-grid--organized .overview-panel--analytics,
 .overview-main-grid--organized .overview-panel--map {
   display: block;
+}
+
+.overview-main-grid--organized .overview-panel--verification {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-main-grid--organized .overview-panel--verification .verificationQueueCards {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.overview-main-grid--organized .overview-panel--verification .verificationQueueCards::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 @media (max-width: 1200px) {
@@ -3078,7 +3096,6 @@ label {
       "verification"
       "barangay"
       "response"
-      "ai"
       "map"
       "analytics";
   }

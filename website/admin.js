@@ -1991,8 +1991,6 @@ function renderOverviewQueueTable(reports) {
 }
 
 function renderAiRecommendations(reports) {
-  if (!aiRecommendations) return;
-
   const openReports = reports.filter((report) => normalizeStatus(report.status) !== "Repaired");
   const highRisk = openReports.filter((report) => getPriorityScore(report) >= 75);
   const overdue = openReports.filter((report) => getEscalationState(report) === "Overdue");
@@ -2025,6 +2023,8 @@ function renderAiRecommendations(reports) {
       meta: "Forecast AI"
     }
   ];
+
+  if (!aiRecommendations) return;
 
   aiRecommendations.innerHTML = recommendations.map((item) => `
     <article class="aiRecoCard">
