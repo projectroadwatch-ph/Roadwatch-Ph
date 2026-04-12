@@ -1697,8 +1697,7 @@ function renderVerificationQueue(reports) {
     .sort((a, b) => {
       const weight = (state) => (state === "Flagged" ? 0 : state === "Needs Verification" ? 1 : 2);
       return weight(a.state) - weight(b.state);
-    })
-    .slice(0, 8);
+    });
 
   if (queue.length === 0) {
     verificationQueueList.innerHTML = '<li class="priorityItem empty">No reports match the selected verification filter.</li>';
@@ -1938,8 +1937,7 @@ function renderOverviewQueueTable(reports) {
       const openDiff = Number(normalizeStatus(a.status) === "Repaired") - Number(normalizeStatus(b.status) === "Repaired");
       if (openDiff !== 0) return openDiff;
       return getPriorityScore(b) - getPriorityScore(a);
-    })
-    .slice(0, 8);
+    });
 
   if (!prioritized.length) {
     overviewQueueBody.innerHTML = '<article class="aiRecoCard"><strong>No reports available yet.</strong><p>Incoming submissions will appear here for moderation and dispatch.</p></article>';
