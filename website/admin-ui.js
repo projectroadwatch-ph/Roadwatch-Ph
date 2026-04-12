@@ -12,11 +12,19 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     statusElement.dataset.state = state;
   }
 
-  function renderAdminIdentity(adminIdentityChip) {
+  function renderAdminIdentity(adminIdentityChip, {
+    role = "Super Admin",
+    trustBadge = null,
+    isLocalSession = true
+  } = {}) {
     if (!adminIdentityChip) return;
     const activeUser = String(localStorage.getItem("roadwatchAdminActiveUser") || "Admin").trim() || "Admin";
-    adminIdentityChip.textContent = activeUser;
-    adminIdentityChip.title = `Signed in as ${activeUser}`;
+    const normalizedRole = String(role || "Super Admin").trim() || "Super Admin";
+    adminIdentityChip.textContent = `${activeUser} · ${normalizedRole}`;
+    adminIdentityChip.title = `Signed in as ${activeUser} (${normalizedRole})`;
+    if (trustBadge) {
+      trustBadge.textContent = isLocalSession ? "Demo Mode · Local session" : "Demo Mode · Sign in required";
+    }
   }
 
   function syncSearchInputs({ dashboardSearch, reportSearch, source = "workspace" }) {

@@ -168,10 +168,27 @@ body {
   outline: none;
 }
 
+.console-search:focus-within {
+  border-color: rgba(148, 211, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(82, 168, 255, 0.22);
+}
+
 .console-chip {
   margin-top: 0;
   min-width: 86px;
   border-radius: 999px;
+}
+
+.trust-badge {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 199, 102, 0.4);
+  color: #ffe2a5;
+  background: rgba(120, 81, 22, 0.35);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .dashboard-header {
   position: relative;
@@ -3560,6 +3577,43 @@ textarea:focus-visible,
 .management-table tr.is-urgent-row {
   box-shadow: inset 4px 0 0 #fb7185;
   background: rgba(131, 24, 67, 0.16);
+}
+
+.saved-view-toolbar {
+  align-items: end;
+}
+
+.saved-view-toolbar .inlineControl {
+  min-width: 220px;
+}
+
+.paginationControls .inlineControl {
+  min-width: 110px;
+  margin: 0;
+}
+
+.management-table.view-triage th:nth-child(4),
+.management-table.view-triage td:nth-child(4),
+.management-table.view-triage th:nth-child(6),
+.management-table.view-triage td:nth-child(6),
+.management-table.view-triage th:nth-child(12),
+.management-table.view-triage td:nth-child(12),
+.management-table.view-triage th:nth-child(13),
+.management-table.view-triage td:nth-child(13),
+.management-table.view-triage th:nth-child(14),
+.management-table.view-triage td:nth-child(14),
+.management-table.view-triage th:nth-child(15),
+.management-table.view-triage td:nth-child(15),
+.management-table.view-triage th:nth-child(16),
+.management-table.view-triage td:nth-child(16) {
+  display: none;
+}
+
+.management-table.view-operations th:nth-child(4),
+.management-table.view-operations td:nth-child(4),
+.management-table.view-operations th:nth-child(10),
+.management-table.view-operations td:nth-child(10) {
+  display: none;
 }
 
 @media (max-width: 900px) {
