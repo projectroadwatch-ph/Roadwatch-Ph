@@ -54,6 +54,8 @@ const triagePane = document.getElementById("triagePane");
 const workspacePane = document.getElementById("workspacePane");
 const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
+const sidebarNavLinks = Array.from(document.querySelectorAll("[data-nav-view]"));
+const sidebarSectionLinks = Array.from(document.querySelectorAll(".admin-sidebar__sections a[href^='#']"));
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
 const openTriageHeroBtn = document.getElementById("openTriageHeroBtn");
 const openTriageShortcutBtn = document.getElementById("openTriageShortcutBtn");
@@ -747,6 +749,7 @@ function setDashboardView(view) {
   showOverviewBtn?.classList.toggle("is-active", activeView === "overview");
   showManagementBtn?.classList.toggle("is-active", activeView === "management");
   showOperationsBtn?.classList.remove("is-active");
+  updateSidebarNavState(activeView, activeView === "management" ? "workspace" : "");
 
   if (activeView === "management") {
     setManagementPane("workspace");
@@ -767,6 +770,16 @@ function setManagementPane(pane) {
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
   setTableColumnView(activePane === "triage" ? "triage" : "operations");
+  updateSidebarNavState("management", activePane);
+}
+
+function updateSidebarNavState(view = "overview", pane = "") {
+  sidebarNavLinks.forEach((link) => {
+    const targetView = String(link.dataset.navView || "overview");
+    const targetPane = String(link.dataset.navPane || "");
+    const isActive = targetView === view && (targetPane ? targetPane === pane : pane === "");
+    link.classList.toggle("is-active", isActive);
+  });
 }
 
 
@@ -2869,6 +2882,23 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+sidebarNavLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    const targetView = String(link.dataset.navView || "overview");
+    const targetPane = String(link.dataset.navPane || "");
+    if (targetView === "management") {
+      setDashboardView("management");
+      setManagementPane(targetPane === "triage" ? "triage" : "workspace");
+      return;
+    }
+    setDashboardView("overview");
+  });
+});
+sidebarSectionLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    setDashboardView("overview");
+  });
+});
 openTriageFromOverviewBtn?.addEventListener("click", () => {
   setDashboardView("management");
   setManagementPane("triage");

@@ -32,6 +32,35 @@
     </section>
 
     <section id="dashboard" class="card hidden dashboard-shell" hidden>
+      <div class="admin-console-layout">
+      <aside class="admin-sidebar" aria-label="Admin dashboard navigation">
+        <div class="admin-sidebar__brand">
+          <span class="admin-sidebar__logo">RW</span>
+          <div>
+            <strong>RoadWatch PH</strong>
+            <p>Admin Suite</p>
+          </div>
+        </div>
+        <p class="admin-sidebar__label">Main Navigation</p>
+        <div class="admin-sidebar__nav">
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview">Dashboard Home</button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace">Report Workspace</button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage">Triage Inbox</button>
+        </div>
+        <p class="admin-sidebar__label">Overview Sections</p>
+        <nav class="admin-sidebar__sections" aria-label="Overview section shortcuts">
+          <a href="#overviewSnapshotPanel">Operational Snapshot</a>
+          <a href="#overviewStatusPanel">Status Distribution</a>
+          <a href="#overviewQueuePanel">Verification Queue</a>
+          <a href="#overviewBarangayPanel">Barangay Hotspots</a>
+          <a href="#overviewResponsePanel">Response Time</a>
+          <a href="#overviewMapPanel">Live Map</a>
+          <a href="#overviewAnalyticsPanel">Data Analytics</a>
+          <a href="#overviewAiPanel">AI Recommendations</a>
+        </nav>
+      </aside>
+
+      <div class="admin-console-main">
       <div class="console-topbar">
         <div class="console-brand">
           <span class="console-brand-mark" aria-hidden="true"><span>RW</span></span>
@@ -180,7 +209,7 @@
           </article>
 
           <div class="overview-main-grid overview-main-grid--organized">
-            <article class="panel chart-stretch overview-panel overview-panel--snapshot">
+            <article id="overviewSnapshotPanel" class="panel chart-stretch overview-panel overview-panel--snapshot">
               <div class="row">
                 <h3>Operational Snapshot</h3>
                 <div class="header-actions">
@@ -215,7 +244,7 @@
               </div>
             </article>
 
-            <article class="panel chart-stretch overview-panel overview-panel--status">
+            <article id="overviewStatusPanel" class="panel chart-stretch overview-panel overview-panel--status">
               <div class="row">
                 <h3>Status Distribution</h3>
                 <div class="header-actions">
@@ -240,7 +269,7 @@
               </div>
             </article>
 
-            <article class="panel chart-stretch full-width-panel overview-panel overview-panel--verification">
+            <article id="overviewQueuePanel" class="panel chart-stretch full-width-panel overview-panel overview-panel--verification">
               <div class="row">
                 <h3>Verification & Moderation Queue</h3>
                 <div class="header-actions">
@@ -257,7 +286,7 @@
               <div id="overviewQueueBody" class="verificationQueueCards"></div>
             </article>
 
-            <article class="panel chart-stretch overview-panel overview-panel--barangay">
+            <article id="overviewBarangayPanel" class="panel chart-stretch overview-panel overview-panel--barangay">
               <div class="row">
                 <h3>Reports Per Barangay</h3>
                 <div class="header-actions">
@@ -271,7 +300,7 @@
               </div>
             </article>
 
-            <article class="panel chart-stretch overview-panel overview-panel--response">
+            <article id="overviewResponsePanel" class="panel chart-stretch overview-panel overview-panel--response">
               <div class="row">
                 <h3>Response Time</h3>
                 <div class="header-actions">
@@ -297,7 +326,7 @@
               </div>
             </article>
 
-            <article class="panel chart-stretch overview-map-panel full-width-panel overview-panel overview-panel--map">
+            <article id="overviewMapPanel" class="panel chart-stretch overview-map-panel full-width-panel overview-panel overview-panel--map">
               <div class="row">
                 <h3>Live Road Issue Map</h3>
                 <p class="small">Barangay-level map markers for urgent, moderate, and low-risk reports.</p>
@@ -312,7 +341,7 @@
             <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
           </article>
 
-            <article class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
+            <article id="overviewAnalyticsPanel" class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
             <div class="row data-analytics-header">
               <h3>Data Analytics</h3>
               <div class="data-analytics-filters">
@@ -378,7 +407,7 @@
               </div>
             </article>
 
-            <article class="panel chart-stretch overview-panel overview-panel--ai">
+            <article id="overviewAiPanel" class="panel chart-stretch overview-panel overview-panel--ai">
               <div class="row">
                 <h3>AI Recommended Actions</h3>
                 <span class="section-chip">Autopilot Ready</span>
@@ -614,6 +643,8 @@
       </section>
 
     </section>
+    </div>
+    </div>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
