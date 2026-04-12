@@ -591,6 +591,28 @@ table { width: 100%; border-collapse: collapse; min-width: 100%; }
 .management-table { min-width: 1520px; }
 th, td { padding: 10px; border-bottom: 1px solid rgba(165,213,255,0.15); text-align: left; vertical-align: top; }
 th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
+.management-table th {
+  color: #dff0ff;
+  letter-spacing: 0.01em;
+  font-weight: 700;
+}
+
+.management-table td {
+  color: #d6e9ff;
+  vertical-align: middle;
+}
+
+.management-table tbody tr {
+  background: rgba(4, 23, 44, 0.62);
+}
+
+.management-table tbody tr:nth-child(even) {
+  background: rgba(8, 33, 61, 0.64);
+}
+
+.management-table tbody tr:hover {
+  background: rgba(41, 158, 255, 0.16);
+}
 .paginationBar {
   margin-top: 10px;
   display: flex;
@@ -1122,6 +1144,18 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .action-cell .slim {
   min-width: 78px;
+  font-weight: 600;
+}
+
+.management-table .status-select {
+  background: rgba(234, 241, 250, 0.95);
+  color: #16314f;
+  border-color: rgba(104, 158, 220, 0.45);
+}
+
+.management-table .status-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(82, 168, 255, 0.24);
 }
 
 .action-cell__drawer-btn {
@@ -1779,12 +1813,12 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
 
 .management-table tbody tr:nth-child(even),
 .overview-table tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(8, 33, 61, 0.64);
 }
 
 .management-table tbody tr:hover,
 .overview-table tbody tr:hover {
-  background: rgba(41, 158, 255, 0.08);
+  background: rgba(41, 158, 255, 0.16);
 }
 
 .workspace-actions .queue-section {
