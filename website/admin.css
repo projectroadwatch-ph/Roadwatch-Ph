@@ -4234,3 +4234,142 @@ body.admin-authenticated button.secondary {
   border: 1px solid rgba(137, 164, 194, 0.44);
   color: #39516a;
 }
+
+/* Professional control-system layout refresh */
+body.admin-authenticated .dashboard-shell {
+  padding: 14px 16px 22px;
+  border-radius: 16px;
+  background: #eef3f9;
+  border-color: rgba(116, 142, 171, 0.3);
+}
+
+body.admin-authenticated .console-topbar {
+  top: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border-color: rgba(120, 145, 172, 0.3);
+  box-shadow: 0 6px 18px rgba(25, 48, 75, 0.08);
+}
+
+body.admin-authenticated .dashboard-header {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+body.admin-authenticated .dashboard-control-deck {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+body.admin-authenticated .dashboard-nav {
+  margin-top: 0;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(215, 227, 242, 0.55);
+  border: 1px solid rgba(130, 157, 187, 0.35);
+}
+
+body.admin-authenticated .nav-btn {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+body.admin-authenticated .nav-btn.is-active {
+  background: #ffffff;
+  border-color: rgba(120, 145, 172, 0.5);
+  color: #24384e;
+}
+
+body.admin-authenticated .overview-shell {
+  gap: 12px;
+}
+
+body.admin-authenticated .overview-main-grid--organized {
+  gap: 12px;
+}
+
+body.admin-authenticated .panel,
+body.admin-authenticated .analytics-panel,
+body.admin-authenticated .management-kpi-card {
+  border-radius: 12px;
+}
+
+body.admin-authenticated .row {
+  gap: 10px;
+}
+
+body.admin-authenticated .header-actions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+body.admin-authenticated .command-center {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 2.1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+body.admin-authenticated #workspacePane,
+body.admin-authenticated #triagePane {
+  min-height: 100%;
+}
+
+body.admin-authenticated .toolbar {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(218, 229, 243, 0.48);
+  border: 1px solid rgba(130, 157, 187, 0.3);
+}
+
+body.admin-authenticated .workspace-organizer {
+  gap: 10px;
+}
+
+body.admin-authenticated .workspace-lane {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.admin-authenticated .reportsTableWrap,
+body.admin-authenticated .table-wrapper {
+  border-radius: 10px;
+  border: 1px solid rgba(130, 157, 187, 0.3);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+body.admin-authenticated table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #e8f0fa;
+  color: #334b64;
+}
+
+body.admin-authenticated table tbody tr:nth-child(even) {
+  background: rgba(228, 237, 248, 0.35);
+}
+
+body.admin-authenticated table tbody tr:hover {
+  background: rgba(186, 212, 239, 0.3);
+}
+
+@media (max-width: 1080px) {
+  body.admin-authenticated .dashboard-control-deck {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .command-center {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .quick-actions--dashboard {
+    width: 100%;
+  }
+}
