@@ -876,6 +876,8 @@ function applyCaseMetadata(report) {
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
   activeDashboardView = activeView;
+  if (showOverviewBtn) showOverviewBtn.setAttribute("aria-selected", String(activeView === "overview"));
+  if (showManagementBtn) showManagementBtn.setAttribute("aria-selected", String(activeView === "management"));
   if (activeView === "management") {
     if (overviewView) overviewView.hidden = true;
     if (managementView) managementView.hidden = false;
