@@ -590,8 +590,54 @@
             <p id="filterSummary" class="small"></p>
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
+            <div class="workspace-view-toggle" role="group" aria-label="Workspace layout">
+              <button id="showKanbanViewBtn" type="button" class="secondary slim nav-btn is-active">Kanban</button>
+              <button id="showTableViewBtn" type="button" class="secondary slim nav-btn">Table</button>
+            </div>
+            <section id="kanbanWorkspace" class="kanban-workspace" aria-label="Kanban report workspace">
+              <div class="kanban-board">
+                <article class="kanban-column" data-status="Pending">
+                  <header><h4>Pending</h4><span id="kanbanCountPending">0</span></header>
+                  <div id="kanbanPending" class="kanban-column-body"></div>
+                </article>
+                <article class="kanban-column" data-status="Verified">
+                  <header><h4>Verified</h4><span id="kanbanCountVerified">0</span></header>
+                  <div id="kanbanVerified" class="kanban-column-body"></div>
+                </article>
+                <article class="kanban-column" data-status="In Progress">
+                  <header><h4>In Progress</h4><span id="kanbanCountInProgress">0</span></header>
+                  <div id="kanbanInProgress" class="kanban-column-body"></div>
+                </article>
+                <article class="kanban-column" data-status="Repaired">
+                  <header><h4>Repaired</h4><span id="kanbanCountRepaired">0</span></header>
+                  <div id="kanbanRepaired" class="kanban-column-body"></div>
+                </article>
+              </div>
+              <aside id="kanbanDetailDrawer" class="kanban-drawer" aria-live="polite">
+                <h4>Case Details</h4>
+                <p id="kanbanDrawerEmpty" class="small">Select a card to view full details and run actions.</p>
+                <div id="kanbanDrawerContent" hidden>
+                  <p><strong id="kanbanDetailTracking">-</strong></p>
+                  <p id="kanbanDetailLocation" class="small">-</p>
+                  <p id="kanbanDetailIssue" class="small">-</p>
+                  <label class="inlineControl compact">Assign To
+                    <input id="kanbanAssignTo" type="text" placeholder="Assign team or owner">
+                  </label>
+                  <label class="inlineControl compact">SLA Due
+                    <input id="kanbanDueAt" type="date">
+                  </label>
+                  <div class="kanban-drawer-actions">
+                    <button id="kanbanSaveMetaBtn" type="button" class="secondary slim">Save Assignment</button>
+                    <button id="kanbanSetPendingBtn" type="button" class="secondary slim">Set Pending</button>
+                    <button id="kanbanSetVerifiedBtn" type="button" class="secondary slim">Set Verified</button>
+                    <button id="kanbanSetProgressBtn" type="button" class="secondary slim">Set In Progress</button>
+                    <button id="kanbanSetRepairedBtn" type="button" class="secondary slim">Set Repaired</button>
+                  </div>
+                </div>
+              </aside>
+            </section>
             <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
-            <div class="tableWrap">
+            <div id="tableWorkspace" class="tableWrap" hidden>
               <table class="management-table">
                 <thead>
                   <tr>
