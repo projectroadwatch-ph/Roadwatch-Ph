@@ -874,6 +874,18 @@ th { background: rgba(5, 21, 40, 0.75); position: sticky; top: 0; z-index: 1; }
   gap: 8px;
 }
 
+#verificationQueueList {
+  max-height: 272px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#overviewQueueBody {
+  max-height: 372px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .priorityItem {
   display: flex;
   justify-content: space-between;
