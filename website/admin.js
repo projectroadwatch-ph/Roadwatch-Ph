@@ -751,37 +751,69 @@ function applyCaseMetadata(report) {
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
   activeDashboardView = activeView;
-  if (overviewView) overviewView.hidden = activeView !== "overview";
-  if (managementView) managementView.hidden = activeView !== "management";
-  if (operationsView) operationsView.hidden = true;
-
-  showOverviewBtn?.classList.toggle("is-active", activeView === "overview");
-  showManagementBtn?.classList.toggle("is-active", activeView === "management");
-  showOperationsBtn?.classList.remove("is-active");
-  updateSidebarNavState(activeView, activeView === "management" ? "workspace" : "");
-  setBreadcrumbs(activeView, activeView === "management" ? "workspace" : "");
-
   if (activeView === "management") {
+    if (overviewView) overviewView.hidden = true;
+    if (managementView) managementView.hidden = false;
+    if (operationsView) operationsView.hidden = true;
+    showOverviewBtn?.classList.remove("is-active");
+    showManagementBtn?.classList.add("is-active");
+    showOperationsBtn?.classList.remove("is-active");
     setManagementPane("workspace");
     return;
   }
 
-  window.setTimeout(() => {
-    overviewMap?.invalidateSize();
-  }, 40);
+  if (typeof adminHomePage.activate !== "function") {
+    if (overviewView) overviewView.hidden = false;
+    if (managementView) managementView.hidden = true;
+    if (operationsView) operationsView.hidden = true;
+    showOverviewBtn?.classList.add("is-active");
+    showManagementBtn?.classList.remove("is-active");
+    showOperationsBtn?.classList.remove("is-active");
+    updateSidebarNavState("overview", "");
+    setBreadcrumbs("overview", "");
+    window.setTimeout(() => {
+      overviewMap?.invalidateSize();
+    }, 40);
+    return;
+  }
+
+  adminHomePage.activate({
+    overviewView,
+    managementView,
+    operationsView,
+    showOverviewBtn,
+    showManagementBtn,
+    showOperationsBtn,
+    updateSidebarNavState,
+    setBreadcrumbs,
+    overviewMap
+  });
 }
 
 function setManagementPane(pane) {
   const activePane = pane === "triage" ? "triage" : "workspace";
+  const pageConfig = getManagementPaneConfig(activePane);
 
-  if (triagePane) triagePane.hidden = activePane !== "triage";
-  if (workspacePane) workspacePane.hidden = activePane !== "workspace";
+  if (typeof pageConfig.activate !== "function") {
+    if (triagePane) triagePane.hidden = activePane !== "triage";
+    if (workspacePane) workspacePane.hidden = activePane !== "workspace";
+    showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
+    showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
+    setTableColumnView(activePane === "triage" ? "triage" : "operations");
+    updateSidebarNavState("management", activePane);
+    setBreadcrumbs("management", activePane);
+    return;
+  }
 
-  showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
-  showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
-  setTableColumnView(activePane === "triage" ? "triage" : "operations");
-  updateSidebarNavState("management", activePane);
-  setBreadcrumbs("management", activePane);
+  pageConfig.activate({
+    triagePane,
+    workspacePane,
+    showTriagePaneBtn,
+    showWorkspacePaneBtn,
+    setTableColumnView,
+    updateSidebarNavState,
+    setBreadcrumbs
+  });
 }
 
 function updateSidebarNavState(view = "overview", pane = "") {
