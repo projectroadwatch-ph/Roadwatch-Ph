@@ -5268,3 +5268,43 @@ body.admin-authenticated .dashboard-header {
     justify-self: start;
   }
 }
+
+/* 2026-04-12 cross-device consistency mode:
+   keep one stable dashboard structure and allow horizontal scroll on small screens
+   instead of heavily reflowing core navigation and header layout. */
+body.admin-authenticated .dashboard-shell {
+  overflow-x: auto;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: 250px minmax(980px, 1fr);
+}
+
+body.admin-authenticated .admin-console-main {
+  min-width: 980px;
+}
+
+body.admin-authenticated .console-topbar {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, auto);
+}
+
+body.admin-authenticated.sidebar-collapsed .admin-sidebar {
+  display: flex !important;
+}
+
+@media (max-width: 1120px) {
+  body.admin-authenticated .admin-console-layout {
+    grid-template-columns: 250px minmax(980px, 1fr) !important;
+  }
+
+  body.admin-authenticated .admin-sidebar {
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 40px);
+    display: flex !important;
+  }
+
+  body.admin-authenticated .sidebar-toggle-btn {
+    display: none !important;
+  }
+}
