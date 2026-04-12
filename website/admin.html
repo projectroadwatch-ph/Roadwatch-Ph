@@ -44,7 +44,8 @@
             <span>🔎</span>
             <input id="dashboardSearch" type="search" placeholder="Search reports, barangays, issues" aria-label="Search dashboard content">
           </label>
-          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin</button>
+          <p id="adminTrustBadge" class="trust-badge" aria-live="polite">Demo Mode · Local session</p>
+          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin · Super Admin</button>
         </div>
       </div>
 
@@ -92,9 +93,9 @@
           <button id="showManagementBtn" type="button" class="secondary nav-btn">System Management</button>
         </nav>
         <div class="quick-actions quick-actions--dashboard" aria-label="Command shortcuts">
-          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill">System Status</button>
-          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill">Network Insights</button>
-          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill">Device Sync</button>
+          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill">Open Triage Queue</button>
+          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill">Show Critical Cases</button>
+          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill">Refresh Reports</button>
         </div>
 
       </section>
@@ -139,7 +140,7 @@
               </div>
               <div class="kpi-pill analyticsCard analyticsCard--warn">
                 <span class="analyticsLabel">Avg Response (days)</span>
-                <strong id="avgQualityScore">0%</strong>
+                <strong id="avgResponseDays">0</strong>
               </div>
             </div>
             <div class="ai-autopilot-bar">
@@ -147,7 +148,7 @@
                 <p class="eyebrow">Operations Copilot</p>
                 <strong id="aiAutopilotSummary">Analyzing current queue for response optimization…</strong>
               </div>
-              <button type="button" class="secondary slim">Run Smart Dispatch</button>
+              <button id="runSmartDispatchBtn" type="button" class="secondary slim">Run Smart Dispatch</button>
             </div>
             <div id="executiveSummary" class="executiveSummary"></div>
             <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
@@ -170,6 +171,10 @@
               <div class="analyticsCard analyticsCard--warn">
                 <span class="analyticsLabel">High Priority Cases</span>
                 <strong id="highPriorityCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Data Quality Score</span>
+                <strong id="avgQualityScore">0%</strong>
               </div>
             </div>
           </article>
@@ -535,6 +540,15 @@
                 </select>
               </label>
             </div>
+            <div class="toolbar saved-view-toolbar">
+              <label class="inlineControl">Saved View
+                <select id="savedViewSelect">
+                  <option value="">Choose a saved view</option>
+                </select>
+              </label>
+              <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
+              <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
+            </div>
             <div class="toolbar selection-toolbar">
               <label class="inlineControl">Bulk Status
                 <select id="bulkStatusValue">
@@ -582,6 +596,13 @@
             <div class="paginationBar">
               <p id="paginationSummary" class="small">Page 1 of 1</p>
               <div class="paginationControls">
+                <label class="inlineControl compact">Rows
+                  <select id="rowsPerPageSelect">
+                    <option value="15" selected>15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                  </select>
+                </label>
                 <button id="prevPageBtn" type="button" class="secondary slim">Previous</button>
                 <button id="nextPageBtn" type="button" class="secondary slim">Next</button>
               </div>

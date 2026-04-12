@@ -8,6 +8,7 @@ const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
 const ADMIN_NOTIFICATION_QUEUE_KEY = "roadwatchAdminNotificationQueue";
 const ADMIN_PROJECTS_KEY = "roadwatchAdminProjects";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
+const ADMIN_SAVED_VIEWS_KEY = "roadwatchAdminSavedViews";
 const adminUi = window.RoadwatchAdminUI;
 
 const loginPanel = document.getElementById("loginPanel");
@@ -93,7 +94,9 @@ const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
+const adminTrustBadge = document.getElementById("adminTrustBadge");
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
+const runSmartDispatchBtn = document.getElementById("runSmartDispatchBtn");
 const bulkStatusValue = document.getElementById("bulkStatusValue");
 const applyBulkStatusBtn = document.getElementById("applyBulkStatusBtn");
 const clearSelectionBtn = document.getElementById("clearSelectionBtn");
@@ -102,17 +105,22 @@ const managementFilteredCount = document.getElementById("managementFilteredCount
 const managementUrgentCount = document.getElementById("managementUrgentCount");
 const managementVerificationCount = document.getElementById("managementVerificationCount");
 const managementSelectedCount = document.getElementById("managementSelectedCount");
+const savedViewSelect = document.getElementById("savedViewSelect");
+const saveCurrentViewBtn = document.getElementById("saveCurrentViewBtn");
+const deleteSavedViewBtn = document.getElementById("deleteSavedViewBtn");
+const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
 const selectedReports = new Set();
 const flaggedReports = new Set();
-const REPORTS_PER_PAGE = 15;
+let rowsPerPage = Number(rowsPerPageSelect?.value || 15);
 let currentPage = 1;
 let overviewMap = null;
 let overviewMarkers = null;
 let activeReportsSource = "";
 let urgentOnlyMode = false;
+let activeColumnView = "operations";
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
@@ -172,7 +180,13 @@ function setSheetSyncStatus(message, state = "warn") {
 }
 
 function renderAdminIdentity() {
-  adminUi.renderAdminIdentity(adminIdentityChip);
+  const role = roleFilterSelect?.value || "Super Admin";
+  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  adminUi.renderAdminIdentity(adminIdentityChip, {
+    role,
+    trustBadge: adminTrustBadge,
+    isLocalSession: isAuthed
+  });
 }
 
 function syncSearchInputs(source = "workspace") {
@@ -233,6 +247,100 @@ function clearFilterByKey(key) {
 function renderActiveFilterChips() {
   const descriptors = getActiveFilterDescriptors();
   adminUi.renderActiveFilterChips(activeFilterChips, descriptors, clearFilterByKey);
+}
+
+function getSavedViews() {
+  try {
+    const raw = localStorage.getItem(ADMIN_SAVED_VIEWS_KEY);
+    const parsed = JSON.parse(raw || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveSavedViews(views) {
+  localStorage.setItem(ADMIN_SAVED_VIEWS_KEY, JSON.stringify((views || []).slice(0, 12)));
+}
+
+function buildCurrentViewConfig() {
+  return {
+    reportSearch: reportSearch?.value || "",
+    statusFilter: statusFilter?.value || "all",
+    categoryFilter: categoryFilter?.value || "all",
+    barangayFilter: barangayFilter?.value || "all",
+    qualityFilter: qualityFilter?.value || "all",
+    triagePreset: triagePreset?.value || "all",
+    urgentOnlyMode,
+    rowsPerPage,
+    columnView: activeColumnView
+  };
+}
+
+function applySavedViewConfig(config) {
+  if (!config || typeof config !== "object") return;
+  if (reportSearch) reportSearch.value = String(config.reportSearch || "");
+  syncSearchInputs("workspace");
+  if (statusFilter) statusFilter.value = config.statusFilter || "all";
+  if (categoryFilter) categoryFilter.value = config.categoryFilter || "all";
+  if (barangayFilter) barangayFilter.value = config.barangayFilter || "all";
+  if (qualityFilter) qualityFilter.value = config.qualityFilter || "all";
+  if (triagePreset) triagePreset.value = config.triagePreset || "all";
+  setUrgentOnlyMode(Boolean(config.urgentOnlyMode));
+  rowsPerPage = Math.max(5, Number(config.rowsPerPage || rowsPerPage || 15));
+  if (rowsPerPageSelect) rowsPerPageSelect.value = String(rowsPerPage);
+  setTableColumnView(config.columnView || activeColumnView);
+}
+
+function renderSavedViews() {
+  if (!savedViewSelect) return;
+  const views = getSavedViews();
+  const previous = savedViewSelect.value;
+  const options = views.map((view) => `<option value="${escapeHtml(view.id)}">${escapeHtml(view.name)}</option>`).join("");
+  savedViewSelect.innerHTML = `<option value="">Choose a saved view</option>${options}`;
+  if (views.some((view) => view.id === previous)) savedViewSelect.value = previous;
+}
+
+function saveCurrentView() {
+  const name = window.prompt("Name this saved view:", "");
+  const trimmedName = String(name || "").trim();
+  if (!trimmedName) return;
+
+  const nextView = {
+    id: `view-${Date.now()}`,
+    name: trimmedName.slice(0, 48),
+    config: buildCurrentViewConfig()
+  };
+
+  const views = getSavedViews();
+  views.unshift(nextView);
+  saveSavedViews(views);
+  renderSavedViews();
+  if (savedViewSelect) savedViewSelect.value = nextView.id;
+  setFeedback("reportsFeedback", `Saved view "${nextView.name}".`);
+}
+
+function deleteSelectedSavedView() {
+  const targetId = savedViewSelect?.value || "";
+  if (!targetId) {
+    setFeedback("reportsFeedback", "Choose a saved view to delete.", true);
+    return;
+  }
+  const views = getSavedViews();
+  const targetView = views.find((view) => view.id === targetId);
+  const remaining = views.filter((view) => view.id !== targetId);
+  saveSavedViews(remaining);
+  renderSavedViews();
+  setFeedback("reportsFeedback", `Deleted saved view "${targetView?.name || targetId}".`);
+}
+
+function setTableColumnView(view = "operations") {
+  const table = document.querySelector(".management-table");
+  if (!table) return;
+  const normalized = view === "triage" ? "triage" : "operations";
+  activeColumnView = normalized;
+  table.classList.toggle("view-triage", normalized === "triage");
+  table.classList.toggle("view-operations", normalized === "operations");
 }
 
 function formatSyncTime(timestamp) {
@@ -658,6 +766,7 @@ function setManagementPane(pane) {
 
   showTriagePaneBtn?.classList.toggle("is-active", activePane === "triage");
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
+  setTableColumnView(activePane === "triage" ? "triage" : "operations");
 }
 
 
@@ -2191,6 +2300,8 @@ function renderAnalytics(reports) {
     flagged: 0,
     qualityTotal: 0
   };
+  let totalAgeDays = 0;
+  let ageSamples = 0;
 
   reports.forEach((report) => {
     const normalized = normalizeStatus(report.status).toLowerCase();
@@ -2201,6 +2312,11 @@ function renderAnalytics(reports) {
     if (getVerificationState(report) === "Needs Verification") counts.needsVerification += 1;
     if (getVerificationState(report) === "Flagged") counts.flagged += 1;
     counts.qualityTotal += getDataQualityScore(report);
+    const reportDate = parseReportDate(report);
+    if (reportDate) {
+      totalAgeDays += Math.max(0, (Date.now() - reportDate.getTime()) / 86400000);
+      ageSamples += 1;
+    }
   });
 
   document.getElementById("totalReportsCount").textContent = counts.total;
@@ -2211,6 +2327,8 @@ function renderAnalytics(reports) {
   document.getElementById("needsVerificationCount").textContent = counts.needsVerification;
   document.getElementById("flaggedReportsCount").textContent = counts.flagged;
   document.getElementById("avgQualityScore").textContent = `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`;
+  const avgResponseDays = document.getElementById("avgResponseDays");
+  if (avgResponseDays) avgResponseDays.textContent = ageSamples ? totalAgeDays / ageSamples >= 10 ? Math.round(totalAgeDays / ageSamples) : (totalAgeDays / ageSamples).toFixed(1) : "0";
   const highPriorityCount = reports.filter((report) => getPriorityScore(report) >= 70).length;
   document.getElementById("highPriorityCount").textContent = highPriorityCount;
 
@@ -2429,7 +2547,7 @@ function getFilteredReports() {
 }
 
 function getTotalPages(totalItems) {
-  return Math.max(1, Math.ceil(totalItems / REPORTS_PER_PAGE));
+  return Math.max(1, Math.ceil(totalItems / rowsPerPage));
 }
 
 function getPaginatedReports(reports) {
@@ -2437,14 +2555,14 @@ function getPaginatedReports(reports) {
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
 
-  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
-  return reports.slice(startIndex, startIndex + REPORTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  return reports.slice(startIndex, startIndex + rowsPerPage);
 }
 
 function renderPagination(totalItems) {
   const totalPages = getTotalPages(totalItems);
   if (paginationSummary) {
-    paginationSummary.textContent = `Page ${currentPage} of ${totalPages}`;
+    paginationSummary.textContent = `Page ${currentPage} of ${totalPages} • ${rowsPerPage} rows/page`;
   }
 
   if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
@@ -2575,6 +2693,7 @@ function applyFiltersAndRender() {
   const filtered = getFilteredReports();
   const paginated = getPaginatedReports(filtered);
   renderManagementSnapshot(filtered);
+  setTableColumnView(activeColumnView);
   renderRows(paginated);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
@@ -2592,8 +2711,8 @@ function applyFiltersAndRender() {
   renderClosureChecklist();
   renderPermissionsSummary();
   renderActiveFilterChips();
-  const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * REPORTS_PER_PAGE) + 1;
-  const endItem = Math.min(currentPage * REPORTS_PER_PAGE, filtered.length);
+  const startItem = filtered.length === 0 ? 0 : ((currentPage - 1) * rowsPerPage) + 1;
+  const endItem = Math.min(currentPage * rowsPerPage, filtered.length);
   const urgentLabel = urgentOnlyMode ? " • Urgent-only mode enabled" : "";
   filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.${urgentLabel}`;
   renderPagination(filtered.length);
@@ -2772,6 +2891,15 @@ focusUrgentShortcutBtn?.addEventListener("click", () => {
 syncDataShortcutBtn?.addEventListener("click", () => {
   loadReports();
 });
+runSmartDispatchBtn?.addEventListener("click", () => {
+  if (triagePreset) triagePreset.value = "critical";
+  setUrgentOnlyMode(true);
+  setDashboardView("management");
+  setManagementPane("triage");
+  currentPage = 1;
+  applyFiltersAndRender();
+  setFeedback("reportsFeedback", "Smart dispatch applied: showing critical urgent reports.");
+});
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 applyBulkStatusBtn?.addEventListener("click", () => {
@@ -2935,6 +3063,23 @@ createProjectBtn?.addEventListener("click", () => {
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
+roleFilterSelect?.addEventListener("change", () => renderAdminIdentity());
+saveCurrentViewBtn?.addEventListener("click", saveCurrentView);
+deleteSavedViewBtn?.addEventListener("click", deleteSelectedSavedView);
+savedViewSelect?.addEventListener("change", () => {
+  const selectedId = savedViewSelect.value;
+  const selectedView = getSavedViews().find((view) => view.id === selectedId);
+  if (!selectedView) return;
+  applySavedViewConfig(selectedView.config);
+  currentPage = 1;
+  applyFiltersAndRender();
+  setFeedback("reportsFeedback", `Applied saved view "${selectedView.name}".`);
+});
+rowsPerPageSelect?.addEventListener("change", () => {
+  rowsPerPage = Math.max(5, Number(rowsPerPageSelect.value || 15));
+  currentPage = 1;
+  applyFiltersAndRender();
+});
 
 setDashboardView("overview");
 renderCaseTimeline("");
@@ -2945,4 +3090,6 @@ retrySyncBtn?.addEventListener("click", () => {
 });
 
 setUrgentOnlyMode(false);
+renderSavedViews();
+setTableColumnView("operations");
 renderAdminIdentity();
