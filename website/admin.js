@@ -837,10 +837,6 @@ function getDashboardPageConfig(view = "overview", pane = "") {
   return adminHomePage;
 }
 
-function getManagementPaneConfig(pane = "workspace") {
-  return pane === "triage" ? adminTriagePage : adminWorkspacePage;
-}
-
 function setBreadcrumbs(view = "overview", pane = "") {
   if (!adminBreadcrumbView || !adminBreadcrumbPane || !adminBreadcrumbPaneSeparator) return;
   const pageConfig = getDashboardPageConfig(view, pane);
