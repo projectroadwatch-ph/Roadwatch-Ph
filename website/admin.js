@@ -10,6 +10,9 @@ const ADMIN_PROJECTS_KEY = "roadwatchAdminProjects";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_SAVED_VIEWS_KEY = "roadwatchAdminSavedViews";
 const adminUi = window.RoadwatchAdminUI;
+const adminHomePage = window.RoadwatchAdminHomePage || {};
+const adminWorkspacePage = window.RoadwatchAdminWorkspacePage || {};
+const adminTriagePage = window.RoadwatchAdminTriagePage || {};
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboard = document.getElementById("dashboard");
@@ -790,15 +793,29 @@ function updateSidebarNavState(view = "overview", pane = "") {
   });
 }
 
-function setBreadcrumbs(view = "overview", pane = "") {
-  if (!adminBreadcrumbView || !adminBreadcrumbPane || !adminBreadcrumbPaneSeparator) return;
-  const viewLabel = view === "management" ? "System Management" : "Home";
-  adminBreadcrumbView.textContent = viewLabel;
+function getDashboardPageConfig(view = "overview", pane = "") {
+  if (view === "management" && pane === "triage") {
+    return adminTriagePage;
+  }
 
   if (view === "management") {
+    return adminWorkspacePage;
+  }
+
+  return adminHomePage;
+}
+
+function setBreadcrumbs(view = "overview", pane = "") {
+  if (!adminBreadcrumbView || !adminBreadcrumbPane || !adminBreadcrumbPaneSeparator) return;
+  const pageConfig = getDashboardPageConfig(view, pane);
+  const viewLabel = pageConfig.breadcrumbViewLabel || (view === "management" ? "System Management" : "Home");
+  const paneLabel = pageConfig.breadcrumbPaneLabel || "";
+  adminBreadcrumbView.textContent = viewLabel;
+
+  if (paneLabel) {
     adminBreadcrumbPane.hidden = false;
     adminBreadcrumbPaneSeparator.hidden = false;
-    adminBreadcrumbPane.textContent = pane === "triage" ? "Triage Box" : "Report Workspace";
+    adminBreadcrumbPane.textContent = paneLabel;
     return;
   }
 
