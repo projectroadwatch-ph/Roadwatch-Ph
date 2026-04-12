@@ -141,9 +141,6 @@ const kanbanDrawerContent = document.getElementById("kanbanDrawerContent");
 const kanbanDetailTracking = document.getElementById("kanbanDetailTracking");
 const kanbanDetailLocation = document.getElementById("kanbanDetailLocation");
 const kanbanDetailIssue = document.getElementById("kanbanDetailIssue");
-const kanbanProfileAvatar = document.getElementById("kanbanProfileAvatar");
-const kanbanProfileName = document.getElementById("kanbanProfileName");
-const kanbanProfileContact = document.getElementById("kanbanProfileContact");
 const kanbanAssignTo = document.getElementById("kanbanAssignTo");
 const kanbanDueAt = document.getElementById("kanbanDueAt");
 const kanbanSaveMetaBtn = document.getElementById("kanbanSaveMetaBtn");
@@ -1436,11 +1433,6 @@ function renderKanbanDrawer(report) {
 
   kanbanDrawerEmpty.hidden = true;
   kanbanDrawerContent.hidden = false;
-  const reporterName = String(report.name || "Anonymous").trim() || "Anonymous";
-  const contactParts = [String(report.phone || "").trim(), String(report.email || "").trim()].filter(Boolean);
-  if (kanbanProfileAvatar) kanbanProfileAvatar.textContent = getReporterInitials(reporterName);
-  if (kanbanProfileName) kanbanProfileName.innerHTML = `<strong>${escapeHtml(reporterName)}</strong>`;
-  if (kanbanProfileContact) kanbanProfileContact.textContent = contactParts.join(" • ") || "No contact info";
   if (kanbanDetailTracking) kanbanDetailTracking.textContent = report.tracking || "Unknown Tracking #";
   if (kanbanDetailLocation) kanbanDetailLocation.textContent = report.location || "Location unavailable";
   if (kanbanDetailIssue) kanbanDetailIssue.textContent = report.issue || "Issue details unavailable";
@@ -1472,10 +1464,6 @@ function renderKanbanBoard(reports) {
       <p class="small">${escapeHtml(report.location || "Location unavailable")}</p>
       <p class="small">Priority: ${getPriorityScore(report)}</p>
       <p class="small">${escapeHtml(report.assignedTo || "Unassigned")}</p>
-      <div class="kanban-card__profile">
-        <span class="kanban-card__avatar">${escapeHtml(getReporterInitials(report.name))}</span>
-        <span class="small">${escapeHtml(report.name || "Anonymous")}</span>
-      </div>
     `;
     card.addEventListener("click", () => {
       activeKanbanTracking = tracking;
@@ -1489,16 +1477,17 @@ function renderKanbanBoard(reports) {
   if (kanbanCountInProgress) kanbanCountInProgress.textContent = String(counts["In Progress"] || 0);
   if (kanbanCountRepaired) kanbanCountRepaired.textContent = String(counts.Repaired || 0);
 
+  Object.entries(columns).forEach(([status, col]) => {
+    if (col.childElementCount === 0) {
+      const hint = document.createElement("p");
+      hint.className = "small kanban-empty-hint";
+      hint.textContent = `No ${status.toLowerCase()} cards in this view.`;
+      col.appendChild(hint);
+    }
+  });
+
   const selected = safeReports.find((report) => String(report.tracking || "").trim() === activeKanbanTracking);
   renderKanbanDrawer(selected || null);
-}
-
-function getReporterInitials(name) {
-  const normalized = String(name || "").trim();
-  if (!normalized) return "AN";
-  const parts = normalized.split(/\s+/).filter(Boolean);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase() || "AN";
 }
 
 function getSelectedReports() {
