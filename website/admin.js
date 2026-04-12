@@ -56,6 +56,10 @@ const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const sidebarNavLinks = Array.from(document.querySelectorAll("[data-nav-view]"));
 const sidebarSectionLinks = Array.from(document.querySelectorAll(".admin-sidebar__sections a[href^='#']"));
+const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+const adminBreadcrumbView = document.getElementById("adminBreadcrumbView");
+const adminBreadcrumbPane = document.getElementById("adminBreadcrumbPane");
+const adminBreadcrumbPaneSeparator = document.getElementById("adminBreadcrumbPaneSeparator");
 const openTriageFromOverviewBtn = document.getElementById("openTriageFromOverviewBtn");
 const openTriageHeroBtn = document.getElementById("openTriageHeroBtn");
 const openTriageShortcutBtn = document.getElementById("openTriageShortcutBtn");
@@ -123,6 +127,7 @@ let overviewMarkers = null;
 let activeReportsSource = "";
 let urgentOnlyMode = false;
 let activeColumnView = "operations";
+let activeDashboardView = "overview";
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
@@ -742,6 +747,7 @@ function applyCaseMetadata(report) {
 
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
+  activeDashboardView = activeView;
   if (overviewView) overviewView.hidden = activeView !== "overview";
   if (managementView) managementView.hidden = activeView !== "management";
   if (operationsView) operationsView.hidden = true;
@@ -750,6 +756,7 @@ function setDashboardView(view) {
   showManagementBtn?.classList.toggle("is-active", activeView === "management");
   showOperationsBtn?.classList.remove("is-active");
   updateSidebarNavState(activeView, activeView === "management" ? "workspace" : "");
+  setBreadcrumbs(activeView, activeView === "management" ? "workspace" : "");
 
   if (activeView === "management") {
     setManagementPane("workspace");
@@ -771,6 +778,7 @@ function setManagementPane(pane) {
   showWorkspacePaneBtn?.classList.toggle("is-active", activePane === "workspace");
   setTableColumnView(activePane === "triage" ? "triage" : "operations");
   updateSidebarNavState("management", activePane);
+  setBreadcrumbs("management", activePane);
 }
 
 function updateSidebarNavState(view = "overview", pane = "") {
@@ -780,6 +788,28 @@ function updateSidebarNavState(view = "overview", pane = "") {
     const isActive = targetView === view && (targetPane ? targetPane === pane : pane === "");
     link.classList.toggle("is-active", isActive);
   });
+}
+
+function setBreadcrumbs(view = "overview", pane = "") {
+  if (!adminBreadcrumbView || !adminBreadcrumbPane || !adminBreadcrumbPaneSeparator) return;
+  const viewLabel = view === "management" ? "System Management" : "Dashboard Home";
+  adminBreadcrumbView.textContent = viewLabel;
+
+  if (view === "management") {
+    adminBreadcrumbPane.hidden = false;
+    adminBreadcrumbPaneSeparator.hidden = false;
+    adminBreadcrumbPane.textContent = pane === "triage" ? "Triage Inbox" : "Report Workspace";
+    return;
+  }
+
+  adminBreadcrumbPane.hidden = true;
+  adminBreadcrumbPaneSeparator.hidden = true;
+  adminBreadcrumbPane.textContent = "";
+}
+
+function toggleSidebarVisibility() {
+  const isCollapsed = document.body.classList.toggle("sidebar-collapsed");
+  sidebarToggleBtn?.setAttribute("aria-expanded", String(!isCollapsed));
 }
 
 
@@ -792,6 +822,10 @@ function applyAuthUI() {
   dashboard.hidden = !isAuthed;
 
   document.body.classList.toggle("admin-authenticated", isAuthed);
+  if (!isAuthed) {
+    document.body.classList.remove("sidebar-collapsed");
+    sidebarToggleBtn?.setAttribute("aria-expanded", "true");
+  }
 
   if (isAuthed) {
     document.getElementById("adminPassword").value = "";
@@ -2657,8 +2691,8 @@ function renderRows(reports) {
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
-    deleteBtn.className = "secondary slim";
-    deleteBtn.textContent = "Delete";
+    deleteBtn.className = "danger slim";
+    deleteBtn.textContent = "🗑 Delete";
     deleteBtn.addEventListener("click", async () => {
       const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
       if (!confirmed) return;
@@ -2684,12 +2718,12 @@ function renderRows(reports) {
     const timelineBtn = document.createElement("button");
     timelineBtn.type = "button";
     timelineBtn.className = "secondary slim";
-    timelineBtn.textContent = "Timeline";
+    timelineBtn.textContent = "🕒 Timeline";
     timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
     const viewBtn = document.createElement("button");
     viewBtn.type = "button";
     viewBtn.className = "secondary slim";
-    viewBtn.textContent = "View";
+    viewBtn.textContent = "👁 View";
     viewBtn.addEventListener("click", () => openReportFormPreview(report));
     tr.children[17].classList.add("action-cell");
     tr.children[17].append(viewBtn, timelineBtn, deleteBtn);
@@ -2899,6 +2933,7 @@ sidebarSectionLinks.forEach((link) => {
     setDashboardView("overview");
   });
 });
+sidebarToggleBtn?.addEventListener("click", toggleSidebarVisibility);
 openTriageFromOverviewBtn?.addEventListener("click", () => {
   setDashboardView("management");
   setManagementPane("triage");

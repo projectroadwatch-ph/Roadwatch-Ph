@@ -33,7 +33,7 @@
 
     <section id="dashboard" class="card hidden dashboard-shell" hidden>
       <div class="admin-console-layout">
-      <aside class="admin-sidebar" aria-label="Admin dashboard navigation">
+      <aside id="adminSidebarNav" class="admin-sidebar" aria-label="Admin dashboard navigation">
         <div class="admin-sidebar__brand">
           <span class="admin-sidebar__logo">RW</span>
           <div>
@@ -43,10 +43,11 @@
         </div>
         <p class="admin-sidebar__label">Main Navigation</p>
         <div class="admin-sidebar__nav">
-          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview">Dashboard Home</button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace">Report Workspace</button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage">Triage Inbox</button>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span aria-hidden="true">📊</span><span>Dashboard Home</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🗂️</span><span>Report Workspace</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span aria-hidden="true">🚨</span><span>Triage Inbox</span></button>
         </div>
+        <hr class="admin-sidebar__divider">
         <p class="admin-sidebar__label">Overview Sections</p>
         <nav class="admin-sidebar__sections" aria-label="Overview section shortcuts">
           <a href="#overviewSnapshotPanel">Operational Snapshot</a>
@@ -63,6 +64,7 @@
       <div class="admin-console-main">
       <div class="console-topbar">
         <div class="console-brand">
+          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation">☰</button>
           <span class="console-brand-mark" aria-hidden="true"><span>RW</span></span>
           <strong>RoadWatch PH</strong>
           <span class="console-divider"></span>
@@ -77,6 +79,13 @@
           <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin · Super Admin</button>
         </div>
       </div>
+      <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+        <span>Admin</span>
+        <span aria-hidden="true">›</span>
+        <span id="adminBreadcrumbView">Dashboard Home</span>
+        <span id="adminBreadcrumbPaneSeparator" aria-hidden="true" hidden>›</span>
+        <span id="adminBreadcrumbPane" hidden></span>
+      </nav>
 
       <div class="dashboard-header">
         <div>
@@ -122,9 +131,9 @@
           <button id="showManagementBtn" type="button" class="secondary nav-btn">System Management</button>
         </nav>
         <div class="quick-actions quick-actions--dashboard" aria-label="Command shortcuts">
-          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill">Open Triage Queue</button>
-          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill">Show Critical Cases</button>
-          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill">Refresh Reports</button>
+          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill"><strong>➕ Open Triage Queue</strong><span>Review incoming reports</span></button>
+          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill"><strong>⚠️ Show Critical Cases</strong><span>Filter urgent incidents</span></button>
+          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill"><strong>🔄 Refresh Reports</strong><span>Sync latest sheet data</span></button>
         </div>
 
       </section>
