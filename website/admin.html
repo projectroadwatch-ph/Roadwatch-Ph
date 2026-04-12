@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
   <title>RoadWatch PH Admin</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="admin.css?v=20260412b">
+  <link rel="stylesheet" href="admin.css?v=20260412c">
 </head>
 <body>
   <main class="wrap">
@@ -41,11 +41,11 @@
             <p>Admin Suite</p>
           </div>
         </div>
-        <p class="admin-sidebar__label">Workspace Folders</p>
+        <p class="admin-sidebar__label">Workspace</p>
         <div class="admin-sidebar__nav">
-          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span aria-hidden="true">📊</span><span>Home</span></button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🗂️</span><span>Report Workspace</span></button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span aria-hidden="true">🚨</span><span>Triage Box</span></button>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span>Home</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span>Reports</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span>Triage</span></button>
         </div>
         <hr class="admin-sidebar__divider">
         <p class="admin-sidebar__label">Overview Sections</p>
@@ -69,12 +69,12 @@
           <span class="console-brand-mark" aria-hidden="true"><span>RW</span></span>
           <strong>RoadWatch PH</strong>
           <span class="console-divider"></span>
-          <span class="console-title">Admin Command Center</span>
+          <span class="console-title">Admin Dashboard</span>
         </div>
         <div class="console-tools">
           <label class="console-search">
-            <span>🔎</span>
-            <input id="dashboardSearch" type="search" placeholder="Search reports, barangays, issues" aria-label="Search dashboard content">
+            <span aria-hidden="true">Search</span>
+            <input id="dashboardSearch" type="search" placeholder="Search reports, barangays, or issue types" aria-label="Search dashboard content">
           </label>
           <p id="adminTrustBadge" class="trust-badge" aria-live="polite">Demo Mode · Local session</p>
           <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin · Super Admin</button>
@@ -84,11 +84,11 @@
         <div>
           <p class="eyebrow">Operations Center</p>
           <h2>Admin Dashboard</h2>
-          <p class="small">Track report flow, prioritize urgent road concerns, and publish accurate status updates for citizens with the redesigned workspace.</p>
+          <p class="small">Track report flow, prioritize urgent concerns, and publish updates quickly.</p>
           <div class="header-kpis" aria-label="At-a-glance metrics">
             <span class="section-chip muted-chip">Unified Queue</span>
-            <span class="section-chip muted-chip">Realtime Sync</span>
-            <span class="section-chip muted-chip">Incident Intelligence</span>
+            <span class="section-chip muted-chip">Live Sync</span>
+            <span class="section-chip muted-chip">Issue Insights</span>
           </div>
           <div class="sync-status-row">
             <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
@@ -97,11 +97,11 @@
           <p id="syncMetaStatus" class="small sync-meta-status" aria-live="polite">Last successful sync: Never</p>
           <div class="mission-strip" aria-label="Mission control summary">
             <article class="mission-chip">
-              <span class="mission-chip__label">Critical Cases</span>
+              <span class="mission-chip__label">Critical</span>
               <strong id="missionCriticalCount">0</strong>
             </article>
             <article class="mission-chip">
-              <span class="mission-chip__label">Needs Verification</span>
+              <span class="mission-chip__label">For Review</span>
               <strong id="missionVerificationCount">0</strong>
             </article>
             <article class="mission-chip">
@@ -123,15 +123,15 @@
           <article class="panel chart-stretch operations-alert-strip">
             <div class="row">
               <div>
-                <h3>Critical Overview Deck</h3>
-                <p class="small">Inspired command strip for urgent triage, moderation, and publication workflows.</p>
+                <h3>Priority Queue</h3>
+                <p class="small">Focus on urgent triage, moderation, and publish workflows.</p>
               </div>
               <button id="openTriageFromOverviewBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
             <div class="operations-pill-grid">
-              <p class="section-chip">Overview Focus · Validate New Submissions</p>
-              <p class="section-chip">Analytics Focus · Escalate High-Priority Hazards</p>
-              <p class="section-chip">Ops Focus · Publish Citizen Updates</p>
+              <p class="section-chip">Validate new submissions</p>
+              <p class="section-chip">Escalate high-priority hazards</p>
+              <p class="section-chip">Publish verified updates</p>
             </div>
           </article>
 
@@ -139,7 +139,7 @@
             <div class="critical-overview-top">
               <div>
                 <h3>Critical Overview</h3>
-                <p class="small">A compact mission panel for unresolved reports, response tempo, and quality health.</p>
+                <p class="small">A compact panel for unresolved reports, response speed, and data quality.</p>
               </div>
               <button id="openTriageHeroBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
             </div>
@@ -157,14 +157,14 @@
                 <strong id="repairedReportsCount">0</strong>
               </div>
               <div class="kpi-pill analyticsCard analyticsCard--warn">
-                <span class="analyticsLabel">Avg Response (days)</span>
+                <span class="analyticsLabel">Average Response (days)</span>
                 <strong id="avgResponseDays">0</strong>
               </div>
             </div>
             <div class="ai-autopilot-bar">
               <div>
                 <p class="eyebrow">Operations Copilot</p>
-                <strong id="aiAutopilotSummary">Analyzing current queue for response optimization…</strong>
+                <strong id="aiAutopilotSummary">Analyzing queue for response optimization…</strong>
               </div>
               <button id="runSmartDispatchBtn" type="button" class="secondary slim">Run Smart Dispatch</button>
             </div>
