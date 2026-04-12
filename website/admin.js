@@ -106,7 +106,6 @@ const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
-const adminTrustBadge = document.getElementById("adminTrustBadge");
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
 const runSmartDispatchBtn = document.getElementById("runSmartDispatchBtn");
 const bulkStatusValue = document.getElementById("bulkStatusValue");
@@ -229,7 +228,6 @@ function renderAdminIdentity() {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
   adminUi.renderAdminIdentity(adminIdentityChip, {
     role,
-    trustBadge: adminTrustBadge,
     isLocalSession: isAuthed
   });
 }
