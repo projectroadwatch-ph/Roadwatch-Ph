@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
   <title>RoadWatch PH Admin</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="admin.css?v=20260411a">
+  <link rel="stylesheet" href="admin.css?v=20260412b">
 </head>
 <body>
   <main class="wrap">
@@ -94,6 +94,7 @@
             <p id="sheetSyncStatus" class="sync-status" aria-live="polite">Checking Google Sheets connection…</p>
             <button id="retrySyncBtn" type="button" class="secondary slim">Retry Sync</button>
           </div>
+          <p id="syncMetaStatus" class="small sync-meta-status" aria-live="polite">Last successful sync: Never</p>
           <div class="mission-strip" aria-label="Mission control summary">
             <article class="mission-chip">
               <span class="mission-chip__label">Critical Cases</span>
@@ -563,6 +564,12 @@
                   <option value="">Choose a saved view</option>
                 </select>
               </label>
+              <label class="inlineControl">Columns
+                <select id="columnPresetSelect">
+                  <option value="operations" selected>Operations</option>
+                  <option value="triage">Triage</option>
+                </select>
+              </label>
               <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
               <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
             </div>
@@ -581,6 +588,7 @@
             </div>
             <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
             <p id="filterSummary" class="small"></p>
+            <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
             <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
             <div class="tableWrap">
@@ -596,6 +604,7 @@
                     <th>Issue Type</th>
                     <th>Data Quality</th>
                     <th>Priority</th>
+                    <th>Why Urgent</th>
                     <th>Verification</th>
                     <th>Severity</th>
                     <th>Assigned To</th>
@@ -642,6 +651,6 @@
   <script src="admin-home.js?v=20260412a"></script>
   <script src="admin-workspace.js?v=20260412a"></script>
   <script src="admin-triage.js?v=20260412a"></script>
-  <script src="admin.js?v=20260412a"></script>
+  <script src="admin.js?v=20260412b"></script>
 </body>
 </html>

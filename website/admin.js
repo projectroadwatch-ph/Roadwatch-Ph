@@ -9,6 +9,9 @@ const ADMIN_NOTIFICATION_QUEUE_KEY = "roadwatchAdminNotificationQueue";
 const ADMIN_PROJECTS_KEY = "roadwatchAdminProjects";
 const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_SAVED_VIEWS_KEY = "roadwatchAdminSavedViews";
+const ADMIN_LAST_SYNC_KEY = "roadwatchAdminLastSyncAt";
+const ADMIN_SESSION_STARTED_AT_KEY = "roadwatchAdminSessionStartedAt";
+const ADMIN_SERVER_MODE_KEY = "roadwatchAdminServerMode";
 const adminUi = window.RoadwatchAdminUI;
 const adminHomePage = window.RoadwatchAdminHomePage || {};
 const adminWorkspacePage = window.RoadwatchAdminWorkspacePage || {};
@@ -115,9 +118,12 @@ const managementUrgentCount = document.getElementById("managementUrgentCount");
 const managementVerificationCount = document.getElementById("managementVerificationCount");
 const managementSelectedCount = document.getElementById("managementSelectedCount");
 const savedViewSelect = document.getElementById("savedViewSelect");
+const columnPresetSelect = document.getElementById("columnPresetSelect");
 const saveCurrentViewBtn = document.getElementById("saveCurrentViewBtn");
 const deleteSavedViewBtn = document.getElementById("deleteSavedViewBtn");
 const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
+const staleDataBanner = document.getElementById("staleDataBanner");
+const syncMetaStatus = document.getElementById("syncMetaStatus");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -131,9 +137,12 @@ let activeReportsSource = "";
 let urgentOnlyMode = false;
 let activeColumnView = "operations";
 let activeDashboardView = "overview";
+let staleDataIntervalId = null;
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
+const SESSION_MAX_MS = 8 * 60 * 60 * 1000;
+const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 
 function getStatusWriteEndpoints() {
   return adminDataLayer.getStatusWriteEndpoints();
@@ -312,6 +321,7 @@ function renderSavedViews() {
 }
 
 function saveCurrentView() {
+  if (!guardPermission("publish", "Your role cannot save personal workspace views.")) return;
   const name = window.prompt("Name this saved view:", "");
   const trimmedName = String(name || "").trim();
   if (!trimmedName) return;
@@ -331,6 +341,7 @@ function saveCurrentView() {
 }
 
 function deleteSelectedSavedView() {
+  if (!guardPermission("publish", "Your role cannot delete saved views.")) return;
   const targetId = savedViewSelect?.value || "";
   if (!targetId) {
     setFeedback("reportsFeedback", "Choose a saved view to delete.", true);
@@ -349,6 +360,7 @@ function setTableColumnView(view = "operations") {
   if (!table) return;
   const normalized = view === "triage" ? "triage" : "operations";
   activeColumnView = normalized;
+  if (columnPresetSelect) columnPresetSelect.value = normalized;
   table.classList.toggle("view-triage", normalized === "triage");
   table.classList.toggle("view-operations", normalized === "operations");
 }
@@ -356,6 +368,95 @@ function setTableColumnView(view = "operations") {
 function formatSyncTime(timestamp) {
   if (!timestamp) return "unknown time";
   return new Date(timestamp).toLocaleString();
+}
+
+function getCurrentRole() {
+  return roleFilterSelect?.value || "Super Admin";
+}
+
+function hasPermission(permission) {
+  const role = getCurrentRole();
+  const permissionsByRole = {
+    "Super Admin": ["delete", "bulk_status", "assign", "publish", "export"],
+    Verifier: ["publish"],
+    Dispatcher: ["bulk_status", "assign", "publish"],
+    "Field Lead": ["publish"],
+    Viewer: ["export"]
+  };
+  return (permissionsByRole[role] || []).includes(permission);
+}
+
+function guardPermission(permission, deniedMessage = "You do not have permission for this action.") {
+  if (hasPermission(permission)) return true;
+  setFeedback("reportsFeedback", deniedMessage, true);
+  return false;
+}
+
+function setLastSuccessfulSync(timestamp = Date.now()) {
+  localStorage.setItem(ADMIN_LAST_SYNC_KEY, String(timestamp));
+}
+
+function getLastSuccessfulSync() {
+  const parsed = Number(localStorage.getItem(ADMIN_LAST_SYNC_KEY) || "0");
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function updateSyncMetaStatus() {
+  if (!syncMetaStatus) return;
+  const lastSync = getLastSuccessfulSync();
+  syncMetaStatus.textContent = `Last successful sync: ${lastSync ? formatSyncTime(lastSync) : "Never"} • Source: ${activeReportsSource || "Not connected"}`;
+}
+
+function refreshStaleDataBanner() {
+  if (!staleDataBanner) return;
+  const lastSync = getLastSuccessfulSync();
+  const isStale = !lastSync || (Date.now() - lastSync) > STALE_THRESHOLD_MS;
+  staleDataBanner.hidden = !isStale;
+  if (isStale) {
+    staleDataBanner.textContent = "Data may be stale (>10 minutes since last successful sync). Please sync now.";
+  }
+}
+
+function startStaleDataMonitor() {
+  if (staleDataIntervalId) window.clearInterval(staleDataIntervalId);
+  staleDataIntervalId = window.setInterval(refreshStaleDataBanner, 60000);
+  refreshStaleDataBanner();
+  updateSyncMetaStatus();
+}
+
+function formatRelativeAgeFromDate(report) {
+  const date = parseReportDate(report);
+  if (!date) return "unknown age";
+  const ageDays = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86400000));
+  return `${ageDays} day(s) open`;
+}
+
+function getUrgencyReason(report) {
+  const reasons = [];
+  const escalationState = getEscalationState(report);
+  const verificationState = getVerificationState(report);
+  const quality = getDataQualityScore(report);
+  const severity = getSeverityLabel(report);
+  if (escalationState === "Overdue") reasons.push("SLA overdue");
+  else if (escalationState === "At Risk") reasons.push("SLA at risk");
+  if (verificationState === "Needs Verification") reasons.push("needs verification");
+  if (verificationState === "Flagged") reasons.push("flagged for moderation");
+  if (severity === "Critical") reasons.push("critical severity");
+  if (quality < 50) reasons.push("low data quality");
+  reasons.push(formatRelativeAgeFromDate(report));
+  return reasons.slice(0, 3).join(" • ");
+}
+
+function enforceSessionTtl() {
+  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  if (!isAuthed) return;
+  const startedAt = Number(localStorage.getItem(ADMIN_SESSION_STARTED_AT_KEY) || "0");
+  if (startedAt && (Date.now() - startedAt) > SESSION_MAX_MS) {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    localStorage.removeItem("roadwatchAdminActiveUser");
+    localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
+    setFeedback("loginFeedback", "Session expired. Please log in again.", true);
+  }
 }
 
 
@@ -863,6 +964,7 @@ function toggleSidebarVisibility() {
 
 
 function applyAuthUI() {
+  enforceSessionTtl();
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
 
   loginPanel.classList.toggle("hidden", isAuthed);
@@ -879,12 +981,15 @@ function applyAuthUI() {
   if (isAuthed) {
     document.getElementById("adminPassword").value = "";
     renderAdminIdentity();
+    startStaleDataMonitor();
     loadReports();
     return;
   }
 
   localStorage.removeItem("roadwatchAdminActiveUser");
   renderAdminIdentity();
+  refreshStaleDataBanner();
+  updateSyncMetaStatus();
 }
 
 function login() {
@@ -900,7 +1005,10 @@ function login() {
   if (isValidCredential) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
     localStorage.setItem("roadwatchAdminActiveUser", username || "Admin");
+    localStorage.setItem(ADMIN_SESSION_STARTED_AT_KEY, String(Date.now()));
+    localStorage.setItem(ADMIN_SERVER_MODE_KEY, "client-only");
     setFeedback("loginFeedback", "Login successful.");
+    setFeedback("reportsFeedback", "Security notice: client-only auth is enabled. Use server-backed sessions before production.", true);
     setDashboardView("overview");
     applyAuthUI();
     return;
@@ -912,6 +1020,7 @@ function login() {
 function logout() {
   localStorage.removeItem(ADMIN_SESSION_KEY);
   localStorage.removeItem("roadwatchAdminActiveUser");
+  localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
   applyAuthUI();
 }
 
@@ -1225,6 +1334,10 @@ function statusSelect(current, tracking) {
   });
 
   select.addEventListener("change", async () => {
+    if (!guardPermission("publish", "Your role cannot update report status.")) {
+      select.value = select.dataset.previous || current;
+      return;
+    }
     const nextStatus = select.value;
     const previousStatus = select.dataset.previous || current;
     select.disabled = true;
@@ -1281,6 +1394,7 @@ function getSelectedReports() {
 }
 
 async function applyBulkStatusUpdate() {
+  if (!guardPermission("bulk_status", "Your role cannot run bulk status updates.")) return;
   const selected = getSelectedReports();
   if (selected.length === 0) {
     setFeedback("reportsFeedback", "Select at least one report before applying a bulk status update.", true);
@@ -1425,10 +1539,12 @@ function renderPriorityQueue(reports) {
   unresolved.forEach(({ report, ageDays }) => {
     const item = document.createElement("li");
     item.className = "priorityItem";
+    const urgencyReason = getUrgencyReason(report);
     item.innerHTML = `
       <div>
         <strong>${report.tracking || "No Tracking #"}</strong>
         <p>${report.location || "Location unavailable"}</p>
+        <p class="small">${escapeHtml(urgencyReason)}</p>
       </div>
       <div class="priorityMeta">
         <span>${normalizeStatus(report.status)}</span>
@@ -2667,7 +2783,7 @@ function renderPagination(totalItems) {
 
 function renderRows(reports) {
   if (reports.length === 0) {
-    reportsBody.innerHTML = '<tr><td colspan="18">No reports match your current filters.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="19">No reports match your current filters.</td></tr>';
     renderSelectionSummary();
     return;
   }
@@ -2683,6 +2799,7 @@ function renderRows(reports) {
     const qualityScore = getDataQualityScore(report);
     const qualityBand = getQualityBand(qualityScore);
     const escalationState = getEscalationState(report);
+    const urgencyReason = getUrgencyReason(report);
 
     if (getPriorityScore(report) >= 75) tr.classList.add("is-urgent-row");
 
@@ -2696,6 +2813,7 @@ function renderRows(reports) {
       <td>${escapeHtml(report.issueType || report.issue || "-")}</td>
       <td><span class="quality-badge quality-${qualityBand}">${qualityScore}%</span></td>
       <td><span class="priority-badge">P${getPriorityScore(report)}</span></td>
+      <td><span class="urgency-reason" title="${escapeHtml(urgencyReason)}">${escapeHtml(urgencyReason)}</span></td>
       <td><span class="verification-badge ${verificationState === "Flagged" ? "is-flagged" : verificationState === "Needs Verification" ? "is-pending" : "is-verified"}">${verificationState}</span></td>
       <td><span class="severity-badge severity-${getSeverityLabel(report).toLowerCase()}">${getSeverityLabel(report)}</span></td>
       <td>${escapeHtml(report.assignedTo || "Unassigned")}</td>
@@ -2743,6 +2861,7 @@ function renderRows(reports) {
     deleteBtn.className = "danger slim";
     deleteBtn.textContent = "🗑 Delete";
     deleteBtn.addEventListener("click", async () => {
+      if (!guardPermission("delete", "Your role cannot delete reports.")) return;
       const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
       if (!confirmed) return;
 
@@ -2815,7 +2934,7 @@ function applyFiltersAndRender() {
 }
 
 async function loadReports() {
-  reportsBody.innerHTML = '<tr><td colspan="18">Loading reports...</td></tr>';
+  reportsBody.innerHTML = '<tr><td colspan="19">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
 
@@ -2857,7 +2976,7 @@ async function loadReports() {
       .map(applyCaseMetadata)
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="18">No reports found.</td></tr>';
+      reportsBody.innerHTML = '<tr><td colspan="19">No reports found.</td></tr>';
       renderAnalytics([]);
       renderPriorityQueue([]);
       renderSlaQueue([]);
@@ -2866,17 +2985,23 @@ async function loadReports() {
       refreshReportingSection([]);
       filterSummary.textContent = "No records to filter.";
       activeReportsSource = sourceLabel;
+      setLastSuccessfulSync(Date.now());
       setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
+      updateSyncMetaStatus();
+      refreshStaleDataBanner();
       setTableLoadingState(false);
       return;
     }
 
     activeReportsSource = sourceLabel;
+    setLastSuccessfulSync(Date.now());
     setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
+    updateSyncMetaStatus();
+    refreshStaleDataBanner();
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s) from ${sourceLabel}.`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="18">Unable to load reports right now.</td></tr>';
+    reportsBody.innerHTML = '<tr><td colspan="19">Unable to load reports right now.</td></tr>';
     renderAnalytics([]);
     renderPriorityQueue([]);
     renderSlaQueue([]);
@@ -2893,6 +3018,8 @@ async function loadReports() {
     } else {
       setSheetSyncStatus("Google Sheets is unreachable. Check Apps Script deployment and access.", "error");
     }
+    updateSyncMetaStatus();
+    refreshStaleDataBanner();
   } finally {
     if (pendingStatusUpdates === 0) setTableLoadingState(false);
   }
@@ -3193,6 +3320,41 @@ rowsPerPageSelect?.addEventListener("change", () => {
   rowsPerPage = Math.max(5, Number(rowsPerPageSelect.value || 15));
   currentPage = 1;
   applyFiltersAndRender();
+});
+columnPresetSelect?.addEventListener("change", () => {
+  setTableColumnView(columnPresetSelect.value || "operations");
+});
+
+document.addEventListener("keydown", (event) => {
+  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  if (!isAuthed) return;
+  const targetTag = String(event.target?.tagName || "").toLowerCase();
+  const isTyping = targetTag === "input" || targetTag === "textarea" || targetTag === "select";
+  if (event.key === "/" && !isTyping) {
+    event.preventDefault();
+    dashboardSearch?.focus();
+    dashboardSearch?.select?.();
+    return;
+  }
+  if (event.key.toLowerCase() === "u" && !isTyping) {
+    event.preventDefault();
+    setUrgentOnlyMode(!urgentOnlyMode);
+    currentPage = 1;
+    applyFiltersAndRender();
+    return;
+  }
+  if (event.shiftKey && event.key.toLowerCase() === "n" && !isTyping) {
+    event.preventDefault();
+    const filtered = getFilteredReports();
+    currentPage = Math.min(getTotalPages(filtered.length), currentPage + 1);
+    applyFiltersAndRender();
+    return;
+  }
+  if (event.shiftKey && event.key.toLowerCase() === "p" && !isTyping) {
+    event.preventDefault();
+    currentPage = Math.max(1, currentPage - 1);
+    applyFiltersAndRender();
+  }
 });
 
 setDashboardView("overview");
