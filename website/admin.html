@@ -518,6 +518,8 @@
               </article>
             </div>
             <div class="workspace-toolbar-shell">
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Quick Filters</p>
             <div class="toolbar toolbar--primary">
               <label class="inlineControl workspace-search-control">Search
                 <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
@@ -534,6 +536,9 @@
               <button id="urgentOnlyToggleBtn" type="button" class="secondary slim" aria-pressed="false">Urgent only: Off</button>
               <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
             </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Queue Focus</p>
             <div class="toolbar triage-toolbar">
               <label class="inlineControl">Category
                 <select id="categoryFilter">
@@ -565,6 +570,9 @@
                 </select>
               </label>
             </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Workspace View Settings</p>
             <div class="toolbar saved-view-toolbar">
               <label class="inlineControl">Saved View
                 <select id="savedViewSelect">
@@ -580,6 +588,9 @@
               <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
               <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
             </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Bulk Actions</p>
             <div class="toolbar selection-toolbar">
               <label class="inlineControl">Bulk Status
                 <select id="bulkStatusValue">
@@ -592,6 +603,7 @@
               <button id="applyBulkStatusBtn" type="button" class="secondary slim">Apply to selected</button>
               <button id="clearSelectionBtn" type="button" class="secondary slim">Clear selection</button>
               <p id="selectionSummary" class="small">0 selected</p>
+            </div>
             </div>
             </div>
             <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
