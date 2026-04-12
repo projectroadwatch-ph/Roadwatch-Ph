@@ -4884,3 +4884,61 @@ body {
     justify-items: start;
   }
 }
+
+/* 2026-04-12 overlap fix: prevent admin dashboard sections from stacking over each other */
+body.admin-authenticated .console-topbar,
+body.admin-authenticated .dashboard-header,
+body.admin-authenticated .dashboard-nav {
+  position: static;
+  top: auto;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  align-items: start;
+}
+
+body.admin-authenticated .console-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, auto);
+  gap: 12px;
+}
+
+body.admin-authenticated .console-tools {
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+body.admin-authenticated .console-search {
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+body.admin-authenticated .trust-badge,
+body.admin-authenticated .console-chip {
+  flex: 0 0 auto;
+}
+
+body.admin-authenticated .dashboard-header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+}
+
+@media (max-width: 1280px) {
+  body.admin-authenticated .console-topbar,
+  body.admin-authenticated .dashboard-header {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .console-tools {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1120px) {
+  body.admin-authenticated .admin-console-layout {
+    grid-template-columns: 1fr;
+  }
+}
