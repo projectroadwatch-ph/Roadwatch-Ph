@@ -1,14 +1,14 @@
 :root {
-  --bg: #020712;
-  --bg-soft: #07172b;
-  --card: #0e2039;
-  --line: rgba(173, 214, 255, 0.24);
-  --text: #ebf4ff;
-  --muted: #b9cbe4;
-  --accent: #52a8ff;
-  --accent-strong: #2d88ff;
-  --success: #66f2b8;
-  --shadow-lg: 0 28px 70px rgba(1, 7, 16, 0.55);
+  --bg: #06111e;
+  --bg-soft: #0b1f36;
+  --card: #122946;
+  --line: rgba(173, 214, 255, 0.2);
+  --text: #eaf2ff;
+  --muted: #aebed6;
+  --accent: #4da0f4;
+  --accent-strong: #2f88e2;
+  --success: #60ddb0;
+  --shadow-lg: 0 14px 34px rgba(1, 10, 20, 0.34);
   --management-action-col-width: 300px;
   --management-status-col-width: 160px;
   --management-select-col-width: 74px;
@@ -22,11 +22,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 4% -12%, rgba(82, 168, 255, 0.25), transparent 36%),
-    radial-gradient(circle at 98% 10%, rgba(75, 123, 255, 0.24), transparent 42%),
-    radial-gradient(circle at 30% 100%, rgba(30, 211, 154, 0.15), transparent 35%),
-    linear-gradient(160deg, var(--bg) 0%, #061427 48%, #040a16 100%);
+  background: linear-gradient(160deg, var(--bg) 0%, #08182b 45%, #060f1e 100%);
   color: var(--text);
   font-family: Inter, Arial, sans-serif;
   overflow-x: hidden;
@@ -48,10 +44,10 @@ body {
 .card {
   background: linear-gradient(160deg, rgba(13, 31, 57, 0.94), rgba(7, 20, 39, 0.95));
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 22px;
+  border-radius: 16px;
+  padding: 20px;
   box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
 }
 .hidden,
 [hidden] { display: none !important; }
@@ -88,13 +84,11 @@ body {
 .dashboard-shell {
   position: relative;
   width: 100%;
-  padding: 18px 22px 26px;
+  padding: 16px 18px 22px;
   overflow: visible;
   max-height: none;
   max-width: 100%;
-  background:
-    radial-gradient(circle at 50% -30%, rgba(60, 120, 255, 0.24), transparent 58%),
-    linear-gradient(160deg, rgba(7, 24, 47, 0.98), rgba(6, 20, 39, 0.98));
+  background: linear-gradient(160deg, rgba(10, 30, 55, 0.97), rgba(8, 24, 44, 0.98));
 }
 
 .console-topbar {
@@ -107,8 +101,8 @@ body {
   gap: 16px;
   padding: 10px 12px;
   border: 1px solid rgba(165, 213, 255, 0.24);
-  border-radius: 14px;
-  background: linear-gradient(120deg, rgba(6, 23, 45, 0.82), rgba(11, 33, 60, 0.65));
+  border-radius: 12px;
+  background: linear-gradient(120deg, rgba(8, 27, 50, 0.9), rgba(12, 34, 59, 0.74));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
@@ -151,7 +145,7 @@ body {
   gap: 8px;
   padding: 8px 12px;
   min-width: 260px;
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid rgba(165, 213, 255, 0.3);
   background: rgba(6, 20, 38, 0.8);
 }
@@ -176,7 +170,7 @@ body {
 .console-chip {
   margin-top: 0;
   min-width: 86px;
-  border-radius: 999px;
+  border-radius: 10px;
 }
 
 .trust-badge {
@@ -200,8 +194,8 @@ body {
   margin-top: 12px;
   padding: 14px 12px;
   border: 1px solid rgba(165, 213, 255, 0.2);
-  border-radius: 14px;
-  background: linear-gradient(110deg, rgba(5, 21, 42, 0.72), rgba(9, 30, 56, 0.64));
+  border-radius: 12px;
+  background: linear-gradient(110deg, rgba(7, 24, 44, 0.84), rgba(10, 30, 53, 0.72));
 }
 
 .header-actions-right {
@@ -217,7 +211,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 999px;
+  border-radius: 10px;
   border: 1px solid rgba(116, 245, 187, 0.35);
   color: #b7f6d9;
   background: rgba(44, 145, 91, 0.18);
@@ -255,7 +249,7 @@ body {
 .mission-chip {
   margin: 0;
   padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid rgba(165, 213, 255, 0.22);
   background: linear-gradient(135deg, rgba(8, 31, 57, 0.88), rgba(13, 41, 71, 0.62));
   display: grid;
@@ -272,6 +266,20 @@ body {
 .mission-chip strong {
   font-size: 1.15rem;
   color: #eef7ff;
+}
+
+.admin-sidebar__link {
+  justify-content: flex-start;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.operations-pill-grid .section-chip,
+.header-kpis .section-chip {
+  border-radius: 8px;
+  background: rgba(77, 160, 244, 0.1);
+  border: 1px solid rgba(173, 214, 255, 0.16);
 }
 .dashboard-nav {
   margin-top: 12px;
