@@ -41,11 +41,11 @@
             <p>Admin Suite</p>
           </div>
         </div>
-        <p class="admin-sidebar__label">Main Navigation</p>
+        <p class="admin-sidebar__label">Workspace Folders</p>
         <div class="admin-sidebar__nav">
-          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span aria-hidden="true">📊</span><span>Dashboard Home</span></button>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span aria-hidden="true">📊</span><span>Home</span></button>
           <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🗂️</span><span>Report Workspace</span></button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span aria-hidden="true">🚨</span><span>Triage Inbox</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span aria-hidden="true">🚨</span><span>Triage Box</span></button>
         </div>
         <hr class="admin-sidebar__divider">
         <p class="admin-sidebar__label">Overview Sections</p>
@@ -59,6 +59,7 @@
           <a href="#overviewAnalyticsPanel">Data Analytics</a>
           <a href="#overviewAiPanel">AI Recommendations</a>
         </nav>
+        <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
       </aside>
 
       <div class="admin-console-main">
@@ -121,22 +122,8 @@
             <span class="dot"></span>
             <span>Live Monitoring</span>
           </div>
-          <button id="logoutBtn" type="button" class="secondary">Log out</button>
         </div>
       </div>
-
-      <section class="dashboard-control-deck" aria-label="Dashboard controls">
-        <nav class="dashboard-nav" aria-label="Dashboard sections">
-          <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active">Home</button>
-          <button id="showManagementBtn" type="button" class="secondary nav-btn">System Management</button>
-        </nav>
-        <div class="quick-actions quick-actions--dashboard" aria-label="Command shortcuts">
-          <button id="openTriageShortcutBtn" type="button" class="quick-action-pill"><strong>➕ Open Triage Queue</strong><span>Review incoming reports</span></button>
-          <button id="focusUrgentShortcutBtn" type="button" class="quick-action-pill"><strong>⚠️ Show Critical Cases</strong><span>Filter urgent incidents</span></button>
-          <button id="syncDataShortcutBtn" type="button" class="quick-action-pill"><strong>🔄 Refresh Reports</strong><span>Sync latest sheet data</span></button>
-        </div>
-
-      </section>
 
       <section id="overviewView" class="dashboard-view">
         <section class="overview-shell">

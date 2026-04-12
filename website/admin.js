@@ -792,13 +792,13 @@ function updateSidebarNavState(view = "overview", pane = "") {
 
 function setBreadcrumbs(view = "overview", pane = "") {
   if (!adminBreadcrumbView || !adminBreadcrumbPane || !adminBreadcrumbPaneSeparator) return;
-  const viewLabel = view === "management" ? "System Management" : "Dashboard Home";
+  const viewLabel = view === "management" ? "System Management" : "Home";
   adminBreadcrumbView.textContent = viewLabel;
 
   if (view === "management") {
     adminBreadcrumbPane.hidden = false;
     adminBreadcrumbPaneSeparator.hidden = false;
-    adminBreadcrumbPane.textContent = pane === "triage" ? "Triage Inbox" : "Report Workspace";
+    adminBreadcrumbPane.textContent = pane === "triage" ? "Triage Box" : "Report Workspace";
     return;
   }
 
