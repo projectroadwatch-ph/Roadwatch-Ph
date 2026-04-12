@@ -5036,3 +5036,126 @@ body.admin-authenticated .dashboard-header {
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-04-12 hybrid workspace: Kanban board + detail drawer */
+.workspace-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+
+.kanban-workspace {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kanban-column {
+  border: 1px solid #d6e3ef;
+  border-radius: 12px;
+  background: #f8fbff;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-column > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e4edf5;
+}
+
+.kanban-column-body {
+  padding: 8px;
+  overflow: auto;
+  max-height: 520px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.kanban-card {
+  border: 1px solid #d7e2ed;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.kanban-card.is-selected {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15);
+}
+
+.kanban-card p {
+  margin: 4px 0;
+}
+
+.kanban-card__profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.kanban-card__avatar,
+.kanban-profile__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.kanban-drawer {
+  border: 1px solid #d6e3ef;
+  border-radius: 12px;
+  background: #f8fbff;
+  padding: 12px;
+}
+
+.kanban-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #dbe7f3;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.kanban-profile p {
+  margin: 2px 0;
+}
+
+.kanban-drawer-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 1200px) {
+  .kanban-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .kanban-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

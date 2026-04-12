@@ -124,6 +124,33 @@ const deleteSavedViewBtn = document.getElementById("deleteSavedViewBtn");
 const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
 const staleDataBanner = document.getElementById("staleDataBanner");
 const syncMetaStatus = document.getElementById("syncMetaStatus");
+const showKanbanViewBtn = document.getElementById("showKanbanViewBtn");
+const showTableViewBtn = document.getElementById("showTableViewBtn");
+const kanbanWorkspace = document.getElementById("kanbanWorkspace");
+const tableWorkspace = document.getElementById("tableWorkspace");
+const kanbanPending = document.getElementById("kanbanPending");
+const kanbanVerified = document.getElementById("kanbanVerified");
+const kanbanInProgress = document.getElementById("kanbanInProgress");
+const kanbanRepaired = document.getElementById("kanbanRepaired");
+const kanbanCountPending = document.getElementById("kanbanCountPending");
+const kanbanCountVerified = document.getElementById("kanbanCountVerified");
+const kanbanCountInProgress = document.getElementById("kanbanCountInProgress");
+const kanbanCountRepaired = document.getElementById("kanbanCountRepaired");
+const kanbanDrawerEmpty = document.getElementById("kanbanDrawerEmpty");
+const kanbanDrawerContent = document.getElementById("kanbanDrawerContent");
+const kanbanDetailTracking = document.getElementById("kanbanDetailTracking");
+const kanbanDetailLocation = document.getElementById("kanbanDetailLocation");
+const kanbanDetailIssue = document.getElementById("kanbanDetailIssue");
+const kanbanProfileAvatar = document.getElementById("kanbanProfileAvatar");
+const kanbanProfileName = document.getElementById("kanbanProfileName");
+const kanbanProfileContact = document.getElementById("kanbanProfileContact");
+const kanbanAssignTo = document.getElementById("kanbanAssignTo");
+const kanbanDueAt = document.getElementById("kanbanDueAt");
+const kanbanSaveMetaBtn = document.getElementById("kanbanSaveMetaBtn");
+const kanbanSetPendingBtn = document.getElementById("kanbanSetPendingBtn");
+const kanbanSetVerifiedBtn = document.getElementById("kanbanSetVerifiedBtn");
+const kanbanSetProgressBtn = document.getElementById("kanbanSetProgressBtn");
+const kanbanSetRepairedBtn = document.getElementById("kanbanSetRepairedBtn");
 
 let allReports = [];
 let pendingStatusUpdates = 0;
@@ -138,6 +165,8 @@ let urgentOnlyMode = false;
 let activeColumnView = "operations";
 let activeDashboardView = "overview";
 let staleDataIntervalId = null;
+let workspaceLayoutMode = "kanban";
+let activeKanbanTracking = "";
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
@@ -1389,6 +1418,89 @@ function renderManagementSnapshot(filteredReports) {
   if (managementSelectedCount) managementSelectedCount.textContent = String(selectedReports.size);
 }
 
+function setWorkspaceLayoutMode(mode = "kanban") {
+  workspaceLayoutMode = mode === "table" ? "table" : "kanban";
+  if (kanbanWorkspace) kanbanWorkspace.hidden = workspaceLayoutMode !== "kanban";
+  if (tableWorkspace) tableWorkspace.hidden = workspaceLayoutMode !== "table";
+  showKanbanViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "kanban");
+  showTableViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "table");
+}
+
+function renderKanbanDrawer(report) {
+  if (!kanbanDrawerEmpty || !kanbanDrawerContent) return;
+  if (!report) {
+    kanbanDrawerEmpty.hidden = false;
+    kanbanDrawerContent.hidden = true;
+    return;
+  }
+
+  kanbanDrawerEmpty.hidden = true;
+  kanbanDrawerContent.hidden = false;
+  const reporterName = String(report.name || "Anonymous").trim() || "Anonymous";
+  const contactParts = [String(report.phone || "").trim(), String(report.email || "").trim()].filter(Boolean);
+  if (kanbanProfileAvatar) kanbanProfileAvatar.textContent = getReporterInitials(reporterName);
+  if (kanbanProfileName) kanbanProfileName.innerHTML = `<strong>${escapeHtml(reporterName)}</strong>`;
+  if (kanbanProfileContact) kanbanProfileContact.textContent = contactParts.join(" • ") || "No contact info";
+  if (kanbanDetailTracking) kanbanDetailTracking.textContent = report.tracking || "Unknown Tracking #";
+  if (kanbanDetailLocation) kanbanDetailLocation.textContent = report.location || "Location unavailable";
+  if (kanbanDetailIssue) kanbanDetailIssue.textContent = report.issue || "Issue details unavailable";
+  if (kanbanAssignTo) kanbanAssignTo.value = report.assignedTo || "";
+  if (kanbanDueAt) kanbanDueAt.value = report.dueAt || "";
+}
+
+function renderKanbanBoard(reports) {
+  if (!kanbanPending || !kanbanVerified || !kanbanInProgress || !kanbanRepaired) return;
+  const columns = {
+    Pending: kanbanPending,
+    Verified: kanbanVerified,
+    "In Progress": kanbanInProgress,
+    Repaired: kanbanRepaired
+  };
+  Object.values(columns).forEach((col) => { col.innerHTML = ""; });
+  const counts = { Pending: 0, Verified: 0, "In Progress": 0, Repaired: 0 };
+  const safeReports = Array.isArray(reports) ? reports : [];
+  safeReports.slice(0, 300).forEach((report) => {
+    const status = normalizeStatus(report.status);
+    const target = columns[status] || columns.Pending;
+    counts[status] = (counts[status] || 0) + 1;
+    const card = document.createElement("article");
+    card.className = "kanban-card";
+    const tracking = String(report.tracking || "").trim();
+    if (tracking && tracking === activeKanbanTracking) card.classList.add("is-selected");
+    card.innerHTML = `
+      <strong>${escapeHtml(tracking || "No Tracking #")}</strong>
+      <p class="small">${escapeHtml(report.location || "Location unavailable")}</p>
+      <p class="small">Priority: ${getPriorityScore(report)}</p>
+      <p class="small">${escapeHtml(report.assignedTo || "Unassigned")}</p>
+      <div class="kanban-card__profile">
+        <span class="kanban-card__avatar">${escapeHtml(getReporterInitials(report.name))}</span>
+        <span class="small">${escapeHtml(report.name || "Anonymous")}</span>
+      </div>
+    `;
+    card.addEventListener("click", () => {
+      activeKanbanTracking = tracking;
+      renderKanbanDrawer(report);
+      renderKanbanBoard(getFilteredReports());
+    });
+    target.appendChild(card);
+  });
+  if (kanbanCountPending) kanbanCountPending.textContent = String(counts.Pending || 0);
+  if (kanbanCountVerified) kanbanCountVerified.textContent = String(counts.Verified || 0);
+  if (kanbanCountInProgress) kanbanCountInProgress.textContent = String(counts["In Progress"] || 0);
+  if (kanbanCountRepaired) kanbanCountRepaired.textContent = String(counts.Repaired || 0);
+
+  const selected = safeReports.find((report) => String(report.tracking || "").trim() === activeKanbanTracking);
+  renderKanbanDrawer(selected || null);
+}
+
+function getReporterInitials(name) {
+  const normalized = String(name || "").trim();
+  if (!normalized) return "AN";
+  const parts = normalized.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase() || "AN";
+}
+
 function getSelectedReports() {
   return allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
 }
@@ -1441,6 +1553,27 @@ async function applyBulkStatusUpdate() {
     setFeedback("reportsFeedback", `Updated ${trackingList.length} report(s) to ${nextStatus}.`);
   }
   applyFiltersAndRender();
+}
+
+async function updateKanbanStatus(status) {
+  const tracking = String(activeKanbanTracking || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Select a Kanban card before changing status.", true);
+    return;
+  }
+  if (!guardPermission("publish", "Your role cannot update report status.")) return;
+  try {
+    await updateReportStatus(tracking, status);
+    const report = allReports.find((item) => String(item.tracking || "").trim() === tracking);
+    const previousStatus = normalizeStatus(report?.status);
+    if (report) report.status = status;
+    addAuditEntry("Status Updated", tracking, `${previousStatus} → ${status}`);
+    addTimelineEntry(tracking, "Status Updated", `${previousStatus} → ${status}`);
+    setFeedback("reportsFeedback", `Updated ${tracking} to ${status}.`);
+    applyFiltersAndRender();
+  } catch (error) {
+    setFeedback("reportsFeedback", error.message || "Unable to update report status.", true);
+  }
 }
 
 function photoCell(photo) {
@@ -2910,6 +3043,7 @@ function applyFiltersAndRender() {
   renderManagementSnapshot(filtered);
   setTableColumnView(activeColumnView);
   renderRows(paginated);
+  renderKanbanBoard(filtered);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
   renderVerificationQueue(allReports);
@@ -3143,6 +3277,8 @@ runSmartDispatchBtn?.addEventListener("click", () => {
 });
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
+showKanbanViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("kanban"));
+showTableViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("table"));
 applyBulkStatusBtn?.addEventListener("click", () => {
   applyBulkStatusUpdate();
 });
@@ -3302,6 +3438,27 @@ createProjectBtn?.addEventListener("click", () => {
   applyFiltersAndRender();
 });
 
+kanbanSaveMetaBtn?.addEventListener("click", () => {
+  const tracking = String(activeKanbanTracking || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Select a Kanban card before saving assignment.", true);
+    return;
+  }
+  if (!guardPermission("assign", "Your role cannot update assignment metadata.")) return;
+  const assignedTo = String(kanbanAssignTo?.value || "").trim() || "Unassigned";
+  const dueAt = String(kanbanDueAt?.value || "").trim();
+  updateCaseMeta(tracking, { assignedTo, dueAt });
+  allReports = allReports.map((report) => String(report.tracking || "").trim() === tracking ? { ...report, assignedTo, dueAt } : report);
+  addAuditEntry("Case Assignment Updated", tracking, `${assignedTo}${dueAt ? ` • Due ${dueAt}` : ""}`);
+  addTimelineEntry(tracking, "Assignment Updated", `${assignedTo}${dueAt ? ` • Due ${dueAt}` : ""}`);
+  setFeedback("reportsFeedback", `Saved assignment details for ${tracking}.`);
+  applyFiltersAndRender();
+});
+kanbanSetPendingBtn?.addEventListener("click", () => updateKanbanStatus("Pending"));
+kanbanSetVerifiedBtn?.addEventListener("click", () => updateKanbanStatus("Verified"));
+kanbanSetProgressBtn?.addEventListener("click", () => updateKanbanStatus("In Progress"));
+kanbanSetRepairedBtn?.addEventListener("click", () => updateKanbanStatus("Repaired"));
+
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
 roleFilterSelect?.addEventListener("change", () => renderAdminIdentity());
@@ -3358,6 +3515,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 setDashboardView("overview");
+setWorkspaceLayoutMode("kanban");
 renderCaseTimeline("");
 applyAuthUI();
 
