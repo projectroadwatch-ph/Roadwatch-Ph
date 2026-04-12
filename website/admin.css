@@ -4427,3 +4427,127 @@ body.admin-authenticated table tbody tr:hover {
     width: 100%;
   }
 }
+
+/* 2026-04-12 accessibility pass: enforce high-contrast admin theme so all controls remain visible */
+body.admin-authenticated {
+  color: #1f3348;
+  background:
+    radial-gradient(circle at 8% 5%, rgba(148, 198, 246, 0.25), transparent 38%),
+    radial-gradient(circle at 95% 10%, rgba(179, 218, 255, 0.2), transparent 32%),
+    #edf4fc;
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated .analyticsLabel,
+body.admin-authenticated label,
+body.admin-authenticated .muted-chip,
+body.admin-authenticated .section-chip,
+body.admin-authenticated .mission-chip__label,
+body.admin-authenticated .queueCard p,
+body.admin-authenticated .priorityItem p {
+  color: #35516f;
+}
+
+body.admin-authenticated .card,
+body.admin-authenticated .dashboard-shell,
+body.admin-authenticated .console-topbar,
+body.admin-authenticated .dashboard-header,
+body.admin-authenticated .dashboard-nav,
+body.admin-authenticated .panel,
+body.admin-authenticated .analyticsCard,
+body.admin-authenticated .snapshot-card,
+body.admin-authenticated .action-drawer,
+body.admin-authenticated .workspace-actions .queue-section,
+body.admin-authenticated .management-kpi-card,
+body.admin-authenticated .severity-card,
+body.admin-authenticated .queueCard,
+body.admin-authenticated .toolbar,
+body.admin-authenticated .reportsTableWrap,
+body.admin-authenticated .table-wrapper,
+body.admin-authenticated .tableWrap {
+  color: #1f3348;
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(119, 154, 194, 0.42);
+}
+
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated textarea,
+body.admin-authenticated .console-search {
+  color: #19314a;
+  background: #ffffff;
+  border-color: rgba(112, 153, 197, 0.55);
+}
+
+body.admin-authenticated input::placeholder,
+body.admin-authenticated textarea::placeholder {
+  color: #5e7a97;
+}
+
+body.admin-authenticated .nav-btn,
+body.admin-authenticated button.secondary,
+body.admin-authenticated .quick-action-pill {
+  color: #19314a;
+  background: #f5f9ff;
+  border-color: rgba(110, 151, 195, 0.48);
+}
+
+body.admin-authenticated button,
+body.admin-authenticated .hero-cta,
+body.admin-authenticated .nav-btn.is-active {
+  color: #ffffff;
+  background: linear-gradient(140deg, #2a7bc8, #245ea2);
+  border-color: rgba(30, 83, 144, 0.75);
+}
+
+body.admin-authenticated .management-table,
+body.admin-authenticated .overview-table {
+  min-width: max(100%, 960px);
+}
+
+body.admin-authenticated .management-table th,
+body.admin-authenticated .overview-table th {
+  color: #1f3a57;
+  background: #e4eefb;
+}
+
+body.admin-authenticated .management-table td,
+body.admin-authenticated .overview-table td {
+  color: #1f3348;
+  border-bottom-color: rgba(128, 162, 199, 0.35);
+}
+
+body.admin-authenticated .management-table tbody tr:nth-child(even),
+body.admin-authenticated .overview-table tbody tr:nth-child(even) {
+  background: rgba(233, 242, 252, 0.6);
+}
+
+body.admin-authenticated .management-table tbody tr:hover,
+body.admin-authenticated .overview-table tbody tr:hover {
+  background: rgba(200, 221, 245, 0.75);
+}
+
+body.admin-authenticated .pinMap,
+body.admin-authenticated .chart-panel,
+body.admin-authenticated .analytics-timeline {
+  background: #f8fbff;
+  border-color: rgba(126, 160, 196, 0.45);
+}
+
+body.admin-authenticated .verification-badge.is-pending,
+body.admin-authenticated .quality-medium,
+body.admin-authenticated .severity-high {
+  color: #784e00;
+}
+
+body.admin-authenticated .verification-badge.is-verified,
+body.admin-authenticated .quality-high,
+body.admin-authenticated .severity-routine {
+  color: #0d5b39;
+}
+
+body.admin-authenticated .verification-badge.is-flagged,
+body.admin-authenticated .quality-low,
+body.admin-authenticated .severity-critical {
+  color: #8a2230;
+}
