@@ -600,9 +600,33 @@
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
             <div class="workspace-view-toggle" role="group" aria-label="Workspace layout">
-              <button id="showKanbanViewBtn" type="button" class="secondary slim nav-btn is-active">Kanban</button>
+              <button id="showCardViewBtn" type="button" class="secondary slim nav-btn is-active">Cards</button>
+              <button id="showKanbanViewBtn" type="button" class="secondary slim nav-btn">Kanban</button>
               <button id="showTableViewBtn" type="button" class="secondary slim nav-btn">Table</button>
             </div>
+            <section id="cardWorkspace" class="card-workspace" aria-label="Card report workspace">
+              <header class="card-workspace__toolbar">
+                <label class="inlineControl compact">Severity
+                  <select id="severityQuickFilter">
+                    <option value="all">All Severity</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </label>
+                <label class="inlineControl compact">Status
+                  <select id="statusQuickFilter">
+                    <option value="all">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Verified">Verified</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Repaired">Repaired</option>
+                  </select>
+                </label>
+              </header>
+              <div id="reportCardsGrid" class="report-cards-grid"></div>
+            </section>
             <section id="kanbanWorkspace" class="kanban-workspace" aria-label="Kanban report workspace">
               <div class="kanban-board">
                 <article class="kanban-column" data-status="Pending">
