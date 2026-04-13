@@ -59,9 +59,9 @@
         <div class="admin-sidebar__nav">
           <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span class="material-symbols-rounded" aria-hidden="true">dashboard</span><span>Dashboard</span></button>
           <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span class="material-symbols-rounded" aria-hidden="true">assignment</span><span>Report Management</span></button>
-          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">map</span><span>Map View</span></button>
-          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span><span>Analytics</span></button>
-          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">groups</span><span>User Reports</span></button>
+          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">map</span><span>Map View</span><small>Coming soon</small></button>
+          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span><span>Analytics</span><small>Coming soon</small></button>
+          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">groups</span><span>User Reports</span><small>Coming soon</small></button>
         </div>
         <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
           <a href="#overviewSnapshotPanel">Operational Snapshot</a>
@@ -570,11 +570,8 @@
               <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
               <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
             </div>
-            <div class="workspace-toolbar-group">
-              <p class="workspace-toolbar-group__title">Display Density</p>
-              <div class="toolbar saved-view-toolbar">
-                <button id="toggleDensityBtn" type="button" class="secondary slim" aria-pressed="false">Dense mode: Off</button>
-              </div>
+            <div class="toolbar saved-view-toolbar saved-view-toolbar--compact">
+              <button id="toggleDensityBtn" type="button" class="secondary slim" aria-pressed="false">Dense mode: Off</button>
             </div>
             </div>
             <div class="workspace-toolbar-group">

@@ -6573,3 +6573,35 @@ body.admin-dense .toolbar {
 body.admin-dense .management-kpi-card {
   padding: 10px;
 }
+
+/* Admin UI cleanup refinements */
+body.admin-authenticated .admin-sidebar__link.is-disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+body.admin-authenticated .admin-sidebar__link.is-disabled:hover,
+body.admin-authenticated .admin-sidebar__link.is-disabled:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  color: #bdd0ec;
+  transform: none;
+}
+
+body.admin-authenticated .admin-sidebar__link.is-disabled small {
+  margin-left: auto;
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #89a7cd;
+}
+
+.saved-view-toolbar--compact {
+  margin-top: 8px;
+  border-top: 1px solid rgba(160, 205, 247, 0.2);
+  padding-top: 10px;
+}
+
+.saved-view-toolbar--compact #toggleDensityBtn {
+  min-width: 180px;
+}
