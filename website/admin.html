@@ -78,35 +78,33 @@
       </aside>
 
       <div class="admin-console-main">
-      <div class="console-topbar">
-        <div class="console-brand">
+      <div class="console-topbar console-topbar--compact">
+        <div class="console-topbar__row">
           <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
-          <strong>RoadWatch PH</strong>
-        </div>
-        <div class="console-tools">
           <label class="console-search">
             <span class="material-symbols-rounded" aria-hidden="true">search</span>
-            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content">
+            <input id="dashboardSearch" type="search" placeholder="Search reports, locations..." aria-label="Search dashboard content">
           </label>
-          <p id="sessionSummaryBadge" class="console-status-pill small">Session active · Sync pending</p>
-          <div class="console-alert-wrap">
-            <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">notifications</span> <span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
-            <div id="notificationPanel" class="notification-panel" hidden>
-              <div class="notification-panel__header">
-                <strong>Notifications</strong>
-                <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+          <div class="console-tools">
+            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar">A</span> roadwatchph-admin</button>
+            <div class="console-alert-wrap">
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">notifications</span><span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
+              <div id="notificationPanel" class="notification-panel" hidden>
+                <div class="notification-panel__header">
+                  <strong>Notifications</strong>
+                  <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+                </div>
+                <ul id="notificationPanelList" class="notification-panel__list"></ul>
               </div>
-              <ul id="notificationPanelList" class="notification-panel__list"></ul>
             </div>
           </div>
-          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="material-symbols-rounded" aria-hidden="true">account_circle</span> Admin</button>
         </div>
-      </div>
-      <div class="dashboard-header">
-        <div>
-          <p class="eyebrow">Operations Center</p>
-          <h2>Admin Dashboard</h2>
-          <p class="small">Track report flow, prioritize urgent concerns, and publish updates quickly.</p>
+        <div class="dashboard-header dashboard-header--compact">
+          <div>
+            <h2>Welcome, Admin</h2>
+            <p class="small">Here's an overview of the latest activity.</p>
+          </div>
+          <p id="sessionSummaryBadge" class="console-status-pill small">Last sync: 1 hour ago</p>
         </div>
       </div>
 

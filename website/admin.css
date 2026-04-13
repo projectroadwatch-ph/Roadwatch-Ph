@@ -6605,3 +6605,156 @@ body.admin-authenticated .admin-sidebar__link.is-disabled small {
 .saved-view-toolbar--compact #toggleDensityBtn {
   min-width: 180px;
 }
+
+/* Compact dashboard hero to match design reference */
+body.admin-authenticated .console-topbar--compact {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #dbe2f1;
+  background: #eef2fb;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  flex: 1;
+  border-radius: 10px;
+  border: 1px solid #dde3ef;
+  background: #f6f7fb;
+  min-height: 34px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input {
+  font-size: 12px;
+  color: #5f6880;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input::placeholder {
+  color: #8d96aa;
+}
+
+body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
+  min-height: 34px;
+  min-width: 34px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid #dde3ef;
+  background: #f6f7fb;
+  color: #58617a;
+}
+
+body.admin-authenticated .console-topbar--compact .console-chip {
+  min-height: 34px;
+  border-radius: 10px;
+  border: 1px solid #dde3ef;
+  background: #f6f7fb;
+  color: #4f5870;
+  font-size: 11px;
+  font-weight: 700;
+  gap: 6px;
+}
+
+body.admin-authenticated .console-chip__avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #5d78ff;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+body.admin-authenticated .console-topbar--compact .console-alert-btn {
+  min-height: 34px;
+  min-width: 34px;
+  border-radius: 10px;
+  border: 1px solid #dde3ef;
+  background: #f6f7fb;
+  color: #58617a;
+  padding: 0 8px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-alert-btn .material-symbols-rounded {
+  font-size: 16px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-alert-btn__badge {
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  min-height: 7px;
+  border-radius: 999px;
+  background: #ff5757;
+  color: transparent;
+  font-size: 0;
+  margin-left: 4px;
+}
+
+body.admin-authenticated .dashboard-header--compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #dde3ef;
+  background: #f8f9fc;
+}
+
+body.admin-authenticated .dashboard-header--compact h2 {
+  margin: 0;
+  font-size: 29px;
+  line-height: 1.1;
+  color: #273145;
+}
+
+body.admin-authenticated .dashboard-header--compact .small {
+  margin: 4px 0 0;
+  color: #7b8498;
+  font-size: 13px;
+}
+
+body.admin-authenticated .dashboard-header--compact .console-status-pill {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #7e879a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+body.admin-authenticated .dashboard-header--compact .console-status-pill::before {
+  content: "○";
+  color: #8ecb68;
+  margin-right: 6px;
+}
+
+@media (max-width: 900px) {
+  body.admin-authenticated .console-topbar--compact .console-chip {
+    display: none;
+  }
+
+  body.admin-authenticated .dashboard-header--compact {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
