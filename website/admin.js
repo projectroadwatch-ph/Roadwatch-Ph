@@ -925,6 +925,11 @@ function setDashboardView(view) {
   });
 }
 
+function getManagementPaneConfig(pane) {
+  if (pane === "triage") return adminTriagePage || {};
+  return adminWorkspacePage || {};
+}
+
 function setManagementPane(pane) {
   const activePane = pane === "triage" ? "triage" : "workspace";
   const pageConfig = getManagementPaneConfig(activePane);
@@ -3645,6 +3650,7 @@ document.addEventListener("keydown", (event) => {
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
   if (!isAuthed) return;
   const targetTag = String(event.target?.tagName || "").toLowerCase();
+  const key = String(event.key || "").toLowerCase();
   const isTyping = targetTag === "input" || targetTag === "textarea" || targetTag === "select";
   if (event.key === "/" && !isTyping) {
     event.preventDefault();
@@ -3652,21 +3658,21 @@ document.addEventListener("keydown", (event) => {
     dashboardSearch?.select?.();
     return;
   }
-  if (event.key.toLowerCase() === "u" && !isTyping) {
+  if (key === "u" && !isTyping) {
     event.preventDefault();
     setUrgentOnlyMode(!urgentOnlyMode);
     currentPage = 1;
     applyFiltersAndRender();
     return;
   }
-  if (event.shiftKey && event.key.toLowerCase() === "n" && !isTyping) {
+  if (event.shiftKey && key === "n" && !isTyping) {
     event.preventDefault();
     const filtered = getFilteredReports();
     currentPage = Math.min(getTotalPages(filtered.length), currentPage + 1);
     applyFiltersAndRender();
     return;
   }
-  if (event.shiftKey && event.key.toLowerCase() === "p" && !isTyping) {
+  if (event.shiftKey && key === "p" && !isTyping) {
     event.preventDefault();
     currentPage = Math.max(1, currentPage - 1);
     applyFiltersAndRender();
