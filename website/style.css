@@ -505,8 +505,8 @@ section {
     calc(58px + var(--safe-bottom))
     calc(clamp(16px, 4vw, 36px) + var(--safe-left));
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   scroll-margin-top: 88px;
 }
 
@@ -586,8 +586,8 @@ section.active {
 
 #home.active > * {
   width: 100%;
-  max-width: 1180px;
-  margin-inline: auto;
+  max-width: 100%;
+  margin-inline: 0;
 }
 
 #home.active > .hero-card,
