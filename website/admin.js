@@ -108,6 +108,13 @@ const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
+const sessionMetaStatus = document.getElementById("sessionMetaStatus");
+const notificationToggleBtn = document.getElementById("notificationToggleBtn");
+const notificationBadge = document.getElementById("notificationBadge");
+const notificationPanel = document.getElementById("notificationPanel");
+const notificationPanelList = document.getElementById("notificationPanelList");
+const markAllReadBtn = document.getElementById("markAllReadBtn");
+const quickFilterPresets = Array.from(document.querySelectorAll("[data-quick-preset]"));
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
 const runSmartDispatchBtn = document.getElementById("runSmartDispatchBtn");
 const bulkStatusValue = document.getElementById("bulkStatusValue");
@@ -424,6 +431,13 @@ function guardPermission(permission, deniedMessage = "You do not have permission
   return false;
 }
 
+function applyRoleUiVisibility() {
+  const role = getCurrentRole().toLowerCase().replace(/\s+/g, "-");
+  document.body.classList.remove("role-super-admin", "role-verifier", "role-dispatcher", "role-field-lead", "role-viewer", "role-field-officer");
+  document.body.classList.add(`role-${role}`);
+  if (role.includes("field")) document.body.classList.add("role-field-officer");
+}
+
 function setLastSuccessfulSync(timestamp = Date.now()) {
   localStorage.setItem(ADMIN_LAST_SYNC_KEY, String(timestamp));
 }
@@ -437,6 +451,43 @@ function updateSyncMetaStatus() {
   if (!syncMetaStatus) return;
   const lastSync = getLastSuccessfulSync();
   syncMetaStatus.textContent = `Last successful sync: ${lastSync ? formatSyncTime(lastSync) : "Never"} • Source: ${activeReportsSource || "Not connected"}`;
+}
+
+function updateSessionMetaStatus() {
+  if (!sessionMetaStatus) return;
+  const startedAt = Number(localStorage.getItem(ADMIN_SESSION_STARTED_AT_KEY) || "0");
+  const lastSync = getLastSuccessfulSync();
+  const sessionLabel = startedAt ? `Session since ${formatSyncTime(startedAt)}` : "Not signed in";
+  const syncLabel = lastSync ? `Last sync ${formatSyncTime(lastSync)}` : "Sync pending";
+  sessionMetaStatus.textContent = `${sessionLabel} • ${syncLabel}`;
+}
+
+function buildDashboardNotifications() {
+  const queue = getNotificationQueue().slice(0, 8);
+  if (queue.length > 0) {
+    return queue.map((item) => ({
+      text: `${item.tracking || "Unknown"} · ${item.message || "Citizen update queued."}`,
+      severity: "info"
+    }));
+  }
+  return [
+    { text: "No unread notifications right now.", severity: "info" }
+  ];
+}
+
+function renderNotificationPanel() {
+  const notifications = buildDashboardNotifications();
+  if (notificationBadge) {
+    notificationBadge.textContent = String(Math.max(0, notifications.length - (notifications[0]?.text.includes("No unread") ? 1 : 0)));
+  }
+  if (!notificationPanelList) return;
+  notificationPanelList.innerHTML = notifications.map((item) => `<li class="notification-item" data-severity="${item.severity}">${item.text}</li>`).join("");
+}
+
+function setNotificationPanelOpen(isOpen) {
+  if (!notificationPanel || !notificationToggleBtn) return;
+  notificationPanel.hidden = !isOpen;
+  notificationToggleBtn.setAttribute("aria-expanded", String(isOpen));
 }
 
 function refreshStaleDataBanner() {
@@ -487,6 +538,7 @@ function enforceSessionTtl() {
     localStorage.removeItem(ADMIN_SESSION_KEY);
     localStorage.removeItem("roadwatchAdminActiveUser");
     localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
+  updateSessionMetaStatus();
     setFeedback("loginFeedback", "Session expired. Please log in again.", true);
   }
 }
@@ -498,7 +550,15 @@ function setTableLoadingState(isLoading, message = "") {
 }
 
 function drawStatusChart(counts) {
-  adminUi.drawStatusChart(counts);
+  adminUi.drawStatusChart(counts, {
+    onStatusClick: (statusLabel) => {
+      if (!statusFilter) return;
+      statusFilter.value = statusLabel;
+      currentPage = 1;
+      applyFiltersAndRender();
+      setFeedback("reportsFeedback", `Filtered workspace to status: ${statusLabel}.`);
+    }
+  });
 }
 
 function getCaseMetaStore() {
@@ -630,6 +690,7 @@ function queueNotification(tracking, template, message, eta) {
     createdAt: new Date().toISOString()
   }, ...getNotificationQueue()];
   saveNotificationQueue(next);
+  renderNotificationPanel();
 }
 
 function getProjects() {
@@ -1053,6 +1114,7 @@ function login() {
     localStorage.setItem(ADMIN_SESSION_STARTED_AT_KEY, String(Date.now()));
     localStorage.setItem(ADMIN_SERVER_MODE_KEY, "client-only");
     setFeedback("loginFeedback", "Login successful.");
+    updateSessionMetaStatus();
     setFeedback("reportsFeedback", "Security notice: client-only auth is enabled. Use server-backed sessions before production.", true);
     setDashboardView("overview");
     applyAuthUI();
@@ -1066,6 +1128,7 @@ function logout() {
   localStorage.removeItem(ADMIN_SESSION_KEY);
   localStorage.removeItem("roadwatchAdminActiveUser");
   localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
+  updateSessionMetaStatus();
   applyAuthUI();
 }
 
@@ -3330,6 +3393,21 @@ dashboardSearch?.addEventListener("input", () => {
   currentPage = 1;
   applyFiltersAndRender();
 });
+notificationToggleBtn?.addEventListener("click", () => {
+  const nextOpen = notificationToggleBtn.getAttribute("aria-expanded") !== "true";
+  setNotificationPanelOpen(nextOpen);
+});
+markAllReadBtn?.addEventListener("click", () => {
+  localStorage.setItem(ADMIN_NOTIFICATION_QUEUE_KEY, JSON.stringify([]));
+  renderNotificationPanel();
+  setNotificationPanelOpen(false);
+});
+document.addEventListener("click", (event) => {
+  if (!notificationPanel || !notificationToggleBtn) return;
+  const target = event.target;
+  if (notificationPanel.contains(target) || notificationToggleBtn.contains(target)) return;
+  setNotificationPanelOpen(false);
+});
 urgentOnlyToggleBtn?.addEventListener("click", () => {
   setUrgentOnlyMode(!urgentOnlyMode);
   currentPage = 1;
@@ -3355,6 +3433,25 @@ qualityFilter?.addEventListener("change", () => {
 triagePreset?.addEventListener("change", () => {
   currentPage = 1;
   applyFiltersAndRender();
+});
+quickFilterPresets.forEach((button) => {
+  button.addEventListener("click", () => {
+    const preset = button.dataset.quickPreset;
+    setUrgentOnlyMode(false);
+    if (statusFilter) statusFilter.value = "all";
+    if (triagePreset) triagePreset.value = "all";
+    if (preset === "urgentPending") {
+      if (statusFilter) statusFilter.value = "Pending";
+      setUrgentOnlyMode(true);
+    } else if (preset === "verification") {
+      if (triagePreset) triagePreset.value = "needsVerification";
+    } else if (preset === "repairToday") {
+      if (statusFilter) statusFilter.value = "Repaired";
+    }
+    quickFilterPresets.forEach((chip) => chip.classList.toggle("is-active", chip === button));
+    currentPage = 1;
+    applyFiltersAndRender();
+  });
 });
 analyticsBarangayFilter?.addEventListener("change", () => renderAnalytics(allReports));
 analyticsIssueTypeFilter?.addEventListener("change", () => renderAnalytics(allReports));
@@ -3625,7 +3722,10 @@ kanbanSetRepairedBtn?.addEventListener("click", () => updateKanbanStatus("Repair
 
 forecastRange?.addEventListener("change", () => renderForecastCards(allReports));
 roleFilterSelect?.addEventListener("change", () => renderPermissionsSummary());
-roleFilterSelect?.addEventListener("change", () => renderAdminIdentity());
+roleFilterSelect?.addEventListener("change", () => {
+  renderAdminIdentity();
+  applyRoleUiVisibility();
+});
 saveCurrentViewBtn?.addEventListener("click", saveCurrentView);
 deleteSavedViewBtn?.addEventListener("click", deleteSelectedSavedView);
 savedViewSelect?.addEventListener("change", () => {
@@ -3693,3 +3793,6 @@ setUrgentOnlyMode(false);
 renderSavedViews();
 setTableColumnView("operations");
 renderAdminIdentity();
+applyRoleUiVisibility();
+renderNotificationPanel();
+updateSessionMetaStatus();

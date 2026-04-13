@@ -6402,3 +6402,117 @@ body.admin-authenticated .severity-low {
   background: #e7f8ee;
   color: #128251;
 }
+
+:root {
+  --critical: #ff6b6b;
+  --warning: #ffd166;
+  --info: #4fc3f7;
+}
+
+.console-alert-wrap {
+  position: relative;
+}
+
+.notification-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(360px, 85vw);
+  background: linear-gradient(160deg, rgba(10, 30, 55, 0.97), rgba(8, 24, 44, 0.98));
+  border: 1px solid rgba(165, 213, 255, 0.24);
+  border-radius: 12px;
+  padding: 10px;
+  z-index: 30;
+}
+
+.notification-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.notification-panel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 260px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+}
+
+.notification-item {
+  border: 1px solid rgba(173, 214, 255, 0.24);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(7, 20, 39, 0.45);
+}
+
+.notification-item[data-severity='critical'] { border-left: 3px solid var(--critical); }
+.notification-item[data-severity='warning'] { border-left: 3px solid var(--warning); }
+.notification-item[data-severity='info'] { border-left: 3px solid var(--info); }
+
+.console-meta {
+  margin: 0;
+  color: var(--muted);
+}
+
+.secondary-kpis summary {
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.chart-panel {
+  position: relative;
+}
+
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(4, 12, 24, 0.9);
+  border: 1px solid rgba(173, 214, 255, 0.3);
+  color: #eaf2ff;
+  font-size: 12px;
+  z-index: 5;
+}
+
+.quick-filter-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.quick-filter-presets .is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(77, 160, 244, 0.2);
+}
+
+.table-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.table-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  to { transform: translateX(100%); }
+}
+
+body.role-field-officer .workspace-toolbar-group:nth-child(n+3),
+body.role-field-officer #showKanbanViewBtn,
+body.role-field-officer #showTableViewBtn {
+  display: none;
+}

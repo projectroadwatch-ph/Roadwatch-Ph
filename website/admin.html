@@ -87,11 +87,21 @@
             <span aria-hidden="true">🔎</span>
             <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content">
           </label>
-          <button type="button" class="secondary slim console-alert-btn" aria-label="Notifications">🔔 <span class="console-alert-btn__badge">3</span></button>
+          <div class="console-alert-wrap">
+            <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">🔔 <span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
+            <div id="notificationPanel" class="notification-panel" hidden>
+              <div class="notification-panel__header">
+                <strong>Notifications</strong>
+                <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+              </div>
+              <ul id="notificationPanelList" class="notification-panel__list"></ul>
+            </div>
+          </div>
           <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">👤 Admin</button>
+          <p id="sessionMetaStatus" class="console-meta small">Session active · Sync pending</p>
         </div>
       </div>
-      <div class="row dashboard-nav" role="tablist" aria-label="Dashboard views">
+      <div class="row dashboard-nav" role="tablist" aria-label="Primary dashboard views">
         <button id="showOverviewBtn" type="button" class="secondary nav-btn" role="tab" aria-selected="false">Overview</button>
         <button id="showManagementBtn" type="button" class="secondary nav-btn is-active" role="tab" aria-selected="true">Management</button>
       </div>
@@ -139,7 +149,9 @@
               <button id="runSmartDispatchBtn" type="button" class="secondary slim">Run Smart Dispatch</button>
             </div>
             <div id="executiveSummary" class="executiveSummary"></div>
-            <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
+            <details id="secondaryKpisDetails" class="secondary-kpis">
+              <summary>Show supporting metrics</summary>
+              <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
               <div class="analyticsCard">
                 <span class="analyticsLabel">Verified</span>
                 <strong id="verifiedReportsCount">0</strong>
@@ -164,7 +176,8 @@
                 <span class="analyticsLabel">Data Quality Score</span>
                 <strong id="avgQualityScore">0%</strong>
               </div>
-            </div>
+              </div>
+            </details>
           </article>
 
           <div class="overview-main-grid overview-main-grid--organized">
@@ -225,6 +238,7 @@
               <p class="small">Workflow state across pending, verification, in-progress, and repaired queues.</p>
               <div class="chart-panel compact-chart">
                 <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
+                <div id="statusChartTooltip" class="chart-tooltip" hidden></div>
               </div>
             </article>
 
@@ -568,6 +582,11 @@
             </div>
             </div>
             <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
+            <div id="quickFilterPresets" class="quick-filter-presets" role="group" aria-label="Quick filter presets">
+              <button type="button" class="secondary slim" data-quick-preset="urgentPending">Urgent + Pending</button>
+              <button type="button" class="secondary slim" data-quick-preset="verification">Needs verification</button>
+              <button type="button" class="secondary slim" data-quick-preset="repairToday">Resolved today</button>
+            </div>
             <p id="filterSummary" class="small"></p>
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
