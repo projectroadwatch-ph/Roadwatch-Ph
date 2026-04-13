@@ -15,38 +15,32 @@
 </head>
 <body>
   <main class="wrap">
-    <section id="loginPanel" class="card login-card">
-      <div class="login-card__branding">
-        <div class="login-brand">
-          <span class="login-brand__icon" aria-hidden="true">📍</span>
-          <strong>RoadWatch PH</strong>
-        </div>
+    <section id="loginPanel" class="card login-card login-card--gov">
+      <div class="login-gov-seal" aria-hidden="true">
+        <div class="login-gov-seal__inner"></div>
       </div>
 
-      <div class="login-shell">
-        <div class="login-hero">
-          <p class="eyebrow">Secure Access</p>
-          <h1>RoadWatch PH<br>Admin Portal</h1>
-          <p>Log in to monitor reports, update road issue statuses, and keep citizens informed in real time.</p>
-        </div>
-        <div class="login-form">
-          <div class="login-form__header"></div>
-          <div class="login-form__content">
-            <h2>Admin Login</h2>
-            <label class="login-field">
-              <span class="login-field__icon" aria-hidden="true">👤</span>
-              <input id="adminUsername" type="text" autocomplete="username" placeholder="Enter admin username" aria-label="Admin username">
-            </label>
-            <label class="login-field">
-              <span class="login-field__icon" aria-hidden="true">🔒</span>
-              <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password" aria-label="Admin password">
-            </label>
-            <button id="loginBtn" type="button">Log In to Dashboard</button>
-            <p id="loginFeedback" class="feedback"></p>
-            <a href="index.html" class="link">← Back to homepage</a>
-          </div>
-        </div>
+      <p class="login-gov-text">Republic of the Philippines</p>
+      <h1 class="login-gov-title">RoadWatch PH</h1>
+      <p class="login-gov-subtitle"><span></span>Secure Admin Access<span></span></p>
+
+      <div class="login-gov-shell">
+        <h2>Secure Access Portal</h2>
+        <label class="login-field">
+          <span class="login-field__icon" aria-hidden="true">👤</span>
+          <input id="adminUsername" type="text" autocomplete="username" placeholder="Username" aria-label="Admin username">
+        </label>
+        <label class="login-field">
+          <span class="login-field__icon" aria-hidden="true">🔒</span>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" aria-label="Admin password">
+        </label>
+        <button id="loginBtn" type="button">Log In Securely</button>
+        <p id="loginFeedback" class="feedback" aria-live="polite"></p>
+        <a href="#" class="link login-forgot">Forgot Password?</a>
+        <p class="login-disclaimer">Authorized personnel only. All activities are monitored.</p>
       </div>
+
+      <p class="login-gov-footer">© 2026 Department of Transportation | RoadWatch PH</p>
     </section>
 
     <section id="dashboard" class="card hidden dashboard-shell" hidden>
