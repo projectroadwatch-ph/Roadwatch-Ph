@@ -44,20 +44,30 @@
         <p class="admin-sidebar__label">Workspace</p>
         <div class="admin-sidebar__nav">
           <button type="button" class="admin-sidebar__link is-active" data-nav-view="overview"><span>Home</span></button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span>Report Workspace</span></button>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span>Triage Inbox</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span>Report Management</span></button>
         </div>
         <hr class="admin-sidebar__divider">
-        <p class="admin-sidebar__label">Overview Sections</p>
-        <nav class="admin-sidebar__sections" aria-label="Overview section shortcuts">
-          <a href="#overviewSnapshotPanel">Operational Snapshot</a>
-          <a href="#overviewStatusPanel">Status Distribution</a>
-          <a href="#overviewQueuePanel">Verification Queue</a>
-          <a href="#overviewBarangayPanel">Barangay Hotspots</a>
-          <a href="#overviewResponsePanel">Response Time</a>
-          <a href="#overviewMapPanel">Live Map</a>
-          <a href="#overviewAnalyticsPanel">Data Analytics</a>
-        </nav>
+        <section class="admin-sidebar__overview-group">
+          <button
+            id="sidebarOverviewToggle"
+            type="button"
+            class="admin-sidebar__label admin-sidebar__section-toggle"
+            aria-expanded="false"
+            aria-controls="sidebarOverviewSections"
+          >
+            <span>Overview Sections</span>
+            <span class="admin-sidebar__arrow" aria-hidden="true">▾</span>
+          </button>
+          <nav id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Overview section shortcuts">
+            <a href="#overviewSnapshotPanel">Operational Snapshot</a>
+            <a href="#overviewStatusPanel">Status Distribution</a>
+            <a href="#overviewQueuePanel">Verification Queue</a>
+            <a href="#overviewBarangayPanel">Barangay Hotspots</a>
+            <a href="#overviewResponsePanel">Response Time</a>
+            <a href="#overviewMapPanel">Live Map</a>
+            <a href="#overviewAnalyticsPanel">Data Analytics</a>
+          </nav>
+        </section>
         <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
       </aside>
 
@@ -122,21 +132,6 @@
 
       <section id="overviewView" class="dashboard-view">
         <section class="overview-shell">
-          <article class="panel chart-stretch operations-alert-strip">
-            <div class="row">
-              <div>
-                <h3>Priority Queue</h3>
-                <p class="small">Focus on urgent triage, moderation, and publish workflows.</p>
-              </div>
-              <button id="openTriageFromOverviewBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
-            </div>
-            <div class="operations-pill-grid">
-              <p class="section-chip">Validate new submissions</p>
-              <p class="section-chip">Escalate high-priority hazards</p>
-              <p class="section-chip">Publish verified updates</p>
-            </div>
-          </article>
-
           <article class="panel analytics-panel critical-overview-panel critical-overview-panel--hero">
             <div class="critical-overview-top">
               <div>
