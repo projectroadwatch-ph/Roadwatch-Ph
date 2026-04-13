@@ -62,6 +62,8 @@ const showTriagePaneBtn = document.getElementById("showTriagePaneBtn");
 const showWorkspacePaneBtn = document.getElementById("showWorkspacePaneBtn");
 const sidebarNavLinks = Array.from(document.querySelectorAll("[data-nav-view]"));
 const sidebarSectionLinks = Array.from(document.querySelectorAll(".admin-sidebar__sections a[href^='#']"));
+const sidebarOverviewToggle = document.getElementById("sidebarOverviewToggle");
+const sidebarOverviewSections = document.getElementById("sidebarOverviewSections");
 const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
 const adminBreadcrumbView = document.getElementById("adminBreadcrumbView");
 const adminBreadcrumbPane = document.getElementById("adminBreadcrumbPane");
@@ -950,6 +952,12 @@ function updateSidebarNavState(view = "overview", pane = "") {
     const isActive = targetView === view && (targetPane ? targetPane === pane : pane === "");
     link.classList.toggle("is-active", isActive);
   });
+}
+
+function setSidebarOverviewExpanded(expanded) {
+  if (!sidebarOverviewToggle || !sidebarOverviewSections) return;
+  sidebarOverviewToggle.setAttribute("aria-expanded", String(expanded));
+  sidebarOverviewSections.classList.toggle("is-open", Boolean(expanded));
 }
 
 function getDashboardPageConfig(view = "overview", pane = "") {
@@ -3230,6 +3238,10 @@ sidebarSectionLinks.forEach((link) => {
     setDashboardView("overview");
   });
 });
+sidebarOverviewToggle?.addEventListener("click", () => {
+  const isExpanded = sidebarOverviewToggle.getAttribute("aria-expanded") === "true";
+  setSidebarOverviewExpanded(!isExpanded);
+});
 sidebarToggleBtn?.addEventListener("click", toggleSidebarVisibility);
 openTriageFromOverviewBtn?.addEventListener("click", () => {
   setDashboardView("management");
@@ -3502,6 +3514,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 setDashboardView("overview");
+setSidebarOverviewExpanded(false);
 setWorkspaceLayoutMode("kanban");
 renderCaseTimeline("");
 applyAuthUI();
