@@ -83,7 +83,7 @@
               <a href="#overviewAnalyticsPanel">Data Analytics</a>
             </div>
           </div>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span>Report Management</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🗂</span><span>Report Management</span></button>
         </div>
         <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
       </aside>
@@ -92,17 +92,15 @@
       <div class="console-topbar">
         <div class="console-brand">
           <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation">☰</button>
-          <span class="console-brand-mark" aria-hidden="true"><span>RW</span></span>
           <strong>RoadWatch PH</strong>
-          <span class="console-divider"></span>
-          <span class="console-title">Admin Dashboard</span>
         </div>
         <div class="console-tools">
           <label class="console-search">
-            <span aria-hidden="true">Search</span>
-            <input id="dashboardSearch" type="search" placeholder="Search reports, barangays, or issue types" aria-label="Search dashboard content">
+            <span aria-hidden="true">🔎</span>
+            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content">
           </label>
-          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">Admin · Super Admin</button>
+          <button type="button" class="secondary slim console-alert-btn" aria-label="Notifications">🔔 <span class="console-alert-btn__badge">3</span></button>
+          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">👤 Admin</button>
         </div>
       </div>
       <div class="row dashboard-nav" role="tablist" aria-label="Dashboard views">
@@ -626,9 +624,7 @@
                   <h4>Report Management</h4>
                   <p class="small">Monitor and manage road reports across the Philippines.</p>
                 </div>
-                <button id="newReportCardBtn" type="button" class="primary slim">+ New Report</button>
-              </header>
-              <header class="card-workspace__toolbar">
+                <div class="card-workspace__toolbar">
                 <label class="inlineControl compact">Severity
                   <select id="severityQuickFilter">
                     <option value="all">All Severity</option>
@@ -647,6 +643,8 @@
                     <option value="Repaired">Repaired</option>
                   </select>
                 </label>
+                </div>
+                <button id="newReportCardBtn" type="button" class="primary slim">＋ New Report</button>
               </header>
               <div id="reportCardsGrid" class="report-cards-grid"></div>
             </section>

@@ -1498,13 +1498,13 @@ function renderCardWorkspace(reports) {
       const viewBtn = document.createElement("button");
       viewBtn.type = "button";
       viewBtn.className = "secondary slim card-action-btn";
-      viewBtn.textContent = "👁 View";
+      viewBtn.textContent = "View";
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
       const timelineBtn = document.createElement("button");
       timelineBtn.type = "button";
       timelineBtn.className = "secondary slim card-action-btn";
-      timelineBtn.textContent = "✎ Edit";
+      timelineBtn.textContent = "Edit";
       timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
 
       const deleteBtn = document.createElement("button");
