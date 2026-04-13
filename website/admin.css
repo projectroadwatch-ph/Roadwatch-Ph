@@ -4923,9 +4923,11 @@ body.admin-authenticated .severity-critical {
   border: 1px solid rgba(197, 240, 255, 0.2);
   border-radius: 10px;
   padding: 9px 10px;
+  min-height: 42px;
   color: #f2fbff;
   text-align: left;
   font-weight: 600;
+  line-height: 1.25;
   background: rgba(6, 30, 48, 0.4);
   cursor: pointer;
 }
@@ -4956,9 +4958,11 @@ body.admin-authenticated .severity-critical {
 .admin-sidebar__sections a {
   color: #d7f3ff;
   text-decoration: none;
-  padding: 6px 4px;
+  display: block;
+  padding: 6px 6px;
   border-radius: 8px;
   font-size: 0.86rem;
+  line-height: 1.3;
 }
 
 .admin-sidebar__sections a:hover,
@@ -4984,6 +4988,18 @@ body.admin-authenticated .severity-critical {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.admin-sidebar__link > span[aria-hidden="true"] {
+  flex: 0 0 18px;
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+  font-size: 0.98rem;
+}
+
+.admin-sidebar__link > span:not([aria-hidden="true"]) {
+  display: block;
 }
 
 .admin-sidebar__divider {
