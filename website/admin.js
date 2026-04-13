@@ -3380,6 +3380,8 @@ document.getElementById("refreshReportsBtn").addEventListener("click", loadRepor
 document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   reportSearch.value = "";
   statusFilter.value = "all";
+  if (statusQuickFilter) statusQuickFilter.value = "all";
+  if (severityQuickFilter) severityQuickFilter.value = "all";
   if (categoryFilter) categoryFilter.value = "all";
   if (barangayFilter) barangayFilter.value = "all";
   if (qualityFilter) qualityFilter.value = "all";
@@ -3387,6 +3389,7 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   if (analyticsBarangayFilter) analyticsBarangayFilter.value = "all";
   if (analyticsIssueTypeFilter) analyticsIssueTypeFilter.value = "all";
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
+  quickFilterPresets.forEach((chip) => chip.classList.remove("is-active"));
   setUrgentOnlyMode(false);
   syncSearchInputs("workspace");
   currentPage = 1;
