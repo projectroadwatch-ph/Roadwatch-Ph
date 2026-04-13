@@ -6824,6 +6824,13 @@ body.admin-authenticated .console-topbar--compact {
 
 body.admin-authenticated .dashboard-header--compact {
   padding: 9px 11px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+body.admin-authenticated .dashboard-header--compact > div {
+  flex: 1 1 260px;
+  min-width: 0;
 }
 
 body.admin-authenticated .dashboard-header--compact h2 {
@@ -6832,6 +6839,13 @@ body.admin-authenticated .dashboard-header--compact h2 {
 
 body.admin-authenticated .dashboard-header--compact .small {
   font-size: 0.76rem;
+}
+
+body.admin-authenticated .dashboard-header--compact .console-status-pill {
+  margin-left: auto;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 body.admin-authenticated .panel h3,
