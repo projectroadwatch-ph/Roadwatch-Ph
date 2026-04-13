@@ -111,8 +111,11 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     el.textContent = message || "Saving update...";
   }
 
-  function drawStatusChart(counts) {
+  function drawStatusChart(counts, {
+    onStatusClick
+  } = {}) {
     const canvas = document.getElementById("statusChart");
+    const tooltip = document.getElementById("statusChartTooltip");
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -140,6 +143,8 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     const barWidth = Math.min(92, chartWidth / bars.length - 24);
     const gap = (chartWidth - barWidth * bars.length) / (bars.length + 1);
 
+    const hitboxes = [];
+
     ctx.fillStyle = "rgba(189, 217, 248, 0.2)";
     ctx.fillRect(padding.left, padding.top + chartHeight, chartWidth, 1);
 
@@ -151,6 +156,15 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
       const barHeight = Math.round((bar.value / max) * (chartHeight - 8));
       const y = padding.top + chartHeight - barHeight;
 
+      hitboxes.push({
+        label: bar.label,
+        value: bar.value,
+        x,
+        y,
+        width: barWidth,
+        height: barHeight
+      });
+
       ctx.fillStyle = bar.color;
       ctx.fillRect(x, y, barWidth, barHeight);
 
@@ -160,6 +174,41 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
       ctx.fillStyle = "#bdd9f8";
       ctx.fillText(bar.label, x + barWidth / 2, cssHeight - 22);
     });
+
+    const getHoveredBar = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      return hitboxes.find((bar) => x >= bar.x && x <= bar.x + bar.width && y >= bar.y && y <= bar.y + bar.height);
+    };
+
+    const handleMouseMove = (event) => {
+      const hoveredBar = getHoveredBar(event);
+      if (!hoveredBar || !tooltip) {
+        if (tooltip) tooltip.hidden = true;
+        canvas.style.cursor = "default";
+        return;
+      }
+      canvas.style.cursor = "pointer";
+      tooltip.hidden = false;
+      tooltip.textContent = `${hoveredBar.label}: ${hoveredBar.value} (click to filter)`;
+      const rect = canvas.getBoundingClientRect();
+      tooltip.style.left = `${event.clientX - rect.left + 10}px`;
+      tooltip.style.top = `${event.clientY - rect.top - 20}px`;
+    };
+
+    const handleClick = (event) => {
+      const hoveredBar = getHoveredBar(event);
+      if (!hoveredBar || typeof onStatusClick !== "function") return;
+      onStatusClick(hoveredBar.label);
+    };
+
+    canvas.onmousemove = handleMouseMove;
+    canvas.onmouseleave = () => {
+      if (tooltip) tooltip.hidden = true;
+      canvas.style.cursor = "default";
+    };
+    canvas.onclick = handleClick;
   }
 
   return {
