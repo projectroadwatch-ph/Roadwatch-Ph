@@ -108,7 +108,10 @@ const sheetSyncStatus = document.getElementById("sheetSyncStatus");
 const retrySyncBtn = document.getElementById("retrySyncBtn");
 const dashboardSearch = document.getElementById("dashboardSearch");
 const adminIdentityChip = document.getElementById("adminIdentityChip");
-const sessionMetaStatus = document.getElementById("sessionMetaStatus");
+const sessionMetaStatus = document.getElementById("sessionSummaryBadge");
+const statusFilterButtons = Array.from(document.querySelectorAll("[data-status-filter]"));
+const statusChartSummaryList = document.getElementById("statusChartSummaryList");
+const toggleDensityBtn = document.getElementById("toggleDensityBtn");
 const notificationToggleBtn = document.getElementById("notificationToggleBtn");
 const notificationBadge = document.getElementById("notificationBadge");
 const notificationPanel = document.getElementById("notificationPanel");
@@ -552,13 +555,21 @@ function setTableLoadingState(isLoading, message = "") {
 function drawStatusChart(counts) {
   adminUi.drawStatusChart(counts, {
     onStatusClick: (statusLabel) => {
-      if (!statusFilter) return;
-      statusFilter.value = statusLabel;
-      currentPage = 1;
-      applyFiltersAndRender();
-      setFeedback("reportsFeedback", `Filtered workspace to status: ${statusLabel}.`);
+      applyStatusFilter(statusLabel);
+    },
+    onSummaryUpdate: (summaryItems = []) => {
+      if (!statusChartSummaryList) return;
+      statusChartSummaryList.innerHTML = summaryItems.map((item) => `<li>${item}</li>`).join("");
     }
   });
+}
+
+function applyStatusFilter(statusLabel) {
+  if (!statusFilter) return;
+  statusFilter.value = statusLabel;
+  currentPage = 1;
+  applyFiltersAndRender();
+  setFeedback("reportsFeedback", `Filtered workspace to status: ${statusLabel}.`);
 }
 
 function getCaseMetaStore() {
@@ -3464,6 +3475,13 @@ slaFilter?.addEventListener("change", () => renderSlaQueue(allReports));
 
 showOverviewBtn?.addEventListener("click", () => setDashboardView("overview"));
 showManagementBtn?.addEventListener("click", () => setDashboardView("management"));
+statusFilterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetStatus = String(button.dataset.statusFilter || "").trim();
+    if (!targetStatus) return;
+    applyStatusFilter(targetStatus);
+  });
+});
 sidebarNavLinks.forEach((link) => {
   link.addEventListener("click", () => {
     const targetView = String(link.dataset.navView || "overview");
@@ -3490,6 +3508,12 @@ sidebarSectionLinks.forEach((link) => {
 sidebarOverviewToggle?.addEventListener("click", () => {
   const isExpanded = sidebarOverviewToggle.getAttribute("aria-expanded") === "true";
   setSidebarOverviewExpanded(!isExpanded);
+});
+
+toggleDensityBtn?.addEventListener("click", () => {
+  const isDense = document.body.classList.toggle("admin-dense");
+  toggleDensityBtn.setAttribute("aria-pressed", String(isDense));
+  toggleDensityBtn.textContent = `Dense mode: ${isDense ? "On" : "Off"}`;
 });
 sidebarToggleBtn?.addEventListener("click", toggleSidebarVisibility);
 openTriageFromOverviewBtn?.addEventListener("click", () => {

@@ -8,6 +8,7 @@
 <meta http-equiv="Expires" content="0">
   <title>RoadWatch PH Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
   <script>window.ROADWATCH_DEPLOYMENT_VERSION = "20260413a";</script>
   <script src="update-manager.js?v=20260413a"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -56,11 +57,11 @@
           </div>
         </div>
         <div class="admin-sidebar__nav">
-          <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span aria-hidden="true">🏠</span><span>Dashboard</span></button>
-          <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🧾</span><span>Report Management</span></button>
-          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">🗺️</span><span>Map View</span></button>
-          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">📊</span><span>Analytics</span></button>
-          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">👤</span><span>User Reports</span></button>
+          <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span class="material-symbols-rounded" aria-hidden="true">dashboard</span><span>Dashboard</span></button>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span class="material-symbols-rounded" aria-hidden="true">assignment</span><span>Report Management</span></button>
+          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">map</span><span>Map View</span></button>
+          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span><span>Analytics</span></button>
+          <button type="button" class="admin-sidebar__link"><span class="material-symbols-rounded" aria-hidden="true">groups</span><span>User Reports</span></button>
         </div>
         <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
           <a href="#overviewSnapshotPanel">Operational Snapshot</a>
@@ -79,16 +80,17 @@
       <div class="admin-console-main">
       <div class="console-topbar">
         <div class="console-brand">
-          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation">☰</button>
+          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
           <strong>RoadWatch PH</strong>
         </div>
         <div class="console-tools">
           <label class="console-search">
-            <span aria-hidden="true">🔎</span>
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
             <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content">
           </label>
+          <p id="sessionSummaryBadge" class="console-status-pill small">Session active · Sync pending</p>
           <div class="console-alert-wrap">
-            <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">🔔 <span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
+            <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">notifications</span> <span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
             <div id="notificationPanel" class="notification-panel" hidden>
               <div class="notification-panel__header">
                 <strong>Notifications</strong>
@@ -97,13 +99,8 @@
               <ul id="notificationPanelList" class="notification-panel__list"></ul>
             </div>
           </div>
-          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin">👤 Admin</button>
-          <p id="sessionMetaStatus" class="console-meta small">Session active · Sync pending</p>
+          <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="material-symbols-rounded" aria-hidden="true">account_circle</span> Admin</button>
         </div>
-      </div>
-      <div class="row dashboard-nav" role="tablist" aria-label="Primary dashboard views">
-        <button id="showOverviewBtn" type="button" class="secondary nav-btn" role="tab" aria-selected="false">Overview</button>
-        <button id="showManagementBtn" type="button" class="secondary nav-btn is-active" role="tab" aria-selected="true">Management</button>
       </div>
       <div class="dashboard-header">
         <div>
@@ -239,6 +236,16 @@
               <div class="chart-panel compact-chart">
                 <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
                 <div id="statusChartTooltip" class="chart-tooltip" hidden></div>
+              </div>
+              <div class="chart-accessibility" aria-label="Status chart quick filters">
+                <p class="small">Keyboard-friendly quick filters</p>
+                <div class="chart-accessibility__actions">
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Pending">Pending</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Verified">Verified</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="In Progress">In Progress</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Repaired">Repaired</button>
+                </div>
+                <ul id="statusChartSummaryList" class="status-chart-summary-list"></ul>
               </div>
             </article>
 
@@ -562,6 +569,12 @@
               </label>
               <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
               <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Display Density</p>
+              <div class="toolbar saved-view-toolbar">
+                <button id="toggleDensityBtn" type="button" class="secondary slim" aria-pressed="false">Dense mode: Off</button>
+              </div>
             </div>
             </div>
             <div class="workspace-toolbar-group">
