@@ -4763,10 +4763,15 @@ body.admin-authenticated .severity-critical {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0;
+  padding: 10px 12px;
   margin: 0;
   cursor: pointer;
   text-align: left;
+}
+
+.admin-sidebar__overview-group {
+  display: grid;
+  gap: 4px;
 }
 
 .admin-sidebar__arrow {
@@ -4776,6 +4781,10 @@ body.admin-authenticated .severity-critical {
 
 .admin-sidebar__section-toggle[aria-expanded="true"] .admin-sidebar__arrow {
   transform: rotate(180deg);
+}
+
+.admin-sidebar__sections {
+  padding-left: 18px;
 }
 
 .sidebar-toggle-btn {
