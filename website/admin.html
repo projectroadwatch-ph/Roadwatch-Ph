@@ -43,28 +43,7 @@
         </div>
         <p class="admin-sidebar__label">Workspace</p>
         <div class="admin-sidebar__nav">
-          <section class="admin-sidebar__overview-group">
-            <button
-              id="sidebarOverviewToggle"
-              type="button"
-              class="admin-sidebar__link admin-sidebar__section-toggle is-active"
-              data-nav-view="overview"
-              aria-expanded="false"
-              aria-controls="sidebarOverviewSections"
-            >
-              <span>Home</span>
-              <span class="admin-sidebar__arrow" aria-hidden="true">▾</span>
-            </button>
-            <nav id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Overview section shortcuts">
-              <a href="#overviewSnapshotPanel">Operational Snapshot</a>
-              <a href="#overviewStatusPanel">Status Distribution</a>
-              <a href="#overviewQueuePanel">Verification Queue</a>
-              <a href="#overviewBarangayPanel">Barangay Hotspots</a>
-              <a href="#overviewResponsePanel">Response Time</a>
-              <a href="#overviewMapPanel">Live Map</a>
-              <a href="#overviewAnalyticsPanel">Data Analytics</a>
-            </nav>
-          </section>
+          <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link is-active" data-nav-view="overview"><span>Home</span></button>
           <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span>Report Management</span></button>
         </div>
         <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
