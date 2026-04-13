@@ -47,37 +47,25 @@
       <div class="admin-console-layout">
       <aside id="adminSidebarNav" class="admin-sidebar" aria-label="Admin dashboard navigation">
         <div class="admin-sidebar__brand">
-          <span class="admin-sidebar__logo">RW</span>
+          <span class="admin-sidebar__logo">A</span>
           <div>
             <strong>RoadWatch PH</strong>
-            <p>Admin Suite</p>
           </div>
         </div>
-        <p class="admin-sidebar__label">Workspace</p>
         <div class="admin-sidebar__nav">
-          <div class="admin-sidebar__overview-group">
-            <button
-              type="button"
-              id="sidebarOverviewToggle"
-              class="admin-sidebar__link admin-sidebar__section-toggle is-active"
-              data-nav-view="overview"
-              aria-expanded="false"
-              aria-controls="sidebarOverviewSections"
-            >
-              <span>Home</span>
-              <span class="admin-sidebar__arrow" aria-hidden="true">▾</span>
-            </button>
-            <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
-              <a href="#overviewSnapshotPanel">Operational Snapshot</a>
-              <a href="#overviewStatusPanel">Status Distribution</a>
-              <a href="#overviewQueuePanel">Verification &amp; Moderation Queue</a>
-              <a href="#overviewBarangayPanel">Reports Per Barangay</a>
-              <a href="#overviewResponsePanel">Response Time Trend</a>
-              <a href="#overviewMapPanel">Location &amp; Pinboard Map</a>
-              <a href="#overviewAnalyticsPanel">Data Analytics</a>
-            </div>
-          </div>
-          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🗂</span><span>Report Management</span></button>
+          <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span aria-hidden="true">🏠</span><span>Dashboard</span></button>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span aria-hidden="true">🧾</span><span>Report Management</span></button>
+          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">🗺️</span><span>Map View</span></button>
+          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">📊</span><span>Analytics</span></button>
+          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">👤</span><span>User Reports</span></button>
+        </div>
+        <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
+          <button type="button" class="admin-sidebar__link"><span aria-hidden="true">⚙️</span><span>Settings</span></button>
+        </div>
+        <div class="admin-sidebar__report-total">
+          <p>Total Reports</p>
+          <strong id="sidebarTotalReportsCount">0</strong>
+          <small>This month</small>
         </div>
         <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
       </aside>
@@ -98,8 +86,8 @@
         </div>
       </div>
       <div class="row dashboard-nav" role="tablist" aria-label="Dashboard views">
-        <button id="showOverviewBtn" type="button" class="secondary nav-btn is-active" role="tab" aria-selected="true">Overview</button>
-        <button id="showManagementBtn" type="button" class="secondary nav-btn" role="tab" aria-selected="false">Management</button>
+        <button id="showOverviewBtn" type="button" class="secondary nav-btn" role="tab" aria-selected="false">Overview</button>
+        <button id="showManagementBtn" type="button" class="secondary nav-btn is-active" role="tab" aria-selected="true">Management</button>
       </div>
       <div class="dashboard-header">
         <div>

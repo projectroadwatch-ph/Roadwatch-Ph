@@ -167,7 +167,7 @@ let overviewMarkers = null;
 let activeReportsSource = "";
 let urgentOnlyMode = false;
 let activeColumnView = "operations";
-let activeDashboardView = "overview";
+let activeDashboardView = "management";
 let staleDataIntervalId = null;
 let workspaceLayoutMode = "cards";
 let activeKanbanTracking = "";
@@ -1427,6 +1427,8 @@ function renderManagementSnapshot(filteredReports) {
   if (managementUrgentCount) managementUrgentCount.textContent = String(urgentCount);
   if (managementVerificationCount) managementVerificationCount.textContent = String(verificationCount);
   if (managementSelectedCount) managementSelectedCount.textContent = String(selectedReports.size);
+  const sidebarTotalReportsCount = document.getElementById("sidebarTotalReportsCount");
+  if (sidebarTotalReportsCount) sidebarTotalReportsCount.textContent = String(reports.length);
 }
 
 function setWorkspaceLayoutMode(mode = "kanban") {
@@ -1453,21 +1455,17 @@ function renderCardWorkspace(reports) {
     const tracking = String(report.tracking || "").trim();
     const severity = getSeverityLabel(report);
     const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "-";
-    const normalizedStatus = normalizeStatus(report.status);
-
     const photo = photoCell(report.photo);
     const photoHtml = typeof photo === "string" ? `<div class="report-card__placeholder">${escapeHtml(photo)}</div>` : "";
 
     card.innerHTML = `
       <header class="report-card__meta">
         <span class="report-card__severity severity-${severity.toLowerCase()}"><span class="report-card__severity-dot" aria-hidden="true"></span>${severity}</span>
-        <span class="report-card__date">${dateLabel}</span>
+        <span class="report-card__date">📅 ${dateLabel}</span>
       </header>
       <div class="report-card__photo"></div>
       <h4>${escapeHtml(report.location || "Unknown location")}</h4>
-      <p class="small">${escapeHtml(report.issue || report.issueType || "-")}</p>
-      <p class="small report-card__tracking"><strong>${escapeHtml(tracking || "-")}</strong></p>
-      <div class="report-card__status"></div>
+      <p class="small report-card__desc">${escapeHtml(report.issue || report.issueType || "-")}</p>
       <div class="report-card__actions"></div>
     `;
 
@@ -1485,26 +1483,18 @@ function renderCardWorkspace(reports) {
       photoSlot.appendChild(marker);
     }
 
-    const statusSlot = card.querySelector(".report-card__status");
-    if (statusSlot) {
-      const statusLabel = document.createElement("p");
-      statusLabel.className = "small report-card__status-label";
-      statusLabel.textContent = `Status: ${normalizedStatus}`;
-      statusSlot.append(statusLabel, statusSelect(normalizedStatus, tracking));
-    }
-
     const actions = card.querySelector(".report-card__actions");
     if (actions) {
       const viewBtn = document.createElement("button");
       viewBtn.type = "button";
       viewBtn.className = "secondary slim card-action-btn";
-      viewBtn.textContent = "View";
+      viewBtn.innerHTML = `<span aria-hidden="true">👁️</span> View`;
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
       const timelineBtn = document.createElement("button");
       timelineBtn.type = "button";
       timelineBtn.className = "secondary slim card-action-btn";
-      timelineBtn.textContent = "Edit";
+      timelineBtn.innerHTML = `<span aria-hidden="true">✏️</span> Edit`;
       timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
 
       const deleteBtn = document.createElement("button");
