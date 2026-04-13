@@ -262,6 +262,12 @@ body.admin-authenticated {
   color: #e5f1ff;
 }
 
+.material-symbols-rounded {
+  font-size: 1.15rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 .console-brand strong {
   letter-spacing: 0.02em;
 }
@@ -285,6 +291,17 @@ body.admin-authenticated {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.console-status-pill {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 207, 255, 0.28);
+  background: rgba(8, 43, 74, 0.45);
+  color: #cae5ff;
 }
 
 .console-search {
@@ -6481,6 +6498,30 @@ body.admin-authenticated .severity-low {
   z-index: 5;
 }
 
+.chart-accessibility {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 213, 255, 0.2);
+  background: rgba(9, 31, 55, 0.38);
+}
+
+.chart-accessibility__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-chart-summary-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: #cde4ff;
+}
+
+.status-chart-summary-list li {
+  margin: 4px 0;
+}
+
 .quick-filter-presets {
   display: flex;
   flex-wrap: wrap;
@@ -6515,4 +6556,20 @@ body.role-field-officer .workspace-toolbar-group:nth-child(n+3),
 body.role-field-officer #showKanbanViewBtn,
 body.role-field-officer #showTableViewBtn {
   display: none;
+}
+
+body.admin-dense .panel {
+  padding: 14px;
+}
+
+body.admin-dense .small {
+  font-size: 0.8rem;
+}
+
+body.admin-dense .toolbar {
+  gap: 6px;
+}
+
+body.admin-dense .management-kpi-card {
+  padding: 10px;
 }

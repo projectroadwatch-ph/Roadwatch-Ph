@@ -18,7 +18,7 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     if (!adminIdentityChip) return;
     const activeUser = String(localStorage.getItem("roadwatchAdminActiveUser") || "Admin").trim() || "Admin";
     const normalizedRole = String(role || "Super Admin").trim() || "Super Admin";
-    adminIdentityChip.textContent = `${activeUser} · ${normalizedRole}`;
+    adminIdentityChip.innerHTML = `<span class="material-symbols-rounded" aria-hidden="true">account_circle</span> ${activeUser} · ${normalizedRole}`;
     adminIdentityChip.title = `Signed in as ${activeUser} (${normalizedRole})`;
   }
 
@@ -112,7 +112,8 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
   }
 
   function drawStatusChart(counts, {
-    onStatusClick
+    onStatusClick,
+    onSummaryUpdate
   } = {}) {
     const canvas = document.getElementById("statusChart");
     const tooltip = document.getElementById("statusChartTooltip");
@@ -135,6 +136,9 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
       { label: "In Progress", value: counts.inProgress, color: "#b388ff" },
       { label: "Repaired", value: counts.repaired, color: "#63e6be" }
     ];
+    if (typeof onSummaryUpdate === "function") {
+      onSummaryUpdate(bars.map((bar) => `${bar.label}: ${bar.value}`));
+    }
 
     const max = Math.max(...bars.map((b) => b.value), 1);
     const padding = { top: 24, right: 20, bottom: 52, left: 24 };
