@@ -6758,3 +6758,102 @@ body.admin-authenticated .dashboard-header--compact .console-status-pill::before
     align-items: flex-start;
   }
 }
+
+/* 2026-04-13: Dashboard density and sidebar scrollbar cleanup */
+body.admin-authenticated {
+  overflow-x: hidden;
+}
+
+body.admin-authenticated .wrap {
+  width: min(1280px, 97%);
+  margin: 8px auto;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+  min-height: auto;
+}
+
+body.admin-authenticated .admin-sidebar {
+  top: 8px;
+  height: calc(100vh - 16px);
+  max-height: calc(100vh - 16px);
+  padding: 0.85rem 0.7rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.admin-authenticated .admin-sidebar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.admin-authenticated .admin-sidebar__brand strong {
+  font-size: 1.05rem;
+}
+
+body.admin-authenticated .admin-sidebar__logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+body.admin-authenticated .admin-sidebar__link {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 0.84rem;
+}
+
+body.admin-authenticated .admin-sidebar__report-total {
+  padding: 10px 11px;
+}
+
+body.admin-authenticated .admin-sidebar__report-total strong {
+  font-size: 1.3rem;
+}
+
+body.admin-authenticated .dashboard-shell {
+  padding: 10px 12px 14px;
+}
+
+body.admin-authenticated .console-topbar--compact {
+  gap: 8px;
+  padding: 10px;
+}
+
+body.admin-authenticated .dashboard-header--compact {
+  padding: 9px 11px;
+}
+
+body.admin-authenticated .dashboard-header--compact h2 {
+  font-size: 1.22rem;
+}
+
+body.admin-authenticated .dashboard-header--compact .small {
+  font-size: 0.76rem;
+}
+
+body.admin-authenticated .panel h3,
+body.admin-authenticated .panel h4 {
+  font-size: 1rem;
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated label {
+  font-size: 0.8rem;
+}
+
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated textarea,
+body.admin-authenticated button {
+  padding: 9px 10px;
+  font-size: 0.85rem;
+}
+
+body.admin-authenticated .analyticsCard strong,
+body.admin-authenticated .snapshot-card strong,
+body.admin-authenticated .severity-card strong {
+  font-size: 1.25rem;
+}
