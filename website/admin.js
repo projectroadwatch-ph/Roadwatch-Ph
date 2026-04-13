@@ -1453,9 +1453,10 @@ function renderCardWorkspace(reports) {
     const card = document.createElement("article");
     card.className = "report-card";
     const tracking = String(report.tracking || "").trim();
+    const effectiveStatus = normalizeStatus(report.status);
     const severity = getSeverityLabel(report);
     const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "Not available";
-    const verifiedLabel = normalizeStatus(report.status) === "Verified" ? "Verified" : "Needs Verification";
+    const verifiedLabel = effectiveStatus === "Verified" ? "Verified" : "Needs Verification";
     const locationTitle = [report.location, report.city, report.region, report.barangay].filter((value) => value && value !== "-").join(", ") || "Unknown location";
     const qualityScore = `${getDataQualityScore(report)}%`;
     const problemType = [report.issueType, report.issueCategory].filter((value) => value && value !== "-").join(" / ") || "Road issue";
