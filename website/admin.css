@@ -6715,8 +6715,8 @@ body.admin-authenticated .console-topbar--compact {
   gap: 10px;
   padding: 12px;
   border-radius: 14px;
-  border: 1px solid #dbe2f1;
-  background: #eef2fb;
+  border: 1px solid #cfd9ee;
+  background: linear-gradient(180deg, #eaf1ff 0%, #e4ecfb 100%);
   box-shadow: none;
 }
 
@@ -6736,18 +6736,18 @@ body.admin-authenticated .console-topbar--compact .console-tools {
 body.admin-authenticated .console-topbar--compact .console-search {
   flex: 1;
   border-radius: 10px;
-  border: 1px solid #dde3ef;
-  background: #f6f7fb;
+  border: 1px solid #cfdaed;
+  background: #f7faff;
   min-height: 34px;
 }
 
 body.admin-authenticated .console-topbar--compact .console-search input {
   font-size: 12px;
-  color: #5f6880;
+  color: #435374;
 }
 
 body.admin-authenticated .console-topbar--compact .console-search input::placeholder {
-  color: #8d96aa;
+  color: #7486a7;
 }
 
 body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
@@ -6818,20 +6818,20 @@ body.admin-authenticated .dashboard-header--compact {
   margin: 0;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid #dde3ef;
-  background: #f8f9fc;
+  border: 1px solid #cfd9ec;
+  background: #f4f8ff;
 }
 
 body.admin-authenticated .dashboard-header--compact h2 {
   margin: 0;
   font-size: 29px;
   line-height: 1.1;
-  color: #273145;
+  color: #16376a;
 }
 
 body.admin-authenticated .dashboard-header--compact .small {
   margin: 4px 0 0;
-  color: #7b8498;
+  color: #5d7195;
   font-size: 13px;
 }
 
@@ -6840,15 +6840,22 @@ body.admin-authenticated .dashboard-header--compact .console-status-pill {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #7e879a;
+  color: #5f7193;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   white-space: nowrap;
 }
 
 body.admin-authenticated .dashboard-header--compact .console-status-pill::before {
-  content: "○";
-  color: #8ecb68;
-  margin-right: 6px;
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #70ba6f;
+  box-shadow: 0 0 0 2px rgba(112, 186, 111, 0.18);
+  flex: 0 0 auto;
 }
 
 @media (max-width: 900px) {
@@ -6946,9 +6953,9 @@ body.admin-authenticated .dashboard-header--compact .small {
 
 body.admin-authenticated .dashboard-header--compact .console-status-pill {
   margin-left: auto;
-  max-width: 100%;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  max-width: fit-content;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 body.admin-authenticated .panel h3,
