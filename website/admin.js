@@ -1539,23 +1539,14 @@ function renderCardWorkspace(reports) {
       viewBtn.textContent = "View";
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
-      const timelineBtn = document.createElement("button");
-      timelineBtn.type = "button";
-      timelineBtn.className = "secondary slim card-action-btn";
-      timelineBtn.textContent = "Edit";
-      timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
-
-      const vipBtn = document.createElement("button");
-      vipBtn.type = "button";
-      vipBtn.className = "secondary slim card-action-btn";
-      vipBtn.textContent = "Manage";
-      vipBtn.addEventListener("click", () => focusTimeline(report.tracking));
+      const statusControl = statusSelect(effectiveStatus, report.tracking);
+      statusControl.classList.add("card-action-select");
+      statusControl.setAttribute("aria-label", `Update status for report ${tracking || "N/A"}`);
 
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
-      deleteBtn.className = "secondary slim card-action-btn card-action-btn--icon";
-      deleteBtn.textContent = "🗑";
-      deleteBtn.setAttribute("aria-label", `Delete report ${tracking}`);
+      deleteBtn.className = "danger slim card-action-btn card-action-btn--danger";
+      deleteBtn.textContent = "Delete";
       deleteBtn.addEventListener("click", async () => {
         if (!guardPermission("delete", "Your role cannot delete reports.")) return;
         const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
@@ -1569,7 +1560,7 @@ function renderCardWorkspace(reports) {
           setFeedback("reportsFeedback", error.message || "Unable to delete report.", true);
         }
       });
-      actions.append(viewBtn, timelineBtn, vipBtn, deleteBtn);
+      actions.append(viewBtn, statusControl, deleteBtn);
     }
     reportCardsGrid.appendChild(card);
   });

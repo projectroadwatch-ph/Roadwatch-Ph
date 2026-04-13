@@ -5739,7 +5739,7 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-card__actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 86px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   padding-top: 6px;
 }
@@ -5997,7 +5997,7 @@ body.admin-authenticated .card-workspace {
 }
 
 .report-card__actions {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .card-action-btn {
@@ -6331,7 +6331,7 @@ body.admin-authenticated .report-card__hero {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 44px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -6351,6 +6351,16 @@ body.admin-authenticated .report-card__actions .card-action-btn--danger {
   background: #ff5d5d;
   color: #fff;
   border: 0;
+}
+
+body.admin-authenticated .report-card__actions .card-action-select {
+  min-height: 44px;
+  border-radius: 10px;
+  background: #eef4fb;
+  color: #26466a;
+  border: 1px solid #e2ebf7;
+  padding: 0 10px;
+  font-weight: 700;
 }
 
 body.admin-authenticated .severity-moderate,
