@@ -6012,3 +6012,159 @@ body:not(.admin-authenticated) .wrap {
     padding: 16px 14px 10px;
   }
 }
+
+/* --- Admin dashboard clean card layout (reference-aligned) --- */
+body.admin-authenticated .dashboard-shell {
+  background: #f3f5f9;
+  border: 0;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar {
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5ebf3;
+}
+
+body.admin-authenticated .console-brand strong {
+  color: #1d2f4d;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+body.admin-authenticated .console-search {
+  min-width: 480px;
+  border-radius: 999px;
+  background: #f0f3f8;
+  border: 1px solid #e2e8f1;
+}
+
+body.admin-authenticated .console-search input {
+  color: #4b5f79;
+}
+
+body.admin-authenticated .admin-sidebar {
+  background: #eef2f6;
+  border-right: 1px solid #dfe6f0;
+}
+
+body.admin-authenticated .admin-sidebar__logo {
+  background: #2d67e5;
+  color: #fff;
+  font-weight: 800;
+}
+
+body.admin-authenticated .admin-sidebar__nav {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-authenticated .admin-sidebar__sections {
+  margin-top: 14px;
+}
+
+body.admin-authenticated .admin-sidebar__link {
+  background: transparent;
+  color: #223954;
+  border: 0;
+  font-weight: 600;
+}
+
+body.admin-authenticated .admin-sidebar__link.is-active,
+body.admin-authenticated .admin-sidebar__link:hover {
+  background: linear-gradient(120deg, #2d67e5, #3d80ff);
+  color: #fff;
+}
+
+.admin-sidebar__report-total {
+  margin-top: auto;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e2e8f1;
+  color: #506482;
+}
+
+.admin-sidebar__report-total p,
+.admin-sidebar__report-total small {
+  margin: 0;
+}
+
+.admin-sidebar__report-total strong {
+  display: block;
+  margin: 8px 0 4px;
+  font-size: 2rem;
+  color: #132b46;
+}
+
+body.admin-authenticated .card-workspace__hero {
+  background: transparent;
+  border-bottom: 0;
+  padding-bottom: 10px;
+}
+
+body.admin-authenticated .card-workspace__hero h4 {
+  font-size: 2.6rem;
+  color: #1b2b44;
+}
+
+body.admin-authenticated .card-workspace__toolbar .inlineControl select,
+body.admin-authenticated .card-workspace__toolbar .inlineControl {
+  color: #2a405f;
+}
+
+body.admin-authenticated .card-workspace__toolbar .inlineControl select {
+  background: #fff;
+  border: 1px solid #e1e8f2;
+  border-radius: 12px;
+}
+
+body.admin-authenticated .report-cards-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+body.admin-authenticated .report-card {
+  border: 1px solid #e3e9f2;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 10px 20px rgba(28, 44, 73, 0.08);
+}
+
+body.admin-authenticated .report-card__date,
+body.admin-authenticated .report-card__desc {
+  color: #617892;
+}
+
+body.admin-authenticated .report-card h4 {
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+body.admin-authenticated .report-card__desc {
+  min-height: 54px;
+}
+
+body.admin-authenticated .report-card__actions .card-action-btn {
+  background: #eef4fb;
+  color: #26466a;
+  border: 1px solid #e2ebf7;
+}
+
+body.admin-authenticated .report-card__actions .card-action-btn--danger {
+  background: #ff5d5d;
+  color: #fff;
+  border: 0;
+}
+
+body.admin-authenticated .severity-moderate,
+body.admin-authenticated .severity-medium {
+  background: #fff4e5;
+  color: #c67a00;
+}
+
+body.admin-authenticated .severity-routine,
+body.admin-authenticated .severity-low {
+  background: #e7f8ee;
+  color: #128251;
+}
