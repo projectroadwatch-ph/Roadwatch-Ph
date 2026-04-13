@@ -6875,13 +6875,14 @@ body.admin-authenticated {
 }
 
 body.admin-authenticated .wrap {
-  width: min(1280px, 97%);
-  margin: 8px auto;
+  width: calc(100vw - 10px);
+  max-width: none;
+  margin: 5px auto;
 }
 
 body.admin-authenticated .admin-console-layout {
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 10px;
   min-height: auto;
 }
 
@@ -6956,6 +6957,7 @@ body.admin-authenticated .dashboard-header--compact .console-status-pill {
   max-width: fit-content;
   white-space: nowrap;
   overflow-wrap: normal;
+  flex-shrink: 0;
 }
 
 body.admin-authenticated .panel h3,
