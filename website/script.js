@@ -530,7 +530,9 @@ function toUserFacingLoadErrorMessage(error) {
 }
 
 function isLikelyCorsBlockedRequest(endpoint, error) {
-  if (!(error instanceof TypeError)) return false;
+  const errorName = (error && error.name ? String(error.name) : "").toLowerCase();
+  const isNetworkStyleError = error instanceof TypeError || errorName === "domexception";
+  if (!isNetworkStyleError) return false;
   return isCrossOriginEndpoint(endpoint);
 }
 
