@@ -5390,25 +5390,40 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 }
 
 /* Management card workspace refresh */
+.card-workspace__hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.card-workspace__hero h4 {
+  margin: 0 0 4px;
+  font-size: 2rem;
+  color: #1f2e45;
+}
+
 .card-workspace__toolbar {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   margin: 0 0 14px;
+  padding: 8px 0 2px;
 }
 
 .report-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
 }
 
 .report-card {
   background: #ffffff;
-  border: 1px solid #d9e4ef;
-  border-radius: 16px;
+  border: 1px solid #e6edf5;
+  border-radius: 18px;
   padding: 12px;
-  box-shadow: 0 10px 24px rgba(30, 52, 73, 0.08);
+  box-shadow: 0 12px 24px rgba(30, 52, 73, 0.08);
   display: grid;
   gap: 10px;
 }
@@ -5421,6 +5436,7 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 }
 
 .report-card__photo {
+  position: relative;
   height: 140px;
   border-radius: 12px;
   overflow: hidden;
@@ -5440,10 +5456,50 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
   font-size: 13px;
 }
 
+.report-card__pin {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  font-size: 1.15rem;
+  padding: 2px 6px;
+}
+
 .report-card h4 {
   margin: 0;
   font-size: 1.1rem;
   color: #1d2d3c;
+}
+
+.report-card__severity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.report-card__severity .report-card__severity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.report-card__date {
+  color: #5a6f85;
+  font-size: 0.88rem;
+}
+
+.report-card__tracking {
+  color: #2a3f54;
+}
+
+.report-card__status-label {
+  margin: 0 0 6px;
 }
 
 .report-card__status .status-select {
@@ -5452,6 +5508,14 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-card__actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
   gap: 8px;
+}
+
+.card-action-btn {
+  min-height: 34px;
+}
+
+.card-action-btn--danger {
+  min-width: 42px;
 }
