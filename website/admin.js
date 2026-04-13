@@ -3234,8 +3234,14 @@ sidebarNavLinks.forEach((link) => {
   });
 });
 sidebarSectionLinks.forEach((link) => {
-  link.addEventListener("click", () => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
     setDashboardView("overview");
+    const targetId = link.getAttribute("href");
+    if (!targetId) return;
+    const targetSection = document.querySelector(targetId);
+    if (!targetSection) return;
+    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 sidebarOverviewToggle?.addEventListener("click", () => {
