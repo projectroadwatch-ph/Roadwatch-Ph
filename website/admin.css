@@ -5725,8 +5725,8 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-card__tracking {
   color: #526784;
-  font-size: 2rem;
-  font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .report-card__status-label {
@@ -5763,7 +5763,7 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 .report-card__location {
   margin: -4px 0 0;
   color: #4f637d;
-  font-size: 1.15rem;
+  font-size: 0.98rem;
   display: inline-flex;
   gap: 8px;
   align-items: center;
@@ -5785,12 +5785,14 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 .report-card__quick-meta p {
   margin: 0 0 8px;
   color: #445a78;
+  font-size: 0.92rem;
 }
 
 .report-card__quick-id {
-  font-size: 1.35rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #1f2f49;
+  word-break: break-word;
 }
 
 .report-card__quick-badge {
@@ -5821,7 +5823,7 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 }
 
 .report-card__reporter-name {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #1f2f49;
 }
@@ -6295,14 +6297,14 @@ body.admin-authenticated .card-workspace__toolbar .inlineControl select {
 }
 
 body.admin-authenticated .report-cards-grid {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
 }
 
 body.admin-authenticated .report-card {
   border: 1px solid #e3e9f2;
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: 18px;
+  padding: 16px;
   box-shadow: 0 10px 20px rgba(28, 44, 73, 0.08);
 }
 
@@ -6312,12 +6314,31 @@ body.admin-authenticated .report-card__desc {
 }
 
 body.admin-authenticated .report-card h4 {
-  font-size: 2rem;
-  line-height: 1.15;
+  font-size: 1.2rem;
+  line-height: 1.35;
 }
 
 body.admin-authenticated .report-card__desc {
-  min-height: 54px;
+  min-height: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+body.admin-authenticated .report-card__section,
+body.admin-authenticated .report-card__reporter,
+body.admin-authenticated .report-card__hero {
+  border-radius: 14px;
+}
+
+body.admin-authenticated .report-card__actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 44px;
+  gap: 10px;
+}
+
+body.admin-authenticated .card-action-btn {
+  min-height: 44px;
+  font-size: 0.9rem;
+  border-radius: 10px;
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn {
