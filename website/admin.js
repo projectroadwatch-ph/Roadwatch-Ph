@@ -134,6 +134,7 @@ const tableWorkspace = document.getElementById("tableWorkspace");
 const reportCardsGrid = document.getElementById("reportCardsGrid");
 const severityQuickFilter = document.getElementById("severityQuickFilter");
 const statusQuickFilter = document.getElementById("statusQuickFilter");
+const newReportCardBtn = document.getElementById("newReportCardBtn");
 const kanbanPending = document.getElementById("kanbanPending");
 const kanbanVerified = document.getElementById("kanbanVerified");
 const kanbanInProgress = document.getElementById("kanbanInProgress");
@@ -1452,19 +1453,20 @@ function renderCardWorkspace(reports) {
     const tracking = String(report.tracking || "").trim();
     const severity = getSeverityLabel(report);
     const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "-";
+    const normalizedStatus = normalizeStatus(report.status);
 
     const photo = photoCell(report.photo);
     const photoHtml = typeof photo === "string" ? `<div class="report-card__placeholder">${escapeHtml(photo)}</div>` : "";
 
     card.innerHTML = `
       <header class="report-card__meta">
-        <span class="severity-badge severity-${severity.toLowerCase()}">${severity}</span>
-        <span class="small">${dateLabel}</span>
+        <span class="report-card__severity severity-${severity.toLowerCase()}"><span class="report-card__severity-dot" aria-hidden="true"></span>${severity}</span>
+        <span class="report-card__date">${dateLabel}</span>
       </header>
       <div class="report-card__photo"></div>
       <h4>${escapeHtml(report.location || "Unknown location")}</h4>
-      <p class="small">${escapeHtml(report.issueType || report.issue || "-")}</p>
-      <p class="small"><strong>${escapeHtml(tracking || "-")}</strong></p>
+      <p class="small">${escapeHtml(report.issue || report.issueType || "-")}</p>
+      <p class="small report-card__tracking"><strong>${escapeHtml(tracking || "-")}</strong></p>
       <div class="report-card__status"></div>
       <div class="report-card__actions"></div>
     `;
@@ -1476,29 +1478,40 @@ function renderCardWorkspace(reports) {
       } else {
         photoSlot.appendChild(photo);
       }
+      const marker = document.createElement("span");
+      marker.className = "report-card__pin";
+      marker.textContent = "📍";
+      marker.setAttribute("aria-hidden", "true");
+      photoSlot.appendChild(marker);
     }
 
     const statusSlot = card.querySelector(".report-card__status");
-    if (statusSlot) statusSlot.appendChild(statusSelect(normalizeStatus(report.status), tracking));
+    if (statusSlot) {
+      const statusLabel = document.createElement("p");
+      statusLabel.className = "small report-card__status-label";
+      statusLabel.textContent = `Status: ${normalizedStatus}`;
+      statusSlot.append(statusLabel, statusSelect(normalizedStatus, tracking));
+    }
 
     const actions = card.querySelector(".report-card__actions");
     if (actions) {
       const viewBtn = document.createElement("button");
       viewBtn.type = "button";
-      viewBtn.className = "secondary slim";
-      viewBtn.textContent = "View";
+      viewBtn.className = "secondary slim card-action-btn";
+      viewBtn.textContent = "👁 View";
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
       const timelineBtn = document.createElement("button");
       timelineBtn.type = "button";
-      timelineBtn.className = "secondary slim";
-      timelineBtn.textContent = "Edit";
+      timelineBtn.className = "secondary slim card-action-btn";
+      timelineBtn.textContent = "✎ Edit";
       timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
 
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
-      deleteBtn.className = "danger slim";
-      deleteBtn.textContent = "Delete";
+      deleteBtn.className = "danger slim card-action-btn card-action-btn--danger";
+      deleteBtn.textContent = "🗑";
+      deleteBtn.setAttribute("aria-label", `Delete report ${tracking}`);
       deleteBtn.addEventListener("click", async () => {
         if (!guardPermission("delete", "Your role cannot delete reports.")) return;
         const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
@@ -3377,6 +3390,9 @@ showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspa
 showKanbanViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("kanban"));
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
 showTableViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("table"));
+newReportCardBtn?.addEventListener("click", () => {
+  window.location.href = "submit.html";
+});
 
 severityQuickFilter?.addEventListener("change", () => {
   applyFiltersAndRender();
