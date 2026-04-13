@@ -1084,10 +1084,10 @@ function applyAuthUI() {
   enforceSessionTtl();
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
 
-  loginPanel.classList.toggle("hidden", isAuthed);
-  dashboard.classList.toggle("hidden", !isAuthed);
-  loginPanel.hidden = isAuthed;
-  dashboard.hidden = !isAuthed;
+  loginPanel?.classList.toggle("hidden", isAuthed);
+  dashboard?.classList.toggle("hidden", !isAuthed);
+  if (loginPanel) loginPanel.hidden = isAuthed;
+  if (dashboard) dashboard.hidden = !isAuthed;
 
   document.body.classList.toggle("admin-authenticated", isAuthed);
   if (!isAuthed) {
@@ -3349,14 +3349,16 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s) from ${sourceLabel}.`);
   } catch (error) {
-    reportsBody.innerHTML = '<tr><td colspan="19">Unable to load reports right now.</td></tr>';
+    if (reportsBody) {
+      reportsBody.innerHTML = '<tr><td colspan="19">Unable to load reports right now.</td></tr>';
+    }
     renderAnalytics([]);
     renderPriorityQueue([]);
     renderSlaQueue([]);
     renderAuditTrail();
     renderCaseTimeline("");
     refreshReportingSection([]);
-    filterSummary.textContent = "";
+    if (filterSummary) filterSummary.textContent = "";
     setFeedback("reportsFeedback", error.message, true);
     if (activeReportsSource) {
       setSheetSyncStatus(
@@ -3374,12 +3376,12 @@ async function loadReports() {
 }
 
 
-document.getElementById("loginBtn").addEventListener("click", login);
-document.getElementById("logoutBtn").addEventListener("click", logout);
-document.getElementById("refreshReportsBtn").addEventListener("click", loadReports);
-document.getElementById("clearFiltersBtn").addEventListener("click", () => {
-  reportSearch.value = "";
-  statusFilter.value = "all";
+document.getElementById("loginBtn")?.addEventListener("click", login);
+document.getElementById("logoutBtn")?.addEventListener("click", logout);
+document.getElementById("refreshReportsBtn")?.addEventListener("click", loadReports);
+document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
+  if (reportSearch) reportSearch.value = "";
+  if (statusFilter) statusFilter.value = "all";
   if (statusQuickFilter) statusQuickFilter.value = "all";
   if (severityQuickFilter) severityQuickFilter.value = "all";
   if (categoryFilter) categoryFilter.value = "all";
@@ -3391,11 +3393,11 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
   quickFilterPresets.forEach((chip) => chip.classList.remove("is-active"));
   setUrgentOnlyMode(false);
-  syncSearchInputs("workspace");
+  if (reportSearch || dashboardSearch) syncSearchInputs("workspace");
   currentPage = 1;
   applyFiltersAndRender();
 });
-reportSearch.addEventListener("input", () => {
+reportSearch?.addEventListener("input", () => {
   syncSearchInputs("workspace");
   currentPage = 1;
   applyFiltersAndRender();
@@ -3427,7 +3429,7 @@ urgentOnlyToggleBtn?.addEventListener("click", () => {
   currentPage = 1;
   applyFiltersAndRender();
 });
-statusFilter.addEventListener("change", () => {
+statusFilter?.addEventListener("change", () => {
   if (statusQuickFilter) statusQuickFilter.value = statusFilter.value;
   currentPage = 1;
   applyFiltersAndRender();
