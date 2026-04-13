@@ -5576,31 +5576,31 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
+  grid-template-columns: 1fr;
+  gap: 22px;
 }
 
 .report-card {
   background: #ffffff;
-  border: 1px solid #e6edf5;
-  border-radius: 18px;
-  padding: 12px;
-  box-shadow: 0 12px 24px rgba(30, 52, 73, 0.08);
+  border: 1px solid #dfe7f2;
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(30, 52, 73, 0.08);
   display: grid;
-  gap: 10px;
+  gap: 14px;
 }
 
 .report-card__meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 18px;
 }
 
 .report-card__photo {
   position: relative;
-  height: 140px;
-  border-radius: 12px;
+  min-height: 220px;
+  border-radius: 16px;
   overflow: hidden;
   background: #eef4fb;
   display: grid;
@@ -5620,27 +5620,28 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-card__pin {
   position: absolute;
-  left: 8px;
-  bottom: 8px;
+  left: 14px;
+  bottom: 14px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 999px;
-  font-size: 1.15rem;
-  padding: 2px 6px;
+  font-size: 1.4rem;
+  padding: 6px 10px;
 }
 
 .report-card h4 {
   margin: 0;
-  font-size: 1.1rem;
-  color: #1d2d3c;
+  font-size: 2.7rem;
+  color: #1f2a3c;
+  line-height: 1.1;
 }
 
 .report-card__severity {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: 18px;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -5657,7 +5658,9 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 }
 
 .report-card__tracking {
-  color: #2a3f54;
+  color: #526784;
+  font-size: 2rem;
+  font-weight: 500;
 }
 
 .report-card__status-label {
@@ -5670,12 +5673,118 @@ body.admin-authenticated.sidebar-collapsed .admin-sidebar {
 
 .report-card__actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 86px;
+  gap: 14px;
+  padding-top: 6px;
 }
 
 .card-action-btn {
-  min-height: 34px;
+  min-height: 62px;
+  font-size: 1.7rem;
+  border-radius: 20px;
+}
+
+.card-action-btn--icon {
+  background: #2f78c7;
+  color: #fff;
+  border-color: #2f78c7;
+}
+
+.report-card__meta--top {
+  justify-content: space-between;
+}
+
+.report-card__location {
+  margin: -4px 0 0;
+  color: #4f637d;
+  font-size: 1.15rem;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.report-card__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  border: 1px solid #d8e2ef;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.report-card__quick-meta {
+  padding: 14px;
+  background: #f7fafc;
+}
+
+.report-card__quick-meta p {
+  margin: 0 0 8px;
+  color: #445a78;
+}
+
+.report-card__quick-id {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1f2f49;
+}
+
+.report-card__quick-badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.report-card__reporter,
+.report-card__section {
+  border: 1px solid #d8e2ef;
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+
+.report-card__reporter {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 12px;
+}
+
+.report-card__reporter-main p,
+.report-card__reporter-side p {
+  margin: 0 0 7px;
+  color: #4f637d;
+}
+
+.report-card__reporter-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2f49;
+}
+
+.report-card__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.report-card__split p {
+  margin: 0 0 8px;
+  color: #4f637d;
+}
+
+.report-card__split span {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.report-card__section-title,
+.report-card__report-id,
+.report-card__verifier {
+  margin: 0 0 10px;
+  color: #2b3f5c;
+}
+
+.report-card__desc {
+  margin: 8px 0 0;
 }
 
 .card-action-btn--danger {

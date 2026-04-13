@@ -1455,17 +1455,63 @@ function renderCardWorkspace(reports) {
     const tracking = String(report.tracking || "").trim();
     const severity = getSeverityLabel(report);
     const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "-";
+    const verifiedLabel = normalizeStatus(report.status) === "Verified" ? "Verified" : "Needs Verification";
+    const locationTitle = [report.location, report.city, report.region, report.barangay].filter((value) => value && value !== "-").join(", ") || "Unknown location";
+    const qualityScore = `${getDataQualityScore(report)}%`;
+    const problemType = [report.issueType, report.issueCategory].filter((value) => value && value !== "-").join(" / ") || "Road issue";
+    const reporterName = report.name && report.name !== "-" ? report.name : "Unspecified reporter";
+    const reporterEmail = report.email && report.email !== "-" ? report.email : "No email provided";
+    const reporterPhone = report.phone && report.phone !== "-" ? report.phone : "No phone provided";
     const photo = photoCell(report.photo);
     const photoHtml = typeof photo === "string" ? `<div class="report-card__placeholder">${escapeHtml(photo)}</div>` : "";
 
     card.innerHTML = `
-      <header class="report-card__meta">
+      <header class="report-card__meta report-card__meta--top">
         <span class="report-card__severity severity-${severity.toLowerCase()}"><span class="report-card__severity-dot" aria-hidden="true"></span>${severity}</span>
-        <span class="report-card__date">📅 ${dateLabel}</span>
+        <span class="report-card__tracking">${escapeHtml(tracking || "N/A")}</span>
       </header>
-      <div class="report-card__photo"></div>
-      <h4>${escapeHtml(report.location || "Unknown location")}</h4>
-      <p class="small report-card__desc">${escapeHtml(report.issue || report.issueType || "-")}</p>
+      <h4>Report: ${escapeHtml(report.issue || report.issueTypeOption || report.issueType || "Road issue")}</h4>
+      <p class="report-card__location"><span aria-hidden="true">📍</span>${escapeHtml(locationTitle)}</p>
+      <section class="report-card__hero">
+        <div class="report-card__photo"></div>
+        <div class="report-card__quick-meta">
+          <span class="report-card__quick-badge severity-${severity.toLowerCase()}">${severity.toUpperCase()}</span>
+          <p>Submitted: ${dateLabel}</p>
+          <p>Verified: ${dateLabel}</p>
+          <hr />
+          <p><strong>Report ID</strong></p>
+          <p class="report-card__quick-id">${escapeHtml(tracking || "N/A")}</p>
+        </div>
+      </section>
+      <section class="report-card__reporter">
+        <div class="report-card__reporter-main">
+          <p class="report-card__reporter-name">${escapeHtml(reporterName)}</p>
+          <p>${escapeHtml(reporterEmail)}</p>
+          <p>📞 ${escapeHtml(reporterPhone)}</p>
+        </div>
+        <div class="report-card__reporter-side">
+          <p>Status: <strong>${escapeHtml(verifiedLabel)}</strong></p>
+          <p>Road Quality: <strong>${escapeHtml(qualityScore)}</strong></p>
+        </div>
+      </section>
+      <section class="report-card__section">
+        <p class="report-card__section-title">📍 Location Details</p>
+        <div class="report-card__split">
+          <p><span>City/Municipality:</span> ${escapeHtml(report.city || "-")}</p>
+          <p><span>Province:</span> ${escapeHtml(report.province || "-")}</p>
+        </div>
+        <div class="report-card__split">
+          <p><span>Barangay:</span> ${escapeHtml(report.barangay || "-")}</p>
+          <p><span>Zip Code:</span> 1233</p>
+        </div>
+        <p class="report-card__verifier">Verifying Officer: <strong>Arch Lennard Granada</strong></p>
+      </section>
+      <section class="report-card__section">
+        <p class="report-card__report-id">Report ID: ${escapeHtml(tracking || "N/A")}</p>
+        <hr />
+        <p><strong>Problem Type:</strong> ${escapeHtml(problemType)}</p>
+        <p class="small report-card__desc">${escapeHtml(report.issue || report.issueType || "-")}</p>
+      </section>
       <div class="report-card__actions"></div>
     `;
 
@@ -1488,18 +1534,24 @@ function renderCardWorkspace(reports) {
       const viewBtn = document.createElement("button");
       viewBtn.type = "button";
       viewBtn.className = "secondary slim card-action-btn";
-      viewBtn.innerHTML = `<span aria-hidden="true">👁️</span> View`;
+      viewBtn.textContent = "View";
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
       const timelineBtn = document.createElement("button");
       timelineBtn.type = "button";
       timelineBtn.className = "secondary slim card-action-btn";
-      timelineBtn.innerHTML = `<span aria-hidden="true">✏️</span> Edit`;
+      timelineBtn.textContent = "Edit";
       timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
+
+      const vipBtn = document.createElement("button");
+      vipBtn.type = "button";
+      vipBtn.className = "secondary slim card-action-btn";
+      vipBtn.textContent = "Vip";
+      vipBtn.addEventListener("click", () => focusTimeline(report.tracking));
 
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
-      deleteBtn.className = "danger slim card-action-btn card-action-btn--danger";
+      deleteBtn.className = "secondary slim card-action-btn card-action-btn--icon";
       deleteBtn.textContent = "🗑";
       deleteBtn.setAttribute("aria-label", `Delete report ${tracking}`);
       deleteBtn.addEventListener("click", async () => {
@@ -1515,7 +1567,7 @@ function renderCardWorkspace(reports) {
           setFeedback("reportsFeedback", error.message || "Unable to delete report.", true);
         }
       });
-      actions.append(viewBtn, timelineBtn, deleteBtn);
+      actions.append(viewBtn, timelineBtn, vipBtn, deleteBtn);
     }
     reportCardsGrid.appendChild(card);
   });
