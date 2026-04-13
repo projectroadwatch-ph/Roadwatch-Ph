@@ -6167,16 +6167,28 @@ body:not(.admin-authenticated) .wrap {
   color: #6a7b95;
 }
 
+.login-card--gov .login-links {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.login-card--gov .login-home-link,
 .login-card--gov .login-forgot {
-  margin: 4px 0 0;
+  margin: 0;
   font-size: clamp(1.5rem, 1.5vw, 1.8rem);
   color: #2b3f5f;
   text-decoration: none;
 }
 
+.login-card--gov .login-home-link:hover,
 .login-card--gov .login-forgot:hover {
   text-decoration: underline;
 }
+
 
 .login-disclaimer {
   margin: 14px 0 0;
