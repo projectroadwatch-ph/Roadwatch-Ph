@@ -3178,6 +3178,72 @@ label {
   top: auto;
 }
 
+/* 2026-04-13 admin dashboard cleanup: calmer spacing, consistent text scale */
+body.admin-authenticated {
+  --dashboard-font-base: 14px;
+  --dashboard-font-small: 0.86rem;
+  --dashboard-font-label: 0.8rem;
+  --dashboard-font-title: clamp(1.25rem, 1.3vw, 1.5rem);
+}
+
+body.admin-authenticated .dashboard-shell {
+  font-size: var(--dashboard-font-base);
+  line-height: 1.45;
+}
+
+body.admin-authenticated .dashboard-header h2,
+body.admin-authenticated .panel h3 {
+  font-size: var(--dashboard-font-title);
+  line-height: 1.25;
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated .queueCard p,
+body.admin-authenticated .priorityItem p,
+body.admin-authenticated .timelineBarLabel,
+body.admin-authenticated .timelineBarValue {
+  font-size: var(--dashboard-font-small);
+  line-height: 1.45;
+}
+
+body.admin-authenticated label,
+body.admin-authenticated .section-chip,
+body.admin-authenticated .analyticsLabel,
+body.admin-authenticated .snapshot-card span,
+body.admin-authenticated .inlineControl.compact {
+  font-size: var(--dashboard-font-label);
+}
+
+body.admin-authenticated .console-topbar,
+body.admin-authenticated .dashboard-header,
+body.admin-authenticated .dashboard-nav,
+body.admin-authenticated .overview-shell .panel,
+body.admin-authenticated .critical-overview-panel--hero,
+body.admin-authenticated .data-analytics-panel {
+  backdrop-filter: none;
+  box-shadow: 0 8px 20px rgba(0, 10, 28, 0.28);
+}
+
+body.admin-authenticated .analyticsCard strong,
+body.admin-authenticated .kpi-pill strong,
+body.admin-authenticated .snapshot-card strong,
+body.admin-authenticated .severity-card strong {
+  font-size: clamp(1.2rem, 1.7vw, 1.6rem);
+}
+
+body.admin-authenticated .management-table th,
+body.admin-authenticated .management-table td,
+body.admin-authenticated .overview-table th,
+body.admin-authenticated .overview-table td {
+  font-size: 0.82rem;
+}
+
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated button {
+  font-size: 0.88rem;
+}
+
 .admin-authenticated .dashboard-view {
   position: relative;
   z-index: 1;
