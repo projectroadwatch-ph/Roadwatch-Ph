@@ -7,6 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
   <title>RoadWatch PH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <script>window.ROADWATCH_DEPLOYMENT_VERSION = "20260413a";</script>
   <script src="update-manager.js?v=20260413a"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -15,21 +16,36 @@
 <body>
   <main class="wrap">
     <section id="loginPanel" class="card login-card">
-      <div class="login-hero">
-        <p class="eyebrow">Secure Access</p>
-        <h1>RoadWatch PH Admin Portal</h1>
-        <p>Log in to monitor reports, update road issue statuses, and keep citizens informed in real time.</p>
+      <div class="login-card__branding">
+        <div class="login-brand">
+          <span class="login-brand__icon" aria-hidden="true">📍</span>
+          <strong>RoadWatch PH</strong>
+        </div>
       </div>
-      <div class="login-form">
-        <label>Username
-          <input id="adminUsername" type="text" autocomplete="username" placeholder="Enter admin username">
-        </label>
-        <label>Password
-          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password">
-        </label>
-        <button id="loginBtn" type="button">Log In to Dashboard</button>
-        <p id="loginFeedback" class="feedback"></p>
-        <a href="index.html" class="link">← Back to homepage</a>
+
+      <div class="login-shell">
+        <div class="login-hero">
+          <p class="eyebrow">Secure Access</p>
+          <h1>RoadWatch PH<br>Admin Portal</h1>
+          <p>Log in to monitor reports, update road issue statuses, and keep citizens informed in real time.</p>
+        </div>
+        <div class="login-form">
+          <div class="login-form__header"></div>
+          <div class="login-form__content">
+            <h2>Admin Login</h2>
+            <label class="login-field">
+              <span class="login-field__icon" aria-hidden="true">👤</span>
+              <input id="adminUsername" type="text" autocomplete="username" placeholder="Enter admin username" aria-label="Admin username">
+            </label>
+            <label class="login-field">
+              <span class="login-field__icon" aria-hidden="true">🔒</span>
+              <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password" aria-label="Admin password">
+            </label>
+            <button id="loginBtn" type="button">Log In to Dashboard</button>
+            <p id="loginFeedback" class="feedback"></p>
+            <a href="index.html" class="link">← Back to homepage</a>
+          </div>
+        </div>
       </div>
     </section>
 
