@@ -2611,25 +2611,25 @@ function openReportFormPreview(report) {
     <title>RoadWatch Submitted Report - ${tracking}</title>
     <style>
       :root { color-scheme: light; }
-      body { font-family: Arial, sans-serif; color: #1b2c3b; margin: 0; background: #eef3f9; }
-      .sheet { max-width: 980px; margin: 20px auto; background: #fff; border: 1px solid #d5e1ec; border-radius: 14px; padding: 22px; }
-      .toolbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
-      .toolbar h1 { margin: 0; font-size: 24px; line-height: 1.2; }
-      .toolbar p { margin: 4px 0 0; color: #4c647b; font-size: 13px; }
-      .print-btn { background: #1f5f8b; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-      .overview { margin-bottom: 14px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 12px; }
-      .section { border: 1px solid #dbe7f1; border-radius: 12px; padding: 12px; margin-bottom: 12px; background: #fdfefe; }
-      .section h2 { margin: 0 0 10px; font-size: 15px; color: #204768; text-transform: uppercase; letter-spacing: .04em; }
-      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
-      .item { border: 1px solid #dbe7f1; border-radius: 10px; padding: 10px 12px; background: #fbfdff; }
-      .item strong { display: block; margin-bottom: 4px; font-size: 12px; color: #47617a; text-transform: uppercase; letter-spacing: .04em; }
-      .item span { font-size: 14px; line-height: 1.45; word-break: break-word; }
+      body { font-family: "Arial Narrow", Arial, sans-serif; color: #102333; margin: 0; background: #ecf1f6; }
+      .sheet { max-width: 980px; margin: 14px auto; background: #f7fafc; border: 1px solid #bac9d8; border-radius: 8px; padding: 10px; }
+      .toolbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+      .toolbar h1 { margin: 0; font-size: 16px; line-height: 1.15; color: #12344f; font-weight: 700; }
+      .toolbar p { margin: 2px 0 0; color: #4f697f; font-size: 9px; }
+      .print-btn { background: #0f5f97; color: #fff; border: 1px solid #0c527f; border-radius: 4px; padding: 5px 10px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; text-transform: none; }
+      .overview { margin-bottom: 8px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(250px, 0.85fr); gap: 8px; }
+      .section { border: 1px solid #bfd0e0; border-radius: 4px; padding: 8px; margin-bottom: 8px; background: #f2f6fb; }
+      .section h2 { margin: 0 0 8px; font-size: 10px; color: #123f63; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
+      .item { border: 1px solid #c3d4e3; border-radius: 4px; padding: 5px 6px; background: #f3f8fd; }
+      .item strong { display: block; margin-bottom: 2px; font-size: 8px; color: #1f4664; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; }
+      .item span { font-size: 10px; line-height: 1.35; color: #1d3448; word-break: break-word; }
       .item.full { grid-column: 1 / -1; }
       .photo-section { height: 100%; display: flex; flex-direction: column; }
-      .photo-wrap { margin-top: 0; height: 100%; display: flex; flex-direction: column; gap: 8px; }
-      .form-photo { width: 100%; min-height: 260px; max-height: 380px; object-fit: cover; border: 1px solid #d5e1ec; border-radius: 10px; background: #f7fbff; }
-      .photo-placeholder { border: 1px dashed #bed0df; border-radius: 10px; padding: 24px; text-align: center; color: #607a93; background: #f8fbff; min-height: 220px; display: grid; place-items: center; }
-      .photo-caption { margin: 0; font-size: 12px; color: #607a93; }
+      .photo-wrap { margin-top: 0; height: 100%; display: flex; flex-direction: column; gap: 5px; }
+      .form-photo { width: 100%; min-height: 165px; max-height: 230px; object-fit: cover; border: 1px solid #b8cada; border-radius: 4px; background: #f7fbff; }
+      .photo-placeholder { border: 1px dashed #bed0df; border-radius: 4px; padding: 18px; text-align: center; color: #607a93; background: #f8fbff; min-height: 165px; display: grid; place-items: center; font-size: 10px; }
+      .photo-caption { margin: 0; font-size: 8px; color: #5e7890; }
       @media (max-width: 780px) {
         .overview { grid-template-columns: 1fr; }
         .grid { grid-template-columns: 1fr; }
@@ -2648,7 +2648,7 @@ function openReportFormPreview(report) {
       <div class="toolbar">
         <div>
           <h1>Submitted Road Issue Form</h1>
-          <p>RoadWatch PH • Tracking # ${tracking}</p>
+          <p>RoadWatch PH • Tracking Reference # ${tracking}</p>
         </div>
         <button class="print-btn" type="button" onclick="window.print()">Print / Save as PDF</button>
       </div>
