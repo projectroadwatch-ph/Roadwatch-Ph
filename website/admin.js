@@ -1454,7 +1454,7 @@ function renderCardWorkspace(reports) {
     card.className = "report-card";
     const tracking = String(report.tracking || "").trim();
     const severity = getSeverityLabel(report);
-    const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "-";
+    const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "Not available";
     const verifiedLabel = normalizeStatus(report.status) === "Verified" ? "Verified" : "Needs Verification";
     const locationTitle = [report.location, report.city, report.region, report.barangay].filter((value) => value && value !== "-").join(", ") || "Unknown location";
     const qualityScore = `${getDataQualityScore(report)}%`;
@@ -1462,6 +1462,8 @@ function renderCardWorkspace(reports) {
     const reporterName = report.name && report.name !== "-" ? report.name : "Unspecified reporter";
     const reporterEmail = report.email && report.email !== "-" ? report.email : "No email provided";
     const reporterPhone = report.phone && report.phone !== "-" ? report.phone : "No phone provided";
+    const zipCode = report.zipCode || report.zip || report.postalCode || "Not provided";
+    const verifierName = report.verifier || report.verifyingOfficer || "Assigned LGU verifier";
     const photo = photoCell(report.photo);
     const photoHtml = typeof photo === "string" ? `<div class="report-card__placeholder">${escapeHtml(photo)}</div>` : "";
 
@@ -1477,9 +1479,9 @@ function renderCardWorkspace(reports) {
         <div class="report-card__quick-meta">
           <span class="report-card__quick-badge severity-${severity.toLowerCase()}">${severity.toUpperCase()}</span>
           <p>Submitted: ${dateLabel}</p>
-          <p>Verified: ${dateLabel}</p>
+          <p>Verification: ${escapeHtml(verifiedLabel)}</p>
           <hr />
-          <p><strong>Report ID</strong></p>
+          <p><strong>Tracking ID</strong></p>
           <p class="report-card__quick-id">${escapeHtml(tracking || "N/A")}</p>
         </div>
       </section>
@@ -1502,9 +1504,9 @@ function renderCardWorkspace(reports) {
         </div>
         <div class="report-card__split">
           <p><span>Barangay:</span> ${escapeHtml(report.barangay || "-")}</p>
-          <p><span>Zip Code:</span> 1233</p>
+          <p><span>Zip Code:</span> ${escapeHtml(String(zipCode))}</p>
         </div>
-        <p class="report-card__verifier">Verifying Officer: <strong>Arch Lennard Granada</strong></p>
+        <p class="report-card__verifier">Verifying Officer: <strong>${escapeHtml(String(verifierName))}</strong></p>
       </section>
       <section class="report-card__section">
         <p class="report-card__report-id">Report ID: ${escapeHtml(tracking || "N/A")}</p>
@@ -1546,7 +1548,7 @@ function renderCardWorkspace(reports) {
       const vipBtn = document.createElement("button");
       vipBtn.type = "button";
       vipBtn.className = "secondary slim card-action-btn";
-      vipBtn.textContent = "Vip";
+      vipBtn.textContent = "Manage";
       vipBtn.addEventListener("click", () => focusTimeline(report.tracking));
 
       const deleteBtn = document.createElement("button");
