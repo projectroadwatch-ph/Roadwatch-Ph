@@ -126,9 +126,14 @@ const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
 const staleDataBanner = document.getElementById("staleDataBanner");
 const syncMetaStatus = document.getElementById("syncMetaStatus");
 const showKanbanViewBtn = document.getElementById("showKanbanViewBtn");
+const showCardViewBtn = document.getElementById("showCardViewBtn");
 const showTableViewBtn = document.getElementById("showTableViewBtn");
+const cardWorkspace = document.getElementById("cardWorkspace");
 const kanbanWorkspace = document.getElementById("kanbanWorkspace");
 const tableWorkspace = document.getElementById("tableWorkspace");
+const reportCardsGrid = document.getElementById("reportCardsGrid");
+const severityQuickFilter = document.getElementById("severityQuickFilter");
+const statusQuickFilter = document.getElementById("statusQuickFilter");
 const kanbanPending = document.getElementById("kanbanPending");
 const kanbanVerified = document.getElementById("kanbanVerified");
 const kanbanInProgress = document.getElementById("kanbanInProgress");
@@ -163,7 +168,7 @@ let urgentOnlyMode = false;
 let activeColumnView = "operations";
 let activeDashboardView = "overview";
 let staleDataIntervalId = null;
-let workspaceLayoutMode = "kanban";
+let workspaceLayoutMode = "cards";
 let activeKanbanTracking = "";
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
@@ -1424,11 +1429,93 @@ function renderManagementSnapshot(filteredReports) {
 }
 
 function setWorkspaceLayoutMode(mode = "kanban") {
-  workspaceLayoutMode = mode === "table" ? "table" : "kanban";
+  workspaceLayoutMode = mode === "table" || mode === "kanban" ? mode : "cards";
+  if (cardWorkspace) cardWorkspace.hidden = workspaceLayoutMode !== "cards";
   if (kanbanWorkspace) kanbanWorkspace.hidden = workspaceLayoutMode !== "kanban";
   if (tableWorkspace) tableWorkspace.hidden = workspaceLayoutMode !== "table";
+  showCardViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "cards");
   showKanbanViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "kanban");
   showTableViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "table");
+}
+
+function renderCardWorkspace(reports) {
+  if (!reportCardsGrid) return;
+  if (!reports.length) {
+    reportCardsGrid.innerHTML = '<article class="report-card"><p class="small">No reports match your current filters.</p></article>';
+    return;
+  }
+
+  reportCardsGrid.innerHTML = "";
+  reports.forEach((report) => {
+    const card = document.createElement("article");
+    card.className = "report-card";
+    const tracking = String(report.tracking || "").trim();
+    const severity = getSeverityLabel(report);
+    const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "-";
+
+    const photo = photoCell(report.photo);
+    const photoHtml = typeof photo === "string" ? `<div class="report-card__placeholder">${escapeHtml(photo)}</div>` : "";
+
+    card.innerHTML = `
+      <header class="report-card__meta">
+        <span class="severity-badge severity-${severity.toLowerCase()}">${severity}</span>
+        <span class="small">${dateLabel}</span>
+      </header>
+      <div class="report-card__photo"></div>
+      <h4>${escapeHtml(report.location || "Unknown location")}</h4>
+      <p class="small">${escapeHtml(report.issueType || report.issue || "-")}</p>
+      <p class="small"><strong>${escapeHtml(tracking || "-")}</strong></p>
+      <div class="report-card__status"></div>
+      <div class="report-card__actions"></div>
+    `;
+
+    const photoSlot = card.querySelector(".report-card__photo");
+    if (photoSlot) {
+      if (typeof photo === "string") {
+        photoSlot.innerHTML = photoHtml;
+      } else {
+        photoSlot.appendChild(photo);
+      }
+    }
+
+    const statusSlot = card.querySelector(".report-card__status");
+    if (statusSlot) statusSlot.appendChild(statusSelect(normalizeStatus(report.status), tracking));
+
+    const actions = card.querySelector(".report-card__actions");
+    if (actions) {
+      const viewBtn = document.createElement("button");
+      viewBtn.type = "button";
+      viewBtn.className = "secondary slim";
+      viewBtn.textContent = "View";
+      viewBtn.addEventListener("click", () => openReportFormPreview(report));
+
+      const timelineBtn = document.createElement("button");
+      timelineBtn.type = "button";
+      timelineBtn.className = "secondary slim";
+      timelineBtn.textContent = "Edit";
+      timelineBtn.addEventListener("click", () => focusTimeline(report.tracking));
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "danger slim";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.addEventListener("click", async () => {
+        if (!guardPermission("delete", "Your role cannot delete reports.")) return;
+        const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
+        if (!confirmed) return;
+        try {
+          await deleteReport(report.tracking);
+          allReports = allReports.filter((item) => String(item.tracking) !== String(report.tracking));
+          setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
+          applyFiltersAndRender();
+        } catch (error) {
+          setFeedback("reportsFeedback", error.message || "Unable to delete report.", true);
+        }
+      });
+      actions.append(viewBtn, timelineBtn, deleteBtn);
+    }
+    reportCardsGrid.appendChild(card);
+  });
 }
 
 function renderKanbanDrawer(report) {
@@ -2834,6 +2921,7 @@ function getAnalyticsFilteredReports(reports) {
 function getFilteredReports() {
   const query = reportSearch.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
+  const selectedSeverity = severityQuickFilter?.value || "all";
   const selectedCategory = categoryFilter?.value || "all";
   const selectedBarangay = barangayFilter?.value || "all";
   const selectedQuality = qualityFilter?.value || "all";
@@ -2844,6 +2932,8 @@ function getFilteredReports() {
   return allReports.filter((report) => {
     const statusPass = selectedStatus === "all" || normalizeStatus(report.status) === selectedStatus;
     if (!statusPass) return false;
+    const severityPass = selectedSeverity === "all" || getSeverityLabel(report) === selectedSeverity;
+    if (!severityPass) return false;
 
     const categoryPass = selectedCategory === "all" || report.issueCategory === selectedCategory;
     if (!categoryPass) return false;
@@ -3038,6 +3128,7 @@ function applyFiltersAndRender() {
   renderManagementSnapshot(filtered);
   setTableColumnView(activeColumnView);
   renderRows(paginated);
+  renderCardWorkspace(paginated);
   renderKanbanBoard(filtered);
   renderAnalytics(allReports);
   renderPriorityQueue(allReports);
@@ -3191,6 +3282,7 @@ urgentOnlyToggleBtn?.addEventListener("click", () => {
   applyFiltersAndRender();
 });
 statusFilter.addEventListener("change", () => {
+  if (statusQuickFilter) statusQuickFilter.value = statusFilter.value;
   currentPage = 1;
   applyFiltersAndRender();
 });
@@ -3283,7 +3375,17 @@ runSmartDispatchBtn?.addEventListener("click", () => {
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showKanbanViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("kanban"));
+showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
 showTableViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("table"));
+
+severityQuickFilter?.addEventListener("change", () => {
+  applyFiltersAndRender();
+});
+
+statusQuickFilter?.addEventListener("change", () => {
+  if (statusFilter) statusFilter.value = statusQuickFilter.value;
+  applyFiltersAndRender();
+});
 applyBulkStatusBtn?.addEventListener("click", () => {
   applyBulkStatusUpdate();
 });
@@ -3521,7 +3623,7 @@ document.addEventListener("keydown", (event) => {
 
 setDashboardView("overview");
 setSidebarOverviewExpanded(false);
-setWorkspaceLayoutMode("kanban");
+setWorkspaceLayoutMode("cards");
 renderCaseTimeline("");
 applyAuthUI();
 
