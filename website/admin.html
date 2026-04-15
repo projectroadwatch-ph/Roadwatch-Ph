@@ -197,16 +197,28 @@
               <p class="small">Quick status pulse for total, pending, and verified entries in the queue.</p>
               <div class="snapshot-kpis">
                 <div class="snapshot-card">
-                  <span>Total Reports</span>
-                  <strong id="snapshotTotalCount">0</strong>
+                  <div class="snapshot-card__icon" aria-hidden="true">📄</div>
+                  <div class="snapshot-card__body">
+                    <span>Total Reports</span>
+                    <strong id="snapshotTotalCount">0</strong>
+                    <small>All entries</small>
+                  </div>
                 </div>
                 <div class="snapshot-card snapshot-card--alert">
-                  <span>Pending Review</span>
-                  <strong id="snapshotPendingCount">0</strong>
+                  <div class="snapshot-card__icon" aria-hidden="true">🕘</div>
+                  <div class="snapshot-card__body">
+                    <span>Pending Review</span>
+                    <strong id="snapshotPendingCount">0</strong>
+                    <small>Needs attention</small>
+                  </div>
                 </div>
                 <div class="snapshot-card snapshot-card--verified">
-                  <span>Verified</span>
-                  <strong id="snapshotVerifiedCount">0</strong>
+                  <div class="snapshot-card__icon" aria-hidden="true">✅</div>
+                  <div class="snapshot-card__body">
+                    <span>Verified</span>
+                    <strong id="snapshotVerifiedCount">0</strong>
+                    <small>Recently verified</small>
+                  </div>
                 </div>
               </div>
             </article>
@@ -236,7 +248,7 @@
                 <div id="statusChartTooltip" class="chart-tooltip" hidden></div>
               </div>
               <div class="chart-accessibility" aria-label="Status chart quick filters">
-                <p class="small">Keyboard-friendly quick filters</p>
+                <p class="small">Quick filters</p>
                 <div class="chart-accessibility__actions">
                   <button type="button" class="secondary slim status-filter-btn" data-status-filter="Pending">Pending</button>
                   <button type="button" class="secondary slim status-filter-btn" data-status-filter="Verified">Verified</button>
