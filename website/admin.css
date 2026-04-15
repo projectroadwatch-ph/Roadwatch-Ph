@@ -6545,6 +6545,89 @@ body.admin-authenticated .severity-medium {
   color: #c67a00;
 }
 
+/* 2026-04-15 report management cards fix: normalize spacing and improve responsive behavior */
+body.admin-authenticated .card-workspace__hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+body.admin-authenticated .card-workspace__hero h4 {
+  font-size: clamp(1.2rem, 1.6vw, 1.55rem);
+  line-height: 1.2;
+}
+
+body.admin-authenticated .report-cards-grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  align-items: start;
+}
+
+body.admin-authenticated .report-card {
+  height: 100%;
+  gap: 12px;
+}
+
+body.admin-authenticated .report-card__meta {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+body.admin-authenticated .report-card__tracking {
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+
+body.admin-authenticated .report-card h4 {
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  line-height: 1.3;
+}
+
+body.admin-authenticated .report-card__hero {
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 0.8fr);
+}
+
+body.admin-authenticated .report-card__photo {
+  min-height: 150px;
+}
+
+body.admin-authenticated .report-card__reporter {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.admin-authenticated .report-card__section {
+  padding: 12px 14px;
+}
+
+body.admin-authenticated .report-card__actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.admin-authenticated .report-card__actions .card-action-select {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  body.admin-authenticated .report-card__hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  body.admin-authenticated .report-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .report-card__reporter,
+  body.admin-authenticated .report-card__split {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .report-card__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 body.admin-authenticated .severity-routine,
 body.admin-authenticated .severity-low {
   background: #e7f8ee;
