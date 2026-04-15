@@ -122,6 +122,7 @@ const quickFilterPresets = Array.from(document.querySelectorAll("[data-quick-pre
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
 const runSmartDispatchBtn = document.getElementById("runSmartDispatchBtn");
 const bulkStatusValue = document.getElementById("bulkStatusValue");
+const selectVisibleBtn = document.getElementById("selectVisibleBtn");
 const applyBulkStatusBtn = document.getElementById("applyBulkStatusBtn");
 const clearSelectionBtn = document.getElementById("clearSelectionBtn");
 const selectionSummary = document.getElementById("selectionSummary");
@@ -131,6 +132,7 @@ const managementVerificationCount = document.getElementById("managementVerificat
 const managementSelectedCount = document.getElementById("managementSelectedCount");
 const savedViewSelect = document.getElementById("savedViewSelect");
 const columnPresetSelect = document.getElementById("columnPresetSelect");
+const sortBySelect = document.getElementById("sortBySelect");
 const saveCurrentViewBtn = document.getElementById("saveCurrentViewBtn");
 const deleteSavedViewBtn = document.getElementById("deleteSavedViewBtn");
 const rowsPerPageSelect = document.getElementById("rowsPerPageSelect");
@@ -335,7 +337,8 @@ function buildCurrentViewConfig() {
     triagePreset: triagePreset?.value || "all",
     urgentOnlyMode,
     rowsPerPage,
-    columnView: activeColumnView
+    columnView: activeColumnView,
+    sortBy: sortBySelect?.value || "priorityDesc"
   };
 }
 
@@ -351,6 +354,7 @@ function applySavedViewConfig(config) {
   setUrgentOnlyMode(Boolean(config.urgentOnlyMode));
   rowsPerPage = Math.max(5, Number(config.rowsPerPage || rowsPerPage || 15));
   if (rowsPerPageSelect) rowsPerPageSelect.value = String(rowsPerPage);
+  if (sortBySelect) sortBySelect.value = config.sortBy || "priorityDesc";
   setTableColumnView(config.columnView || activeColumnView);
 }
 
@@ -1727,6 +1731,23 @@ function getSelectedReports() {
   return allReports.filter((report) => selectedReports.has(String(report.tracking || "").trim()));
 }
 
+function selectVisibleReports() {
+  const visibleReports = getPaginatedReports(getFilteredReports());
+  let added = 0;
+  visibleReports.forEach((report) => {
+    const tracking = String(report.tracking || "").trim();
+    if (!tracking || selectedReports.has(tracking)) return;
+    selectedReports.add(tracking);
+    added += 1;
+  });
+  if (added > 0) {
+    setFeedback("reportsFeedback", `Added ${added} visible report(s) to selection.`);
+  } else {
+    setFeedback("reportsFeedback", "All visible reports are already selected.");
+  }
+  applyFiltersAndRender();
+}
+
 async function applyBulkStatusUpdate() {
   if (!guardPermission("bulk_status", "Your role cannot run bulk status updates.")) return;
   const selected = getSelectedReports();
@@ -3071,7 +3092,7 @@ function getFilteredReports() {
   const thresholdDays = getUrgencyThresholdDays();
   const now = Date.now();
 
-  return allReports.filter((report) => {
+  const filteredReports = allReports.filter((report) => {
     const statusPass = selectedStatus === "all" || normalizeStatus(report.status) === selectedStatus;
     if (!statusPass) return false;
     const severityPass = selectedSeverity === "all" || getSeverityLabel(report) === selectedSeverity;
@@ -3116,6 +3137,31 @@ function getFilteredReports() {
     ].join(" ").toLowerCase();
     return haystack.includes(query);
   });
+
+  return sortReports(filteredReports, sortBySelect?.value || "priorityDesc");
+}
+
+function sortReports(reports, sortMode = "priorityDesc") {
+  const safeReports = Array.isArray(reports) ? [...reports] : [];
+  const scoreDate = (report) => parseReportDate(report)?.getTime() || 0;
+  const scorePriority = (report) => getPriorityScore(report);
+  const scoreQuality = (report) => getDataQualityScore(report);
+
+  switch (sortMode) {
+    case "priorityAsc":
+      return safeReports.sort((a, b) => scorePriority(a) - scorePriority(b) || scoreDate(b) - scoreDate(a));
+    case "newest":
+      return safeReports.sort((a, b) => scoreDate(b) - scoreDate(a) || scorePriority(b) - scorePriority(a));
+    case "oldest":
+      return safeReports.sort((a, b) => scoreDate(a) - scoreDate(b) || scorePriority(b) - scorePriority(a));
+    case "qualityDesc":
+      return safeReports.sort((a, b) => scoreQuality(b) - scoreQuality(a) || scorePriority(b) - scorePriority(a));
+    case "qualityAsc":
+      return safeReports.sort((a, b) => scoreQuality(a) - scoreQuality(b) || scorePriority(b) - scorePriority(a));
+    case "priorityDesc":
+    default:
+      return safeReports.sort((a, b) => scorePriority(b) - scorePriority(a) || scoreDate(b) - scoreDate(a));
+  }
 }
 
 function getTotalPages(totalItems) {
@@ -3593,6 +3639,9 @@ statusQuickFilter?.addEventListener("change", () => {
 applyBulkStatusBtn?.addEventListener("click", () => {
   applyBulkStatusUpdate();
 });
+selectVisibleBtn?.addEventListener("click", () => {
+  selectVisibleReports();
+});
 clearSelectionBtn?.addEventListener("click", () => {
   selectedReports.clear();
   renderSelectionSummary();
@@ -3789,6 +3838,10 @@ savedViewSelect?.addEventListener("change", () => {
 });
 rowsPerPageSelect?.addEventListener("change", () => {
   rowsPerPage = Math.max(5, Number(rowsPerPageSelect.value || 15));
+  currentPage = 1;
+  applyFiltersAndRender();
+});
+sortBySelect?.addEventListener("change", () => {
   currentPage = 1;
   applyFiltersAndRender();
 });
