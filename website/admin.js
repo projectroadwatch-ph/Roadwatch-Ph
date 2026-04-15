@@ -560,7 +560,12 @@ function drawStatusChart(counts) {
     },
     onSummaryUpdate: (summaryItems = []) => {
       if (!statusChartSummaryList) return;
-      statusChartSummaryList.innerHTML = summaryItems.map((item) => `<li>${item}</li>`).join("");
+      statusChartSummaryList.innerHTML = summaryItems.map((item) => {
+        const [rawLabel, rawValue] = String(item).split(":");
+        const label = (rawLabel || "").trim();
+        const value = Number(rawValue ?? 0);
+        return `<li><span class="status-chart-summary-label">${label}</span><strong class="status-chart-summary-value">${Number.isFinite(value) ? value : 0}</strong></li>`;
+      }).join("");
     }
   });
 }
@@ -568,6 +573,10 @@ function drawStatusChart(counts) {
 function applyStatusFilter(statusLabel) {
   if (!statusFilter) return;
   statusFilter.value = statusLabel;
+  statusFilterButtons.forEach((button) => {
+    const buttonStatus = String(button.dataset.statusFilter || "").trim();
+    button.classList.toggle("is-active", buttonStatus === statusLabel);
+  });
   currentPage = 1;
   applyFiltersAndRender();
   setFeedback("reportsFeedback", `Filtered workspace to status: ${statusLabel}.`);
@@ -3398,6 +3407,7 @@ document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
   if (analyticsStatusFilter) analyticsStatusFilter.value = "all";
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
   quickFilterPresets.forEach((chip) => chip.classList.remove("is-active"));
+  statusFilterButtons.forEach((button) => button.classList.remove("is-active"));
   setUrgentOnlyMode(false);
   if (reportSearch || dashboardSearch) syncSearchInputs("workspace");
   currentPage = 1;
@@ -3437,6 +3447,10 @@ urgentOnlyToggleBtn?.addEventListener("click", () => {
 });
 statusFilter?.addEventListener("change", () => {
   if (statusQuickFilter) statusQuickFilter.value = statusFilter.value;
+  statusFilterButtons.forEach((button) => {
+    const buttonStatus = String(button.dataset.statusFilter || "").trim();
+    button.classList.toggle("is-active", statusFilter.value !== "all" && buttonStatus === statusFilter.value);
+  });
   currentPage = 1;
   applyFiltersAndRender();
 });
