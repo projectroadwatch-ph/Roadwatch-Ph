@@ -636,10 +636,69 @@ function drawStatusChart(counts) {
         const [rawLabel, rawValue] = String(item).split(":");
         const label = (rawLabel || "").trim();
         const value = Number(rawValue ?? 0);
-        return `<li><span class="status-chart-summary-label">${label}</span><strong class="status-chart-summary-value">${Number.isFinite(value) ? value : 0}</strong></li>`;
+        return `<li><span class="status-chart-summary-label" data-status="${escapeHtml(label)}">${escapeHtml(label)}</span><strong class="status-chart-summary-value">${Number.isFinite(value) ? value : 0}</strong></li>`;
       }).join("");
     }
   });
+}
+
+function getRelativeTimeLabel(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "Unknown time";
+  const now = Date.now();
+  const diffMs = now - date.getTime();
+  const diffMins = Math.max(0, Math.floor(diffMs / 60000));
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+  if (diffMins < 2880) return "Yesterday";
+  return `${Math.floor(diffMins / 1440)}d ago`;
+}
+
+function renderOperationalSnapshotDetails(reports) {
+  const weeklyBars = document.getElementById("snapshotQueueBars");
+  const activityList = document.getElementById("snapshotRecentActivity");
+  if (!weeklyBars && !activityList) return;
+
+  const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+
+  reports.forEach((report) => {
+    const date = parseReportDate(report);
+    if (!date) return;
+    const jsDay = date.getDay();
+    const mondayIndex = (jsDay + 6) % 7;
+    dayCounts[mondayIndex] += 1;
+  });
+
+  if (weeklyBars) {
+    const maxCount = Math.max(...dayCounts, 1);
+    weeklyBars.innerHTML = dayLabels.map((label, index) => {
+      const value = dayCounts[index];
+      const barHeight = value > 0 ? Math.max(12, Math.round((value / maxCount) * 148)) : 10;
+      const emptyClass = value === 0 ? " is-empty" : "";
+      return `<div class="snapshot-weekly-bar"><span class="snapshot-weekly-bar__value">${value}</span><span class="snapshot-weekly-bar__column${emptyClass}" style="height:${barHeight}px"></span><span class="snapshot-weekly-bar__label">${label}</span></div>`;
+    }).join("");
+  }
+
+  if (activityList) {
+    const recent = reports
+      .map((report) => ({ report, date: parseReportDate(report) }))
+      .filter((entry) => entry.date)
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .slice(0, 3);
+
+    if (recent.length === 0) {
+      activityList.innerHTML = '<li class="snapshot-activity-item"><span class="snapshot-activity-status"></span><div class="snapshot-activity-main"><span class="snapshot-activity-title">No recent activity</span><span class="snapshot-activity-sub">New status updates will appear here.</span></div><span class="snapshot-activity-time">—</span></li>';
+      return;
+    }
+
+    activityList.innerHTML = recent.map(({ report, date }) => {
+      const tracking = escapeHtml(report.tracking || "Unknown report");
+      const status = normalizeStatus(report.status);
+      const location = escapeHtml(report.location || report.barangay || "Unknown area");
+      return `<li class="snapshot-activity-item"><span class="snapshot-activity-status" data-status="${escapeHtml(status)}"></span><div class="snapshot-activity-main"><span class="snapshot-activity-title">Report ${tracking} ${escapeHtml(status.toLowerCase())}</span><span class="snapshot-activity-sub">${location}</span></div><span class="snapshot-activity-time">${getRelativeTimeLabel(date)}</span></li>`;
+    }).join("");
+  }
 }
 
 function applyStatusFilter(statusLabel) {
@@ -2994,6 +3053,7 @@ function renderAnalytics(reports) {
   if (snapshotTotal) snapshotTotal.textContent = counts.total;
   if (snapshotPending) snapshotPending.textContent = counts.pending;
   if (snapshotVerified) snapshotVerified.textContent = counts.verified;
+  renderOperationalSnapshotDetails(reports);
   const missionCriticalCount = document.getElementById("missionCriticalCount");
   const missionVerificationCount = document.getElementById("missionVerificationCount");
   const missionResolvedCount = document.getElementById("missionResolvedCount");

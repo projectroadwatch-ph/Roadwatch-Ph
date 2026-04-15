@@ -131,10 +131,10 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
     const bars = [
-      { label: "Pending", value: counts.pending, color: "#ffd166" },
-      { label: "Verified", value: counts.verified, color: "#4fc3f7" },
-      { label: "In Progress", value: counts.inProgress, color: "#b388ff" },
-      { label: "Repaired", value: counts.repaired, color: "#63e6be" }
+      { label: "Pending", value: counts.pending, color: "#63e6be" },
+      { label: "Verified", value: counts.verified, color: "#ef4444" },
+      { label: "In Progress", value: counts.inProgress, color: "#facc15" },
+      { label: "Repaired", value: counts.repaired, color: "#4ade80" }
     ];
     if (typeof onSummaryUpdate === "function") {
       onSummaryUpdate(bars.map((bar) => `${bar.label}: ${bar.value}`));

@@ -195,7 +195,9 @@
               <p class="small">Quick status pulse for total, pending, and verified entries in the queue.</p>
               <div class="snapshot-kpis">
                 <div class="snapshot-card">
-                  <div class="snapshot-card__icon" aria-hidden="true">📄</div>
+                  <div class="snapshot-card__icon snapshot-card__icon--total" aria-hidden="true">
+                    <span class="material-symbols-rounded">description</span>
+                  </div>
                   <div class="snapshot-card__body">
                     <span>Total Reports</span>
                     <strong id="snapshotTotalCount">0</strong>
@@ -203,7 +205,9 @@
                   </div>
                 </div>
                 <div class="snapshot-card snapshot-card--alert">
-                  <div class="snapshot-card__icon" aria-hidden="true">🕘</div>
+                  <div class="snapshot-card__icon snapshot-card__icon--alert" aria-hidden="true">
+                    <span class="material-symbols-rounded">history</span>
+                  </div>
                   <div class="snapshot-card__body">
                     <span>Pending Review</span>
                     <strong id="snapshotPendingCount">0</strong>
@@ -211,13 +215,26 @@
                   </div>
                 </div>
                 <div class="snapshot-card snapshot-card--verified">
-                  <div class="snapshot-card__icon" aria-hidden="true">✅</div>
+                  <div class="snapshot-card__icon snapshot-card__icon--verified" aria-hidden="true">
+                    <span class="material-symbols-rounded">check_circle</span>
+                  </div>
                   <div class="snapshot-card__body">
                     <span>Verified</span>
                     <strong id="snapshotVerifiedCount">0</strong>
                     <small>Recently verified</small>
                   </div>
                 </div>
+              </div>
+              <div class="snapshot-detail-grid">
+                <section class="snapshot-detail-card">
+                  <h4>Queue Overview (This Week)</h4>
+                  <div id="snapshotQueueBars" class="snapshot-weekly-bars" role="img" aria-label="Weekly queue overview bar chart"></div>
+                </section>
+                <section class="snapshot-detail-card">
+                  <h4>Recent Activity</h4>
+                  <ul id="snapshotRecentActivity" class="snapshot-activity-list"></ul>
+                  <a href="#reportsSection" class="snapshot-detail-link">View all reports <span aria-hidden="true">→</span></a>
+                </section>
               </div>
             </article>
 
