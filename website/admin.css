@@ -7016,3 +7016,157 @@ body.admin-authenticated .console-topbar--compact .dashboard-header--compact {
   margin: 2px 0 0;
   clear: both;
 }
+
+/* 2026-04-15 analytics card refresh to match admin dashboard mock */
+body.admin-authenticated #overviewAnalyticsPanel.data-analytics-panel {
+  border: 1px solid #cfd8e5;
+  border-radius: 20px;
+  background: #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  padding: 22px;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .data-analytics-header {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .data-analytics-header h3 {
+  font-size: clamp(1.2rem, 1.5vw, 1.85rem);
+  color: #1f3150;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .data-analytics-filters {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .analytics-filter-control {
+  border: 0;
+  border-radius: 14px;
+  background: #eceff4;
+  color: #516481;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .analytics-filter-control select {
+  border: 1px solid #b9c9dd;
+  border-radius: 12px;
+  background: #f7fafc;
+  color: #21324e;
+  font-size: 0.88rem;
+  font-weight: 500;
+  min-height: 42px;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card {
+  border: 1px solid #ccd6e4;
+  border-radius: 18px;
+  background: #f4f7fb;
+  padding: 16px 18px;
+  box-shadow: none;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card span {
+  color: #22334f;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card small {
+  color: #5a6f8f;
+  font-size: 0.86rem;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-meter {
+  height: 12px;
+  background: #e5e9f0;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--urgent strong {
+  color: #df8088;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--moderate strong {
+  color: #6d7e97;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--low strong {
+  color: #64c79d;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--urgent .severity-meter span {
+  background: linear-gradient(90deg, #ef9a90, #e48175);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--moderate .severity-meter span {
+  background: linear-gradient(90deg, #cfd5df, #bbc3d1);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .severity-card--low .severity-meter span {
+  background: linear-gradient(90deg, #71cda8, #5dc59a);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .analytics-timeline {
+  margin-top: 18px;
+  border: 1px solid #ccd6e4;
+  border-radius: 16px;
+  padding: 18px 18px 14px;
+  background: #f4f7fb;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .analytics-timeline h4 {
+  color: #20324e;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .analyticsTimelineBars {
+  margin-top: 14px;
+  gap: 14px;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBarFill {
+  border: none;
+  border-radius: 10px 10px 0 0;
+  box-shadow: none;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBar:nth-child(1n) .timelineBarFill {
+  background: linear-gradient(180deg, #9bc6f6, #84b3e8);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBar:nth-child(3n) .timelineBarFill {
+  background: linear-gradient(180deg, #64b1ea, #4e9ddd);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBar:nth-child(4n) .timelineBarFill {
+  background: linear-gradient(180deg, #a177e6, #8c63d8);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBar:nth-child(5n) .timelineBarFill {
+  background: linear-gradient(180deg, #62cfa8, #59bf9b);
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .timelineBarLabel,
+body.admin-authenticated #overviewAnalyticsPanel .timelineBarValue,
+body.admin-authenticated #overviewAnalyticsPanel #analyticsTimelineSummary {
+  color: #5d7090;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel .export-row {
+  margin-top: 18px;
+}
+
+body.admin-authenticated #overviewAnalyticsPanel #exportPdfBtn {
+  background: linear-gradient(140deg, #42a0ec, #2e84d5);
+  color: #fff;
+  border-color: #2e84d5;
+}
+
+@media (max-width: 1120px) {
+  body.admin-authenticated #overviewAnalyticsPanel .data-analytics-filters {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}

@@ -38,6 +38,7 @@ const reportingRange = document.getElementById("reportingRange");
 const reportingSummary = document.getElementById("reportingSummary");
 const analyticsBarangayFilter = document.getElementById("analyticsBarangayFilter");
 const analyticsIssueTypeFilter = document.getElementById("analyticsIssueTypeFilter");
+const analyticsStatusFilter = document.getElementById("analyticsStatusFilter");
 const analyticsSeverityFilter = document.getElementById("analyticsSeverityFilter");
 const analyticsTimelineSummary = document.getElementById("analyticsTimelineSummary");
 const hotspotHeatmap = document.getElementById("hotspotHeatmap");
@@ -2934,10 +2935,12 @@ function renderAnalytics(reports) {
   if (analyticsTimelineSummary) {
     const selectedBarangay = analyticsBarangayFilter?.value || "all";
     const selectedIssueType = analyticsIssueTypeFilter?.value || "all";
+    const selectedStatus = analyticsStatusFilter?.value || "all";
     const selectedSeverity = analyticsSeverityFilter?.value || "all";
     const labels = [];
     if (selectedBarangay !== "all") labels.push(selectedBarangay);
     if (selectedIssueType !== "all") labels.push(selectedIssueType);
+    if (selectedStatus !== "all") labels.push(selectedStatus);
     if (selectedSeverity !== "all") labels.push(selectedSeverity.charAt(0).toUpperCase() + selectedSeverity.slice(1));
     const filterText = labels.length ? labels.join(" • ") : "All reports";
     analyticsTimelineSummary.textContent = `${filterText} • ${analyticsReports.length} matching report(s).`;
@@ -3032,11 +3035,13 @@ function syncAnalyticsFilters(reports) {
 function getAnalyticsFilteredReports(reports) {
   const selectedBarangay = analyticsBarangayFilter?.value || "all";
   const selectedIssueType = analyticsIssueTypeFilter?.value || "all";
+  const selectedStatus = analyticsStatusFilter?.value || "all";
   const selectedSeverity = analyticsSeverityFilter?.value || "all";
 
   return reports.filter((report) => {
     if (selectedBarangay !== "all" && String(report.barangay || "").trim() !== selectedBarangay) return false;
     if (selectedIssueType !== "all" && String(report.issueType || "").trim() !== selectedIssueType) return false;
+    if (selectedStatus !== "all" && normalizeStatus(report.status) !== selectedStatus) return false;
     if (selectedSeverity !== "all") {
       const score = getPriorityScore(report);
       const severity = score >= 75 ? "urgent" : score >= 45 ? "moderate" : "low";
@@ -3390,6 +3395,7 @@ document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
   if (triagePreset) triagePreset.value = "all";
   if (analyticsBarangayFilter) analyticsBarangayFilter.value = "all";
   if (analyticsIssueTypeFilter) analyticsIssueTypeFilter.value = "all";
+  if (analyticsStatusFilter) analyticsStatusFilter.value = "all";
   if (analyticsSeverityFilter) analyticsSeverityFilter.value = "all";
   quickFilterPresets.forEach((chip) => chip.classList.remove("is-active"));
   setUrgentOnlyMode(false);
@@ -3471,6 +3477,7 @@ quickFilterPresets.forEach((button) => {
 });
 analyticsBarangayFilter?.addEventListener("change", () => renderAnalytics(allReports));
 analyticsIssueTypeFilter?.addEventListener("change", () => renderAnalytics(allReports));
+analyticsStatusFilter?.addEventListener("change", () => renderAnalytics(allReports));
 analyticsSeverityFilter?.addEventListener("change", () => renderAnalytics(allReports));
 urgencyThresholdDays?.addEventListener("change", () => renderPriorityQueue(allReports));
 window.addEventListener("resize", () => renderAnalytics(allReports));
