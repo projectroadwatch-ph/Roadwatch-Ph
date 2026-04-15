@@ -59,9 +59,7 @@
         <div class="admin-sidebar__nav">
           <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span class="material-symbols-rounded" aria-hidden="true">dashboard</span><span>Dashboard</span></button>
           <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span class="material-symbols-rounded" aria-hidden="true">assignment</span><span>Report Management</span></button>
-          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">map</span><span>Map View</span><small>Coming soon</small></button>
-          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">monitoring</span><span>Analytics</span><small>Coming soon</small></button>
-          <button type="button" class="admin-sidebar__link is-disabled" disabled aria-disabled="true"><span class="material-symbols-rounded" aria-hidden="true">groups</span><span>User Reports</span><small>Coming soon</small></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span class="material-symbols-rounded" aria-hidden="true">local_shipping</span><span>Dispatch Board</span></button>
         </div>
         <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
           <a href="#overviewSnapshotPanel">Operational Snapshot</a>
@@ -416,12 +414,12 @@
             <div>
               <p class="eyebrow">Case Operations</p>
               <h3>Report Management Workspace</h3>
-              <p class="small">Use Report Workspace for updates, then switch to Unified Triage Inbox when you need to focus on urgent queues.</p>
+              <p class="small">Use Report Workspace for updates, then switch to Dispatch Board when you need to focus on urgent queues.</p>
             </div>
           </header>
           <nav class="dashboard-nav management-nav" aria-label="Report management panels">
             <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
-            <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Unified Triage Inbox</button>
+            <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Dispatch Board</button>
           </nav>
         </section>
         <section class="management-kpi-grid" aria-label="Management workspace summary">
@@ -449,7 +447,7 @@
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
             <div class="row">
-              <h3>Unified Triage Inbox</h3>
+              <h3>Dispatch Board</h3>
               <button id="refreshReportsBtn" type="button" class="secondary slim">Refresh</button>
             </div>
             <p class="small">Monitor priority, verification, and SLA risk in one place, then jump back to Report Workspace to apply updates.</p>
