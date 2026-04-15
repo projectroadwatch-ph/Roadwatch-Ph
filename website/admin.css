@@ -6410,6 +6410,8 @@ body.admin-authenticated .admin-sidebar__logo {
 body.admin-authenticated .admin-sidebar__nav {
   display: grid;
   gap: 8px;
+  align-content: start;
+  grid-auto-rows: min-content;
 }
 
 body.admin-authenticated .admin-sidebar__sections {
