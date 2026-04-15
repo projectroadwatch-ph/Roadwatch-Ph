@@ -44,7 +44,10 @@ function buildHomepageUrl() {
   const basePath = hasFileName
     ? pathname.replace(/[^/]+$/, "")
     : (pathname || "/");
-  return `${origin}${basePath}index.html`;
+
+  // Keep QR targets stable across homepage upgrades by routing scans through
+  // a lightweight alias page that always points to the latest home experience.
+  return `${origin}${basePath}qr.html`;
 }
 
 function setHomepageQrCode() {
