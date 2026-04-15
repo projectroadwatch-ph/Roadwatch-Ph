@@ -3,5 +3,5 @@ window.RoadwatchAdminTriagePage = Object.freeze({
   navView: "management",
   navPane: "triage",
   breadcrumbViewLabel: "System Management",
-  breadcrumbPaneLabel: "Unified Triage Inbox"
+  breadcrumbPaneLabel: "Dispatch Board"
 });
