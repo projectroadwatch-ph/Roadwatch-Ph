@@ -5533,17 +5533,22 @@ body.admin-authenticated .dashboard-header {
 }
 
 #workspacePane .saved-view-toolbar {
-  grid-template-columns: minmax(220px, 1.2fr) minmax(150px, 1fr) auto auto;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(150px, 1fr) minmax(200px, 1fr) auto auto;
 }
 
 #workspacePane .selection-toolbar {
-  grid-template-columns: minmax(180px, 1.3fr) auto auto 1fr;
+  grid-template-columns: minmax(180px, 1.3fr) auto auto auto 1fr;
 }
 
 #workspacePane #selectionSummary {
   justify-self: end;
   align-self: center;
   margin: 0;
+}
+
+.workspace-helper-note {
+  margin: 2px 0 0;
+  color: #9bc3e9;
 }
 
 .management-table-wrap {

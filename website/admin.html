@@ -587,6 +587,16 @@
                   <option value="triage">Triage</option>
                 </select>
               </label>
+              <label class="inlineControl">Sort By
+                <select id="sortBySelect">
+                  <option value="priorityDesc" selected>Priority (High → Low)</option>
+                  <option value="priorityAsc">Priority (Low → High)</option>
+                  <option value="newest">Newest reports</option>
+                  <option value="oldest">Oldest reports</option>
+                  <option value="qualityDesc">Data quality (High → Low)</option>
+                  <option value="qualityAsc">Data quality (Low → High)</option>
+                </select>
+              </label>
               <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
               <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
             </div>
@@ -605,6 +615,7 @@
                   <option value="Repaired">Repaired</option>
                 </select>
               </label>
+              <button id="selectVisibleBtn" type="button" class="secondary slim">Select visible</button>
               <button id="applyBulkStatusBtn" type="button" class="secondary slim">Apply to selected</button>
               <button id="clearSelectionBtn" type="button" class="secondary slim">Clear selection</button>
               <p id="selectionSummary" class="small">0 selected</p>
@@ -618,6 +629,7 @@
               <button type="button" class="secondary slim" data-quick-preset="repairToday">Resolved today</button>
             </div>
             <p id="filterSummary" class="small"></p>
+            <p class="small workspace-helper-note">Tip: sort your queue, click <strong>Select visible</strong>, then run a bulk status update in one pass.</p>
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
             <p class="small">Update each tracking record with the latest workflow status. Changes sync to Google Sheets and are reflected on the public dashboard.</p>
             <div class="workspace-view-toggle" role="group" aria-label="Workspace layout">
