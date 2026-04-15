@@ -7141,12 +7141,23 @@ body.admin-authenticated .snapshot-card__icon {
   background: #eaf1ff;
 }
 
-body.admin-authenticated .snapshot-card--alert .snapshot-card__icon {
-  background: #ffe9ec;
+body.admin-authenticated .snapshot-card__icon .material-symbols-rounded {
+  font-size: 1.8rem;
+  font-variation-settings: "FILL" 1, "wght" 500, "opsz" 24;
 }
 
-body.admin-authenticated .snapshot-card--verified .snapshot-card__icon {
+body.admin-authenticated .snapshot-card__icon--total {
+  color: #2563eb;
+}
+
+body.admin-authenticated .snapshot-card__icon--alert {
+  background: #ffe9ec;
+  color: #ef4444;
+}
+
+body.admin-authenticated .snapshot-card__icon--verified {
   background: #ddf5eb;
+  color: #22c55e;
 }
 
 body.admin-authenticated .snapshot-card__body {
@@ -7202,6 +7213,10 @@ body.admin-authenticated .chart-accessibility .small {
 }
 
 body.admin-authenticated .chart-accessibility__actions .status-filter-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   border-radius: 999px;
   border: 1px solid #cbd6e5;
   background: #f7faff;
@@ -7211,10 +7226,35 @@ body.admin-authenticated .chart-accessibility__actions .status-filter-btn {
   font-weight: 700;
 }
 
+body.admin-authenticated .chart-accessibility__actions .status-filter-btn::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+}
+
+body.admin-authenticated .chart-accessibility__actions .status-filter-btn[data-status-filter="Pending"]::before {
+  background: #63e6be;
+}
+
+body.admin-authenticated .chart-accessibility__actions .status-filter-btn[data-status-filter="Verified"]::before {
+  background: #ef4444;
+}
+
+body.admin-authenticated .chart-accessibility__actions .status-filter-btn[data-status-filter="In Progress"]::before {
+  background: #facc15;
+}
+
+body.admin-authenticated .chart-accessibility__actions .status-filter-btn[data-status-filter="Repaired"]::before {
+  background: #4ade80;
+}
+
 body.admin-authenticated .chart-accessibility__actions .status-filter-btn.is-active {
-  border-color: #46a5f5;
-  box-shadow: inset 0 0 0 1px rgba(70, 165, 245, 0.35);
-  background: #e9f5ff;
+  border-color: #8aa1be;
+  box-shadow: inset 0 0 0 1px rgba(138, 161, 190, 0.35);
+  background: #eef3fb;
 }
 
 body.admin-authenticated .status-chart-summary-list {
@@ -7241,9 +7281,36 @@ body.admin-authenticated .status-chart-summary-list li:first-child {
 }
 
 body.admin-authenticated .status-chart-summary-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: #3a5275;
   font-weight: 700;
   font-size: 0.92rem;
+}
+
+body.admin-authenticated .status-chart-summary-label::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #94a3b8;
+}
+
+body.admin-authenticated .status-chart-summary-label[data-status="Pending"]::before {
+  background: #63e6be;
+}
+
+body.admin-authenticated .status-chart-summary-label[data-status="Verified"]::before {
+  background: #ef4444;
+}
+
+body.admin-authenticated .status-chart-summary-label[data-status="In Progress"]::before {
+  background: #facc15;
+}
+
+body.admin-authenticated .status-chart-summary-label[data-status="Repaired"]::before {
+  background: #4ade80;
 }
 
 body.admin-authenticated .status-chart-summary-value {
@@ -7253,8 +7320,130 @@ body.admin-authenticated .status-chart-summary-value {
   font-weight: 800;
 }
 
+body.admin-authenticated .snapshot-detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+body.admin-authenticated .snapshot-detail-card {
+  border-radius: 16px;
+  border: 1px solid #d6dfec;
+  background: #ffffff;
+  padding: 16px;
+}
+
+body.admin-authenticated .snapshot-detail-card h4 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  color: #12294c;
+}
+
+body.admin-authenticated .snapshot-weekly-bars {
+  height: 220px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+body.admin-authenticated .snapshot-weekly-bar {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+body.admin-authenticated .snapshot-weekly-bar__column {
+  width: 100%;
+  max-width: 38px;
+  min-height: 8px;
+  border-radius: 10px 10px 6px 6px;
+  background: linear-gradient(180deg, #7cc8ff 0%, #55b5f2 100%);
+}
+
+body.admin-authenticated .snapshot-weekly-bar__column.is-empty {
+  background: #e5edf7;
+}
+
+body.admin-authenticated .snapshot-weekly-bar__label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5a7193;
+}
+
+body.admin-authenticated .snapshot-weekly-bar__value {
+  font-size: 0.88rem;
+  color: #3d567a;
+}
+
+body.admin-authenticated .snapshot-activity-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+body.admin-authenticated .snapshot-activity-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+body.admin-authenticated .snapshot-activity-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #63e6be;
+}
+
+body.admin-authenticated .snapshot-activity-status[data-status="Verified"] {
+  background: #ef4444;
+}
+
+body.admin-authenticated .snapshot-activity-status[data-status="In Progress"] {
+  background: #facc15;
+}
+
+body.admin-authenticated .snapshot-activity-status[data-status="Repaired"] {
+  background: #4ade80;
+}
+
+body.admin-authenticated .snapshot-activity-main {
+  display: grid;
+  gap: 2px;
+}
+
+body.admin-authenticated .snapshot-activity-title {
+  font-weight: 700;
+  color: #12305b;
+}
+
+body.admin-authenticated .snapshot-activity-sub {
+  font-size: 0.88rem;
+  color: #6780a3;
+}
+
+body.admin-authenticated .snapshot-activity-time {
+  font-size: 0.88rem;
+  color: #4f678b;
+  white-space: nowrap;
+}
+
+body.admin-authenticated .snapshot-detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: #2563eb;
+  font-weight: 700;
+}
+
 @media (max-width: 1100px) {
   body.admin-authenticated .snapshot-kpis,
+  body.admin-authenticated .snapshot-detail-grid,
   body.admin-authenticated .status-chart-summary-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -7262,6 +7451,7 @@ body.admin-authenticated .status-chart-summary-value {
 
 @media (max-width: 700px) {
   body.admin-authenticated .snapshot-kpis,
+  body.admin-authenticated .snapshot-detail-grid,
   body.admin-authenticated .status-chart-summary-list {
     grid-template-columns: minmax(0, 1fr);
   }
