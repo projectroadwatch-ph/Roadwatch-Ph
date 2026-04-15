@@ -12,6 +12,7 @@ const ADMIN_SAVED_VIEWS_KEY = "roadwatchAdminSavedViews";
 const ADMIN_LAST_SYNC_KEY = "roadwatchAdminLastSyncAt";
 const ADMIN_SESSION_STARTED_AT_KEY = "roadwatchAdminSessionStartedAt";
 const ADMIN_SERVER_MODE_KEY = "roadwatchAdminServerMode";
+const ADMIN_AUTO_UI_IMPROVER_KEY = "roadwatchAdminAutoUiImprover";
 const adminUi = window.RoadwatchAdminUI;
 const adminHomePage = window.RoadwatchAdminHomePage || {};
 const adminWorkspacePage = window.RoadwatchAdminWorkspacePage || {};
@@ -113,6 +114,7 @@ const sessionMetaStatus = document.getElementById("sessionSummaryBadge");
 const statusFilterButtons = Array.from(document.querySelectorAll("[data-status-filter]"));
 const statusChartSummaryList = document.getElementById("statusChartSummaryList");
 const toggleDensityBtn = document.getElementById("toggleDensityBtn");
+const autoUiImproverBtn = document.getElementById("autoUiImproverBtn");
 const notificationToggleBtn = document.getElementById("notificationToggleBtn");
 const notificationBadge = document.getElementById("notificationBadge");
 const notificationPanel = document.getElementById("notificationPanel");
@@ -184,6 +186,8 @@ let activeDashboardView = "management";
 let staleDataIntervalId = null;
 let workspaceLayoutMode = "cards";
 let activeKanbanTracking = "";
+let autoUiImproverIntervalId = null;
+let isLoadingReports = false;
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
@@ -262,6 +266,70 @@ function setUrgentOnlyMode(nextValue) {
   if (!urgentOnlyToggleBtn) return;
   urgentOnlyToggleBtn.setAttribute("aria-pressed", String(urgentOnlyMode));
   urgentOnlyToggleBtn.textContent = `Urgent only: ${urgentOnlyMode ? "On" : "Off"}`;
+}
+
+function setDenseMode(nextValue) {
+  const isDense = Boolean(nextValue);
+  document.body.classList.toggle("admin-dense", isDense);
+  if (!toggleDensityBtn) return;
+  toggleDensityBtn.setAttribute("aria-pressed", String(isDense));
+  toggleDensityBtn.textContent = `Dense mode: ${isDense ? "On" : "Off"}`;
+}
+
+function isAutoUiImproverEnabled() {
+  return localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY) === "true";
+}
+
+function updateAutoUiImproverButton() {
+  if (!autoUiImproverBtn) return;
+  const enabled = isAutoUiImproverEnabled();
+  autoUiImproverBtn.setAttribute("aria-pressed", String(enabled));
+  autoUiImproverBtn.textContent = `Auto UI Improver: ${enabled ? "On" : "Off"}`;
+}
+
+function stopAutoUiImprover() {
+  if (!autoUiImproverIntervalId) return;
+  window.clearInterval(autoUiImproverIntervalId);
+  autoUiImproverIntervalId = null;
+}
+
+function runAutoUiImprover() {
+  if (!isAutoUiImproverEnabled()) return;
+  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  if (!isAuthed) return;
+
+  const filteredReports = getFilteredReports();
+  const totalReports = filteredReports.length;
+  const hasNarrowViewport = window.innerWidth < 1180;
+  const hasWideViewport = window.innerWidth >= 1320;
+  const isDenseMode = document.body.classList.contains("admin-dense");
+
+  if (totalReports >= 18 && !isDenseMode) setDenseMode(true);
+  if (totalReports <= 10 && isDenseMode) setDenseMode(false);
+
+  if (hasNarrowViewport) {
+    document.body.classList.add("sidebar-collapsed");
+    sidebarToggleBtn?.setAttribute("aria-expanded", "false");
+  } else if (hasWideViewport) {
+    document.body.classList.remove("sidebar-collapsed");
+    sidebarToggleBtn?.setAttribute("aria-expanded", "true");
+  }
+
+  const lastSync = getLastSuccessfulSync();
+  const shouldRefreshData = !isLoadingReports && (!lastSync || (Date.now() - lastSync) > (5 * 60 * 1000));
+  if (shouldRefreshData) {
+    loadReports();
+  }
+}
+
+function setAutoUiImproverEnabled(nextValue) {
+  localStorage.setItem(ADMIN_AUTO_UI_IMPROVER_KEY, nextValue ? "true" : "false");
+  updateAutoUiImproverButton();
+  stopAutoUiImprover();
+  if (nextValue) {
+    runAutoUiImprover();
+    autoUiImproverIntervalId = window.setInterval(runAutoUiImprover, 45000);
+  }
 }
 
 function getActiveFilterDescriptors() {
@@ -1114,6 +1182,7 @@ function applyAuthUI() {
     renderAdminIdentity();
     startStaleDataMonitor();
     loadReports();
+    if (isAutoUiImproverEnabled()) setAutoUiImproverEnabled(true);
     return;
   }
 
@@ -1121,6 +1190,7 @@ function applyAuthUI() {
   renderAdminIdentity();
   refreshStaleDataBanner();
   updateSyncMetaStatus();
+  stopAutoUiImprover();
 }
 
 function login() {
@@ -3339,9 +3409,12 @@ function applyFiltersAndRender() {
   const urgentLabel = urgentOnlyMode ? " • Urgent-only mode enabled" : "";
   filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.${urgentLabel}`;
   renderPagination(filtered.length);
+  runAutoUiImprover();
 }
 
 async function loadReports() {
+  if (isLoadingReports) return;
+  isLoadingReports = true;
   reportsBody.innerHTML = '<tr><td colspan="19">Loading reports...</td></tr>';
   setTableLoadingState(true, "Loading latest reports...");
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
@@ -3431,6 +3504,7 @@ async function loadReports() {
     updateSyncMetaStatus();
     refreshStaleDataBanner();
   } finally {
+    isLoadingReports = false;
     if (pendingStatusUpdates === 0) setTableLoadingState(false);
   }
 }
@@ -3583,9 +3657,10 @@ sidebarOverviewToggle?.addEventListener("click", () => {
 });
 
 toggleDensityBtn?.addEventListener("click", () => {
-  const isDense = document.body.classList.toggle("admin-dense");
-  toggleDensityBtn.setAttribute("aria-pressed", String(isDense));
-  toggleDensityBtn.textContent = `Dense mode: ${isDense ? "On" : "Off"}`;
+  setDenseMode(!document.body.classList.contains("admin-dense"));
+});
+autoUiImproverBtn?.addEventListener("click", () => {
+  setAutoUiImproverEnabled(!isAutoUiImproverEnabled());
 });
 sidebarToggleBtn?.addEventListener("click", toggleSidebarVisibility);
 openTriageFromOverviewBtn?.addEventListener("click", () => {
@@ -3893,6 +3968,14 @@ retrySyncBtn?.addEventListener("click", () => {
 });
 
 setUrgentOnlyMode(false);
+setDenseMode(false);
+if (!localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY)) {
+  localStorage.setItem(ADMIN_AUTO_UI_IMPROVER_KEY, "true");
+}
+updateAutoUiImproverButton();
+if (localStorage.getItem(ADMIN_SESSION_KEY) === "true" && isAutoUiImproverEnabled()) {
+  setAutoUiImproverEnabled(true);
+}
 renderSavedViews();
 setTableColumnView("operations");
 renderAdminIdentity();
