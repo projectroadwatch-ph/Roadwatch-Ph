@@ -9,6 +9,7 @@ let isSubmittingReport = false;
 let locationSuggestionAbortController = null;
 let locationSuggestionDebounceTimer = null;
 let leafletReadyPromise = null;
+let uiAutoFixObserver = null;
 const dataLayer = window.RoadwatchDataLayer;
 
 const CORS_RETRY_COOLDOWN_MS = 60 * 1000;
@@ -17,6 +18,7 @@ const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UI_AUTO_FIX_TOAST_MS = 3400;
 
 const LEAFLET_SCRIPT_SOURCES = [
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
@@ -819,6 +821,100 @@ function showPage(page) {
       window.citizenReportsMapInstance.invalidateSize(true);
     }, 260);
   }
+}
+
+function ensureAutoFixToastHost() {
+  let host = document.getElementById("uiAutoFixToastHost");
+  if (host) return host;
+  host = document.createElement("div");
+  host.id = "uiAutoFixToastHost";
+  host.className = "ui-auto-fix-toast-host";
+  host.setAttribute("aria-live", "polite");
+  host.setAttribute("aria-atomic", "true");
+  document.body.appendChild(host);
+  return host;
+}
+
+function announceUiAutoFix(message) {
+  const host = ensureAutoFixToastHost();
+  const toast = document.createElement("p");
+  toast.className = "ui-auto-fix-toast";
+  toast.textContent = `Auto-fix applied: ${message}`;
+  host.appendChild(toast);
+  window.setTimeout(() => {
+    toast.remove();
+  }, UI_AUTO_FIX_TOAST_MS);
+}
+
+function ensureAriaStateConsistency() {
+  const menu = document.getElementById("menu");
+  const menuBtn = document.getElementById("menuBtn");
+  if (!menu || !menuBtn) return false;
+
+  const open = menu.classList.contains("open");
+  const expectedExpanded = open ? "true" : "false";
+  const expectedHidden = open ? "false" : "true";
+  let patched = false;
+
+  if (menuBtn.getAttribute("aria-expanded") !== expectedExpanded) {
+    menuBtn.setAttribute("aria-expanded", expectedExpanded);
+    patched = true;
+  }
+  if (menu.getAttribute("aria-hidden") !== expectedHidden) {
+    menu.setAttribute("aria-hidden", expectedHidden);
+    patched = true;
+  }
+
+  return patched;
+}
+
+function ensureActivePageConsistency() {
+  const sections = Array.from(document.querySelectorAll("section"));
+  if (sections.length === 0) return false;
+
+  const activeSection = sections.find((section) => section.classList.contains("active"));
+  if (activeSection) return false;
+
+  const preferredSection =
+    document.getElementById(resolveInitialPage()) ||
+    document.getElementById("home") ||
+    sections[0];
+
+  if (!preferredSection) return false;
+  showPage(preferredSection.id);
+  return true;
+}
+
+function runUiAutoFixSweep(reason = "") {
+  let patched = false;
+  patched = ensureAriaStateConsistency() || patched;
+  patched = ensureActivePageConsistency() || patched;
+  if (patched) {
+    announceUiAutoFix(reason || "UI state recovered");
+  }
+}
+
+function registerUiAutoFixRuntime() {
+  runUiAutoFixSweep("initial UI validation");
+
+  if (uiAutoFixObserver) {
+    uiAutoFixObserver.disconnect();
+  }
+
+  uiAutoFixObserver = new MutationObserver(() => {
+    runUiAutoFixSweep("layout/state drift detected");
+  });
+
+  uiAutoFixObserver.observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["class", "aria-hidden", "aria-expanded"]
+  });
+
+  window.addEventListener("error", () => {
+    announceUiAutoFix("runtime error captured; keeping current UI responsive");
+  });
 }
 
 
@@ -1717,6 +1813,8 @@ async function handleTrackingSearch(event) {
 
 // Photo preview
 document.addEventListener("DOMContentLoaded", () => {
+  registerUiAutoFixRuntime();
+
   const body = document.body;
   const introOverlay = document.getElementById("brandIntro");
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
