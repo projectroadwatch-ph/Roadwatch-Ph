@@ -7477,3 +7477,241 @@ body.admin-authenticated #overviewAnalyticsPanel #exportPdfBtn {
     grid-template-columns: repeat(2, minmax(160px, 1fr));
   }
 }
+
+/* 2026-04-15: Admin portal visual refresh (theme, density, typography, and layout organization) */
+body.admin-authenticated {
+  --portal-bg: #edf3fb;
+  --portal-panel: #ffffff;
+  --portal-panel-soft: #f7faff;
+  --portal-border: #cfdae9;
+  --portal-border-strong: #bccce1;
+  --portal-title: #12335f;
+  --portal-text: #1f3659;
+  --portal-muted: #5a7195;
+  --portal-brand: #2f82da;
+  --portal-brand-strong: #1968bf;
+  --portal-success: #1b9c74;
+  --portal-warning: #d58a1c;
+}
+
+body.admin-authenticated .dashboard-shell {
+  background: linear-gradient(180deg, #f4f8fd 0%, #ebf2fb 100%);
+  border: 1px solid var(--portal-border);
+  border-radius: 26px;
+  box-shadow: 0 18px 40px rgba(18, 48, 86, 0.1);
+  padding: 16px 18px 22px;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: 228px minmax(0, 1fr);
+  gap: 14px;
+}
+
+body.admin-authenticated .admin-sidebar {
+  border: 1px solid var(--portal-border);
+  background: linear-gradient(185deg, #15365f 0%, #0e2950 100%);
+  box-shadow: 0 14px 28px rgba(7, 22, 45, 0.28);
+  padding: 1rem 0.8rem;
+}
+
+body.admin-authenticated .admin-sidebar__brand strong {
+  font-size: 1.08rem;
+  color: #f2f7ff;
+  letter-spacing: 0.01em;
+}
+
+body.admin-authenticated .admin-sidebar__logo {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(145deg, #4ba7ff, #2f78d8);
+}
+
+body.admin-authenticated .admin-sidebar__link {
+  min-height: 40px;
+  font-size: 0.91rem;
+  border-radius: 12px;
+}
+
+body.admin-authenticated .admin-sidebar__report-total {
+  border: 1px solid rgba(159, 199, 248, 0.4);
+  background: rgba(19, 57, 103, 0.75);
+}
+
+body.admin-authenticated .admin-sidebar__report-total strong {
+  font-size: 1.55rem;
+}
+
+body.admin-authenticated .console-topbar--compact {
+  border: 1px solid var(--portal-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+  box-shadow: 0 10px 22px rgba(18, 48, 86, 0.08);
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  min-height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--portal-border-strong);
+  background: #fff;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input {
+  font-size: 0.95rem;
+  color: var(--portal-text);
+}
+
+body.admin-authenticated .dashboard-header--compact {
+  border-color: var(--portal-border);
+  background: linear-gradient(120deg, #f8fbff 0%, #eef5ff 100%);
+  padding: 14px 16px;
+}
+
+body.admin-authenticated .dashboard-header--compact h2 {
+  font-size: clamp(1.45rem, 1.9vw, 1.95rem);
+  color: var(--portal-title);
+  letter-spacing: 0.01em;
+}
+
+body.admin-authenticated .dashboard-header--compact .small {
+  font-size: 0.95rem;
+  color: var(--portal-muted);
+  max-width: 72ch;
+}
+
+body.admin-authenticated .dashboard-header--compact .console-status-pill {
+  font-size: 0.82rem;
+  color: #48658e;
+}
+
+body.admin-authenticated .overview-shell,
+body.admin-authenticated .overview-main-grid {
+  gap: 20px;
+}
+
+body.admin-authenticated .panel h3,
+body.admin-authenticated .panel h4 {
+  font-size: 1.14rem;
+  color: var(--portal-title);
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated label {
+  font-size: 0.93rem;
+  color: var(--portal-muted);
+}
+
+body.admin-authenticated button,
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated textarea {
+  font-size: 0.93rem;
+  min-height: 40px;
+}
+
+body.admin-authenticated button {
+  font-weight: 700;
+}
+
+body.admin-authenticated .critical-overview-panel {
+  border: 1px solid #ccdaeb;
+  background:
+    radial-gradient(circle at 10% 14%, rgba(97, 164, 244, 0.13), transparent 42%),
+    linear-gradient(140deg, #ffffff 0%, #f3f8ff 100%);
+  box-shadow: 0 16px 30px rgba(18, 48, 86, 0.1);
+}
+
+body.admin-authenticated .critical-overview-panel .small,
+body.admin-authenticated .critical-overview-panel .analyticsLabel {
+  color: #5a7296;
+}
+
+body.admin-authenticated .critical-overview-panel strong,
+body.admin-authenticated .analyticsCard strong {
+  color: #163a66;
+}
+
+body.admin-authenticated .kpi-pill.analyticsCard,
+body.admin-authenticated .analyticsCard {
+  border: 1px solid #d5e0ee;
+  background: #ffffff;
+  border-radius: 14px;
+}
+
+body.admin-authenticated .ai-autopilot-bar {
+  border: 1px solid #d7e3f0;
+  background: #f6fbff;
+  border-radius: 14px;
+}
+
+body.admin-authenticated .snapshot-card,
+body.admin-authenticated .severity-card,
+body.admin-authenticated .aiRecommendation,
+body.admin-authenticated .chart-accessibility,
+body.admin-authenticated #overviewAnalyticsPanel .analytics-timeline {
+  border-color: #d4deeb;
+  background: var(--portal-panel);
+}
+
+body.admin-authenticated .snapshot-card {
+  min-height: 148px;
+}
+
+body.admin-authenticated .snapshot-card__body span {
+  font-size: 1.04rem;
+}
+
+body.admin-authenticated .snapshot-card__body small {
+  font-size: 0.92rem;
+}
+
+body.admin-authenticated .tableWrap {
+  border: 1px solid #cfd9e8;
+  border-radius: 14px;
+  background: #fff;
+}
+
+body.admin-authenticated .management-table th {
+  font-size: 0.9rem;
+  background: #f2f7ff;
+  color: #2a4468;
+}
+
+body.admin-authenticated .management-table td {
+  font-size: 0.9rem;
+  color: #254267;
+}
+
+body.admin-authenticated .management-table tbody tr {
+  background: #ffffff;
+}
+
+body.admin-authenticated .management-table tbody tr:nth-child(even) {
+  background: #f9fbff;
+}
+
+body.admin-authenticated .management-table tbody tr:hover {
+  background: #eaf4ff;
+}
+
+body.admin-authenticated .overview-table th,
+body.admin-authenticated .overview-table td {
+  font-size: 0.88rem;
+}
+
+body.admin-authenticated .section-chip,
+body.admin-authenticated .muted-chip {
+  font-size: 0.76rem;
+  padding: 6px 12px;
+}
+
+@media (max-width: 1180px) {
+  body.admin-authenticated .admin-console-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-authenticated .admin-sidebar {
+    position: static;
+    height: auto;
+    max-height: none;
+  }
+}
