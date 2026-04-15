@@ -6983,3 +6983,36 @@ body.admin-authenticated .snapshot-card strong,
 body.admin-authenticated .severity-card strong {
   font-size: 1.25rem;
 }
+
+/* 2026-04-15 compact admin header fix:
+   keep search row and welcome panel in normal document flow so they do not overlap */
+body.admin-authenticated .console-topbar--compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__row {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  flex: 1 1 360px;
+  min-width: 220px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-tools {
+  margin-left: auto;
+  flex: 0 1 auto;
+}
+
+body.admin-authenticated .console-topbar--compact .dashboard-header--compact {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 2px 0 0;
+  clear: both;
+}
