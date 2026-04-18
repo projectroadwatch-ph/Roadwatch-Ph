@@ -8332,6 +8332,14 @@ body.admin-authenticated .admin-sidebar__sections {
   gap: 10px;
 }
 
+body.admin-authenticated .admin-sidebar__sections:not(.is-open) {
+  display: none;
+}
+
+body.admin-authenticated .admin-sidebar__sections.is-open {
+  display: grid;
+}
+
 body.admin-authenticated .admin-sidebar__sections a {
   padding: 4px 2px;
   line-height: 1.45;
