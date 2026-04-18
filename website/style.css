@@ -531,10 +531,10 @@ a:focus-visible {
 section {
   display: none;
   padding:
-    42px
-    calc(clamp(16px, 4vw, 36px) + var(--safe-right))
+    28px
+    calc(clamp(10px, 2.2vw, 18px) + var(--safe-right))
     calc(58px + var(--safe-bottom))
-    calc(clamp(16px, 4vw, 36px) + var(--safe-left));
+    calc(clamp(10px, 2.2vw, 18px) + var(--safe-left));
   width: 100%;
   max-width: 100%;
   margin: 0;
@@ -632,7 +632,7 @@ section.active {
   border: 1px solid rgba(169, 208, 255, 0.2);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
   border-radius: 22px;
-  padding: 34px;
+  padding: clamp(18px, 2.5vw, 28px);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
@@ -1456,8 +1456,7 @@ section.active {
 .submit-stack {
   display: grid;
   gap: 22px;
-  max-width: 1120px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 
