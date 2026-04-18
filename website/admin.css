@@ -7995,6 +7995,7 @@ body.admin-authenticated .muted-chip {
 
 /* Professional dashboard polish */
 body.admin-authenticated {
+  --admin-content-scale: 0.9;
   --portal-bg: #eef4ff;
   --portal-panel: #ffffff;
   --portal-panel-soft: #f4f8ff;
@@ -8014,10 +8015,14 @@ body.admin-authenticated .dashboard-shell {
   box-shadow: 0 24px 46px rgba(35, 73, 125, 0.12);
 }
 
+body.admin-authenticated .wrap {
+  width: min(1680px, 99%);
+}
+
 body.admin-authenticated .admin-sidebar {
   border: 1px solid var(--portal-line);
-  background: linear-gradient(180deg, #0f3b72 0%, #123f78 45%, #174a8b 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 28px rgba(14, 48, 94, 0.3);
+  background: linear-gradient(180deg, #194e8f 0%, #205eaa 45%, #2a70bf 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 14px 28px rgba(19, 56, 103, 0.22);
 }
 
 body.admin-authenticated .admin-sidebar__logo {
@@ -8029,12 +8034,12 @@ body.admin-authenticated .admin-sidebar__brand strong,
 body.admin-authenticated .admin-sidebar__brand p,
 body.admin-authenticated .admin-sidebar__report-total p,
 body.admin-authenticated .admin-sidebar__report-total small {
-  color: #e4efff;
+  color: #f4f9ff;
 }
 
 body.admin-authenticated .admin-sidebar__report-total {
-  border: 1px solid rgba(166, 201, 245, 0.38);
-  background: rgba(8, 34, 70, 0.4);
+  border: 1px solid rgba(214, 232, 255, 0.52);
+  background: rgba(10, 55, 105, 0.36);
 }
 
 body.admin-authenticated .admin-sidebar__report-total strong {
@@ -8043,21 +8048,23 @@ body.admin-authenticated .admin-sidebar__report-total strong {
 
 body.admin-authenticated .admin-sidebar__link {
   border-radius: 12px;
-  color: #d7e8ff;
+  color: #f6faff;
   border: 1px solid transparent;
+  background: rgba(11, 46, 93, 0.18);
   transition: all 0.18s ease;
+  font-weight: 600;
 }
 
 body.admin-authenticated .admin-sidebar__link:hover,
 body.admin-authenticated .admin-sidebar__link:focus-visible {
-  border-color: rgba(158, 196, 245, 0.6);
-  background: rgba(230, 241, 255, 0.12);
-  color: #f3f8ff;
+  border-color: rgba(232, 243, 255, 0.8);
+  background: rgba(239, 247, 255, 0.2);
+  color: #ffffff;
 }
 
 body.admin-authenticated .admin-sidebar__link.is-active {
-  border-color: rgba(199, 224, 255, 0.85);
-  background: linear-gradient(90deg, rgba(225, 238, 255, 0.28), rgba(232, 244, 255, 0.12));
+  border-color: rgba(239, 248, 255, 0.96);
+  background: linear-gradient(90deg, rgba(243, 249, 255, 0.4), rgba(232, 244, 255, 0.18));
   color: #ffffff;
 }
 
