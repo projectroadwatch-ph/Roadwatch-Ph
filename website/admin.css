@@ -8369,11 +8369,11 @@ body.admin-authenticated .ai-autopilot-bar #runSmartDispatchBtn {
 
 /* 2026-04-18: Match admin shell proportions to latest design reference. */
 body.admin-authenticated .admin-console-layout {
-  grid-template-columns: 276px minmax(0, 1fr);
+  grid-template-columns: 238px minmax(0, 1fr);
 }
 
 body.admin-authenticated .admin-sidebar {
-  padding: 20px 12px;
+  padding: 18px 10px;
 }
 
 body.admin-authenticated .admin-sidebar__brand strong {
@@ -8437,7 +8437,7 @@ body.admin-authenticated .console-topbar--compact .console-alert-btn {
 
 @media (max-width: 1280px) {
   body.admin-authenticated .admin-console-layout {
-    grid-template-columns: 248px minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
   }
 }
 
