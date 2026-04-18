@@ -7863,6 +7863,7 @@ body.admin-authenticated .dashboard-header--compact .console-status-pill {
 body.admin-authenticated .overview-shell,
 body.admin-authenticated .overview-main-grid {
   gap: 20px;
+  font-size: calc(1rem * var(--overview-content-scale, 0.75));
 }
 
 body.admin-authenticated .panel h3,
@@ -7996,6 +7997,7 @@ body.admin-authenticated .muted-chip {
 /* Professional dashboard polish */
 body.admin-authenticated {
   --admin-content-scale: 0.9;
+  --overview-content-scale: 0.75;
   --portal-bg: #eef4ff;
   --portal-panel: #ffffff;
   --portal-panel-soft: #f4f8ff;
