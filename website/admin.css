@@ -8188,3 +8188,181 @@ body.admin-authenticated .overview-table td,
 body.admin-authenticated .overview-table th {
   color: #1f446e;
 }
+
+/* Admin portal visual refresh: soft command-center style (April 2026). */
+body.admin-authenticated {
+  background: radial-gradient(circle at 18% 8%, #e8eef8 0%, #d8e2f1 42%, #ced9eb 100%);
+  color: #1c385d;
+}
+
+body.admin-authenticated .wrap {
+  width: min(1540px, 99%);
+  margin: 10px auto;
+}
+
+body.admin-authenticated .dashboard-shell {
+  border-radius: 22px;
+  border: 1px solid rgba(167, 188, 217, 0.55);
+  background: linear-gradient(180deg, rgba(247, 250, 255, 0.94) 0%, rgba(240, 246, 254, 0.96) 100%);
+  box-shadow: 0 18px 40px rgba(53, 84, 129, 0.13);
+  padding: 0;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 0;
+}
+
+body.admin-authenticated .admin-sidebar {
+  border-right: 1px solid rgba(171, 191, 220, 0.58);
+  background: linear-gradient(180deg, rgba(240, 245, 253, 0.93) 0%, rgba(231, 238, 250, 0.95) 100%);
+  padding: 24px 16px;
+}
+
+body.admin-authenticated .admin-sidebar__brand {
+  padding: 6px 6px 16px;
+}
+
+body.admin-authenticated .admin-sidebar__logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #5f8fd5 0%, #2e66be 100%);
+  color: #eff6ff;
+  box-shadow: 0 10px 24px rgba(37, 84, 154, 0.25);
+}
+
+body.admin-authenticated .admin-sidebar__brand strong {
+  color: #203d64;
+  font-size: 1.95rem;
+  letter-spacing: 0.01em;
+}
+
+body.admin-authenticated .admin-sidebar__link {
+  min-height: 54px;
+  border-radius: 14px;
+  border: 1px solid rgba(189, 205, 229, 0.75);
+  background: linear-gradient(180deg, rgba(253, 254, 255, 0.95) 0%, rgba(238, 245, 255, 0.95) 100%);
+  color: #294d79;
+  box-shadow: 0 6px 14px rgba(64, 95, 136, 0.08);
+}
+
+body.admin-authenticated .admin-sidebar__link.is-active,
+body.admin-authenticated .admin-sidebar__link:hover,
+body.admin-authenticated .admin-sidebar__link:focus-visible {
+  border-color: rgba(151, 178, 212, 0.85);
+  background: linear-gradient(180deg, #eaf2ff 0%, #dfeafc 100%);
+  color: #193b68;
+}
+
+body.admin-authenticated .admin-sidebar__report-total {
+  border-radius: 18px;
+  border: 1px solid rgba(188, 205, 228, 0.85);
+  background: linear-gradient(180deg, rgba(254, 255, 255, 0.92) 0%, rgba(239, 246, 255, 0.95) 100%);
+  box-shadow: 0 10px 22px rgba(60, 91, 131, 0.1);
+}
+
+body.admin-authenticated .admin-sidebar__report-total p,
+body.admin-authenticated .admin-sidebar__report-total small {
+  color: #48668e;
+}
+
+body.admin-authenticated .admin-sidebar__report-total strong {
+  color: #254671;
+}
+
+body.admin-authenticated .admin-sidebar__logout {
+  border-radius: 14px;
+  color: #1e406b;
+}
+
+body.admin-authenticated .admin-console-main {
+  padding: 18px 18px 18px 14px;
+}
+
+body.admin-authenticated .console-topbar--compact {
+  gap: 12px;
+  padding: 16px;
+  border-radius: 0 0 0 0;
+  border: 0;
+  border-bottom: 1px solid rgba(171, 192, 220, 0.58);
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.97) 0%, rgba(239, 246, 255, 0.96) 100%);
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  min-height: 56px;
+  border-radius: 999px;
+  border: 1px solid #c8d6e8;
+  background: linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input::placeholder {
+  color: #6f84a4;
+}
+
+body.admin-authenticated .console-chip,
+body.admin-authenticated .console-alert-btn,
+body.admin-authenticated .sidebar-toggle-btn {
+  border-radius: 999px;
+}
+
+body.admin-authenticated .dashboard-header--compact {
+  border-radius: 20px;
+  border: 1px solid rgba(184, 202, 226, 0.85);
+  background: linear-gradient(180deg, rgba(253, 254, 255, 0.95) 0%, rgba(242, 247, 255, 0.96) 100%);
+  box-shadow: 0 8px 18px rgba(60, 90, 129, 0.08);
+}
+
+body.admin-authenticated .dashboard-header--compact h2 {
+  color: #223d63;
+  font-weight: 700;
+}
+
+body.admin-authenticated .dashboard-header--compact .small {
+  color: #5b7294;
+}
+
+body.admin-authenticated .console-status-pill {
+  border: 0;
+  background: transparent;
+  color: #647c9d;
+}
+
+body.admin-authenticated .overview-shell .panel,
+body.admin-authenticated .critical-overview-panel--hero,
+body.admin-authenticated .data-analytics-panel,
+body.admin-authenticated .chart-panel,
+body.admin-authenticated .tableWrap,
+body.admin-authenticated .analyticsCard,
+body.admin-authenticated .snapshot-card,
+body.admin-authenticated .kpi-pill.analyticsCard {
+  border-radius: 20px;
+  border: 1px solid rgba(186, 203, 225, 0.78);
+  background: linear-gradient(180deg, rgba(253, 254, 255, 0.96) 0%, rgba(243, 248, 255, 0.96) 100%);
+  box-shadow: 0 10px 20px rgba(64, 92, 131, 0.08);
+}
+
+body.admin-authenticated .critical-overview-panel .analyticsCard strong,
+body.admin-authenticated .analyticsCard strong,
+body.admin-authenticated .snapshot-card strong {
+  color: #2d456d;
+}
+
+body.admin-authenticated .ai-autopilot-bar {
+  border-radius: 16px;
+  border: 1px solid rgba(183, 200, 222, 0.85);
+  background: linear-gradient(180deg, rgba(249, 251, 255, 0.95) 0%, rgba(239, 245, 254, 0.96) 100%);
+}
+
+body.admin-authenticated .ai-autopilot-bar #runSmartDispatchBtn {
+  border: 1px solid #2a5ea7;
+  background: linear-gradient(135deg, #5a82bf 0%, #365f9c 100%);
+  color: #f3f7ff;
+}
+
+@media (max-width: 1200px) {
+  body.admin-authenticated .admin-console-layout {
+    grid-template-columns: 1fr;
+  }
+}
