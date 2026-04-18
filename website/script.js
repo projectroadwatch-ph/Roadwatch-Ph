@@ -19,6 +19,11 @@ const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const UI_AUTO_FIX_TOAST_MS = 3400;
+const TEXT_ZOOM_STORAGE_KEY = "roadwatchTextZoomPercent";
+const TEXT_ZOOM_MIN_PERCENT = 90;
+const TEXT_ZOOM_MAX_PERCENT = 125;
+const TEXT_ZOOM_STEP_PERCENT = 5;
+const TEXT_ZOOM_DEFAULT_PERCENT = 100;
 
 const LEAFLET_SCRIPT_SOURCES = [
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
@@ -48,6 +53,50 @@ function buildHomepageUrl() {
   // Keep QR targets stable across homepage upgrades by routing scans through
   // a lightweight alias page that always points to the latest home experience.
   return `${origin}${basePath}qr.html`;
+}
+
+function clampTextZoomPercent(value) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) return TEXT_ZOOM_DEFAULT_PERCENT;
+  return Math.min(TEXT_ZOOM_MAX_PERCENT, Math.max(TEXT_ZOOM_MIN_PERCENT, parsed));
+}
+
+function updateTextZoomStatus(zoomPercent) {
+  const status = document.getElementById("textZoomStatus");
+  if (!status) return;
+  status.textContent = `${zoomPercent}%`;
+}
+
+function applyTextZoom(zoomPercent, { persist = true } = {}) {
+  const normalizedZoom = clampTextZoomPercent(zoomPercent);
+  document.documentElement.style.setProperty("--rw-text-size-adjust", `${normalizedZoom}%`);
+  updateTextZoomStatus(normalizedZoom);
+  if (persist) localStorage.setItem(TEXT_ZOOM_STORAGE_KEY, String(normalizedZoom));
+}
+
+function initializeTextZoomControls() {
+  const zoomOutBtn = document.getElementById("textZoomOutBtn");
+  const zoomInBtn = document.getElementById("textZoomInBtn");
+  const zoomResetBtn = document.getElementById("textZoomResetBtn");
+
+  if (!zoomOutBtn || !zoomInBtn || !zoomResetBtn) return;
+
+  const savedZoomPercent = clampTextZoomPercent(localStorage.getItem(TEXT_ZOOM_STORAGE_KEY));
+  applyTextZoom(savedZoomPercent, { persist: false });
+
+  zoomOutBtn.addEventListener("click", () => {
+    const currentZoom = clampTextZoomPercent(localStorage.getItem(TEXT_ZOOM_STORAGE_KEY));
+    applyTextZoom(currentZoom - TEXT_ZOOM_STEP_PERCENT);
+  });
+
+  zoomInBtn.addEventListener("click", () => {
+    const currentZoom = clampTextZoomPercent(localStorage.getItem(TEXT_ZOOM_STORAGE_KEY));
+    applyTextZoom(currentZoom + TEXT_ZOOM_STEP_PERCENT);
+  });
+
+  zoomResetBtn.addEventListener("click", () => {
+    applyTextZoom(TEXT_ZOOM_DEFAULT_PERCENT);
+  });
 }
 
 function setHomepageQrCode() {
@@ -1840,6 +1889,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initialPage = resolveInitialPage();
   showPage(initialPage);
+  initializeTextZoomControls();
   setHomepageQrCode();
   wireHomepageQuickActions();
   syncHomeReportViews();
