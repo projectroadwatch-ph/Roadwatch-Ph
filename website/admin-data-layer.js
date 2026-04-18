@@ -16,14 +16,14 @@
     return Array.from(new Set(createReportEndpoints().map((endpoint) => endpoint.url).filter(Boolean)));
   }
 
-  function buildJsonpEndpoint(endpoint) {
+  function buildJsonpEndpoint(endpoint, callbackName) {
     const separator = endpoint.includes("?") ? "&" : "?";
-    return `${endpoint}${separator}callback=roadwatchAdminJsonpCallback`;
+    return `${endpoint}${separator}callback=${encodeURIComponent(callbackName)}`;
   }
 
   function loadJsonp(endpoint) {
     return new Promise((resolve, reject) => {
-      const callbackName = "roadwatchAdminJsonpCallback";
+      const callbackName = `roadwatchAdminJsonpCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
       const cleanup = () => {
         const existing = document.getElementById(callbackName);
         if (existing) existing.remove();
@@ -43,7 +43,7 @@
 
       const script = document.createElement("script");
       script.id = callbackName;
-      script.src = buildJsonpEndpoint(endpoint);
+      script.src = buildJsonpEndpoint(endpoint, callbackName);
       script.onerror = () => {
         window.clearTimeout(timeout);
         cleanup();

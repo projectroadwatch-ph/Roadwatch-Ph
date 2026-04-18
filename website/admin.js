@@ -2198,10 +2198,11 @@ function renderTeamPerformanceBoard(reports) {
 function syncTimelineTrackingOptions(reports) {
   if (!timelineTrackingSelect) return;
   const currentValue = timelineTrackingSelect.value;
-  const options = reports
-    .map((report) => String(report?.tracking || "").trim())
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b));
+  const options = Array.from(new Set(
+    reports
+      .map((report) => String(report?.tracking || "").trim())
+      .filter(Boolean)
+  )).sort((a, b) => a.localeCompare(b));
 
   timelineTrackingSelect.innerHTML = `<option value="">Choose tracking #</option>${options
     .map((tracking) => `<option value="${escapeHtml(tracking)}">${escapeHtml(tracking)}</option>`)
