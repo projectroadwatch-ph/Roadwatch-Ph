@@ -79,14 +79,18 @@
       <div class="console-topbar console-topbar--compact">
         <div class="console-topbar__row">
           <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
+          <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
+            <span class="console-topbar__brand-logo">A</span>
+            <strong>RoadWatch PH</strong>
+          </div>
           <label class="console-search">
             <span class="material-symbols-rounded" aria-hidden="true">search</span>
             <input id="dashboardSearch" type="search" placeholder="Search reports, locations..." aria-label="Search dashboard content">
           </label>
           <div class="console-tools">
             <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar">A</span> roadwatchph-admin</button>
-            <div class="console-alert-wrap">
-              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">notifications</span><span id="notificationBadge" class="console-alert-btn__badge">0</span></button>
+            <div class="console-alert-wrap console-alert-wrap--attached">
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
               <div id="notificationPanel" class="notification-panel" hidden>
                 <div class="notification-panel__header">
                   <strong>Notifications</strong>
