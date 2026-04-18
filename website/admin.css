@@ -8307,6 +8307,58 @@ body.admin-authenticated .sidebar-toggle-btn {
   border-radius: 999px;
 }
 
+/* 2026-04-18: Sidebar flow and spacing refinement for narrow dashboard widths. */
+body.admin-authenticated .admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+body.admin-authenticated .admin-sidebar__brand {
+  margin-bottom: 2px;
+}
+
+body.admin-authenticated .admin-sidebar__nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 12px;
+}
+
+body.admin-authenticated .admin-sidebar__sections {
+  margin-top: 2px;
+  padding-left: 12px;
+  gap: 10px;
+}
+
+body.admin-authenticated .admin-sidebar__sections a {
+  padding: 4px 2px;
+  line-height: 1.45;
+}
+
+body.admin-authenticated .admin-sidebar__report-total {
+  margin-top: auto;
+  padding: 14px 12px;
+}
+
+body.admin-authenticated .admin-sidebar__logout {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1180px) {
+  body.admin-authenticated .admin-sidebar {
+    gap: 12px;
+    padding-bottom: 14px;
+    overflow: visible;
+  }
+
+  body.admin-authenticated .admin-sidebar__report-total {
+    margin-top: 8px;
+  }
+}
+
 body.admin-authenticated .dashboard-header--compact {
   border-radius: 20px;
   border: 1px solid rgba(184, 202, 226, 0.85);
