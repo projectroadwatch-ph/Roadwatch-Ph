@@ -6193,9 +6193,9 @@ body.admin-authenticated .card-workspace {
 /* Government-style login redesign */
 body:not(.admin-authenticated) {
   background:
-    linear-gradient(rgba(244, 246, 250, 0.9), rgba(244, 246, 250, 0.9)),
-    radial-gradient(circle at 14% 10%, rgba(255, 255, 255, 0.92), rgba(229, 233, 239, 0.9)),
-    linear-gradient(180deg, #f6f7fa 0%, #eceff4 100%);
+    radial-gradient(circle at 14% 10%, rgba(77, 145, 222, 0.28), transparent 44%),
+    radial-gradient(circle at 86% 80%, rgba(83, 196, 226, 0.22), transparent 42%),
+    linear-gradient(160deg, #040d1a 0%, #071b31 52%, #051427 100%);
 }
 
 body:not(.admin-authenticated) .wrap {
@@ -6209,12 +6209,12 @@ body:not(.admin-authenticated) .wrap {
   overflow: hidden;
   padding: 38px 24px 18px;
   border-radius: 30px;
-  border: 1px solid rgba(214, 218, 224, 0.98);
-  box-shadow: 0 22px 48px rgba(30, 46, 74, 0.14);
-  background: rgba(249, 250, 252, 0.94);
+  border: 1px solid rgba(144, 192, 245, 0.36);
+  box-shadow: 0 22px 48px rgba(1, 14, 30, 0.5);
+  background: linear-gradient(170deg, rgba(8, 30, 54, 0.95), rgba(5, 20, 37, 0.94));
   position: relative;
   text-align: center;
-  color: #0f2442;
+  color: #e9f4ff;
 }
 
 .login-gov-seal {
@@ -6225,9 +6225,9 @@ body:not(.admin-authenticated) .wrap {
   width: 82px;
   height: 82px;
   border-radius: 50%;
-  background: #f7f9fb;
-  border: 4px solid #c8972d;
-  box-shadow: 0 8px 16px rgba(25, 35, 56, 0.18);
+  background: #0c2544;
+  border: 4px solid #d6aa4f;
+  box-shadow: 0 8px 16px rgba(1, 10, 20, 0.45);
   display: grid;
   place-items: center;
 }
@@ -6243,7 +6243,7 @@ body:not(.admin-authenticated) .wrap {
 
 .login-gov-text {
   margin: 4px 0 4px;
-  color: #1d2f4a;
+  color: #c9ddf7;
   font-size: clamp(0.95rem, 2.1vw, 1.1rem);
   letter-spacing: 0.02em;
   font-family: "Poppins", "Inter", sans-serif;
@@ -6251,7 +6251,7 @@ body:not(.admin-authenticated) .wrap {
 
 .login-gov-title {
   margin: 0;
-  color: #11284a;
+  color: #f0f8ff;
   font-size: clamp(1.45rem, 4.8vw, 2rem);
   letter-spacing: 0.02em;
   font-family: "Poppins", "Inter", sans-serif;
@@ -6259,7 +6259,7 @@ body:not(.admin-authenticated) .wrap {
 
 .login-gov-subtitle {
   margin: 4px auto 10px;
-  color: #7f6a3b;
+  color: #d6bc7d;
   font-size: clamp(0.78rem, 2.1vw, 0.92rem);
   display: inline-flex;
   align-items: center;
@@ -6269,20 +6269,20 @@ body:not(.admin-authenticated) .wrap {
 .login-gov-subtitle span {
   width: 60px;
   height: 1px;
-  background: rgba(167, 149, 110, 0.7);
+  background: rgba(214, 188, 125, 0.75);
 }
 
 .login-gov-shell {
-  border: 1px solid #d7dce3;
+  border: 1px solid rgba(149, 196, 252, 0.28);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.58);
+  background: rgba(9, 33, 59, 0.72);
   padding: 10px 10px 8px;
 }
 
 .login-gov-shell h2 {
   margin: 0 0 12px;
   font-size: clamp(1rem, 2.3vw, 1.2rem);
-  color: #5d6f87;
+  color: #acc8ed;
   font-weight: 700;
   font-family: "Poppins", "Inter", sans-serif;
 }
@@ -6290,35 +6290,35 @@ body:not(.admin-authenticated) .wrap {
 .login-card--gov .login-field {
   min-height: 46px;
   margin-bottom: 8px;
-  border: 1px solid #ccd3dc;
+  border: 1px solid rgba(143, 189, 244, 0.4);
   border-radius: 12px;
-  background: #ffffff;
+  background: rgba(5, 25, 46, 0.84);
 }
 
 .login-card--gov .login-field__icon {
   width: 34px;
   text-align: center;
   font-size: 1.1rem;
-  color: #5f7088;
-  border-right: 1px solid #d4dbe3;
+  color: #9cc1ee;
+  border-right: 1px solid rgba(134, 180, 236, 0.38);
   padding-right: 10px;
 }
 
 .login-card--gov .login-field input {
-  color: #4b5b72;
+  color: #dcf0ff;
   font-size: 1rem;
 }
 
 .login-card--gov .login-field input::placeholder {
-  color: #5e6d83;
+  color: #7fa2cc;
 }
 
 .login-card--gov #loginBtn {
   margin-top: 6px;
   min-height: 44px;
   border-radius: 12px;
-  border: 1px solid #21436d;
-  background: linear-gradient(100deg, #153d68, #1d4a77 56%, #2f5e91);
+  border: 1px solid rgba(147, 196, 255, 0.44);
+  background: linear-gradient(100deg, #1b589d, #2875be 56%, #3ca9d4);
   font-size: clamp(1rem, 2.2vw, 1.1rem);
   letter-spacing: 0.01em;
 }
@@ -6332,7 +6332,7 @@ body:not(.admin-authenticated) .wrap {
   min-height: 1.2rem;
   margin: 6px 0;
   font-size: 0.9rem;
-  color: #6a7b95;
+  color: #9ec0e6;
 }
 
 .login-card--gov .login-links {
@@ -6348,7 +6348,7 @@ body:not(.admin-authenticated) .wrap {
 .login-card--gov .login-forgot {
   margin: 0;
   font-size: clamp(0.82rem, 2.2vw, 0.95rem);
-  color: #2b3f5f;
+  color: #b7d6fa;
   text-decoration: none;
 }
 
