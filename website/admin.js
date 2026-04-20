@@ -199,7 +199,7 @@ const SESSION_MAX_MS = 8 * 60 * 60 * 1000;
 const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 
 const ADMIN_THEME_KEY = "roadwatchAdminTheme";
-const ADMIN_THEME_ORDER = ["dark", "light", "high-contrast"];
+const ADMIN_THEME_ORDER = ["dark", "light"];
 const ADMIN_DARK_QUERY = "(prefers-color-scheme: dark)";
 
 function getSystemTheme() {
@@ -208,19 +208,21 @@ function getSystemTheme() {
 
 function getPreferredTheme() {
   const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
+  if (storedTheme === "high-contrast") return "dark";
   if (ADMIN_THEME_ORDER.includes(storedTheme)) return storedTheme;
   return getSystemTheme();
 }
 
 function setTheme(theme, { persist = true } = {}) {
-  const normalizedTheme = ADMIN_THEME_ORDER.includes(theme) ? theme : "dark";
+  const requestedTheme = theme === "high-contrast" ? "dark" : theme;
+  const normalizedTheme = ADMIN_THEME_ORDER.includes(requestedTheme) ? requestedTheme : "dark";
   document.body.dataset.theme = normalizedTheme;
   document.documentElement.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
   if (persist) {
     localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
   }
   if (!themeToggleBtn) return;
-  const title = normalizedTheme === "high-contrast" ? "High Contrast" : `${normalizedTheme.charAt(0).toUpperCase()}${normalizedTheme.slice(1)}`;
+  const title = `${normalizedTheme.charAt(0).toUpperCase()}${normalizedTheme.slice(1)}`;
   themeToggleBtn.textContent = `Theme: ${title}`;
 }
 
