@@ -7314,7 +7314,7 @@ body.admin-authenticated .snapshot-card__body {
 body.admin-authenticated .snapshot-card__body span {
   font-size: 1.02rem;
   font-weight: 700;
-  color: #d9e9ff;
+  color: #3f587d;
 }
 
 body.admin-authenticated .snapshot-card__body strong {
@@ -7334,7 +7334,7 @@ body.admin-authenticated .snapshot-card--verified .snapshot-card__body strong {
 body.admin-authenticated .snapshot-card__body small {
   margin: 0;
   font-size: 0.95rem;
-  color: #9fbcde;
+  color: #5a7296;
 }
 
 body.admin-authenticated .overview-panel--status .chart-panel.compact-chart {
@@ -7354,7 +7354,7 @@ body.admin-authenticated .chart-accessibility {
 
 body.admin-authenticated .chart-accessibility .small {
   margin-bottom: 10px;
-  color: #d3e6ff;
+  color: #456389;
   font-weight: 700;
 }
 
