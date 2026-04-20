@@ -8940,3 +8940,78 @@ body.admin-authenticated[data-theme="high-contrast"] {
   min-width: 126px;
   text-transform: none;
 }
+
+body.admin-authenticated[data-theme="light"] {
+  color-scheme: light;
+}
+
+body.admin-authenticated[data-theme="high-contrast"] {
+  color-scheme: dark;
+}
+
+body.admin-authenticated[data-theme="light"] .dashboard-header,
+body.admin-authenticated[data-theme="light"] .dashboard-nav,
+body.admin-authenticated[data-theme="light"] .panel,
+body.admin-authenticated[data-theme="light"] .critical-overview-panel,
+body.admin-authenticated[data-theme="light"] .command-pane,
+body.admin-authenticated[data-theme="light"] .action-drawer,
+body.admin-authenticated[data-theme="light"] .analytics-panel,
+body.admin-authenticated[data-theme="light"] .chart-stretch,
+body.admin-authenticated[data-theme="light"] .admin-sidebar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 248, 255, 0.95));
+  border-color: rgba(17, 84, 165, 0.2);
+}
+
+body.admin-authenticated[data-theme="light"] .admin-sidebar__link,
+body.admin-authenticated[data-theme="light"] .nav-btn,
+body.admin-authenticated[data-theme="light"] button.secondary {
+  background: rgba(38, 110, 187, 0.12);
+  border-color: rgba(17, 84, 165, 0.22);
+  color: #103560;
+}
+
+body.admin-authenticated[data-theme="light"] .admin-sidebar__link.is-active,
+body.admin-authenticated[data-theme="light"] .nav-btn.active,
+body.admin-authenticated[data-theme="light"] button.secondary:hover {
+  background: linear-gradient(110deg, rgba(62, 128, 199, 0.28), rgba(31, 95, 164, 0.32));
+}
+
+body.admin-authenticated[data-theme="light"] .console-search,
+body.admin-authenticated[data-theme="light"] .tableWrap,
+body.admin-authenticated[data-theme="light"] .overview-table-wrap,
+body.admin-authenticated[data-theme="light"] .inlineControl,
+body.admin-authenticated[data-theme="light"] input,
+body.admin-authenticated[data-theme="light"] select,
+body.admin-authenticated[data-theme="light"] textarea {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(17, 84, 165, 0.26);
+  color: #103560;
+}
+
+body.admin-authenticated[data-theme="light"] .small,
+body.admin-authenticated[data-theme="light"] .eyebrow,
+body.admin-authenticated[data-theme="light"] .analyticsLabel,
+body.admin-authenticated[data-theme="light"] .hint {
+  color: #3b5b84;
+}
+
+body.admin-authenticated[data-theme="high-contrast"] .dashboard-header,
+body.admin-authenticated[data-theme="high-contrast"] .dashboard-nav,
+body.admin-authenticated[data-theme="high-contrast"] .panel,
+body.admin-authenticated[data-theme="high-contrast"] .critical-overview-panel,
+body.admin-authenticated[data-theme="high-contrast"] .command-pane,
+body.admin-authenticated[data-theme="high-contrast"] .action-drawer,
+body.admin-authenticated[data-theme="high-contrast"] .analytics-panel,
+body.admin-authenticated[data-theme="high-contrast"] .chart-stretch,
+body.admin-authenticated[data-theme="high-contrast"] .admin-sidebar,
+body.admin-authenticated[data-theme="high-contrast"] .console-search,
+body.admin-authenticated[data-theme="high-contrast"] .tableWrap,
+body.admin-authenticated[data-theme="high-contrast"] .overview-table-wrap,
+body.admin-authenticated[data-theme="high-contrast"] .inlineControl,
+body.admin-authenticated[data-theme="high-contrast"] input,
+body.admin-authenticated[data-theme="high-contrast"] select,
+body.admin-authenticated[data-theme="high-contrast"] textarea {
+  background: #000000;
+  border-color: #ffe44d;
+  color: #ffffff;
+}
