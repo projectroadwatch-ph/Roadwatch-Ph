@@ -8476,6 +8476,12 @@ body.admin-authenticated .snapshot-card__body small {
   color: #4e678c;
 }
 
+/* Keep metadata and helper text legible on the light authenticated overview surfaces. */
+body.admin-authenticated .snapshot-card .snapshot-card__body span,
+body.admin-authenticated .snapshot-card .snapshot-card__body small {
+  color: #355071;
+}
+
 body.admin-authenticated .chart-accessibility .small {
   color: #2f4f76;
 }
