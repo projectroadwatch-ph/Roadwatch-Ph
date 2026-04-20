@@ -12,6 +12,7 @@ const ADMIN_LAST_SYNC_KEY = "roadwatchAdminLastSyncAt";
 const ADMIN_SESSION_STARTED_AT_KEY = "roadwatchAdminSessionStartedAt";
 const ADMIN_SERVER_MODE_KEY = "roadwatchAdminServerMode";
 const ADMIN_AUTO_UI_IMPROVER_KEY = "roadwatchAdminAutoUiImprover";
+const ADMIN_WORKSPACE_PREFS_KEY = "roadwatchAdminWorkspacePrefs";
 const adminUi = window.RoadwatchAdminUI;
 const adminAuth = window.RoadwatchAdminAuth;
 const adminHomePage = window.RoadwatchAdminHomePage || {};
@@ -184,11 +185,13 @@ let activeReportsSource = "";
 let urgentOnlyMode = false;
 let activeColumnView = "operations";
 let activeDashboardView = "management";
+let activeManagementPane = "workspace";
 let staleDataIntervalId = null;
 let workspaceLayoutMode = "cards";
 let activeKanbanTracking = "";
 let autoUiImproverIntervalId = null;
 let isLoadingReports = false;
+let workspacePrefsPersistTimeoutId = null;
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
@@ -364,6 +367,54 @@ function setAutoUiImproverEnabled(nextValue) {
   if (nextValue) {
     runAutoUiImprover();
     autoUiImproverIntervalId = window.setInterval(runAutoUiImprover, 45000);
+  }
+}
+
+function buildWorkspacePrefsSnapshot() {
+  return {
+    version: 1,
+    dashboardView: activeDashboardView,
+    managementPane: activeManagementPane,
+    workspaceLayoutMode,
+    rowsPerPage,
+    denseMode: document.body.classList.contains("admin-dense"),
+    filters: buildCurrentViewConfig()
+  };
+}
+
+function persistWorkspacePrefs() {
+  const snapshot = buildWorkspacePrefsSnapshot();
+  localStorage.setItem(ADMIN_WORKSPACE_PREFS_KEY, JSON.stringify(snapshot));
+}
+
+function queuePersistWorkspacePrefs() {
+  if (workspacePrefsPersistTimeoutId) {
+    window.clearTimeout(workspacePrefsPersistTimeoutId);
+  }
+  workspacePrefsPersistTimeoutId = window.setTimeout(() => {
+    persistWorkspacePrefs();
+  }, 180);
+}
+
+function loadWorkspacePrefs() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ADMIN_WORKSPACE_PREFS_KEY) || "{}");
+    if (!parsed || typeof parsed !== "object") return;
+
+    const preferredView = parsed.dashboardView === "management" ? "management" : "overview";
+    const preferredPane = parsed.managementPane === "triage" ? "triage" : "workspace";
+    const preferredLayout = parsed.workspaceLayoutMode === "table" || parsed.workspaceLayoutMode === "kanban" ? parsed.workspaceLayoutMode : "cards";
+
+    setDashboardView(preferredView);
+    if (preferredView === "management") {
+      setManagementPane(preferredPane);
+    }
+    setWorkspaceLayoutMode(preferredLayout);
+    setDenseMode(Boolean(parsed.denseMode));
+    applySavedViewConfig(parsed.filters);
+    queuePersistWorkspacePrefs();
+  } catch {
+    // Ignore malformed local preference payloads.
   }
 }
 
@@ -1141,7 +1192,8 @@ function setDashboardView(view) {
     showOverviewBtn?.classList.remove("is-active");
     showManagementBtn?.classList.add("is-active");
     showOperationsBtn?.classList.remove("is-active");
-    setManagementPane("workspace");
+    setManagementPane(activeManagementPane);
+    queuePersistWorkspacePrefs();
     return;
   }
 
@@ -1157,6 +1209,7 @@ function setDashboardView(view) {
     window.setTimeout(() => {
       overviewMap?.invalidateSize();
     }, 40);
+    queuePersistWorkspacePrefs();
     return;
   }
 
@@ -1171,6 +1224,7 @@ function setDashboardView(view) {
     setBreadcrumbs,
     overviewMap
   });
+  queuePersistWorkspacePrefs();
 }
 
 function getManagementPaneConfig(pane) {
@@ -1180,6 +1234,7 @@ function getManagementPaneConfig(pane) {
 
 function setManagementPane(pane) {
   const activePane = pane === "triage" ? "triage" : "workspace";
+  activeManagementPane = activePane;
   const pageConfig = getManagementPaneConfig(activePane);
 
   if (typeof pageConfig.activate !== "function") {
@@ -1190,6 +1245,7 @@ function setManagementPane(pane) {
     setTableColumnView(activePane === "triage" ? "triage" : "operations");
     updateSidebarNavState("management", activePane);
     setBreadcrumbs("management", activePane);
+    queuePersistWorkspacePrefs();
     return;
   }
 
@@ -1202,6 +1258,7 @@ function setManagementPane(pane) {
     updateSidebarNavState,
     setBreadcrumbs
   });
+  queuePersistWorkspacePrefs();
 }
 
 function updateSidebarNavState(view = "overview", pane = "") {
@@ -1701,6 +1758,7 @@ function setWorkspaceLayoutMode(mode = "kanban") {
   showCardViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "cards");
   showKanbanViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "kanban");
   showTableViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "table");
+  queuePersistWorkspacePrefs();
 }
 
 function renderCardWorkspace(reports) {
@@ -3512,6 +3570,7 @@ function applyFiltersAndRender() {
   filterSummary.textContent = `Showing ${startItem}-${endItem} of ${filtered.length} filtered report(s) from ${allReports.length} total.${urgentLabel}`;
   renderPagination(filtered.length);
   runAutoUiImprover();
+  queuePersistWorkspacePrefs();
 }
 
 async function loadReports() {
@@ -4064,6 +4123,7 @@ document.addEventListener("keydown", (event) => {
 setDashboardView("overview");
 setSidebarOverviewExpanded(false);
 setWorkspaceLayoutMode("cards");
+loadWorkspacePrefs();
 renderCaseTimeline("");
 applyAuthUI();
 
