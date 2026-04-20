@@ -547,7 +547,16 @@
         </div>
         <div class="field-group">
           <label for="phone">Mobile Number <span aria-hidden="true">*</span></label>
-          <input id="phone" placeholder="09XX-XXX-XXXX">
+          <input
+            id="phone"
+            type="tel"
+            inputmode="numeric"
+            autocomplete="tel-national"
+            maxlength="13"
+            placeholder="09XX-XXX-XXXX"
+            aria-describedby="phoneFieldHelp"
+          >
+          <small id="phoneFieldHelp" class="field-help">Use 11-digit PH mobile number (e.g., 09171234567).</small>
         </div>
         <div class="field-group">
           <label for="reporterProvince">Province <span aria-hidden="true">*</span></label>
