@@ -19,6 +19,8 @@ const ADMIN_STATUS_OVERRIDES_KEY = "roadwatchAdminStatusOverrides";
 const ADMIN_DELETED_REPORTS_KEY = "roadwatchAdminDeletedReports";
 const HOME_REPORTS_SYNC_INTERVAL_MS = 10000;
 const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PH_MOBILE_DIGITS_PATTERN = /^09\d{9}$/;
+const PH_MOBILE_E164_PATTERN = /^\+639\d{9}$/;
 const UI_AUTO_FIX_TOAST_MS = 3400;
 
 const LEAFLET_SCRIPT_SOURCES = [
@@ -1916,6 +1918,14 @@ function clearFieldInvalidState(field) {
   field.removeAttribute("title");
 }
 
+function normalizePhoneNumber(value = "") {
+  return value.replace(/[^\d+]/g, "");
+}
+
+function isValidPhilippineMobile(value = "") {
+  return PH_MOBILE_DIGITS_PATTERN.test(value) || PH_MOBILE_E164_PATTERN.test(value);
+}
+
 function focusFirstInvalidField(fields) {
   const firstInvalid = fields.find((field) => field?.classList?.contains("field-invalid"));
   if (!firstInvalid) return;
@@ -1962,6 +1972,17 @@ function validateSubmitFields() {
     markFieldInvalid(emailField, "Please enter a valid email address.");
     if (!missingLabels.includes("Valid Email Address")) {
       missingLabels.push("Valid Email Address");
+    }
+  }
+
+  const phoneField = document.getElementById("phone");
+  if (phoneField && phoneField.value.trim()) {
+    const normalizedPhone = normalizePhoneNumber(phoneField.value.trim());
+    if (!isValidPhilippineMobile(normalizedPhone)) {
+      markFieldInvalid(phoneField, "Please enter a valid PH mobile number (0917... or +639...).");
+      if (!missingLabels.includes("Valid Mobile Number")) {
+        missingLabels.push("Valid Mobile Number");
+      }
     }
   }
 
@@ -2109,7 +2130,7 @@ async function submitReport() {
     firstname: document.getElementById("firstname").value,
     mi: document.getElementById("mi").value,
     email: reporterEmail,
-    phone: document.getElementById("phone").value,
+    phone: normalizePhoneNumber(document.getElementById("phone").value),
     reporterProvince: document.getElementById("reporterProvince")?.value || "",
     reporterCity: document.getElementById("reporterCity")?.value || "",
     reporterBarangay: document.getElementById("reporterBarangay")?.value || "",
