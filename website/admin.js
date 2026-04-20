@@ -1,4 +1,3 @@
-const DEFAULT_ADMIN_CREDENTIALS = { username: "roadwatchph", password: "roadwatchph" };
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
 const adminDataLayer = window.RoadwatchAdminDataLayer;
 const API_URL = adminDataLayer.apiUrl;
@@ -14,6 +13,7 @@ const ADMIN_SESSION_STARTED_AT_KEY = "roadwatchAdminSessionStartedAt";
 const ADMIN_SERVER_MODE_KEY = "roadwatchAdminServerMode";
 const ADMIN_AUTO_UI_IMPROVER_KEY = "roadwatchAdminAutoUiImprover";
 const adminUi = window.RoadwatchAdminUI;
+const adminAuth = window.RoadwatchAdminAuth;
 const adminHomePage = window.RoadwatchAdminHomePage || {};
 const adminWorkspacePage = window.RoadwatchAdminWorkspacePage || {};
 const adminTriagePage = window.RoadwatchAdminTriagePage || {};
@@ -120,6 +120,7 @@ const notificationBadge = document.getElementById("notificationBadge");
 const notificationPanel = document.getElementById("notificationPanel");
 const notificationPanelList = document.getElementById("notificationPanelList");
 const markAllReadBtn = document.getElementById("markAllReadBtn");
+const themeToggleBtn = document.getElementById("themeToggleBtn");
 const quickFilterPresets = Array.from(document.querySelectorAll("[data-quick-preset]"));
 const urgentOnlyToggleBtn = document.getElementById("urgentOnlyToggleBtn");
 const runSmartDispatchBtn = document.getElementById("runSmartDispatchBtn");
@@ -194,6 +195,31 @@ const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
 const SESSION_MAX_MS = 8 * 60 * 60 * 1000;
 const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 
+const ADMIN_THEME_KEY = "roadwatchAdminTheme";
+const ADMIN_THEME_ORDER = ["dark", "light", "high-contrast"];
+
+function getPreferredTheme() {
+  const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
+  if (ADMIN_THEME_ORDER.includes(storedTheme)) return storedTheme;
+  return "dark";
+}
+
+function setTheme(theme) {
+  const normalizedTheme = ADMIN_THEME_ORDER.includes(theme) ? theme : "dark";
+  document.body.dataset.theme = normalizedTheme;
+  localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
+  if (!themeToggleBtn) return;
+  const title = normalizedTheme === "high-contrast" ? "High Contrast" : `${normalizedTheme.charAt(0).toUpperCase()}${normalizedTheme.slice(1)}`;
+  themeToggleBtn.textContent = `Theme: ${title}`;
+}
+
+function cycleTheme() {
+  const currentTheme = getPreferredTheme();
+  const currentIndex = ADMIN_THEME_ORDER.indexOf(currentTheme);
+  const nextTheme = ADMIN_THEME_ORDER[(currentIndex + 1) % ADMIN_THEME_ORDER.length];
+  setTheme(nextTheme);
+}
+
 function getStatusWriteEndpoints() {
   return adminDataLayer.getStatusWriteEndpoints();
 }
@@ -249,7 +275,8 @@ function setSheetSyncStatus(message, state = "warn") {
 }
 
 function renderAdminIdentity() {
-  const role = roleFilterSelect?.value || "Super Admin";
+  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const role = roleFilterSelect?.value || storedRole || "Super Admin";
   const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
   adminUi.renderAdminIdentity(adminIdentityChip, {
     role,
@@ -1255,27 +1282,32 @@ function applyAuthUI() {
 function login() {
   const username = document.getElementById("adminUsername").value.trim();
   const password = document.getElementById("adminPassword").value.trim();
-  const customUsername = String(localStorage.getItem("roadwatchAdminUsername") || "").trim();
-  const customPassword = String(localStorage.getItem("roadwatchAdminPassword") || "").trim();
-  const allowedCredential = customUsername && customPassword
-    ? { username: customUsername, password: customPassword }
-    : DEFAULT_ADMIN_CREDENTIALS;
-  const isValidCredential = username === allowedCredential.username && password === allowedCredential.password;
+  const authResult = adminAuth?.verifyCredentials({ username, password }) || {
+    ok: false,
+    mode: "unconfigured",
+    message: "Authentication provider is unavailable."
+  };
 
-  if (isValidCredential) {
+  if (authResult.ok) {
     localStorage.setItem(ADMIN_SESSION_KEY, "true");
-    localStorage.setItem("roadwatchAdminActiveUser", username || "Admin");
+    localStorage.setItem("roadwatchAdminActiveUser", authResult.activeUser || username || "Admin");
     localStorage.setItem(ADMIN_SESSION_STARTED_AT_KEY, String(Date.now()));
-    localStorage.setItem(ADMIN_SERVER_MODE_KEY, "client-only");
-    setFeedback("loginFeedback", "Login successful.");
+    localStorage.setItem(ADMIN_SERVER_MODE_KEY, authResult.mode || "server-config");
+    if (authResult.role) {
+      localStorage.setItem("roadwatchAdminRole", authResult.role);
+      if (roleFilterSelect) roleFilterSelect.value = authResult.role;
+    }
+    setFeedback("loginFeedback", authResult.message || "Login successful.");
     updateSessionMetaStatus();
-    setFeedback("reportsFeedback", "Security notice: client-only auth is enabled. Use server-backed sessions before production.", true);
+    setFeedback("reportsFeedback", authResult.mode === "client-local"
+      ? "Security warning: local-development auth is enabled. Disable it before production deployment."
+      : "Server-configured credentials verified.");
     setDashboardView("overview");
     applyAuthUI();
     return;
   }
 
-  setFeedback("loginFeedback", "Invalid username or password.", true);
+  setFeedback("loginFeedback", authResult.message || "Invalid username or password.", true);
 }
 
 function logout() {
@@ -2473,7 +2505,8 @@ function renderClosureChecklist(tracking = "") {
 
 function renderPermissionsSummary() {
   if (!permissionsSummary) return;
-  const role = roleFilterSelect?.value || "Super Admin";
+  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const role = roleFilterSelect?.value || storedRole || "Super Admin";
   const permissionsByRole = {
     "Super Admin": ["Delete cases", "Assign teams", "Publish updates"],
     Verifier: ["Validate reports", "Request evidence", "Flag abuse"],
@@ -3723,6 +3756,7 @@ toggleDensityBtn?.addEventListener("click", () => {
 autoUiImproverBtn?.addEventListener("click", () => {
   setAutoUiImproverEnabled(!isAutoUiImproverEnabled());
 });
+themeToggleBtn?.addEventListener("click", cycleTheme);
 sidebarToggleBtn?.addEventListener("click", toggleSidebarVisibility);
 openTriageFromOverviewBtn?.addEventListener("click", () => {
   setDashboardView("management");
@@ -3898,7 +3932,8 @@ saveClosureBtn?.addEventListener("click", () => {
 saveCollabNoteBtn?.addEventListener("click", () => {
   const tracking = String(timelineTrackingSelect?.value || "").trim();
   const mention = String(mentionInput?.value || "").trim();
-  const role = roleFilterSelect?.value || "Super Admin";
+  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const role = roleFilterSelect?.value || storedRole || "Super Admin";
   if (!tracking) {
     setFeedback("reportsFeedback", "Choose a tracking number before saving a collaboration note.", true);
     return;
@@ -4028,6 +4063,7 @@ retrySyncBtn?.addEventListener("click", () => {
   loadReports();
 });
 
+setTheme(getPreferredTheme());
 setUrgentOnlyMode(false);
 setDenseMode(false);
 if (!localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY)) {

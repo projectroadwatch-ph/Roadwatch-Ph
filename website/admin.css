@@ -8908,3 +8908,35 @@ body.admin-authenticated .analyticsLabel,
 body.admin-authenticated .hint {
   color: #b7cae3;
 }
+
+/* 2026-04-20: Theme modes + topbar theme control */
+body.admin-authenticated[data-theme="light"] {
+  --bg: #eaf1fb;
+  --bg-soft: #d6e3f7;
+  --card: #ffffff;
+  --line: rgba(17, 64, 119, 0.22);
+  --text: #0f2a4f;
+  --muted: #3e5b80;
+  --accent: #1f6dd0;
+  --accent-strong: #1358b3;
+  --success: #11895e;
+  background: radial-gradient(circle at 8% 6%, #f4f8ff 0%, #dbe9fb 38%, #c8dcf4 100%);
+}
+
+body.admin-authenticated[data-theme="high-contrast"] {
+  --bg: #000000;
+  --bg-soft: #0a0a0a;
+  --card: #121212;
+  --line: rgba(255, 255, 255, 0.65);
+  --text: #ffffff;
+  --muted: #f2f2f2;
+  --accent: #ffe44d;
+  --accent-strong: #ffd400;
+  --success: #47f5a6;
+  background: #000000;
+}
+
+.console-theme-btn {
+  min-width: 126px;
+  text-transform: none;
+}
