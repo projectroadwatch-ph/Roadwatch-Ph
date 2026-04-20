@@ -8468,6 +8468,18 @@ body.admin-authenticated .snapshot-card strong {
   color: #2d456d;
 }
 
+body.admin-authenticated .snapshot-card__body span {
+  color: #3b557b;
+}
+
+body.admin-authenticated .snapshot-card__body small {
+  color: #5c7396;
+}
+
+body.admin-authenticated .chart-accessibility .small {
+  color: #456389;
+}
+
 body.admin-authenticated .ai-autopilot-bar {
   border-radius: 16px;
   border: 1px solid rgba(183, 200, 222, 0.85);
