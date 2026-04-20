@@ -7314,7 +7314,7 @@ body.admin-authenticated .snapshot-card__body {
 body.admin-authenticated .snapshot-card__body span {
   font-size: 1.02rem;
   font-weight: 700;
-  color: #3f587d;
+  color: #2f4f76;
 }
 
 body.admin-authenticated .snapshot-card__body strong {
@@ -7354,7 +7354,7 @@ body.admin-authenticated .chart-accessibility {
 
 body.admin-authenticated .chart-accessibility .small {
   margin-bottom: 10px;
-  color: #456389;
+  color: #2f4f76;
   font-weight: 700;
 }
 
@@ -8469,11 +8469,11 @@ body.admin-authenticated .snapshot-card strong {
 }
 
 body.admin-authenticated .snapshot-card__body span {
-  color: #3b557b;
+  color: #2f4f76;
 }
 
 body.admin-authenticated .snapshot-card__body small {
-  color: #5c7396;
+  color: #4e678c;
 }
 
 /* Keep metadata and helper text legible on the light authenticated overview surfaces. */
@@ -8483,7 +8483,7 @@ body.admin-authenticated .snapshot-card .snapshot-card__body small {
 }
 
 body.admin-authenticated .chart-accessibility .small {
-  color: #3a567a;
+  color: #2f4f76;
 }
 
 body.admin-authenticated .ai-autopilot-bar {
