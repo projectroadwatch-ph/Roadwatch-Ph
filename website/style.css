@@ -1,5 +1,4 @@
 :root {
-  --rw-text-size-adjust: 100%;
   --bg: #020b17;
   --bg-soft: #0d2239;
   --panel: rgba(8, 30, 54, 0.83);
@@ -26,8 +25,8 @@
 
 body {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  text-size-adjust: var(--rw-text-size-adjust);
-  -webkit-text-size-adjust: var(--rw-text-size-adjust);
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
   margin: 0;
   color: var(--text);
   background:
@@ -256,44 +255,6 @@ header h2 {
 .sidebar button.active {
   border-color: rgba(149, 215, 255, 0.45);
   background: linear-gradient(120deg, rgba(53, 124, 209, 0.4), rgba(44, 176, 232, 0.22));
-}
-
-.sidebar-text-size {
-  margin: 10px 10px 6px;
-  padding: 10px 10px 12px;
-  border: 1px solid rgba(149, 215, 255, 0.3);
-  border-radius: 12px;
-  background: rgba(7, 30, 54, 0.45);
-}
-
-.sidebar-text-size-label {
-  margin: 0 0 8px;
-  font-size: 0.8rem;
-  color: #abd7ff;
-  text-transform: uppercase;
-  letter-spacing: 0.55px;
-  font-weight: 700;
-}
-
-.sidebar-text-size-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.sidebar-text-size-actions button {
-  width: 100%;
-  margin: 0;
-  text-align: center;
-  padding: 8px 6px;
-  border-radius: 8px;
-}
-
-.sidebar-text-size-status {
-  margin: 8px 0 0;
-  font-size: 0.78rem;
-  color: #cfe9ff;
-  text-align: right;
 }
 
 .home-command-center {
