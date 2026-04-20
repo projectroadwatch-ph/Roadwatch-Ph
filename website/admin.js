@@ -197,17 +197,25 @@ const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 
 const ADMIN_THEME_KEY = "roadwatchAdminTheme";
 const ADMIN_THEME_ORDER = ["dark", "light", "high-contrast"];
+const ADMIN_DARK_QUERY = "(prefers-color-scheme: dark)";
+
+function getSystemTheme() {
+  return window.matchMedia?.(ADMIN_DARK_QUERY).matches ? "dark" : "light";
+}
 
 function getPreferredTheme() {
   const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
   if (ADMIN_THEME_ORDER.includes(storedTheme)) return storedTheme;
-  return "dark";
+  return getSystemTheme();
 }
 
-function setTheme(theme) {
+function setTheme(theme, { persist = true } = {}) {
   const normalizedTheme = ADMIN_THEME_ORDER.includes(theme) ? theme : "dark";
   document.body.dataset.theme = normalizedTheme;
-  localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
+  document.documentElement.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
+  if (persist) {
+    localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
+  }
   if (!themeToggleBtn) return;
   const title = normalizedTheme === "high-contrast" ? "High Contrast" : `${normalizedTheme.charAt(0).toUpperCase()}${normalizedTheme.slice(1)}`;
   themeToggleBtn.textContent = `Theme: ${title}`;
@@ -4063,7 +4071,12 @@ retrySyncBtn?.addEventListener("click", () => {
   loadReports();
 });
 
-setTheme(getPreferredTheme());
+setTheme(getPreferredTheme(), { persist: ADMIN_THEME_ORDER.includes(String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim()) });
+window.matchMedia?.(ADMIN_DARK_QUERY).addEventListener("change", () => {
+  const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
+  if (ADMIN_THEME_ORDER.includes(storedTheme)) return;
+  setTheme(getSystemTheme(), { persist: false });
+});
 setUrgentOnlyMode(false);
 setDenseMode(false);
 if (!localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY)) {
