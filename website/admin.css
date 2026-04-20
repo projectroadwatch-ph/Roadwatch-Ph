@@ -6455,19 +6455,19 @@ body.admin-authenticated .card-action-btn {
 
 /* --- Admin dashboard clean card layout (reference-aligned) --- */
 body.admin-authenticated .dashboard-shell {
-  background: #f3f5f9;
-  border: 0;
-  box-shadow: none;
+  background: linear-gradient(160deg, rgba(10, 30, 55, 0.97), rgba(8, 24, 44, 0.98));
+  border: 1px solid rgba(165, 213, 255, 0.16);
+  box-shadow: var(--shadow-lg);
 }
 
 body.admin-authenticated .console-topbar {
   border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid #e5ebf3;
+  background: linear-gradient(120deg, rgba(8, 27, 50, 0.9), rgba(12, 34, 59, 0.74));
+  border: 1px solid rgba(165, 213, 255, 0.24);
 }
 
 body.admin-authenticated .console-brand strong {
-  color: #1d2f4d;
+  color: #e5f1ff;
   font-size: 2rem;
   font-weight: 800;
 }
@@ -6475,22 +6475,22 @@ body.admin-authenticated .console-brand strong {
 body.admin-authenticated .console-search {
   min-width: 480px;
   border-radius: 999px;
-  background: #f0f3f8;
-  border: 1px solid #e2e8f1;
+  background: rgba(6, 20, 38, 0.8);
+  border: 1px solid rgba(165, 213, 255, 0.3);
 }
 
 body.admin-authenticated .console-search input {
-  color: #4b5f79;
+  color: #d5e8ff;
 }
 
 body.admin-authenticated .admin-sidebar {
-  background: #eef2f6;
-  border-right: 1px solid #dfe6f0;
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.95), rgba(9, 27, 48, 0.92));
+  border-right: 1px solid rgba(165, 213, 255, 0.24);
 }
 
 body.admin-authenticated .admin-sidebar__logo {
-  background: #2d67e5;
-  color: #fff;
+  background: linear-gradient(120deg, #2f88e2, #4da0f4);
+  color: #f3f9ff;
   font-weight: 800;
 }
 
@@ -6506,25 +6506,25 @@ body.admin-authenticated .admin-sidebar__sections {
 }
 
 body.admin-authenticated .admin-sidebar__link {
-  background: transparent;
-  color: #223954;
+  background: rgba(255, 255, 255, 0.02);
+  color: #cfe5ff;
   border: 0;
   font-weight: 600;
 }
 
 body.admin-authenticated .admin-sidebar__link.is-active,
 body.admin-authenticated .admin-sidebar__link:hover {
-  background: linear-gradient(120deg, #2d67e5, #3d80ff);
-  color: #fff;
+  background: linear-gradient(120deg, #1f5eaa, #2f88e2);
+  color: #f3f9ff;
 }
 
 .admin-sidebar__report-total {
   margin-top: auto;
   padding: 14px;
   border-radius: 14px;
-  background: #fff;
-  border: 1px solid #e2e8f1;
-  color: #506482;
+  background: rgba(6, 23, 42, 0.55);
+  border: 1px solid rgba(165, 213, 255, 0.24);
+  color: #bdd4ee;
 }
 
 .admin-sidebar__report-total p,
@@ -6536,7 +6536,7 @@ body.admin-authenticated .admin-sidebar__link:hover {
   display: block;
   margin: 8px 0 4px;
   font-size: 2rem;
-  color: #132b46;
+  color: #edf6ff;
 }
 
 body.admin-authenticated .card-workspace__hero {
@@ -6547,17 +6547,17 @@ body.admin-authenticated .card-workspace__hero {
 
 body.admin-authenticated .card-workspace__hero h4 {
   font-size: 2.6rem;
-  color: #1b2b44;
+  color: #e9f3ff;
 }
 
 body.admin-authenticated .card-workspace__toolbar .inlineControl select,
 body.admin-authenticated .card-workspace__toolbar .inlineControl {
-  color: #2a405f;
+  color: #c8ddf4;
 }
 
 body.admin-authenticated .card-workspace__toolbar .inlineControl select {
-  background: #fff;
-  border: 1px solid #e1e8f2;
+  background: rgba(6, 22, 41, 0.55);
+  border: 1px solid rgba(165, 213, 255, 0.24);
   border-radius: 12px;
 }
 
@@ -6567,15 +6567,15 @@ body.admin-authenticated .report-cards-grid {
 }
 
 body.admin-authenticated .report-card {
-  border: 1px solid #e3e9f2;
+  border: 1px solid rgba(165, 213, 255, 0.2);
   border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 10px 20px rgba(28, 44, 73, 0.08);
+  box-shadow: 0 10px 24px rgba(2, 12, 25, 0.28);
 }
 
 body.admin-authenticated .report-card__date,
 body.admin-authenticated .report-card__desc {
-  color: #617892;
+  color: #a8c3e2;
 }
 
 body.admin-authenticated .report-card h4 {
@@ -6607,9 +6607,9 @@ body.admin-authenticated .card-action-btn {
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn {
-  background: #eef4fb;
-  color: #26466a;
-  border: 1px solid #e2ebf7;
+  background: rgba(8, 31, 57, 0.78);
+  color: #d7ebff;
+  border: 1px solid rgba(165, 213, 255, 0.28);
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn--danger {
@@ -6621,17 +6621,17 @@ body.admin-authenticated .report-card__actions .card-action-btn--danger {
 body.admin-authenticated .report-card__actions .card-action-select {
   min-height: 44px;
   border-radius: 10px;
-  background: #eef4fb;
-  color: #26466a;
-  border: 1px solid #e2ebf7;
+  background: rgba(8, 31, 57, 0.78);
+  color: #d7ebff;
+  border: 1px solid rgba(165, 213, 255, 0.28);
   padding: 0 10px;
   font-weight: 700;
 }
 
 body.admin-authenticated .severity-moderate,
 body.admin-authenticated .severity-medium {
-  background: #fff4e5;
-  color: #c67a00;
+  background: rgba(255, 209, 102, 0.18);
+  color: #ffd88a;
 }
 
 /* 2026-04-15 report management cards fix: normalize spacing and improve responsive behavior */
@@ -6719,8 +6719,8 @@ body.admin-authenticated .report-card__actions .card-action-select {
 
 body.admin-authenticated .severity-routine,
 body.admin-authenticated .severity-low {
-  background: #e7f8ee;
-  color: #128251;
+  background: rgba(99, 230, 190, 0.16);
+  color: #98f4cf;
 }
 
 :root {
