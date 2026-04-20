@@ -7220,10 +7220,12 @@ body.admin-authenticated .dashboard-header--compact .console-status-pill {
 /* 2026-04-15: Refresh overview snapshot/status cards to match new admin dashboard design */
 body.admin-authenticated .overview-panel--snapshot,
 body.admin-authenticated .overview-panel--status {
-  border: 1px solid #d6dfec;
+  border: 1px solid rgba(121, 164, 223, 0.32);
   border-radius: 20px;
-  background: #f6f9ff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(79, 171, 255, 0.16), transparent 38%),
+    linear-gradient(155deg, rgba(11, 34, 60, 0.96), rgba(7, 24, 44, 0.94));
+  box-shadow: inset 0 1px 0 rgba(196, 224, 255, 0.1), 0 14px 26px rgba(1, 8, 18, 0.42);
 }
 
 body.admin-authenticated .overview-panel--snapshot .row,
@@ -7242,7 +7244,7 @@ body.admin-authenticated .overview-panel--status .inlineControl.compact {
   border: 0;
   background: transparent;
   font-weight: 700;
-  color: #334d72;
+  color: #bdd9ff;
   gap: 6px;
 }
 
@@ -7250,9 +7252,9 @@ body.admin-authenticated .overview-panel--snapshot .inlineControl.compact select
 body.admin-authenticated .overview-panel--status .inlineControl.compact select {
   min-height: 40px;
   border-radius: 13px;
-  border: 1px solid #c3d2e5;
-  background: #f9fcff;
-  color: #1f3250;
+  border: 1px solid rgba(140, 184, 238, 0.38);
+  background: rgba(6, 26, 48, 0.92);
+  color: #e4f0ff;
   font-weight: 700;
   padding: 0 34px 0 12px;
 }
@@ -7268,8 +7270,8 @@ body.admin-authenticated .snapshot-card {
   align-items: center;
   gap: 14px;
   border-radius: 16px;
-  border: 1px solid #d9e3ef;
-  background: #ffffff;
+  border: 1px solid rgba(138, 181, 236, 0.24);
+  background: linear-gradient(155deg, rgba(9, 33, 59, 0.94), rgba(20, 54, 90, 0.66));
   padding: 16px;
   min-height: 132px;
 }
@@ -7282,7 +7284,7 @@ body.admin-authenticated .snapshot-card__icon {
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
-  background: #eaf1ff;
+  background: rgba(136, 190, 255, 0.18);
 }
 
 body.admin-authenticated .snapshot-card__icon .material-symbols-rounded {
@@ -7291,17 +7293,17 @@ body.admin-authenticated .snapshot-card__icon .material-symbols-rounded {
 }
 
 body.admin-authenticated .snapshot-card__icon--total {
-  color: #2563eb;
+  color: #6eb7ff;
 }
 
 body.admin-authenticated .snapshot-card__icon--alert {
-  background: #ffe9ec;
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ff8d9b;
 }
 
 body.admin-authenticated .snapshot-card__icon--verified {
-  background: #ddf5eb;
-  color: #22c55e;
+  background: rgba(62, 211, 154, 0.2);
+  color: #73e5bd;
 }
 
 body.admin-authenticated .snapshot-card__body {
@@ -7312,47 +7314,47 @@ body.admin-authenticated .snapshot-card__body {
 body.admin-authenticated .snapshot-card__body span {
   font-size: 1.02rem;
   font-weight: 700;
-  color: #263f63;
+  color: #d9e9ff;
 }
 
 body.admin-authenticated .snapshot-card__body strong {
   font-size: clamp(1.85rem, 2.5vw, 2.35rem);
   line-height: 1;
-  color: #132f57;
+  color: #f5fbff;
 }
 
 body.admin-authenticated .snapshot-card--alert .snapshot-card__body strong {
-  color: #ef5166;
+  color: #ff8e9d;
 }
 
 body.admin-authenticated .snapshot-card--verified .snapshot-card__body strong {
-  color: #20b88b;
+  color: #6be4b7;
 }
 
 body.admin-authenticated .snapshot-card__body small {
   margin: 0;
   font-size: 0.95rem;
-  color: #5f7497;
+  color: #9fbcde;
 }
 
 body.admin-authenticated .overview-panel--status .chart-panel.compact-chart {
   border-radius: 14px;
-  border: 1px solid #d4deeb;
-  background: #fbfdff;
+  border: 1px solid rgba(128, 172, 228, 0.28);
+  background: linear-gradient(180deg, rgba(9, 31, 55, 0.95), rgba(8, 27, 50, 0.93));
   padding: 10px 10px 4px;
 }
 
 body.admin-authenticated .chart-accessibility {
   margin-top: 14px;
   border-radius: 14px;
-  border: 1px solid #d7e0eb;
-  background: #eff3f9;
+  border: 1px solid rgba(126, 173, 234, 0.25);
+  background: rgba(8, 29, 53, 0.74);
   padding: 12px;
 }
 
 body.admin-authenticated .chart-accessibility .small {
   margin-bottom: 10px;
-  color: #364f72;
+  color: #d3e6ff;
   font-weight: 700;
 }
 
@@ -7362,9 +7364,9 @@ body.admin-authenticated .chart-accessibility__actions .status-filter-btn {
   align-items: center;
   gap: 10px;
   border-radius: 999px;
-  border: 1px solid #cbd6e5;
-  background: #f7faff;
-  color: #2f4669;
+  border: 1px solid rgba(127, 170, 224, 0.32);
+  background: rgba(8, 32, 60, 0.9);
+  color: #d4e9ff;
   min-height: 42px;
   padding: 0 20px;
   font-weight: 700;
@@ -7396,9 +7398,9 @@ body.admin-authenticated .chart-accessibility__actions .status-filter-btn[data-s
 }
 
 body.admin-authenticated .chart-accessibility__actions .status-filter-btn.is-active {
-  border-color: #8aa1be;
-  box-shadow: inset 0 0 0 1px rgba(138, 161, 190, 0.35);
-  background: #eef3fb;
+  border-color: rgba(159, 206, 255, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(170, 213, 255, 0.35), 0 0 0 1px rgba(81, 153, 231, 0.22);
+  background: rgba(15, 45, 79, 0.95);
 }
 
 body.admin-authenticated .status-chart-summary-list {
@@ -7407,9 +7409,9 @@ body.admin-authenticated .status-chart-summary-list {
   list-style: none;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border: 1px solid #d6deea;
+  border: 1px solid rgba(129, 173, 229, 0.28);
   border-radius: 12px;
-  background: #ffffff;
+  background: linear-gradient(160deg, rgba(8, 29, 52, 0.95), rgba(15, 45, 78, 0.66));
 }
 
 body.admin-authenticated .status-chart-summary-list li {
@@ -7417,7 +7419,7 @@ body.admin-authenticated .status-chart-summary-list li {
   padding: 12px 14px;
   display: grid;
   gap: 6px;
-  border-left: 1px solid #e1e8f2;
+  border-left: 1px solid rgba(136, 176, 227, 0.22);
 }
 
 body.admin-authenticated .status-chart-summary-list li:first-child {
@@ -7428,7 +7430,7 @@ body.admin-authenticated .status-chart-summary-label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #3a5275;
+  color: #cce1fc;
   font-weight: 700;
   font-size: 0.92rem;
 }
@@ -7458,7 +7460,7 @@ body.admin-authenticated .status-chart-summary-label[data-status="Repaired"]::be
 }
 
 body.admin-authenticated .status-chart-summary-value {
-  color: #18355f;
+  color: #f5fbff;
   font-size: 2rem;
   line-height: 1;
   font-weight: 800;
@@ -7473,15 +7475,15 @@ body.admin-authenticated .snapshot-detail-grid {
 
 body.admin-authenticated .snapshot-detail-card {
   border-radius: 16px;
-  border: 1px solid #d6dfec;
-  background: #ffffff;
+  border: 1px solid rgba(129, 173, 229, 0.28);
+  background: linear-gradient(165deg, rgba(8, 30, 54, 0.95), rgba(16, 47, 78, 0.62));
   padding: 16px;
 }
 
 body.admin-authenticated .snapshot-detail-card h4 {
   margin: 0 0 10px;
   font-size: 1.5rem;
-  color: #12294c;
+  color: #e8f4ff;
 }
 
 body.admin-authenticated .snapshot-weekly-bars {
@@ -7507,18 +7509,18 @@ body.admin-authenticated .snapshot-weekly-bar__column {
 }
 
 body.admin-authenticated .snapshot-weekly-bar__column.is-empty {
-  background: #e5edf7;
+  background: rgba(93, 123, 161, 0.35);
 }
 
 body.admin-authenticated .snapshot-weekly-bar__label {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #5a7193;
+  color: #afcdef;
 }
 
 body.admin-authenticated .snapshot-weekly-bar__value {
   font-size: 0.88rem;
-  color: #3d567a;
+  color: #d8ebff;
 }
 
 body.admin-authenticated .snapshot-activity-list {
