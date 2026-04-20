@@ -8780,3 +8780,72 @@ body.admin-authenticated ::-webkit-scrollbar-track {
     justify-self: start;
   }
 }
+
+/* 2026-04 theme fix: unify admin dashboard contrast and color hierarchy */
+body.admin-authenticated {
+  --bg: #040d18;
+  --bg-soft: #0a1a2d;
+  --card: #0f243d;
+  --line: rgba(130, 186, 237, 0.28);
+  --text: #eef5ff;
+  --muted: #a7bbd8;
+  --accent: #4ea4f6;
+  --accent-strong: #2f83d9;
+  background: radial-gradient(circle at 12% -8%, #123154 0%, #081a2f 44%, #040d18 100%);
+}
+
+body.admin-authenticated .dashboard-shell {
+  background: linear-gradient(160deg, rgba(6, 21, 38, 0.97), rgba(4, 14, 28, 0.98));
+  border: 1px solid rgba(130, 186, 237, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-authenticated .console-topbar,
+body.admin-authenticated .dashboard-header,
+body.admin-authenticated .dashboard-nav,
+body.admin-authenticated .panel,
+body.admin-authenticated .critical-overview-panel,
+body.admin-authenticated .command-pane,
+body.admin-authenticated .action-drawer,
+body.admin-authenticated .analytics-panel,
+body.admin-authenticated .chart-stretch {
+  background: linear-gradient(160deg, rgba(11, 33, 58, 0.78), rgba(8, 25, 45, 0.86));
+  border-color: rgba(137, 196, 248, 0.26);
+}
+
+body.admin-authenticated .admin-sidebar {
+  background: linear-gradient(180deg, rgba(7, 26, 46, 0.95), rgba(5, 17, 33, 0.98));
+  border-color: rgba(135, 194, 248, 0.24);
+}
+
+body.admin-authenticated .admin-sidebar__link,
+body.admin-authenticated .nav-btn,
+body.admin-authenticated button.secondary {
+  background: rgba(64, 131, 198, 0.18);
+  border: 1px solid rgba(137, 197, 251, 0.24);
+  color: var(--text);
+}
+
+body.admin-authenticated .admin-sidebar__link.is-active,
+body.admin-authenticated .nav-btn.active,
+body.admin-authenticated button.secondary:hover {
+  background: linear-gradient(110deg, rgba(69, 150, 227, 0.38), rgba(52, 119, 186, 0.5));
+}
+
+body.admin-authenticated .console-search,
+body.admin-authenticated .tableWrap,
+body.admin-authenticated .overview-table-wrap,
+body.admin-authenticated .inlineControl,
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated textarea {
+  background: rgba(5, 20, 36, 0.72);
+  border-color: rgba(133, 190, 242, 0.28);
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated .eyebrow,
+body.admin-authenticated .analyticsLabel,
+body.admin-authenticated .hint {
+  color: #b7cae3;
+}
