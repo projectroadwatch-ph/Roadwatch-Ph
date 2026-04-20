@@ -9,10 +9,10 @@
   <title>RoadWatch PH Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
-  <script>window.ROADWATCH_DEPLOYMENT_VERSION = "20260418a";</script>
+  <script>window.ROADWATCH_DEPLOYMENT_VERSION = "20260420a";</script>
   <script src="update-manager.js?v=20260418a"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="admin.css?v=20260418a">
+  <link rel="stylesheet" href="admin.css?v=20260420a">
 </head>
 <body>
   <main class="wrap">
@@ -88,6 +88,7 @@
             <input id="dashboardSearch" type="search" placeholder="Search reports, locations..." aria-label="Search dashboard content">
           </label>
           <div class="console-tools">
+            <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn" aria-label="Toggle dashboard theme">Theme: Dark</button>
             <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar">A</span> roadwatchph-admin</button>
             <div class="console-alert-wrap console-alert-wrap--attached">
               <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
@@ -781,10 +782,11 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="data-layer.js?v=20260413a"></script>
   <script src="admin-data-layer.js?v=20260415a"></script>
-  <script src="admin-ui.js?v=20260415a"></script>
+  <script src="admin-ui.js?v=20260420a"></script>
+  <script src="admin-auth.js?v=20260420a"></script>
   <script src="admin-home.js?v=20260415a"></script>
   <script src="admin-workspace.js?v=20260415a"></script>
   <script src="admin-triage.js?v=20260415a"></script>
-  <script src="admin.js?v=20260415a"></script>
+  <script src="admin.js?v=20260420a"></script>
 </body>
 </html>
