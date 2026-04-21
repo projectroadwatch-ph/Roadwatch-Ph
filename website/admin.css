@@ -9827,25 +9827,26 @@ body.admin-authenticated[data-theme="dark"] .console-topbar--reference .console-
 
 /* 2026-04-21: Admin top strip aligned with provided visual reference. */
 body.admin-authenticated .console-topbar--compact {
-  padding: 8px 12px;
+  padding: 10px 14px 0;
   border-radius: 0;
 }
 
 body.admin-authenticated .console-topbar--compact .console-topbar__row {
-  min-height: 64px;
-  border-radius: 0;
-  border: 0;
-  box-shadow: none;
-  background: #f7f9fc;
+  min-height: 74px;
+  border-radius: 20px;
+  border: 1px solid #e7edf5;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  background: #fbfcff;
   overflow: visible;
-  gap: 0;
+  gap: 12px;
+  padding-inline: 16px;
 }
 
 body.admin-authenticated .console-topbar--compact .console-topbar__brand {
   display: inline-flex;
-  min-width: 250px;
-  border-right: 1px solid #e4eaf2;
-  background: #f7f9fc;
+  min-width: 255px;
+  border-right: 0;
+  background: transparent;
 }
 
 body.admin-authenticated .console-topbar__brand-logo {
@@ -9869,15 +9870,16 @@ body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
 
 body.admin-authenticated .console-topbar--compact .console-search {
   border-right: 0;
-  padding: 0 16px;
+  padding: 0;
   background: transparent;
 }
 
 body.admin-authenticated .console-topbar--compact .console-search input {
-  background: #eef2f7;
-  border-radius: 14px;
-  min-height: 38px;
-  padding-inline: 8px 14px;
+  background: #f2f5fb;
+  border: 1px solid #e1e8f3;
+  border-radius: 18px;
+  min-height: 46px;
+  padding-inline: 10px 18px;
 }
 
 body.admin-authenticated .topbar-hidden-meta {
@@ -9885,9 +9887,9 @@ body.admin-authenticated .topbar-hidden-meta {
 }
 
 body.admin-authenticated .console-topbar--compact .console-tools {
-  margin-left: 14px;
-  padding-right: 10px;
-  gap: 4px;
+  margin-left: auto;
+  padding-right: 4px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -9926,4 +9928,38 @@ body.admin-authenticated .console-topbar--compact .console-chip {
   padding-inline: 8px 4px;
   gap: 8px;
   color: #314766;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-topbar__row {
+  background: rgba(12, 28, 52, 0.88);
+  border-color: rgba(96, 131, 180, 0.38);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-topbar__brand,
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .sidebar-toggle-btn {
+  background: transparent;
+  border-right-color: rgba(96, 131, 180, 0.3);
+  color: #b9cceb;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-search input {
+  background: rgba(15, 39, 73, 0.82);
+  border-color: rgba(96, 131, 180, 0.42);
+  color: #dce8fb;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-search input::placeholder {
+  color: rgba(198, 216, 243, 0.72);
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-alert-btn,
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-chip {
+  color: #d3e2f7;
+}
+
+@media (max-width: 820px) {
+  body.admin-authenticated .console-topbar--compact .console-topbar__row {
+    border-radius: 16px;
+  }
 }
