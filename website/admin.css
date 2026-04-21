@@ -9297,3 +9297,18 @@ body.admin-authenticated[data-theme="light"] .snapshot-activity-time,
 body.admin-authenticated[data-theme="light"] .snapshot-card__body small {
   color: #4e6f96;
 }
+
+/* 2026-04-21: align top header flush with sidebar edge like reference layout. */
+body.admin-authenticated .admin-console-layout {
+  gap: 0;
+}
+
+body.admin-authenticated .admin-console-main {
+  padding: 0 18px 18px 0;
+}
+
+body.admin-authenticated .console-topbar--compact {
+  margin-left: 0;
+  border-left: 0;
+  border-radius: 0;
+}
