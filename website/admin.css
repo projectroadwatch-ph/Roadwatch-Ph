@@ -31,6 +31,10 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
+
+body[data-theme="dark"] {
+  background: radial-gradient(circle at 12% 8%, #16365e 0%, #0a1d35 38%, #050e1d 100%);
+}
 .wrap {
   width: min(1150px, 95%);
   min-height: 100vh;
@@ -75,6 +79,40 @@ body {
   grid-template-columns: 1fr;
   gap: 20px;
   align-items: start;
+}
+
+body[data-theme="dark"] .login-card {
+  background: linear-gradient(180deg, rgba(15, 30, 53, 0.94), rgba(8, 20, 39, 0.92));
+  border-color: rgba(123, 162, 209, 0.38);
+  box-shadow: 0 24px 50px rgba(2, 10, 20, 0.5);
+}
+
+body[data-theme="dark"] .login-gov-text,
+body[data-theme="dark"] .login-gov-title,
+body[data-theme="dark"] .login-gov-subtitle,
+body[data-theme="dark"] .login-gov-footer {
+  color: #dbe9ff;
+}
+
+body[data-theme="dark"] .login-gov-shell {
+  background: linear-gradient(180deg, rgba(7, 21, 41, 0.96), rgba(8, 24, 47, 0.92));
+  border-color: rgba(116, 160, 214, 0.4);
+}
+
+body[data-theme="dark"] .login-gov-shell h2,
+body[data-theme="dark"] .login-disclaimer,
+body[data-theme="dark"] .login-home-link {
+  color: #d5e7ff;
+}
+
+body[data-theme="dark"] .login-field {
+  background: rgba(11, 27, 50, 0.9);
+  border-color: rgba(118, 168, 228, 0.42);
+}
+
+body[data-theme="dark"] .login-field input,
+body[data-theme="dark"] .login-field input::placeholder {
+  color: #c9defc;
 }
 
 .login-card__branding {

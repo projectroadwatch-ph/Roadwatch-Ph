@@ -3,6 +3,17 @@
   const ADMIN_THEME_ORDER = ["dark", "light"];
   const ADMIN_DARK_QUERY = "(prefers-color-scheme: dark)";
 
+  function applyThemeAttributes(theme) {
+    const normalizedTheme = ADMIN_THEME_ORDER.includes(theme) ? theme : "dark";
+    const root = document.documentElement;
+    root.dataset.theme = normalizedTheme;
+    root.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
+    if (document.body) {
+      document.body.dataset.theme = normalizedTheme;
+    }
+    return normalizedTheme;
+  }
+
   function getSystemTheme() {
     return windowRef.matchMedia?.(ADMIN_DARK_QUERY).matches ? "dark" : "light";
   }
@@ -16,9 +27,7 @@
 
   function setTheme(theme, { persist = true, toggleButton = null } = {}) {
     const requestedTheme = theme === "high-contrast" ? "dark" : theme;
-    const normalizedTheme = ADMIN_THEME_ORDER.includes(requestedTheme) ? requestedTheme : "dark";
-    document.body.dataset.theme = normalizedTheme;
-    document.documentElement.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
+    const normalizedTheme = applyThemeAttributes(requestedTheme);
 
     if (persist) {
       localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
