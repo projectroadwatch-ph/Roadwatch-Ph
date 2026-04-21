@@ -9824,3 +9824,106 @@ body.admin-authenticated[data-theme="dark"] .console-topbar--reference .console-
     order: 3;
   }
 }
+
+/* 2026-04-21: Admin top strip aligned with provided visual reference. */
+body.admin-authenticated .console-topbar--compact {
+  padding: 8px 12px;
+  border-radius: 0;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__row {
+  min-height: 64px;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+  background: #f7f9fc;
+  overflow: visible;
+  gap: 0;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__brand {
+  display: inline-flex;
+  min-width: 250px;
+  border-right: 1px solid #e4eaf2;
+  background: #f7f9fc;
+}
+
+body.admin-authenticated .console-topbar__brand-logo {
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+}
+
+body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
+  display: inline-flex;
+  align-self: stretch;
+  width: 52px;
+  min-width: 52px;
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid #e4eaf2;
+  color: #8a95a8;
+  background: #f7f9fc;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  border-right: 0;
+  padding: 0 16px;
+  background: transparent;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input {
+  background: #eef2f7;
+  border-radius: 14px;
+  min-height: 38px;
+  padding-inline: 8px 14px;
+}
+
+body.admin-authenticated .topbar-hidden-meta {
+  display: none !important;
+}
+
+body.admin-authenticated .console-topbar--compact .console-tools {
+  margin-left: 14px;
+  padding-right: 10px;
+  gap: 4px;
+  align-items: center;
+}
+
+body.admin-authenticated .console-topbar--compact .console-alert-btn {
+  position: relative;
+  border: 0;
+  min-width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: transparent;
+  color: #6f7d90;
+}
+
+body.admin-authenticated .console-topbar--compact .console-alert-btn__badge {
+  display: inline-flex;
+  position: absolute;
+  right: 7px;
+  top: 4px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  background: #ef4444;
+}
+
+body.admin-authenticated .console-topbar--compact .console-chip {
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 8px 4px;
+  gap: 8px;
+  color: #314766;
+}
