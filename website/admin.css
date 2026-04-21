@@ -9717,16 +9717,112 @@ body.admin-authenticated[data-theme="light"] button.secondary:hover {
   box-shadow: 0 8px 14px rgba(74, 122, 183, 0.2);
 }
 
-/* 2026-04-21: Let top search stretch from sidebar edge to actions cluster. */
-body.admin-authenticated .console-topbar--compact .console-topbar__brand {
-  display: none;
+/* 2026-04-21: Reference-aligned topbar without breaking existing dashboard controls. */
+body.admin-authenticated .console-topbar--reference {
+  padding: 8px 12px;
 }
 
-body.admin-authenticated .console-topbar--compact .console-search {
-  flex: 1 1 auto;
-  width: 100%;
-  border-right: 1px solid rgba(217, 224, 236, 0.9);
-  padding-inline: 16px;
+body.admin-authenticated .console-topbar--reference .console-topbar__row {
+  min-height: 64px;
+  border-radius: 14px;
+  gap: 0;
+  overflow: hidden;
+}
+
+body.admin-authenticated .console-topbar--reference .console-topbar__brand {
+  display: inline-flex;
+  align-self: stretch;
+  padding-inline: 14px;
+  border-right: 1px solid rgba(194, 206, 224, 0.75);
+}
+
+body.admin-authenticated .console-topbar--reference .console-topbar__brand-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+body.admin-authenticated .console-topbar--reference .sidebar-toggle-btn {
+  display: inline-flex;
+  align-self: stretch;
+  min-width: 46px;
+  border: 0;
+  border-right: 1px solid rgba(194, 206, 224, 0.75);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: #7d8ba1;
+}
+
+body.admin-authenticated .console-topbar--reference .console-search {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 14px;
+}
+
+body.admin-authenticated .console-topbar--reference .console-search input {
+  min-height: 38px;
+  border-radius: 999px;
+  background: rgba(228, 236, 247, 0.7);
+}
+
+body.admin-authenticated .console-topbar--reference .console-tools {
+  margin-left: auto;
+  gap: 4px;
+  padding-right: 8px;
+}
+
+body.admin-authenticated .console-topbar--reference .console-alert-btn {
+  position: relative;
+  min-width: 42px;
+  min-height: 42px;
+  border-radius: 999px;
+  border: 0;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--reference .console-alert-btn__badge {
+  display: inline-flex;
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  min-width: 15px;
+  height: 15px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+  background: #ef4444;
+}
+
+body.admin-authenticated .console-topbar--reference .console-chip {
+  min-height: 42px;
+  border-radius: 999px;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 8px 4px;
+  gap: 8px;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--reference .console-search input {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 1100px) {
+  body.admin-authenticated .console-topbar--reference .console-topbar__row {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  body.admin-authenticated .console-topbar--reference .console-search {
+    flex-basis: 100%;
+    order: 3;
+  }
 }
 
 /* 2026-04-21: Admin top strip aligned with provided visual reference. */
