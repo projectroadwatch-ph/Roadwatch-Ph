@@ -405,7 +405,7 @@ function loadWorkspacePrefs() {
 
     const preferredView = parsed.dashboardView === "management" ? "management" : "overview";
     const preferredPane = parsed.managementPane === "triage" ? "triage" : "workspace";
-    const preferredLayout = parsed.workspaceLayoutMode === "table" || parsed.workspaceLayoutMode === "kanban" ? parsed.workspaceLayoutMode : "cards";
+    const preferredLayout = "cards";
 
     setDashboardView(preferredView);
     if (preferredView === "management") {
@@ -1752,14 +1752,14 @@ function renderManagementSnapshot(filteredReports) {
   if (sidebarTotalReportsCount) sidebarTotalReportsCount.textContent = String(reports.length);
 }
 
-function setWorkspaceLayoutMode(mode = "kanban") {
-  workspaceLayoutMode = mode === "table" || mode === "kanban" ? mode : "cards";
+function setWorkspaceLayoutMode() {
+  workspaceLayoutMode = "cards";
   if (cardWorkspace) cardWorkspace.hidden = workspaceLayoutMode !== "cards";
-  if (kanbanWorkspace) kanbanWorkspace.hidden = workspaceLayoutMode !== "kanban";
-  if (tableWorkspace) tableWorkspace.hidden = workspaceLayoutMode !== "table";
+  if (kanbanWorkspace) kanbanWorkspace.hidden = true;
+  if (tableWorkspace) tableWorkspace.hidden = true;
   showCardViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "cards");
-  showKanbanViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "kanban");
-  showTableViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "table");
+  showKanbanViewBtn?.classList.remove("is-active");
+  showTableViewBtn?.classList.remove("is-active");
   queuePersistWorkspacePrefs();
 }
 
@@ -3860,9 +3860,7 @@ runSmartDispatchBtn?.addEventListener("click", () => {
 });
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
-showKanbanViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("kanban"));
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
-showTableViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("table"));
 newReportCardBtn?.addEventListener("click", () => {
   window.location.href = "submit.html";
 });
