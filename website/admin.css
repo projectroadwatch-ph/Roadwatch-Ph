@@ -2,9 +2,9 @@
   --bg: #040c18;
   --bg-soft: #0d2744;
   --card: #163659;
-  --line: rgba(173, 214, 255, 0.3);
-  --text: #f2f7ff;
-  --muted: #c2d2e7;
+  --line: rgba(173, 214, 255, 0.42);
+  --text: #f7fbff;
+  --muted: #d3e4f8;
   --accent: #60b3ff;
   --accent-strong: #2f8df0;
   --success: #60ddb0;
@@ -232,6 +232,9 @@ body {
 }
 
 body.admin-authenticated {
+  --line: rgba(177, 221, 255, 0.5);
+  --text: #f7fbff;
+  --muted: #d9e8f8;
   background: radial-gradient(circle at 10% 4%, #123156 0%, #07182c 28%, var(--bg) 100%);
   font-size: calc(1rem * var(--admin-content-scale));
   line-height: 1.62;
@@ -292,7 +295,7 @@ body.admin-authenticated {
 }
 
 .console-title {
-  color: #c9def8;
+  color: #e3f0ff;
   font-size: 0.99rem;
 }
 
@@ -310,7 +313,7 @@ body.admin-authenticated {
   border-radius: 999px;
   border: 1px solid rgba(148, 207, 255, 0.28);
   background: rgba(8, 43, 74, 0.45);
-  color: #cae5ff;
+  color: #e0efff;
 }
 
 .console-search {
@@ -436,7 +439,7 @@ body.admin-authenticated {
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #9dc2e4;
+  color: #bed9f5;
 }
 
 .mission-chip strong {
@@ -714,7 +717,7 @@ textarea:focus-visible {
 .overview-map-panel {
   grid-column: 1 / -1;
 }
-label { display: block; margin-top: 12px; color: #d7e6f8; font-size: 0.99rem; font-weight: 600; }
+label { display: block; margin-top: 12px; color: #ebf4ff; font-size: 0.99rem; font-weight: 600; }
 input, textarea, select, button {
   width: 100%;
   margin-top: 6px;
@@ -789,7 +792,7 @@ th { background: rgba(5, 21, 40, 0.9); position: sticky; top: 0; z-index: 1; }
 }
 
 .management-table td {
-  color: #e4f0ff;
+  color: #f0f7ff;
   vertical-align: middle;
   font-weight: 500;
 }
@@ -1082,7 +1085,7 @@ th { background: rgba(5, 21, 40, 0.9); position: sticky; top: 0; z-index: 1; }
 
 .priorityItem p {
   margin: 4px 0 0;
-  color: var(--muted);
+  color: #d7e8fa;
   font-size: 0.84rem;
 }
 
@@ -1313,7 +1316,7 @@ th { background: rgba(5, 21, 40, 0.9); position: sticky; top: 0; z-index: 1; }
 
 .table-loading {
   margin: 10px 0 0;
-  color: #9ad4ff;
+  color: #c6e4ff;
   font-size: 0.9rem;
 }
 
