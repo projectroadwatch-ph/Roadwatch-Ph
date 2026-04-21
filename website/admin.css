@@ -5006,7 +5006,8 @@ body.admin-authenticated .severity-critical {
   height: calc(100vh - 24px);
   max-height: calc(100vh - 24px);
   min-height: calc(100vh - 24px);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 16px 14px;
   border-radius: 14px;
   border: 1px solid rgba(164, 212, 255, 0.2);
