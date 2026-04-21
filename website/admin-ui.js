@@ -18,7 +18,8 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
     if (!adminIdentityChip) return;
     const activeUser = String(localStorage.getItem("roadwatchAdminActiveUser") || "Admin").trim() || "Admin";
     const normalizedRole = String(role || "Super Admin").trim() || "Super Admin";
-    adminIdentityChip.innerHTML = `<span class="console-chip__avatar material-symbols-rounded" aria-hidden="true">person</span><span class="console-chip__name">${activeUser}</span><span class="material-symbols-rounded" aria-hidden="true">expand_more</span>`;
+    const avatarLetter = activeUser.charAt(0).toUpperCase() || "A";
+    adminIdentityChip.innerHTML = `<span class="console-chip__avatar" aria-hidden="true">${avatarLetter}</span><span class="console-chip__name">${activeUser}</span><span class="material-symbols-rounded" aria-hidden="true">expand_more</span>`;
     adminIdentityChip.title = `Signed in as ${activeUser} (${normalizedRole})`;
   }
 
