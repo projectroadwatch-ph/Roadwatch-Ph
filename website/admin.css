@@ -9163,3 +9163,80 @@ body.admin-authenticated .overview-table-wrap {
     min-width: 0;
   }
 }
+
+/* 2026-04-21: Hardening dark/light theme contrast for the admin portal */
+body.admin-authenticated[data-theme="dark"] {
+  --bg: #040c18;
+  --bg-soft: #0d2744;
+  --card: #163659;
+  --line: rgba(173, 214, 255, 0.3);
+  --text: #f2f7ff;
+  --muted: #c2d2e7;
+  --accent: #60b3ff;
+  --accent-strong: #2f8df0;
+  --success: #60ddb0;
+  background: radial-gradient(circle at 10% 4%, #123156 0%, #07182c 28%, var(--bg) 100%);
+  color-scheme: dark;
+}
+
+body.admin-authenticated[data-theme="light"] {
+  color: var(--text);
+}
+
+body.admin-authenticated[data-theme="dark"] .dashboard-shell,
+body.admin-authenticated[data-theme="dark"] .dashboard-header,
+body.admin-authenticated[data-theme="dark"] .dashboard-nav,
+body.admin-authenticated[data-theme="dark"] .panel,
+body.admin-authenticated[data-theme="dark"] .critical-overview-panel,
+body.admin-authenticated[data-theme="dark"] .command-pane,
+body.admin-authenticated[data-theme="dark"] .action-drawer,
+body.admin-authenticated[data-theme="dark"] .analytics-panel,
+body.admin-authenticated[data-theme="dark"] .chart-stretch,
+body.admin-authenticated[data-theme="dark"] .admin-sidebar,
+body.admin-authenticated[data-theme="dark"] .console-topbar {
+  background: linear-gradient(165deg, rgba(9, 31, 56, 0.96), rgba(7, 24, 44, 0.96));
+  border-color: rgba(155, 207, 255, 0.26);
+}
+
+body.admin-authenticated[data-theme="light"] .dashboard-shell {
+  background: linear-gradient(165deg, rgba(247, 251, 255, 0.98), rgba(233, 243, 255, 0.98));
+  border-color: rgba(16, 75, 140, 0.2);
+  box-shadow: 0 18px 36px rgba(24, 73, 130, 0.16);
+}
+
+body.admin-authenticated[data-theme="light"] .console-topbar {
+  background: rgba(245, 250, 255, 0.92);
+  border-color: rgba(16, 75, 140, 0.18);
+  box-shadow: 0 10px 24px rgba(22, 67, 117, 0.14);
+}
+
+body.admin-authenticated[data-theme="light"] .dashboard-header h2,
+body.admin-authenticated[data-theme="light"] .panel h3,
+body.admin-authenticated[data-theme="light"] .overview-table thead th,
+body.admin-authenticated[data-theme="light"] .tableWrap thead th,
+body.admin-authenticated[data-theme="light"] .admin-sidebar__title,
+body.admin-authenticated[data-theme="light"] .admin-sidebar__link,
+body.admin-authenticated[data-theme="light"] .console-search input,
+body.admin-authenticated[data-theme="light"] label {
+  color: #0f2a4f;
+}
+
+body.admin-authenticated[data-theme="light"] .admin-sidebar__link:hover,
+body.admin-authenticated[data-theme="light"] .admin-sidebar__link:focus-visible,
+body.admin-authenticated[data-theme="light"] .nav-btn:hover,
+body.admin-authenticated[data-theme="light"] .nav-btn:focus-visible,
+body.admin-authenticated[data-theme="light"] button.secondary:hover,
+body.admin-authenticated[data-theme="light"] button.secondary:focus-visible {
+  border-color: rgba(17, 84, 165, 0.4);
+  box-shadow: 0 0 0 3px rgba(36, 119, 206, 0.15);
+}
+
+body.admin-authenticated[data-theme="light"] input::placeholder,
+body.admin-authenticated[data-theme="light"] textarea::placeholder {
+  color: #5c789f;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-search input::placeholder,
+body.admin-authenticated[data-theme="dark"] textarea::placeholder {
+  color: #9db9da;
+}
