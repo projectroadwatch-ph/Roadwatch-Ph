@@ -9388,6 +9388,27 @@ body.admin-authenticated[data-theme="dark"] #overviewAnalyticsPanel #analyticsTi
   color: #acc8e6;
 }
 
+/* 2026-04-21: enforce clear dark/light readability baseline */
+body.admin-authenticated[data-theme="dark"] {
+  background: #060f1a;
+  color: #ffffff;
+}
+
+body.admin-authenticated[data-theme="dark"] .dashboard-shell,
+body.admin-authenticated[data-theme="dark"] .dashboard-shell * {
+  color: #ffffff;
+}
+
+body.admin-authenticated[data-theme="light"] {
+  background: #f5f9ff;
+  color: #000000;
+}
+
+body.admin-authenticated[data-theme="light"] .dashboard-shell,
+body.admin-authenticated[data-theme="light"] .dashboard-shell * {
+  color: #000000;
+}
+
 body.admin-authenticated[data-theme="dark"] #overviewAnalyticsPanel .severity-meter {
   background: rgba(189, 221, 255, 0.18);
 }
