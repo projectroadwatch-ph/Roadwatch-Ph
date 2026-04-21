@@ -159,29 +159,9 @@ function ensureLeafletReady() {
 
 
 
-function getAdminStatusOverrides() {
-  return {};
-}
-
 function applyAdminStatusOverride(report) {
   // Keep Google Sheet/API data as the source of truth for status values.
   return toReportModel(report);
-}
-
-function getStatusOverrideByTracking(tracking, overrides) {
-  const target = (tracking || "").toString().trim().toLowerCase();
-  if (!target || !overrides || typeof overrides !== "object") return "";
-
-  const direct = overrides[tracking];
-  if (direct) return direct;
-
-  const matchedKey = Object.keys(overrides).find((key) => key.trim().toLowerCase() === target);
-  return matchedKey ? overrides[matchedKey] : "";
-}
-
-
-function getDeletedReports() {
-  return [];
 }
 
 function isDeletedByTracking(tracking) {
