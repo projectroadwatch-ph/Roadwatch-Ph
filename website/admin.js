@@ -606,6 +606,11 @@ function updateSessionMetaStatus() {
   sessionMetaStatus.textContent = `${sessionLabel} • ${syncLabel}`;
 }
 
+function updateSessionMetaVisibility(view = activeDashboardView) {
+  if (!sessionMetaStatus) return;
+  sessionMetaStatus.hidden = view !== "overview";
+}
+
 function buildDashboardNotifications() {
   const queue = getNotificationQueue().slice(0, 8);
   if (queue.length > 0) {
@@ -1182,6 +1187,7 @@ function applyCaseMetadata(report) {
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
   activeDashboardView = activeView;
+  updateSessionMetaVisibility(activeView);
   if (showOverviewBtn) showOverviewBtn.setAttribute("aria-selected", String(activeView === "overview"));
   if (showManagementBtn) showManagementBtn.setAttribute("aria-selected", String(activeView === "management"));
   if (activeView === "management") {

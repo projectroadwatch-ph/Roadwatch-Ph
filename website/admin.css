@@ -354,6 +354,10 @@ body.admin-authenticated {
   color: #e0efff;
 }
 
+.console-status-pill--search {
+  white-space: nowrap;
+}
+
 .console-search {
   margin-top: 0;
   display: inline-flex;
