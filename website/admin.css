@@ -9584,7 +9584,8 @@ body.admin-authenticated[data-theme="light"] #workspacePane .paginationBar {
 /* 2026-04-21: Admin UI polish pass */
 body.admin-authenticated .dashboard-shell {
   border-radius: 24px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
   border: 1px solid rgba(125, 174, 230, 0.24);
   box-shadow: 0 24px 48px rgba(6, 20, 38, 0.22);
 }
