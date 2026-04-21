@@ -9195,8 +9195,8 @@ body.admin-authenticated[data-theme="dark"] {
   --bg-soft: #0d2744;
   --card: #163659;
   --line: rgba(173, 214, 255, 0.3);
-  --text: #f2f7ff;
-  --muted: #c2d2e7;
+  --text: #f4f8ff;
+  --muted: #cad9ed;
   --accent: #60b3ff;
   --accent-strong: #2f8df0;
   --success: #60ddb0;
@@ -9205,6 +9205,8 @@ body.admin-authenticated[data-theme="dark"] {
 }
 
 body.admin-authenticated[data-theme="light"] {
+  --text: #102d53;
+  --muted: #4a678f;
   color: var(--text);
 }
 
@@ -9243,7 +9245,7 @@ body.admin-authenticated[data-theme="light"] .admin-sidebar__title,
 body.admin-authenticated[data-theme="light"] .admin-sidebar__link,
 body.admin-authenticated[data-theme="light"] .console-search input,
 body.admin-authenticated[data-theme="light"] label {
-  color: #0f2a4f;
+  color: #12345e;
 }
 
 body.admin-authenticated[data-theme="light"] .admin-sidebar__link:hover,
@@ -9264,6 +9266,22 @@ body.admin-authenticated[data-theme="light"] textarea::placeholder {
 body.admin-authenticated[data-theme="dark"] .console-search input::placeholder,
 body.admin-authenticated[data-theme="dark"] textarea::placeholder {
   color: #9db9da;
+}
+
+body.admin-authenticated[data-theme="dark"] .small,
+body.admin-authenticated[data-theme="dark"] .hint,
+body.admin-authenticated[data-theme="dark"] .analyticsLabel,
+body.admin-authenticated[data-theme="dark"] .status-chip small,
+body.admin-authenticated[data-theme="dark"] .meta,
+body.admin-authenticated[data-theme="dark"] .subtle {
+  color: var(--muted);
+}
+
+body.admin-authenticated[data-theme="dark"] .panel p,
+body.admin-authenticated[data-theme="dark"] .tableWrap td,
+body.admin-authenticated[data-theme="dark"] .console-status-pill,
+body.admin-authenticated[data-theme="dark"] .dashboard-header p {
+  color: var(--text);
 }
 
 body.admin-authenticated[data-theme="dark"] .snapshot-activity-title,
@@ -9317,7 +9335,20 @@ body.admin-authenticated[data-theme="light"] .chart-accessibility__actions .stat
 body.admin-authenticated[data-theme="light"] .snapshot-activity-sub,
 body.admin-authenticated[data-theme="light"] .snapshot-activity-time,
 body.admin-authenticated[data-theme="light"] .snapshot-card__body small {
-  color: #4e6f96;
+  color: #47658d;
+}
+
+body.admin-authenticated[data-theme="light"] .panel p,
+body.admin-authenticated[data-theme="light"] .tableWrap td,
+body.admin-authenticated[data-theme="light"] .console-status-pill,
+body.admin-authenticated[data-theme="light"] .dashboard-header p,
+body.admin-authenticated[data-theme="light"] .small,
+body.admin-authenticated[data-theme="light"] .hint,
+body.admin-authenticated[data-theme="light"] .analyticsLabel,
+body.admin-authenticated[data-theme="light"] .status-chip small,
+body.admin-authenticated[data-theme="light"] .meta,
+body.admin-authenticated[data-theme="light"] .subtle {
+  color: var(--muted);
 }
 
 body.admin-authenticated[data-theme="dark"] #overviewAnalyticsPanel.data-analytics-panel {
