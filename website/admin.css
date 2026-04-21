@@ -9936,48 +9936,45 @@ body.admin-authenticated .console-topbar--compact .console-chip {
   }
 }
 
-/* 2026-04-21: Consolidated topbar layout to match provided reference. */
+/* 2026-04-21: Final pass to align admin top strip with provided design reference. */
 body.admin-authenticated .console-topbar--compact {
   padding: 14px 14px 0;
+  border-radius: 0;
+  background: transparent;
   border: 0;
   box-shadow: none;
-  background: transparent;
 }
 
 body.admin-authenticated .console-topbar--compact .console-topbar__row {
-  min-height: 86px;
+  min-height: 88px;
   border-radius: 18px;
-  border: 1px solid #e7ebf3;
-  background: #ffffff;
-  box-shadow: 0 2px 0 rgba(17, 37, 68, 0.03);
-  padding: 0 18px;
-  gap: 18px;
+  border: 1px solid #e7ecf4;
+  background: #fdfefe;
+  box-shadow: 0 2px 0 rgba(39, 72, 126, 0.03);
+  gap: 22px;
+  padding: 0 22px;
+  overflow: visible;
 }
 
 body.admin-authenticated .console-topbar--compact .console-topbar__brand {
-  min-width: 280px;
-  padding: 0;
+  min-width: 310px;
+  padding: 0 12px;
   gap: 14px;
-  border: 0;
+  border-right: 0;
 }
 
 body.admin-authenticated .console-topbar__brand-logo {
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(155deg, #2c75ea, #1f5fd6);
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 1.35rem;
+  background: linear-gradient(145deg, #2a72ea, #1d59cc);
 }
 
 body.admin-authenticated .console-topbar__brand strong {
-  font-size: 2rem;
+  font-size: 2.2rem;
   line-height: 1;
-  color: #102848;
+  color: #112544;
   font-weight: 700;
 }
 
@@ -9985,75 +9982,45 @@ body.admin-authenticated .console-topbar__brand strong span {
   font-weight: 500;
 }
 
-body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
-  display: none;
-}
-
 body.admin-authenticated .console-topbar--compact .console-search {
   flex: 1;
-  max-width: 810px;
-  border: 0;
-  background: transparent;
-  padding: 0;
+  max-width: 820px;
 }
 
 body.admin-authenticated .console-topbar--compact .console-search input {
   min-height: 52px;
-  border-radius: 16px;
-  border: 1px solid #dde4ef;
-  background: #f5f7fb;
-  font-size: 1.03rem;
-  color: #4f5f77;
-}
-
-body.admin-authenticated .console-topbar--compact .console-search .material-symbols-rounded {
-  color: #2e6fdb;
-}
-
-body.admin-authenticated .topbar-hidden-meta {
-  display: none !important;
+  border-radius: 17px;
+  background: #f3f5fa;
+  border-color: #dde4ef;
+  font-size: 1.04rem;
 }
 
 body.admin-authenticated .console-topbar--compact .console-tools {
-  margin-left: auto;
-  gap: 8px;
+  gap: 10px;
   padding-right: 0;
-  align-items: center;
 }
 
 body.admin-authenticated .console-topbar--compact .console-alert-btn {
-  position: relative;
-  border: 0;
-  min-width: 44px;
   width: 44px;
+  min-width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background: transparent;
-  color: #7f8ca1;
-  box-shadow: none;
+  color: #7f8ba0;
 }
 
 body.admin-authenticated .console-topbar--compact .console-alert-btn__badge {
-  display: inline-flex;
-  top: 3px;
-  right: 3px;
+  right: 2px;
+  top: 1px;
   min-width: 18px;
   height: 18px;
-  font-size: 0.7rem;
-  background: #ff4b4b;
-  color: #fff;
+  font-size: 0.68rem;
 }
 
 body.admin-authenticated .console-topbar--compact .console-chip {
-  min-height: 46px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  box-shadow: none;
+  min-height: 48px;
   gap: 10px;
-  padding: 0;
-  color: #2f405f;
-  font-size: 1.04rem;
+  padding-inline: 4px 0;
+  color: #2f4160;
+  font-size: 1.06rem;
 }
 
 body.admin-authenticated .console-chip__avatar {
@@ -10063,113 +10030,18 @@ body.admin-authenticated .console-chip__avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.7rem;
-  color: #3f5f93;
-  background: radial-gradient(circle at 35% 25%, #eaf0f9 0%, #c8d6e8 78%);
+  font-weight: 700;
+  color: #1f57b0;
+  background: radial-gradient(circle at 30% 25%, #ecf2fb, #c9d7ea 72%);
 }
 
 body.admin-authenticated .console-chip__name {
-  max-width: 150px;
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 body.admin-authenticated .admin-sidebar__link.is-active {
-  background: #e6eefc;
-  color: #1f67dc;
-}
-
-@media (max-width: 1100px) {
-  body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn {
-    display: inline-flex;
-  }
-
-  body.admin-authenticated .console-topbar--compact .console-topbar__brand {
-    min-width: auto;
-  }
-}
-
-/* 2026-04-21: Match top area to provided light reference exactly. */
-body.admin-authenticated .admin-console-layout {
-  background: #f3f5f9;
-}
-
-body.admin-authenticated .admin-sidebar {
-  background: #f7f8fb;
-  border-right: 1px solid #e3e7ef;
-  color: #2a3f5f;
-}
-
-body.admin-authenticated .admin-sidebar__brand {
-  border-bottom: 1px solid #e5e9f1;
-  padding-bottom: 14px;
-}
-
-body.admin-authenticated .admin-sidebar__logo {
-  background: linear-gradient(145deg, #2b73ea, #1f60d6);
-  color: #fff;
-}
-
-body.admin-authenticated .admin-sidebar__link {
-  border-radius: 16px;
-  color: #355178;
-}
-
-body.admin-authenticated .admin-sidebar__link.is-active,
-body.admin-authenticated .admin-sidebar__link:hover,
-body.admin-authenticated .admin-sidebar__link:focus-visible {
   background: #e6edf9;
-  color: #1e64d8;
-}
-
-body.admin-authenticated .console-topbar--compact {
-  padding-top: 10px;
-}
-
-body.admin-authenticated .console-topbar--compact .console-topbar__row {
-  min-height: 78px;
-  border-radius: 18px;
-  border-color: #e4e8f0;
-  background: #ffffff;
-}
-
-body.admin-authenticated .console-topbar__brand-logo {
-  width: 40px;
-  height: 40px;
-  font-size: 1.15rem;
-  border-radius: 11px;
-  box-shadow: 0 6px 14px rgba(32, 96, 213, 0.24);
-}
-
-body.admin-authenticated .console-topbar__brand strong {
-  font-size: 2.05rem;
-  letter-spacing: -0.01em;
-}
-
-body.admin-authenticated .console-topbar--compact .console-search {
-  max-width: 760px;
-}
-
-body.admin-authenticated .console-topbar--compact .console-search input {
-  min-height: 50px;
-  border-radius: 18px;
-  background: #f7f8fb;
-  color: #6d7e98;
-}
-
-body.admin-authenticated .console-topbar--compact .console-alert-btn {
-  color: #7f8da3;
-}
-
-body.admin-authenticated .console-chip__avatar {
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  color: #3a5f95;
-  background: #d8e1ee;
-}
-
-body.admin-authenticated .console-topbar--compact .console-chip {
-  font-weight: 600;
+  color: #1d64d8;
 }
