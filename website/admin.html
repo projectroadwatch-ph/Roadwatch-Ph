@@ -87,23 +87,25 @@
       </aside>
 
       <div class="admin-console-main">
-      <div class="console-topbar console-topbar--compact">
+      <div class="console-topbar console-topbar--compact console-topbar--reference">
         <div class="console-topbar__row">
-          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
           <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
-            <span class="console-topbar__brand-logo">A</span>
+            <span class="console-topbar__brand-logo material-symbols-rounded" aria-hidden="true">route</span>
             <strong>RoadWatch PH</strong>
           </div>
+          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
           <label class="console-search">
             <span class="material-symbols-rounded" aria-hidden="true">search</span>
-            <input id="dashboardSearch" type="search" placeholder="Search reports, locations... ( / )" aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
+            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
           </label>
           <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small">Last sync: 1 hour ago</p>
+          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn" aria-label="Toggle dashboard theme">Theme: Dark</button>
           <div class="console-tools">
-            <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn" aria-label="Toggle dashboard theme">Theme: Dark</button>
-            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar">A</span> roadwatchph-admin</button>
             <div class="console-alert-wrap console-alert-wrap--attached">
-              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel"><span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
+              </button>
               <div id="notificationPanel" class="notification-panel" hidden>
                 <div class="notification-panel__header">
                   <strong>Notifications</strong>
@@ -112,6 +114,7 @@
                 <ul id="notificationPanelList" class="notification-panel__list"></ul>
               </div>
             </div>
+            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="material-symbols-rounded" aria-hidden="true">account_circle</span> Admin <span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
           </div>
         </div>
       </div>
