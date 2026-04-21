@@ -622,7 +622,7 @@ function buildDashboardNotifications() {
 function renderNotificationPanel() {
   const notifications = buildDashboardNotifications();
   if (notificationBadge) {
-    notificationBadge.textContent = String(Math.max(0, notifications.length - (notifications[0]?.text.includes("No unread") ? 1 : 0)));
+    notificationBadge.textContent = String(Math.max(0, notifications.length - (notifications[0]?.text?.includes("No unread") ? 1 : 0)));
   }
   if (!notificationPanelList) return;
   notificationPanelList.innerHTML = notifications.map((item) => `<li class="notification-item" data-severity="${item.severity}">${item.text}</li>`).join("");
@@ -632,6 +632,23 @@ function setNotificationPanelOpen(isOpen) {
   if (!notificationPanel || !notificationToggleBtn) return;
   notificationPanel.hidden = !isOpen;
   notificationToggleBtn.setAttribute("aria-expanded", String(isOpen));
+}
+
+let pendingShortcutPrefix = "";
+let pendingShortcutTimerId = null;
+
+function clearShortcutPrefix() {
+  pendingShortcutPrefix = "";
+  if (pendingShortcutTimerId) {
+    window.clearTimeout(pendingShortcutTimerId);
+    pendingShortcutTimerId = null;
+  }
+}
+
+function startShortcutPrefix(prefix) {
+  clearShortcutPrefix();
+  pendingShortcutPrefix = prefix;
+  pendingShortcutTimerId = window.setTimeout(clearShortcutPrefix, 900);
 }
 
 function refreshStaleDataBanner() {
@@ -4072,7 +4089,38 @@ document.addEventListener("keydown", (event) => {
   if (!isAuthed) return;
   const targetTag = String(event.target?.tagName || "").toLowerCase();
   const key = String(event.key || "").toLowerCase();
-  const isTyping = targetTag === "input" || targetTag === "textarea" || targetTag === "select";
+  const isTyping = targetTag === "input" || targetTag === "textarea" || targetTag === "select" || Boolean(event.target?.isContentEditable);
+  if (event.key === "Escape" && isTyping && typeof event.target?.blur === "function") {
+    event.target.blur();
+    clearShortcutPrefix();
+    return;
+  }
+  if (key === "g" && !isTyping) {
+    startShortcutPrefix("g");
+    return;
+  }
+  if (pendingShortcutPrefix === "g" && !isTyping) {
+    if (key === "o") {
+      event.preventDefault();
+      setDashboardView("overview");
+      clearShortcutPrefix();
+      return;
+    }
+    if (key === "w") {
+      event.preventDefault();
+      setDashboardView("management");
+      setManagementPane("workspace");
+      clearShortcutPrefix();
+      return;
+    }
+    if (key === "t") {
+      event.preventDefault();
+      setDashboardView("management");
+      setManagementPane("triage");
+      clearShortcutPrefix();
+      return;
+    }
+  }
   if (event.key === "/" && !isTyping) {
     event.preventDefault();
     dashboardSearch?.focus();
