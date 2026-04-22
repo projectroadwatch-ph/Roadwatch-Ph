@@ -10102,3 +10102,84 @@ body.admin-authenticated[data-theme="dark"] .console-topbar__brand-meta small {
     display: none;
   }
 }
+
+/* 2026-04-22: Make header strip span the full main content width from sidebar edge. */
+body.admin-authenticated .admin-console-main > .console-topbar--compact {
+  width: 100%;
+  margin: 0;
+  padding: 10px 0 0;
+}
+
+body.admin-authenticated .admin-console-main > .console-topbar--compact .console-topbar__row {
+  width: 100%;
+}
+
+/* 2026-04-22: Use admin-header prototype layout in live admin portal topbar. */
+body.admin-authenticated .console-topbar--compact .console-topbar__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+}
+
+body.admin-authenticated .console-topbar--compact .topbar-left,
+body.admin-authenticated .console-topbar--compact .topbar-right {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+body.admin-authenticated .console-topbar--compact .topbar-center {
+  min-width: 0;
+}
+
+body.admin-authenticated .console-topbar--compact .topbar-center .console-search {
+  max-width: none;
+  width: 100%;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__brand {
+  min-width: 0;
+  padding: 0 4px;
+  gap: 12px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__brand strong {
+  font-size: 1.65rem;
+}
+
+body.admin-authenticated .console-topbar--compact .console-tools {
+  gap: 8px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-theme-btn {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 0;
+  color: #6a788e;
+}
+
+body.admin-authenticated .console-topbar--compact .console-theme-btn::before {
+  content: "dark_mode";
+  font-family: "Material Symbols Rounded";
+  font-size: 1.08rem;
+  line-height: 1;
+}
+
+body.admin-authenticated .console-topbar--compact .sidebar-toggle-btn.topbar-hidden-meta,
+body.admin-authenticated .console-topbar--compact #sessionSummaryBadge.topbar-hidden-meta {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  body.admin-authenticated .console-topbar--compact .console-topbar__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  body.admin-authenticated .console-topbar--compact .topbar-left {
+    display: none;
+  }
+}
