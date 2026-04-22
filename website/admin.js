@@ -385,7 +385,9 @@ function loadWorkspacePrefs() {
 
     const preferredView = parsed.dashboardView === "management" ? "management" : "overview";
     const preferredPane = parsed.managementPane === "triage" ? "triage" : "workspace";
-    const preferredLayout = "cards";
+    const preferredLayout = parsed.workspaceLayoutMode === "table" || parsed.workspaceLayoutMode === "kanban"
+      ? parsed.workspaceLayoutMode
+      : "cards";
 
     setDashboardView(preferredView);
     if (preferredView === "management") {
@@ -4169,11 +4171,17 @@ adminTheme.setTheme(adminTheme.getPreferredTheme(), {
   persist: ADMIN_THEME_ORDER.includes(String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim()),
   toggleButton: themeToggleBtn
 });
-window.matchMedia?.(ADMIN_DARK_QUERY).addEventListener("change", () => {
+const adminDarkMediaQuery = window.matchMedia?.(ADMIN_DARK_QUERY);
+const handleSystemThemeChange = () => {
   const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
   if (ADMIN_THEME_ORDER.includes(storedTheme)) return;
   adminTheme.setTheme(adminTheme.getSystemTheme(), { persist: false, toggleButton: themeToggleBtn });
-});
+};
+if (adminDarkMediaQuery?.addEventListener) {
+  adminDarkMediaQuery.addEventListener("change", handleSystemThemeChange);
+} else if (adminDarkMediaQuery?.addListener) {
+  adminDarkMediaQuery.addListener(handleSystemThemeChange);
+}
 setUrgentOnlyMode(false);
 setDenseMode(false);
 if (!localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY)) {
