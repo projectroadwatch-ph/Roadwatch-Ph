@@ -51,6 +51,22 @@ const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
   "Street Infrastructure": ["Damaged sidewalk", "Broken streetlights", "Damaged road reflectors", "Open or uncovered manholes", "Other"]
 };
 
+function silenceKnownBrowserExtensionErrorNoise() {
+  window.addEventListener("unhandledrejection", (event) => {
+    const reasonMessage = (
+      typeof event?.reason === "string"
+        ? event.reason
+        : event?.reason?.message
+    ) || "";
+
+    if (reasonMessage.includes("Could not establish connection. Receiving end does not exist.")) {
+      event.preventDefault();
+    }
+  });
+}
+
+silenceKnownBrowserExtensionErrorNoise();
+
 
 function buildHomepageUrl() {
   const currentUrl = new URL(window.location.href);
