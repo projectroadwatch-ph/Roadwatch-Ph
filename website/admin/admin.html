@@ -90,33 +90,29 @@
       <!-- NOTE: This is the live admin portal header used throughout the admin command center. -->
       <div class="console-topbar console-topbar--reference console-topbar--compact console-topbar--inspiration">
         <div class="console-topbar__row">
-          <div class="topbar-left" aria-label="RoadWatch PH brand">
-            <span class="topbar-left__logo" aria-hidden="true"></span>
-            <div class="topbar-left__meta">
+          <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
+            <span class="console-topbar__brand-logo" aria-hidden="true"></span>
+            <div class="console-topbar__brand-meta">
               <strong>RoadWatch PH</strong>
             </div>
           </div>
-
-          <div class="topbar-center">
-            <label class="console-search">
-              <span class="material-symbols-rounded" aria-hidden="true">search</span>
-              <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
-            </label>
-          </div>
-
-          <div class="topbar-right">
-            <div class="topbar-right__actions">
-              <div class="console-alert-wrap console-alert-wrap--attached">
-                <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
-                  <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
-                  <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
-                </button>
-                <div id="notificationPanel" class="notification-panel" hidden>
-                  <div class="notification-panel__header">
-                    <strong>Notifications</strong>
-                    <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
-                  </div>
-                  <ul id="notificationPanelList" class="notification-panel__list"></ul>
+          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn sidebar-toggle-btn--divider" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
+          <label class="console-search">
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
+            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
+          </label>
+          <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small topbar-hidden-meta">Last sync: 1 hour ago</p>
+          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
+          <div class="console-tools">
+            <div class="console-alert-wrap console-alert-wrap--attached">
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
+              </button>
+              <div id="notificationPanel" class="notification-panel" hidden>
+                <div class="notification-panel__header">
+                  <strong>Notifications</strong>
+                  <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
                 </div>
               </div>
               <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>

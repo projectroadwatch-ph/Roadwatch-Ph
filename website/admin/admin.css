@@ -10121,35 +10121,7 @@ body.admin-authenticated .admin-console-main > .console-topbar--compact .console
   }
 }
 
-/* 2026-04-22: Premium admin header refinement (3-column + light/dark variable system). */
-body.admin-authenticated {
-  --admin-bg: #f1f5f9;
-  --header-bg: rgba(255, 255, 255, 0.72);
-  --header-border: rgba(203, 213, 225, 0.8);
-  --header-shadow: 0 14px 32px rgba(15, 23, 42, 0.11);
-  --text-main: #1f2937;
-  --text-muted: #64748b;
-  --search-bg: rgba(248, 250, 252, 0.95);
-  --search-border: #d5deea;
-  --search-focus: rgba(59, 130, 246, 0.35);
-  --icon-bg-hover: rgba(148, 163, 184, 0.16);
-  --avatar-bg: #94a3b8;
-}
-
-body.admin-authenticated.dark {
-  --admin-bg: #0f172a;
-  --header-bg: rgba(17, 24, 39, 0.76);
-  --header-border: rgba(71, 85, 105, 0.75);
-  --header-shadow: 0 16px 32px rgba(2, 6, 23, 0.55);
-  --text-main: #e5e7eb;
-  --text-muted: #cbd5e1;
-  --search-bg: rgba(30, 41, 59, 0.86);
-  --search-border: rgba(100, 116, 139, 0.86);
-  --search-focus: rgba(96, 165, 250, 0.42);
-  --icon-bg-hover: rgba(148, 163, 184, 0.22);
-  --avatar-bg: #64748b;
-}
-
+/* 2026-04-22: Match the compact top navigation to the approved light inspiration header. */
 body.admin-authenticated .sr-only {
   position: absolute;
   width: 1px;
@@ -10161,110 +10133,82 @@ body.admin-authenticated .sr-only {
   border: 0;
 }
 
-body.admin-authenticated .admin-console-main {
-  background: var(--admin-bg);
-  transition: background-color 0.25s ease;
+body.admin-authenticated .console-topbar--inspiration {
+  padding-top: 12px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  min-height: 72px;
-  gap: 24px;
+  min-height: 62px;
   border-radius: 18px;
+  background: #f5f6f8;
+  border: 1px solid #e7e9ee;
+  box-shadow: none;
+  gap: 14px;
   padding: 10px 20px;
-  background: var(--header-bg);
-  border: 1px solid var(--header-border);
-  box-shadow: var(--header-shadow);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-body.admin-authenticated .console-topbar--inspiration .topbar-left {
-  display: inline-flex;
-  align-items: center;
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand {
+  min-width: 230px;
   gap: 12px;
 }
 
-body.admin-authenticated .console-topbar--inspiration .topbar-left__logo {
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-logo {
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  background: linear-gradient(140deg, #1d4ed8 0%, #3b82f6 100%);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+  background: linear-gradient(140deg, #1f6de2 0%, #3a7be9 100%);
+  box-shadow: 0 8px 18px rgba(27, 95, 206, 0.24);
 }
 
-body.admin-authenticated .console-topbar--inspiration .topbar-left__meta strong {
-  color: var(--text-main);
-  font-size: 1.78rem;
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
+  color: #2f3a48;
+  font-size: 1.9rem;
   font-weight: 700;
-  white-space: nowrap;
 }
 
-body.admin-authenticated .console-topbar--inspiration .topbar-center {
-  display: flex;
-  justify-content: center;
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta small {
+  display: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .sidebar-toggle-btn {
+  display: none;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search {
-  width: min(100%, 560px);
-  margin: 0 auto;
+  max-width: 520px;
+  margin-left: 10px;
   border-radius: 999px;
-  border: 1px solid var(--search-border);
-  background: var(--search-bg);
+  border: 1px solid #d6dae2;
+  background: #f2f3f5;
   box-shadow: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-body.admin-authenticated .console-topbar--inspiration .console-search:focus-within {
-  border-color: var(--search-focus);
-  box-shadow: 0 0 0 3px var(--search-focus);
-}
-
-body.admin-authenticated .console-topbar--inspiration .console-search .material-symbols-rounded {
-  color: var(--text-muted);
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search input {
-  min-height: 42px;
-  border: 0;
+  min-height: 40px;
+  font-size: 0.97rem;
   background: transparent;
-  color: var(--text-main);
+  border: 0;
+  color: #4d5560;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search input::placeholder {
-  color: var(--text-muted);
-}
-
-body.admin-authenticated .console-topbar--inspiration .topbar-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-}
-
-body.admin-authenticated .console-topbar--inspiration .topbar-right__actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  color: #808894;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-theme-btn,
 body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
-  width: 38px;
-  min-width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-main);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #d9dde5;
+  background: #f9fafb;
+  color: #6c7480;
 }
 
-body.admin-authenticated .console-topbar--inspiration .console-theme-btn:hover,
-body.admin-authenticated .console-topbar--inspiration .console-alert-btn:hover {
-  background: var(--icon-bg-hover);
+body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
+  border: 0;
+  background: transparent;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-alert-btn__badge {
@@ -10277,14 +10221,14 @@ body.admin-authenticated .console-topbar--inspiration .console-chip {
   background: transparent;
   min-height: 36px;
   padding-inline: 0;
-  color: var(--text-main);
+  color: #2d3642;
   gap: 9px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-chip__avatar {
   width: 34px;
   height: 34px;
-  background: var(--avatar-bg);
+  background: #9ea8b6;
   color: transparent;
   box-shadow: none;
 }
@@ -10292,21 +10236,5 @@ body.admin-authenticated .console-topbar--inspiration .console-chip__avatar {
 body.admin-authenticated .console-topbar--inspiration .console-chip__name {
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--text-main);
   text-transform: lowercase;
-}
-
-@media (max-width: 900px) {
-  body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
-    grid-template-columns: auto auto;
-    justify-content: space-between;
-  }
-
-  body.admin-authenticated .console-topbar--inspiration .topbar-center {
-    display: none;
-  }
-
-  body.admin-authenticated .console-topbar--inspiration .topbar-left__meta strong {
-    font-size: 1.3rem;
-  }
 }
