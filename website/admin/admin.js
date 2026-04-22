@@ -3840,7 +3840,7 @@ async function loadReports() {
       );
       updateSyncMetaStatus();
       refreshStaleDataBanner();
-      setFeedback("reportsFeedback", `Unable to refresh real-time data: ${error.message}`, true);
+      setFeedback("reportsFeedback", "Unable to refresh real-time data right now. Showing the last successful sync.", true);
       return;
     }
 
@@ -3854,7 +3854,7 @@ async function loadReports() {
     renderCaseTimeline("");
     refreshReportingSection([]);
     if (filterSummary) filterSummary.textContent = "";
-    setFeedback("reportsFeedback", error.message, true);
+    setFeedback("reportsFeedback", "Unable to load reports right now. Please try again in a moment.", true);
     if (activeReportsSource) {
       setSheetSyncStatus(
         `Connection problem. Showing last synced source: ${activeReportsSource}.`,
