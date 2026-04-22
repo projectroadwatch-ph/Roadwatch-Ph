@@ -10456,3 +10456,46 @@ body.admin-authenticated .console-topbar--inspiration .console-tools {
     display: none;
   }
 }
+
+/* 2026-04-22: Admin portal frame alignment fix (desktop + mobile). */
+body.admin-authenticated .wrap {
+  width: min(1540px, calc(100% - 20px));
+  margin: 10px auto;
+  min-height: calc(100vh - 20px);
+}
+
+body.admin-authenticated .dashboard-shell {
+  padding: 12px;
+  overflow: hidden;
+}
+
+body.admin-authenticated .admin-console-layout {
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: calc(100vh - 88px);
+}
+
+body.admin-authenticated .admin-console-main {
+  min-width: 0;
+  padding: 0 12px 14px 0;
+}
+
+body.admin-authenticated .admin-console-main > .console-topbar--compact,
+body.admin-authenticated .admin-console-main > .console-topbar--inspiration {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 1100px) {
+  body.admin-authenticated .dashboard-shell {
+    padding: 10px;
+  }
+
+  body.admin-authenticated .admin-console-layout {
+    border-radius: 16px;
+    min-height: auto;
+  }
+
+  body.admin-authenticated .admin-console-main {
+    padding: 0 8px 10px 0;
+  }
+}
