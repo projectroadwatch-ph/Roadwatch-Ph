@@ -298,9 +298,16 @@ function isLikelyCorsBlockedRequest(endpoint, error) {
 }
 
 function parseReports(payload) {
+  const hasAnyValue = (record) => {
+    if (!record || typeof record !== "object") return false;
+    return Object.values(record).some((value) => String(value ?? "").trim() !== "");
+  };
+
   const toObjectRows = (rows) => {
     if (!Array.isArray(rows) || rows.length === 0) return [];
-    if (!Array.isArray(rows[0])) return rows;
+    if (!Array.isArray(rows[0])) {
+      return rows.filter(hasAnyValue);
+    }
 
     const headers = rows[0].map((header) => String(header || "").trim());
     return rows.slice(1)
@@ -333,6 +340,49 @@ function parseReports(payload) {
   if (payload && Array.isArray(payload.rows)) return toObjectRows(payload.rows);
   if (payload && Array.isArray(payload.values)) return toObjectRows(payload.values);
   return [];
+}
+
+function isMeaningfulRawReport(record = {}) {
+  const hasData = (keys = []) => keys.some((key) => String(getFieldValue(record, [key]) || "").trim() !== "");
+  return hasData([
+    "tracking",
+    "trackingNumber",
+    "tracking_no",
+    "tracking number",
+    "Tracking #",
+    "Tracking Number",
+    "reference number",
+    "Reference Number"
+  ]) || hasData([
+    "issue",
+    "issueDetail",
+    "issueDetails",
+    "Issue",
+    "Issue Detail",
+    "Issue Details",
+    "description",
+    "details",
+    "issueType",
+    "issue_type",
+    "Issue Type",
+    "issueCategory",
+    "issue_category",
+    "Issue Category"
+  ]) || hasData([
+    "location",
+    "address",
+    "road",
+    "Road Location",
+    "incidentLocation",
+    "Incident Location",
+    "roadName",
+    "Road Name",
+    "barangay",
+    "Barangay",
+    "city",
+    "City",
+    "municipality"
+  ]);
 }
 
 function setFeedback(id, message, isError = false) {
@@ -3751,6 +3801,7 @@ async function loadReports() {
 
     allReports = dedupeReports(
       selectedParsedReports
+      .filter(isMeaningfulRawReport)
       .map(normalizeReport)
       .map(applyCaseMetadata)
     );
