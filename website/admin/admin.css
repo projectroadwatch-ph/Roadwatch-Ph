@@ -10466,12 +10466,12 @@ body.admin-authenticated .wrap {
 
 body.admin-authenticated .dashboard-shell {
   padding: 12px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 body.admin-authenticated .admin-console-layout {
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
   min-height: calc(100vh - 88px);
 }
 
