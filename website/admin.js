@@ -213,6 +213,60 @@ const ADMIN_THEME_KEY = adminTheme.constants.ADMIN_THEME_KEY;
 const ADMIN_THEME_ORDER = adminTheme.constants.ADMIN_THEME_ORDER;
 const ADMIN_DARK_QUERY = adminTheme.constants.ADMIN_DARK_QUERY;
 
+const AUTH_STORAGE_KEYS = new Set([
+  ADMIN_SESSION_KEY,
+  ADMIN_SESSION_STARTED_AT_KEY,
+  ADMIN_SERVER_MODE_KEY,
+  "roadwatchAdminActiveUser",
+  "roadwatchAdminRole"
+]);
+
+function readAuthStorage(key) {
+  const normalizedKey = String(key || "");
+  if (!normalizedKey) return null;
+
+  const sessionValue = window.sessionStorage?.getItem(normalizedKey);
+  if (sessionValue !== null && sessionValue !== undefined) return sessionValue;
+
+  if (!AUTH_STORAGE_KEYS.has(normalizedKey)) return null;
+  const legacyValue = window.localStorage?.getItem(normalizedKey);
+  if (legacyValue !== null && legacyValue !== undefined) {
+    try {
+      window.sessionStorage?.setItem(normalizedKey, legacyValue);
+      window.localStorage?.removeItem(normalizedKey);
+    } catch (error) {
+      console.warn("Unable to migrate auth storage key", normalizedKey, error);
+    }
+    return legacyValue;
+  }
+
+  return null;
+}
+
+function writeAuthStorage(key, value) {
+  const normalizedKey = String(key || "");
+  if (!normalizedKey) return;
+
+  try {
+    window.sessionStorage?.setItem(normalizedKey, String(value));
+    window.localStorage?.removeItem(normalizedKey);
+  } catch (error) {
+    console.warn("Unable to persist auth storage key", normalizedKey, error);
+  }
+}
+
+function clearAuthStorage(key) {
+  const normalizedKey = String(key || "");
+  if (!normalizedKey) return;
+
+  try {
+    window.sessionStorage?.removeItem(normalizedKey);
+    window.localStorage?.removeItem(normalizedKey);
+  } catch (error) {
+    console.warn("Unable to clear auth storage key", normalizedKey, error);
+  }
+}
+
 function getStatusWriteEndpoints() {
   return adminDataLayer.getStatusWriteEndpoints();
 }
@@ -268,9 +322,9 @@ function setSheetSyncStatus(message, state = "warn") {
 }
 
 function renderAdminIdentity() {
-  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const storedRole = String(readAuthStorage("roadwatchAdminRole") || "").trim();
   const role = roleFilterSelect?.value || storedRole || "Super Admin";
-  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
   adminUi.renderAdminIdentity(adminIdentityChip, {
     role,
     isLocalSession: isAuthed
@@ -315,7 +369,7 @@ function stopAutoUiImprover() {
 
 function runAutoUiImprover() {
   if (!isAutoUiImproverEnabled()) return;
-  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
   if (!isAuthed) return;
 
   const filteredReports = getFilteredReports();
@@ -601,7 +655,7 @@ function updateSyncMetaStatus() {
 
 function updateSessionMetaStatus() {
   if (!sessionMetaStatus) return;
-  const startedAt = Number(localStorage.getItem(ADMIN_SESSION_STARTED_AT_KEY) || "0");
+  const startedAt = Number(readAuthStorage(ADMIN_SESSION_STARTED_AT_KEY) || "0");
   const lastSync = getLastSuccessfulSync();
   const sessionLabel = startedAt ? `Session since ${formatSyncTime(startedAt)}` : "Not signed in";
   const syncLabel = lastSync ? `Last sync ${formatSyncTime(lastSync)}` : "Sync pending";
@@ -699,14 +753,14 @@ function getUrgencyReason(report) {
 }
 
 function enforceSessionTtl() {
-  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
   if (!isAuthed) return;
-  const startedAt = Number(localStorage.getItem(ADMIN_SESSION_STARTED_AT_KEY) || "0");
+  const startedAt = Number(readAuthStorage(ADMIN_SESSION_STARTED_AT_KEY) || "0");
   if (startedAt && (Date.now() - startedAt) > SESSION_MAX_MS) {
-    localStorage.removeItem(ADMIN_SESSION_KEY);
-    localStorage.removeItem("roadwatchAdminActiveUser");
-    localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
-  updateSessionMetaStatus();
+    clearAuthStorage(ADMIN_SESSION_KEY);
+    clearAuthStorage("roadwatchAdminActiveUser");
+    clearAuthStorage(ADMIN_SESSION_STARTED_AT_KEY);
+    updateSessionMetaStatus();
     setFeedback("loginFeedback", "Session expired. Please log in again.", true);
   }
 }
@@ -1322,7 +1376,7 @@ function toggleSidebarVisibility() {
 
 function applyAuthUI() {
   enforceSessionTtl();
-  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
 
   loginPanel?.classList.toggle("hidden", isAuthed);
   dashboard?.classList.toggle("hidden", !isAuthed);
@@ -1344,7 +1398,7 @@ function applyAuthUI() {
     return;
   }
 
-  localStorage.removeItem("roadwatchAdminActiveUser");
+  clearAuthStorage("roadwatchAdminActiveUser");
   renderAdminIdentity();
   refreshStaleDataBanner();
   updateSyncMetaStatus();
@@ -1361,12 +1415,12 @@ function login() {
   };
 
   if (authResult.ok) {
-    localStorage.setItem(ADMIN_SESSION_KEY, "true");
-    localStorage.setItem("roadwatchAdminActiveUser", authResult.activeUser || username || "Admin");
-    localStorage.setItem(ADMIN_SESSION_STARTED_AT_KEY, String(Date.now()));
-    localStorage.setItem(ADMIN_SERVER_MODE_KEY, authResult.mode || "server-config");
+    writeAuthStorage(ADMIN_SESSION_KEY, "true");
+    writeAuthStorage("roadwatchAdminActiveUser", authResult.activeUser || username || "Admin");
+    writeAuthStorage(ADMIN_SESSION_STARTED_AT_KEY, String(Date.now()));
+    writeAuthStorage(ADMIN_SERVER_MODE_KEY, authResult.mode || "server-config");
     if (authResult.role) {
-      localStorage.setItem("roadwatchAdminRole", authResult.role);
+      writeAuthStorage("roadwatchAdminRole", authResult.role);
       if (roleFilterSelect) roleFilterSelect.value = authResult.role;
     }
     setFeedback("loginFeedback", authResult.message || "Login successful.");
@@ -1383,9 +1437,9 @@ function login() {
 }
 
 function logout() {
-  localStorage.removeItem(ADMIN_SESSION_KEY);
-  localStorage.removeItem("roadwatchAdminActiveUser");
-  localStorage.removeItem(ADMIN_SESSION_STARTED_AT_KEY);
+  clearAuthStorage(ADMIN_SESSION_KEY);
+  clearAuthStorage("roadwatchAdminActiveUser");
+  clearAuthStorage(ADMIN_SESSION_STARTED_AT_KEY);
   updateSessionMetaStatus();
   applyAuthUI();
 }
@@ -2578,7 +2632,7 @@ function renderClosureChecklist(tracking = "") {
 
 function renderPermissionsSummary() {
   if (!permissionsSummary) return;
-  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const storedRole = String(readAuthStorage("roadwatchAdminRole") || "").trim();
   const role = roleFilterSelect?.value || storedRole || "Super Admin";
   const permissionsByRole = {
     "Super Admin": ["Delete cases", "Assign teams", "Publish updates"],
@@ -4004,7 +4058,7 @@ saveClosureBtn?.addEventListener("click", () => {
 saveCollabNoteBtn?.addEventListener("click", () => {
   const tracking = String(timelineTrackingSelect?.value || "").trim();
   const mention = String(mentionInput?.value || "").trim();
-  const storedRole = String(localStorage.getItem("roadwatchAdminRole") || "").trim();
+  const storedRole = String(readAuthStorage("roadwatchAdminRole") || "").trim();
   const role = roleFilterSelect?.value || storedRole || "Super Admin";
   if (!tracking) {
     setFeedback("reportsFeedback", "Choose a tracking number before saving a collaboration note.", true);
@@ -4093,7 +4147,7 @@ columnPresetSelect?.addEventListener("change", () => {
 });
 
 document.addEventListener("keydown", (event) => {
-  const isAuthed = localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
   if (!isAuthed) return;
   const targetTag = String(event.target?.tagName || "").toLowerCase();
   const key = String(event.key || "").toLowerCase();
@@ -4188,7 +4242,7 @@ if (!localStorage.getItem(ADMIN_AUTO_UI_IMPROVER_KEY)) {
   localStorage.setItem(ADMIN_AUTO_UI_IMPROVER_KEY, "true");
 }
 updateAutoUiImproverButton();
-if (localStorage.getItem(ADMIN_SESSION_KEY) === "true" && isAutoUiImproverEnabled()) {
+if (readAuthStorage(ADMIN_SESSION_KEY) === "true" && isAutoUiImproverEnabled()) {
   setAutoUiImproverEnabled(true);
 }
 renderSavedViews();

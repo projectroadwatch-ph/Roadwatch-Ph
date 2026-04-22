@@ -13,21 +13,6 @@
       .filter((entry) => entry.username && entry.password);
   }
 
-  function readLocalDevCredential() {
-    const localAuthEnabled = globalScope.localStorage?.getItem("roadwatchAdminAllowLocalAuth") === "true";
-    if (!localAuthEnabled) return null;
-
-    const username = String(globalScope.localStorage?.getItem("roadwatchAdminUsername") || "").trim();
-    const password = String(globalScope.localStorage?.getItem("roadwatchAdminPassword") || "").trim();
-    if (!username || !password) return null;
-
-    return {
-      username,
-      password,
-      role: String(globalScope.localStorage?.getItem("roadwatchAdminRole") || "Super Admin").trim() || "Super Admin"
-    };
-  }
-
   function verifyCredentials({ username = "", password = "" } = {}) {
     const normalizedUsername = String(username).trim();
     const normalizedPassword = String(password).trim();
@@ -36,8 +21,7 @@
     }
 
     const serverCredentials = readServerCredentials();
-    const localCredential = readLocalDevCredential();
-    const candidates = localCredential ? [...serverCredentials, localCredential] : serverCredentials;
+    const candidates = serverCredentials;
 
     if (candidates.length === 0) {
       return {
@@ -54,7 +38,7 @@
 
     return {
       ok: true,
-      mode: localCredential && match.username === localCredential.username ? "client-local" : "server-config",
+      mode: "server-config",
       role: match.role,
       activeUser: match.username,
       message: "Login successful."
