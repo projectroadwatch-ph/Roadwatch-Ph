@@ -6172,22 +6172,9 @@ body.admin-authenticated .console-search input {
   margin-left: 4px;
 }
 
-body.admin-authenticated #managementView .management-shell-head,
-body.admin-authenticated #managementView .management-kpi-grid,
-body.admin-authenticated #managementView .workspace-organizer,
-body.admin-authenticated #managementView .workspace-toolbar-shell,
-body.admin-authenticated #managementView .workspace-view-toggle,
-body.admin-authenticated #managementView #activeFilterChips,
-body.admin-authenticated #managementView #filterSummary,
-body.admin-authenticated #managementView #staleDataBanner,
-body.admin-authenticated #managementView #tableWorkspace,
-body.admin-authenticated #managementView .paginationBar {
-  display: none !important;
-}
-
 body.admin-authenticated #managementView .command-pane--workspace > .row.workspace-pane-header > div .small,
 body.admin-authenticated #managementView .workspace-header-badges {
-  display: none;
+  opacity: 0.82;
 }
 
 body.admin-authenticated #managementView .command-pane--workspace {
