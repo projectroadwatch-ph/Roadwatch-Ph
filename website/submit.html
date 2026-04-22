@@ -1,2 +1,20 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=public/submit.html"></head><body><p>Redirecting... <a href="public/submit.html">Continue</a></p></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b31">
+  <meta http-equiv="refresh" content="0; url=public/submit.html">
+  <title>RoadWatch PH Submit page</title>
+  <script>
+    (function () {
+      var query = window.location.search || "";
+      var hash = window.location.hash || "";
+      window.location.replace("public/submit.html" + query + hash);
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting... <a href="public/submit.html">Continue</a></p>
+</body>
+</html>
