@@ -90,34 +90,44 @@
       <!-- NOTE: This is the live admin portal header used throughout the admin command center. -->
       <div class="console-topbar console-topbar--reference console-topbar--compact console-topbar--inspiration">
         <div class="console-topbar__row">
-          <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
-            <span class="console-topbar__brand-logo" aria-hidden="true"></span>
-            <div class="console-topbar__brand-meta">
-              <strong>RoadWatch PH</strong>
-            </div>
-          </div>
-          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn sidebar-toggle-btn--divider" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
-          <label class="console-search">
-            <span class="material-symbols-rounded" aria-hidden="true">search</span>
-            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
-          </label>
-          <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small topbar-hidden-meta">Last sync: 1 hour ago</p>
-          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
-          <div class="console-tools">
-            <div class="console-alert-wrap console-alert-wrap--attached">
-              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
-                <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
-                <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
-              </button>
-              <div id="notificationPanel" class="notification-panel" hidden>
-                <div class="notification-panel__header">
-                  <strong>Notifications</strong>
-                  <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
-                </div>
-                <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
+          <div class="console-topbar__section console-topbar__section--left">
+            <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn topbar-utility-hidden" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
+            <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
+              <span class="console-topbar__brand-logo console-topbar__brand-logo--badge" aria-hidden="true">🛣️</span>
+              <div class="console-topbar__brand-meta">
+                <strong>RoadWatch PH</strong>
               </div>
             </div>
-            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span></button>
+          </div>
+          <div class="console-topbar__section console-topbar__section--center">
+            <label class="console-search">
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
+            </label>
+          </div>
+          <div class="console-topbar__section console-topbar__section--right">
+            <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small topbar-utility-hidden">Last sync: 1 hour ago</p>
+            <div class="console-topbar__quickstats topbar-utility-hidden" aria-label="Header quick status">
+              <span class="console-pill console-pill--live">System Online</span>
+              <span class="console-pill">Press <kbd>/</kbd> to search</span>
+            </div>
+            <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-utility-hidden" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
+            <div class="console-tools">
+              <div class="console-alert-wrap console-alert-wrap--attached">
+                <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                  <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                  <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
+                </button>
+                <div id="notificationPanel" class="notification-panel" hidden>
+                  <div class="notification-panel__header">
+                    <strong>Notifications</strong>
+                    <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+                  </div>
+                  <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
+                </div>
+              </div>
+              <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span></button>
+            </div>
           </div>
         </div>
       </div>

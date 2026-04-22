@@ -57,7 +57,32 @@ function buildHomepageUrl() {
   // routing changes later on.
   const qrLandingPath = "qr.html";
   const defaultBaseUrl = `${currentUrl.origin}${currentDirectory}`;
-  const directHomepageUrl = new URL(qrLandingPath, defaultBaseUrl);
+  let baseForQr = configuredBaseUrl || defaultBaseUrl;
+
+  if (configuredBaseUrl) {
+    try {
+      const configuredUrl = new URL(configuredBaseUrl, currentUrl.origin);
+      const isGithubPagesHost = currentUrl.hostname.endsWith(".github.io");
+      const currentPathSegments = currentDirectory.split("/").filter(Boolean);
+      const configuredPathSegments = configuredUrl.pathname.split("/").filter(Boolean);
+      const firstCurrentSegment = currentPathSegments[0];
+      const isMissingProjectSegment = (
+        isGithubPagesHost
+        && firstCurrentSegment
+        && configuredPathSegments[0] !== firstCurrentSegment
+      );
+
+      if (isMissingProjectSegment) {
+        // Project sites on GitHub Pages must include the repository segment
+        // (e.g. /Roadwatch-Ph/) to avoid "404 There isn't a GitHub Pages site here."
+        baseForQr = defaultBaseUrl;
+      }
+    } catch (error) {
+      baseForQr = defaultBaseUrl;
+    }
+  }
+
+  const directHomepageUrl = new URL(qrLandingPath, baseForQr);
 
   if (typeof window.appendRoadWatchVersion === "function") {
     return window.appendRoadWatchVersion(directHomepageUrl.toString());

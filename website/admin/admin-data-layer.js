@@ -5,11 +5,20 @@
   const apiUrl = sharedDataLayer?.constants?.API_URL || "";
 
   function createReportEndpoints() {
-    return [
+    const configuredEndpoints = [
       { url: apiUrl, label: "Admin primary Google Sheet endpoint" },
       { url: apiUrl, label: "Admin backup Google Sheet endpoint" },
       { url: apiUrl, label: "Public website Google Sheet" }
     ];
+
+    const seen = new Set();
+    return configuredEndpoints.filter((endpoint) => {
+      const normalizedUrl = String(endpoint?.url || "").trim();
+      if (!normalizedUrl || seen.has(normalizedUrl)) return false;
+      seen.add(normalizedUrl);
+      endpoint.url = normalizedUrl;
+      return true;
+    });
   }
 
   function getStatusWriteEndpoints() {
