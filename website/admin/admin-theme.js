@@ -10,6 +10,7 @@
     root.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
     if (document.body) {
       document.body.dataset.theme = normalizedTheme;
+      document.body.classList.toggle("dark", normalizedTheme === "dark");
     }
     return normalizedTheme;
   }
