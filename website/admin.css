@@ -10104,14 +10104,24 @@ body.admin-authenticated[data-theme="dark"] .console-topbar__brand-meta small {
 }
 
 /* 2026-04-22: Make header strip span the full main content width from sidebar edge. */
+body.admin-authenticated .admin-console-layout {
+  gap: 0;
+}
+
+body.admin-authenticated .admin-console-main {
+  padding-left: 0;
+}
+
 body.admin-authenticated .admin-console-main > .console-topbar--compact {
-  width: calc(100% + 16px);
-  margin: 0 0 0 -16px;
+  width: 100%;
+  margin: 0;
   padding: 10px 0 0;
 }
 
 body.admin-authenticated .admin-console-main > .console-topbar--compact .console-topbar__row {
   width: 100%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 @media (max-width: 1200px) {
