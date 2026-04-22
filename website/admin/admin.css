@@ -9592,7 +9592,7 @@ body.admin-authenticated .dashboard-shell {
 
 body.admin-authenticated .admin-sidebar {
   backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(136, 184, 241, 0.24);
+  border-right: 0;
 }
 
 body.admin-authenticated .admin-sidebar__link {
