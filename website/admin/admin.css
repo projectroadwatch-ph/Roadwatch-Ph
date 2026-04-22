@@ -10191,7 +10191,12 @@ body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-met
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta small {
-  display: none;
+  display: block;
+  margin-top: 2px;
+  color: #b7cced;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 body.admin-authenticated .console-topbar--inspiration .sidebar-toggle-btn {
@@ -10217,6 +10222,46 @@ body.admin-authenticated .console-topbar--inspiration .console-search input {
 
 body.admin-authenticated .console-topbar--inspiration .console-search input::placeholder {
   color: #92acd2;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__quickstats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #2d5a93;
+  background: rgba(9, 42, 84, 0.85);
+  color: #d8e6fb;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-pill kbd {
+  border-radius: 5px;
+  border: 1px solid #4a6f9f;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f8ff;
+  font-size: 0.68rem;
+  font-family: "Inter", sans-serif;
+  padding: 2px 5px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-pill--live::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #4de08b;
+  box-shadow: 0 0 0 4px rgba(77, 224, 139, 0.18);
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-theme-btn,
@@ -10315,6 +10360,10 @@ body.admin-authenticated .console-topbar--inspiration .console-tools {
   body.admin-authenticated .console-topbar--inspiration .console-tools {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  body.admin-authenticated .console-topbar--inspiration .console-topbar__quickstats {
+    display: none;
   }
 
   body.admin-authenticated .console-topbar--inspiration .console-chip__name {
