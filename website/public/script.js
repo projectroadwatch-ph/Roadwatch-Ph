@@ -52,13 +52,6 @@ function buildHomepageUrl() {
   const currentDirectory = currentPathname.endsWith("/")
     ? currentPathname
     : currentPathname.replace(/[^/]+$/, "");
-  const settings = getSiteSettings();
-  const configuredBaseUrl = String(
-    window.ROADWATCH_PUBLIC_BASE_URL
-    || settings.publicBaseUrl
-    || settings.websiteBaseUrl
-    || ""
-  ).trim();
 
   // Use the QR landing alias because this URL stays stable even if homepage
   // routing changes later on.
