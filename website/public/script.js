@@ -47,15 +47,21 @@ const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
 
 
 function buildHomepageUrl() {
-  const { origin, pathname } = window.location;
-  const hasFileName = /\.[a-zA-Z0-9]+$/.test(pathname || "");
-  const basePath = hasFileName
-    ? pathname.replace(/[^/]+$/, "")
-    : (pathname || "/");
+  const currentUrl = new URL(window.location.href);
+  const currentPathname = currentUrl.pathname || "/";
+  const currentDirectory = currentPathname.endsWith("/")
+    ? currentPathname
+    : currentPathname.replace(/[^/]+$/, "");
 
-  // Keep QR targets stable across homepage upgrades by routing scans through
-  // a lightweight alias page that always points to the latest home experience.
-  return `${origin}${basePath}qr.html`;
+  // Some scanners and in-app browsers are sensitive to chained redirects.
+  // Point the QR code directly to the homepage route to keep scans reliable.
+  const directHomepageUrl = new URL("index.html?page=home", `${currentUrl.origin}${currentDirectory}`);
+
+  if (typeof window.appendRoadWatchVersion === "function") {
+    return window.appendRoadWatchVersion(directHomepageUrl.toString());
+  }
+
+  return directHomepageUrl.toString();
 }
 
 
