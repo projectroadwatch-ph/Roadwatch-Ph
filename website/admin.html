@@ -89,11 +89,14 @@
 
       <div class="admin-console-main">
       <!-- NOTE: This is the live admin portal header. `admin-header.html` is a standalone prototype preview only. -->
-      <div class="console-topbar console-topbar--reference">
+      <div class="console-topbar console-topbar--reference console-topbar--compact">
         <div class="console-topbar__row">
           <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
             <span class="console-topbar__brand-logo material-symbols-rounded" aria-hidden="true">route</span>
-            <strong>RoadWatch <span>PH</span></strong>
+            <div class="console-topbar__brand-meta">
+              <strong>RoadWatch <span>PH</span></strong>
+              <small>Admin Command Center</small>
+            </div>
           </div>
           <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn sidebar-toggle-btn--divider" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
           <label class="console-search">

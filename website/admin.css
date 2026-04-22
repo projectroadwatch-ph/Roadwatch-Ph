@@ -10045,3 +10045,60 @@ body.admin-authenticated .admin-sidebar__link.is-active {
   background: #e6edf9;
   color: #1d64d8;
 }
+
+/* 2026-04-22: Header polish for admin portal top strip. */
+body.admin-authenticated .console-topbar__brand-meta {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+body.admin-authenticated .console-topbar__brand-meta small {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a7b93;
+}
+
+body.admin-authenticated .console-topbar--compact .console-topbar__row {
+  min-height: 92px;
+  border-radius: 22px;
+  border-color: rgba(205, 218, 236, 0.9);
+  box-shadow: 0 16px 28px rgba(26, 58, 103, 0.08);
+}
+
+body.admin-authenticated .console-topbar--compact .console-search {
+  max-width: 780px;
+}
+
+body.admin-authenticated .console-topbar--compact .console-search input {
+  min-height: 50px;
+  border-radius: 16px;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar--compact .console-topbar__row {
+  background: linear-gradient(165deg, rgba(12, 31, 56, 0.96), rgba(9, 23, 42, 0.95));
+  border-color: rgba(90, 128, 177, 0.55);
+  box-shadow: 0 16px 30px rgba(2, 9, 18, 0.48);
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar__brand strong {
+  color: #e8f1ff;
+}
+
+body.admin-authenticated[data-theme="dark"] .console-topbar__brand-meta small {
+  color: #9fb8d8;
+}
+
+@media (max-width: 900px) {
+  body.admin-authenticated .console-topbar--compact .console-topbar__brand {
+    min-width: 0;
+    padding-left: 4px;
+  }
+
+  body.admin-authenticated .console-topbar__brand-meta small {
+    display: none;
+  }
+}
