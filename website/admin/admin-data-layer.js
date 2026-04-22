@@ -98,6 +98,8 @@
     apiUrl,
     createReportEndpoints,
     getStatusWriteEndpoints,
-    fetchApiPayload
+    fetchApiPayload,
+    loadJsonp,
+    isLikelyCorsBlockedRequest
   };
 })(window);

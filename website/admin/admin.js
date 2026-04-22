@@ -1,6 +1,12 @@
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
-const adminDataLayer = window.RoadwatchAdminDataLayer;
-const API_URL = adminDataLayer.apiUrl;
+const adminDataLayer = window.RoadwatchAdminDataLayer || {
+  apiUrl: "",
+  createReportEndpoints: () => [],
+  getStatusWriteEndpoints: () => [],
+  fetchApiPayload: async () => ({}),
+  loadJsonp: async () => ({}),
+  isLikelyCorsBlockedRequest: () => false
+};
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
@@ -273,6 +279,14 @@ function getStatusWriteEndpoints() {
 
 async function fetchApiPayload(endpoint) {
   return adminDataLayer.fetchApiPayload(endpoint);
+}
+
+async function loadJsonp(endpoint) {
+  return adminDataLayer.loadJsonp(endpoint);
+}
+
+function isLikelyCorsBlockedRequest(endpoint, error) {
+  return adminDataLayer.isLikelyCorsBlockedRequest(endpoint, error);
 }
 
 function parseReports(payload) {
