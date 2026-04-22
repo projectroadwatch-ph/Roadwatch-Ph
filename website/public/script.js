@@ -70,7 +70,6 @@ function buildHomepageUrl() {
     try {
       const configuredUrl = new URL(configuredBaseUrl, currentUrl.origin);
       const isGithubPagesHost = currentUrl.hostname.endsWith(".github.io");
-      const isDifferentHost = configuredUrl.origin !== currentUrl.origin;
       const currentPathSegments = currentDirectory.split("/").filter(Boolean);
       const configuredPathSegments = configuredUrl.pathname.split("/").filter(Boolean);
       const firstCurrentSegment = currentPathSegments[0];
@@ -79,15 +78,10 @@ function buildHomepageUrl() {
         && firstCurrentSegment
         && configuredPathSegments[0] !== firstCurrentSegment
       );
-      const shouldIgnoreConfiguredBase = (
-        isGithubPagesHost
-        && (isDifferentHost || isMissingProjectSegment)
-      );
 
-      if (shouldIgnoreConfiguredBase) {
+      if (isMissingProjectSegment) {
         // Project sites on GitHub Pages must include the repository segment
-        // (e.g. /Roadwatch-Ph/) and the active deployment host to avoid:
-        // "404 There isn't a GitHub Pages site here."
+        // (e.g. /Roadwatch-Ph/) to avoid "404 There isn't a GitHub Pages site here."
         baseForQr = defaultBaseUrl;
       }
     } catch (error) {
