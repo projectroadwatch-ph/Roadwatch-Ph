@@ -10,6 +10,7 @@
     root.style.colorScheme = normalizedTheme === "light" ? "light" : "dark";
     if (document.body) {
       document.body.dataset.theme = normalizedTheme;
+      document.body.classList.toggle("dark", normalizedTheme === "dark");
     }
     return normalizedTheme;
   }
@@ -34,8 +35,10 @@
     }
 
     if (toggleButton) {
-      const title = `${normalizedTheme.charAt(0).toUpperCase()}${normalizedTheme.slice(1)}`;
-      toggleButton.textContent = `Theme: ${title}`;
+      const nextTheme = normalizedTheme === "dark" ? "light" : "dark";
+      const iconName = normalizedTheme === "dark" ? "dark_mode" : "light_mode";
+      toggleButton.innerHTML = `<span class="material-symbols-rounded" aria-hidden="true">${iconName}</span><span class="sr-only">Switch to ${nextTheme} theme</span>`;
+      toggleButton.setAttribute("title", `Current theme: ${normalizedTheme}. Click to switch to ${nextTheme}.`);
     }
 
     return normalizedTheme;
