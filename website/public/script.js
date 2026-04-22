@@ -33,6 +33,11 @@ const LEAFLET_STYLE_SOURCES = [
   "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 ];
 
+const QR_CODE_SCRIPT_SOURCES = [
+  "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js",
+  "https://unpkg.com/qrcode@1.5.4/build/qrcode.min.js"
+];
+
 const ISSUE_TYPE_OPTIONS_BY_CATEGORY = {
   "Road Surface": ["Potholes", "Road cracks", "Faded or missing road markings", "Uneven or damaged road surfaces", "Other"],
   "Flooding / Drainage": ["Clogged roadside drainage", "Missing or broken drainage cover", "Flooded roads during heavy rain", "Water pooling on the road", "Other"],
@@ -59,6 +64,8 @@ function setHomepageQrCode() {
   if (!qrImage) return;
 
   const homepageUrl = buildHomepageUrl();
+  qrImage.setAttribute("data-homepage-url", homepageUrl);
+
   const encodedHomepageUrl = encodeURIComponent(homepageUrl);
   const qrSources = [
     `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodedHomepageUrl}`,
@@ -66,25 +73,63 @@ function setHomepageQrCode() {
     `https://chart.googleapis.com/chart?cht=qr&chs=220x220&chl=${encodedHomepageUrl}`
   ];
 
-  let sourceIndex = 0;
-  const tryLoadQrSource = () => {
-    const nextSource = qrSources[sourceIndex];
-    if (!nextSource) {
-      qrImage.alt = "QR code failed to load. Please refresh or open this page directly.";
-      return;
-    }
+  const tryRemoteQrImageFallback = () => {
+    let sourceIndex = 0;
 
-    qrImage.src = nextSource;
-    sourceIndex += 1;
+    const tryLoadQrSource = () => {
+      const nextSource = qrSources[sourceIndex];
+      if (!nextSource) {
+        qrImage.alt = "QR code failed to load. Please refresh or open this page directly.";
+        return;
+      }
+
+      qrImage.src = nextSource;
+      sourceIndex += 1;
+    };
+
+    qrImage.onerror = tryLoadQrSource;
+    qrImage.onload = () => {
+      qrImage.onerror = null;
+    };
+
+    tryLoadQrSource();
   };
 
-  qrImage.onerror = tryLoadQrSource;
-  qrImage.onload = () => {
-    qrImage.onerror = null;
+  const generateLocalQrCode = () => {
+    const qrLibrary = window.QRCode;
+    if (!qrLibrary || typeof qrLibrary.toDataURL !== "function") return Promise.resolve(false);
+
+    return new Promise((resolve) => {
+      qrLibrary.toDataURL(
+        homepageUrl,
+        { width: 220, margin: 1, errorCorrectionLevel: "M" },
+        (error, url) => {
+          if (error || !url) {
+            resolve(false);
+            return;
+          }
+
+          qrImage.src = url;
+          qrImage.onerror = null;
+          resolve(true);
+        }
+      );
+    });
   };
 
-  tryLoadQrSource();
-  qrImage.setAttribute("data-homepage-url", homepageUrl);
+  generateLocalQrCode()
+    .then((generated) => {
+      if (generated) return true;
+      return loadScriptSequentially(QR_CODE_SCRIPT_SOURCES, () => Boolean(window.QRCode)).then(() => generateLocalQrCode());
+    })
+    .then((generated) => {
+      if (!generated) {
+        tryRemoteQrImageFallback();
+      }
+    })
+    .catch(() => {
+      tryRemoteQrImageFallback();
+    });
 }
 
 function injectLeafletStylesheet() {
@@ -100,9 +145,9 @@ function injectLeafletStylesheet() {
   document.head.appendChild(linkEl);
 }
 
-function loadScriptSequentially(sources, index = 0) {
+function loadScriptSequentially(sources, isReadyCheck = () => typeof window.L !== "undefined", index = 0) {
   return new Promise((resolve) => {
-    if (typeof window.L !== "undefined") {
+    if (isReadyCheck()) {
       resolve(true);
       return;
     }
@@ -116,13 +161,13 @@ function loadScriptSequentially(sources, index = 0) {
     const existingTag = document.querySelector(`script[src="${source}"]`);
     if (existingTag) {
       if (existingTag.dataset.loaded === "true") {
-        resolve(typeof window.L !== "undefined");
+        resolve(isReadyCheck());
         return;
       }
 
-      existingTag.addEventListener("load", () => resolve(typeof window.L !== "undefined"), { once: true });
+      existingTag.addEventListener("load", () => resolve(isReadyCheck()), { once: true });
       existingTag.addEventListener("error", () => {
-        loadScriptSequentially(sources, index + 1).then(resolve);
+        loadScriptSequentially(sources, isReadyCheck, index + 1).then(resolve);
       }, { once: true });
       return;
     }
@@ -132,11 +177,11 @@ function loadScriptSequentially(sources, index = 0) {
     scriptEl.async = true;
     scriptEl.addEventListener("load", () => {
       scriptEl.dataset.loaded = "true";
-      resolve(typeof window.L !== "undefined");
+      resolve(isReadyCheck());
     }, { once: true });
     scriptEl.addEventListener("error", () => {
       scriptEl.remove();
-      loadScriptSequentially(sources, index + 1).then(resolve);
+      loadScriptSequentially(sources, isReadyCheck, index + 1).then(resolve);
     }, { once: true });
     document.head.appendChild(scriptEl);
   });
@@ -147,7 +192,7 @@ function ensureLeafletReady() {
   if (leafletReadyPromise) return leafletReadyPromise;
 
   injectLeafletStylesheet();
-  leafletReadyPromise = loadScriptSequentially(LEAFLET_SCRIPT_SOURCES).then((isReady) => {
+  leafletReadyPromise = loadScriptSequentially(LEAFLET_SCRIPT_SOURCES, () => typeof window.L !== "undefined").then((isReady) => {
     if (!isReady) {
       console.warn("Leaflet failed to load from all configured CDNs.");
     }
