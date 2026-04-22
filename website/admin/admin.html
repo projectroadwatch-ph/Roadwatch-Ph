@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+  <title>RoadWatch PH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+  <script>window.ROADWATCH_DEPLOYMENT_VERSION = "20260420b";</script>
+  <script>
+    (function preloadAdminTheme() {
+      const key = "roadwatchAdminTheme";
+      const darkQuery = "(prefers-color-scheme: dark)";
+      const stored = String(localStorage.getItem(key) || "").trim();
+      const prefersDark = window.matchMedia?.(darkQuery).matches;
+      const theme = stored === "light" || stored === "dark" ? stored : (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme === "light" ? "light" : "dark";
+    })();
+  </script>
+  <script src="../shared/update-manager.js?v=20260418a"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="admin.css?v=20260421c">
+</head>
+<body>
+  <main class="wrap">
+    <section id="loginPanel" class="card login-card login-card--gov">
+      <div class="login-gov-seal" aria-hidden="true">
+        <div class="login-gov-seal__inner"></div>
+      </div>
+
+      <p class="login-gov-text">Republic of the Philippines</p>
+      <h1 class="login-gov-title">RoadWatch PH</h1>
+      <p class="login-gov-subtitle"><span></span>Secure Admin Access<span></span></p>
+
+      <div class="login-gov-shell">
+        <h2>Secure Access Portal</h2>
+        <label class="login-field">
+          <span class="login-field__icon" aria-hidden="true">👤</span>
+          <input id="adminUsername" type="text" autocomplete="username" placeholder="Username" aria-label="Admin username">
+        </label>
+        <label class="login-field">
+          <span class="login-field__icon" aria-hidden="true">🔒</span>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" aria-label="Admin password">
+        </label>
+        <button id="loginBtn" type="button">Log In Securely</button>
+        <p id="loginFeedback" class="feedback" aria-live="polite"></p>
+        <div class="login-links" aria-label="Login help and navigation">
+          <a href="../public/index.html?page=home&rwv=20260413a" class="link login-home-link">← Back to Homepage</a>
+          <a href="#" class="link login-forgot">Forgot Password?</a>
+        </div>
+        <p class="login-disclaimer">Authorized personnel only. All activities are monitored.</p>
+      </div>
+
+      <p class="login-gov-footer">© 2026 Department of Transportation | RoadWatch PH</p>
+    </section>
+
+    <section id="dashboard" class="card hidden dashboard-shell" hidden>
+      <div class="admin-console-layout">
+      <aside id="adminSidebarNav" class="admin-sidebar" aria-label="Admin dashboard navigation">
+        <div class="admin-sidebar__brand">
+          <span class="admin-sidebar__logo">A</span>
+          <div>
+            <strong>RoadWatch <span>PH</span></strong>
+          </div>
+        </div>
+        <div class="admin-sidebar__nav">
+          <button type="button" id="sidebarOverviewToggle" class="admin-sidebar__link" data-nav-view="overview" aria-expanded="false" aria-controls="sidebarOverviewSections"><span class="material-symbols-rounded" aria-hidden="true">dashboard</span><span>Overview Hub</span></button>
+          <div id="sidebarOverviewSections" class="admin-sidebar__sections" aria-label="Home subsections">
+            <a href="#overviewSnapshotPanel">Operational Snapshot</a>
+            <a href="#overviewQueuePanel">Verification Queue</a>
+            <a href="#overviewMapPanel">Map Insights</a>
+            <a href="#overviewAnalyticsPanel">Analytics</a>
+          </div>
+          <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span class="material-symbols-rounded" aria-hidden="true">assignment</span><span>Case Workspace</span></button>
+          <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span class="material-symbols-rounded" aria-hidden="true">local_shipping</span><span>Dispatch & Routing</span></button>
+        </div>
+        <div class="admin-sidebar__report-total">
+          <p>Total Reports</p>
+          <strong id="sidebarTotalReportsCount">0</strong>
+          <small>This month</small>
+        </div>
+        <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
+      </aside>
+
+      <div class="admin-console-main">
+      <!-- NOTE: This is the live admin portal header. `admin-header.html` is a standalone prototype preview only. -->
+      <div class="console-topbar console-topbar--reference console-topbar--compact">
+        <div class="console-topbar__row">
+          <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
+            <span class="console-topbar__brand-logo material-symbols-rounded" aria-hidden="true">route</span>
+            <div class="console-topbar__brand-meta">
+              <strong>RoadWatch <span>PH</span></strong>
+              <small>Admin Command Center</small>
+            </div>
+          </div>
+          <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn sidebar-toggle-btn--divider" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
+          <label class="console-search">
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
+            <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
+          </label>
+          <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small topbar-hidden-meta">Last sync: 1 hour ago</p>
+          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme">Theme: Dark</button>
+          <div class="console-tools">
+            <div class="console-alert-wrap console-alert-wrap--attached">
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
+              </button>
+              <div id="notificationPanel" class="notification-panel" hidden>
+                <div class="notification-panel__header">
+                  <strong>Notifications</strong>
+                  <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+                </div>
+                <ul id="notificationPanelList" class="notification-panel__list"></ul>
+              </div>
+            </div>
+            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="material-symbols-rounded" aria-hidden="true">account_circle</span> Admin <span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
+          </div>
+        </div>
+      </div>
+
+      <section id="overviewView" class="dashboard-view">
+        <section class="overview-shell">
+          <article class="panel analytics-panel critical-overview-panel critical-overview-panel--hero">
+            <div class="critical-overview-top">
+              <div>
+                <h3>Critical Operations Overview</h3>
+                <p class="small">Prioritized insight into unresolved reports, response speed, and data quality.</p>
+              </div>
+              <button id="openTriageHeroBtn" type="button" class="secondary slim hero-cta">Review Urgent Reports</button>
+            </div>
+            <div class="critical-kpi-strip" aria-label="Critical performance summary cards">
+              <div class="kpi-pill analyticsCard">
+                <span class="analyticsLabel">Total Reports</span>
+                <strong id="totalReportsCount">0</strong>
+              </div>
+              <div class="kpi-pill analyticsCard analyticsCard--alert">
+                <span class="analyticsLabel">Ongoing Reports</span>
+                <strong id="pendingReportsCount">0</strong>
+              </div>
+              <div class="kpi-pill analyticsCard">
+                <span class="analyticsLabel">Resolved Today</span>
+                <strong id="repairedReportsCount">0</strong>
+              </div>
+              <div class="kpi-pill analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">Average Response (days)</span>
+                <strong id="avgResponseDays">0</strong>
+              </div>
+            </div>
+            <div class="ai-autopilot-bar">
+              <div>
+                <p class="eyebrow">Operations Copilot</p>
+                <strong id="aiAutopilotSummary">Analyzing queue for response optimization…</strong>
+              </div>
+              <button id="runSmartDispatchBtn" type="button" class="secondary slim">Run Smart Dispatch</button>
+            </div>
+            <div id="executiveSummary" class="executiveSummary"></div>
+            <details id="secondaryKpisDetails" class="secondary-kpis">
+              <summary>Show supporting metrics</summary>
+              <div id="analyticsGrid" class="analyticsGrid analyticsGrid--supporting">
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Verified</span>
+                <strong id="verifiedReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">In Progress</span>
+                <strong id="inProgressReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">Needs Verification</span>
+                <strong id="needsVerificationCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--alert">
+                <span class="analyticsLabel">Flagged Reports</span>
+                <strong id="flaggedReportsCount">0</strong>
+              </div>
+              <div class="analyticsCard analyticsCard--warn">
+                <span class="analyticsLabel">High Priority Cases</span>
+                <strong id="highPriorityCount">0</strong>
+              </div>
+              <div class="analyticsCard">
+                <span class="analyticsLabel">Data Quality Score</span>
+                <strong id="avgQualityScore">0%</strong>
+              </div>
+              </div>
+            </details>
+          </article>
+
+          <div class="overview-main-grid overview-main-grid--organized">
+            <article id="overviewSnapshotPanel" class="panel chart-stretch overview-panel overview-panel--snapshot">
+              <div class="row">
+                <h3>Operational Snapshot</h3>
+                <div class="header-actions">
+                  <label class="inlineControl compact">Scope
+                    <select>
+                      <option>All reports</option>
+                      <option>Urgent only</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Location
+                    <select>
+                      <option>All barangays</option>
+                      <option>Top hotspots</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <p class="small">Quick status pulse for total, pending, and verified entries in the queue.</p>
+              <div class="snapshot-kpis">
+                <div class="snapshot-card">
+                  <div class="snapshot-card__icon snapshot-card__icon--total" aria-hidden="true">
+                    <span class="material-symbols-rounded">description</span>
+                  </div>
+                  <div class="snapshot-card__body">
+                    <span>Total Reports</span>
+                    <strong id="snapshotTotalCount">0</strong>
+                    <small>All entries</small>
+                  </div>
+                </div>
+                <div class="snapshot-card snapshot-card--alert">
+                  <div class="snapshot-card__icon snapshot-card__icon--alert" aria-hidden="true">
+                    <span class="material-symbols-rounded">history</span>
+                  </div>
+                  <div class="snapshot-card__body">
+                    <span>Pending Review</span>
+                    <strong id="snapshotPendingCount">0</strong>
+                    <small>Needs attention</small>
+                  </div>
+                </div>
+                <div class="snapshot-card snapshot-card--verified">
+                  <div class="snapshot-card__icon snapshot-card__icon--verified" aria-hidden="true">
+                    <span class="material-symbols-rounded">check_circle</span>
+                  </div>
+                  <div class="snapshot-card__body">
+                    <span>Verified</span>
+                    <strong id="snapshotVerifiedCount">0</strong>
+                    <small>Recently verified</small>
+                  </div>
+                </div>
+              </div>
+              <div class="snapshot-detail-grid">
+                <section class="snapshot-detail-card">
+                  <h4>Queue Overview (This Week)</h4>
+                  <div id="snapshotQueueBars" class="snapshot-weekly-bars" role="img" aria-label="Weekly queue overview bar chart"></div>
+                </section>
+                <section class="snapshot-detail-card">
+                  <h4>Recent Activity</h4>
+                  <ul id="snapshotRecentActivity" class="snapshot-activity-list"></ul>
+                  <a href="#reportsSection" class="snapshot-detail-link">View all reports <span aria-hidden="true">→</span></a>
+                </section>
+              </div>
+            </article>
+
+            <article id="overviewStatusPanel" class="panel chart-stretch overview-panel overview-panel--status">
+              <div class="row">
+                <h3>Status Distribution</h3>
+                <div class="header-actions">
+                  <label class="inlineControl compact">Barangay
+                    <select>
+                      <option>All barangays</option>
+                      <option>Top 5 hotspots</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Type
+                    <select>
+                      <option>All issue types</option>
+                      <option>Potholes</option>
+                      <option>Flooded street</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <p class="small">Workflow state across pending, verification, in-progress, and repaired queues.</p>
+              <div class="chart-panel compact-chart">
+                <canvas id="statusChart" width="960" height="280" aria-label="Bar chart showing report status counts" role="img"></canvas>
+                <div id="statusChartTooltip" class="chart-tooltip" hidden></div>
+              </div>
+              <div class="chart-accessibility" aria-label="Status chart quick filters">
+                <p class="small">Quick filters</p>
+                <div class="chart-accessibility__actions">
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Pending">Pending</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Verified">Verified</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="In Progress">In Progress</button>
+                  <button type="button" class="secondary slim status-filter-btn" data-status-filter="Repaired">Repaired</button>
+                </div>
+                <ul id="statusChartSummaryList" class="status-chart-summary-list"></ul>
+              </div>
+            </article>
+
+            <article id="overviewQueuePanel" class="panel chart-stretch full-width-panel overview-panel overview-panel--verification">
+              <div class="row">
+                <h3>Verification & Moderation Queue</h3>
+                <div class="header-actions">
+                  <label class="inlineControl compact">Queue
+                    <select>
+                      <option>Needs verification</option>
+                      <option>Flagged entries</option>
+                      <option>All unresolved</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <p class="small">Moderation lane styled for urgent verifications and false-positive filtering.</p>
+              <div id="overviewQueueBody" class="verificationQueueCards"></div>
+            </article>
+
+            <article id="overviewBarangayPanel" class="panel chart-stretch overview-panel overview-panel--barangay">
+              <div class="row">
+                <h3>Reports Per Barangay</h3>
+                <div class="header-actions">
+                  <span class="section-chip muted-chip">All Barangay</span>
+                  <span class="section-chip muted-chip">Frequency</span>
+                </div>
+              </div>
+              <p class="small">Barangay hotspots inspired by dashboard-style horizontal load bars.</p>
+              <div class="heatmapWrap">
+                <div id="hotspotHeatmap" class="hotspotHeatmap"></div>
+              </div>
+            </article>
+
+            <article id="overviewResponsePanel" class="panel chart-stretch overview-panel overview-panel--response">
+              <div class="row">
+                <h3>Response Time</h3>
+                <div class="header-actions">
+                  <label class="inlineControl compact">Average
+                    <select id="reportingRange">
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly" selected>Monthly</option>
+                      <option value="daily">Daily</option>
+                    </select>
+                  </label>
+                  <label class="inlineControl compact">Forecast
+                    <select id="forecastRange">
+                      <option value="7" selected>Next 7 days</option>
+                      <option value="14">Next 14 days</option>
+                      <option value="30">Next 30 days</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <p class="small" id="reportingSummary">Road condition trends and hotspot analysis for LGU planning.</p>
+              <div class="chart-panel">
+                <canvas id="trendChart" width="960" height="280" aria-label="Line chart showing road issue trends" role="img"></canvas>
+              </div>
+            </article>
+
+            <article id="overviewMapPanel" class="panel chart-stretch overview-map-panel full-width-panel overview-panel overview-panel--map">
+              <div class="row">
+                <h3>Live Road Issue Map</h3>
+                <p class="small">Barangay-level map markers for urgent, moderate, and low-risk reports.</p>
+              </div>
+              <p id="overviewMapSummary" class="small">Showing all geotagged reports.</p>
+            <div class="mapLegend" aria-label="Pin map legend">
+              <span class="legendItem"><span class="legendDot legend-pending"></span> Pending (default)</span>
+              <span class="legendItem"><span class="legendDot legend-verified"></span> Verified</span>
+              <span class="legendItem"><span class="legendDot legend-progress"></span> In Progress</span>
+              <span class="legendItem"><span class="legendDot legend-repaired"></span> Repaired</span>
+            </div>
+            <div id="overviewPinMap" class="pinMap pinMap--large" role="img" aria-label="Map showing all pinned report locations"></div>
+          </article>
+
+            <article id="overviewAnalyticsPanel" class="panel chart-stretch data-analytics-panel overview-panel overview-panel--analytics">
+            <div class="row data-analytics-header">
+              <h3>Data Analytics</h3>
+              <div class="data-analytics-filters">
+                <label class="analytics-filter-control">
+                  Barangay
+                  <select id="analyticsBarangayFilter">
+                    <option value="all">All barangays</option>
+                  </select>
+                </label>
+                <label class="analytics-filter-control">
+                  Issue Type
+                  <select id="analyticsIssueTypeFilter">
+                    <option value="all">All issue types</option>
+                  </select>
+                </label>
+                <label class="analytics-filter-control">
+                  Status
+                  <select id="analyticsStatusFilter">
+                    <option value="all">All statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Verified">Verified</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Repaired">Repaired</option>
+                  </select>
+                </label>
+                <label class="analytics-filter-control">
+                  Severity
+                  <select id="analyticsSeverityFilter">
+                    <option value="all">All levels</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="severity-strip dashboard-severity-strip">
+              <div class="severity-card severity-card--urgent">
+                <div class="severity-card-top">
+                  <span>Urgent</span>
+                  <strong id="severityUrgentCount">0</strong>
+                </div>
+                <div class="severity-meter"><span id="severityUrgentMeter"></span></div>
+                <small id="severityUrgentMeta">No data yet</small>
+              </div>
+              <div class="severity-card severity-card--moderate">
+                <div class="severity-card-top">
+                  <span>Moderate</span>
+                  <strong id="severityModerateCount">0</strong>
+                </div>
+                <div class="severity-meter"><span id="severityModerateMeter"></span></div>
+                <small id="severityModerateMeta">No data yet</small>
+              </div>
+              <div class="severity-card severity-card--low">
+                <div class="severity-card-top">
+                  <span>Low</span>
+                  <strong id="severityLowCount">0</strong>
+                </div>
+                <div class="severity-meter"><span id="severityLowMeter"></span></div>
+                <small id="severityLowMeta">No data yet</small>
+              </div>
+            </div>
+            <div class="analytics-timeline">
+              <div class="row">
+                <h4>Issue Volume Timeline (Overview + Analytics)</h4>
+                <p class="small" id="analyticsTimelineSummary">Daily trend of logged reports for rapid hotspot spotting.</p>
+              </div>
+              <div id="analyticsTimelineBars" class="analyticsTimelineBars" aria-live="polite"></div>
+            </div>
+              <div class="row export-row">
+                <button id="exportCsvBtn" type="button" class="secondary slim">Export CSV</button>
+                <button id="exportPdfBtn" type="button" class="secondary slim">Export PDF</button>
+              </div>
+            </article>
+
+        </section>
+      </section>
+
+      <section id="managementView" class="dashboard-view" hidden>
+        <section class="management-shell-head">
+          <header class="management-header panel">
+            <div>
+              <p class="eyebrow">Case Operations</p>
+              <h3>Report Management Workspace</h3>
+              <p class="small">Use Report Workspace for updates, then switch to Dispatch Board when you need to focus on urgent queues.</p>
+            </div>
+          </header>
+          <nav class="dashboard-nav management-nav" aria-label="Report management panels">
+            <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
+            <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Dispatch Board</button>
+          </nav>
+        </section>
+        <section class="management-kpi-grid" aria-label="Management workspace summary">
+          <article class="management-kpi-card">
+            <p>Filtered Queue</p>
+            <strong id="managementFilteredCount">0</strong>
+            <small>Reports that match your current filters.</small>
+          </article>
+          <article class="management-kpi-card management-kpi-card--warn">
+            <p>Urgent in View</p>
+            <strong id="managementUrgentCount">0</strong>
+            <small>Priority score 75+ reports requiring immediate action.</small>
+          </article>
+          <article class="management-kpi-card">
+            <p>Needs Verification</p>
+            <strong id="managementVerificationCount">0</strong>
+            <small>Reports missing proof, details, or location confidence.</small>
+          </article>
+          <article class="management-kpi-card">
+            <p>Selected Cases</p>
+            <strong id="managementSelectedCount">0</strong>
+            <small>Cases staged for bulk updates or project grouping.</small>
+          </article>
+        </section>
+        <section class="command-center">
+          <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
+            <div class="row">
+              <h3>Dispatch Board</h3>
+              <button id="refreshReportsBtn" type="button" class="secondary slim">Refresh</button>
+            </div>
+            <p class="small">Monitor priority, verification, and SLA risk in one place, then jump back to Report Workspace to apply updates.</p>
+            <label class="inlineControl compact">Urgent if open for
+              <select id="urgencyThresholdDays">
+                <option value="3">3+ days</option>
+                <option value="5">5+ days</option>
+                <option value="7" selected>7+ days</option>
+                <option value="14">14+ days</option>
+              </select>
+            </label>
+            <div class="queue-section">
+              <h4>Priority Queue</h4>
+              <ul id="priorityQueueList" class="priorityQueueList"></ul>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>Verification & Moderation</h4>
+                <label class="inlineControl compact">Show
+                  <select id="verificationFilter">
+                    <option value="all">All reports</option>
+                    <option value="verification">Needs verification</option>
+                    <option value="flagged">Spam/abuse flagged</option>
+                  </select>
+                </label>
+              </div>
+              <ul id="verificationQueueList" class="priorityQueueList"></ul>
+            </div>
+            <div class="queue-section">
+              <div class="row">
+                <h4>SLA & Escalation</h4>
+                <label class="inlineControl compact">Show
+                  <select id="slaFilter">
+                    <option value="all">All unresolved</option>
+                    <option value="atRisk">At risk</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+                </label>
+              </div>
+              <ul id="slaQueueList" class="priorityQueueList"></ul>
+            </div>
+          </aside>
+
+          <section id="workspacePane" class="command-pane command-pane--workspace analytics-panel">
+            <div class="row workspace-pane-header">
+              <div>
+                <p class="small">Run focused queue operations with quick filters, saved views, and bulk actions.</p>
+              </div>
+              <div class="workspace-header-badges" aria-label="Workspace highlights">
+                <span class="section-chip">Live Filters</span>
+                <span class="section-chip">Bulk Actions</span>
+                <span class="section-chip">Kanban + Table</span>
+              </div>
+            </div>
+            <div class="workspace-organizer">
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 1 · Filter and prioritize</p>
+                <p class="small">Use search, status, quality, and triage presets to narrow into your action queue.</p>
+              </article>
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 2 · Review and select</p>
+                <p class="small">Select records that share a workflow objective before running a bulk operation.</p>
+              </article>
+              <article class="workspace-lane">
+                <p class="workspace-lane__label">Step 3 · Update and publish</p>
+                <p class="small">Save status updates, timeline notes, and closure proof to keep the public feed accurate.</p>
+              </article>
+            </div>
+            <div class="workspace-toolbar-shell">
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Quick Filters</p>
+            <div class="toolbar toolbar--primary">
+              <label class="inlineControl workspace-search-control">Search
+                <input id="reportSearch" type="search" placeholder="Tracking #, name, location, or issue">
+              </label>
+              <label class="inlineControl">Status Filter
+                <select id="statusFilter">
+                  <option value="all">All statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <button id="urgentOnlyToggleBtn" type="button" class="secondary slim" aria-pressed="false">Urgent only: Off</button>
+              <button id="clearFiltersBtn" type="button" class="secondary slim">Clear filters</button>
+            </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Queue Focus</p>
+            <div class="toolbar triage-toolbar">
+              <label class="inlineControl">Category
+                <select id="categoryFilter">
+                  <option value="all">All categories</option>
+                </select>
+              </label>
+              <label class="inlineControl">Barangay
+                <select id="barangayFilter">
+                  <option value="all">All barangays</option>
+                </select>
+              </label>
+              <label class="inlineControl">Data Quality
+                <select id="qualityFilter">
+                  <option value="all">All scores</option>
+                  <option value="high">High (80-100)</option>
+                  <option value="medium">Medium (50-79)</option>
+                  <option value="low">Low (0-49)</option>
+                </select>
+              </label>
+              <label class="inlineControl">Triage Preset
+                <select id="triagePreset">
+                  <option value="all">All reports</option>
+                  <option value="highRisk">High-risk unresolved</option>
+                  <option value="needsVerification">Needs verification</option>
+                  <option value="flagged">Flagged spam/abuse</option>
+                  <option value="lowQuality">Low data quality</option>
+                  <option value="duplicates">Possible duplicates</option>
+                  <option value="critical">Critical public risk</option>
+                </select>
+              </label>
+            </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Workspace View Settings</p>
+            <div class="toolbar saved-view-toolbar">
+              <label class="inlineControl">Saved View
+                <select id="savedViewSelect">
+                  <option value="">Choose a saved view</option>
+                </select>
+              </label>
+              <label class="inlineControl">Columns
+                <select id="columnPresetSelect">
+                  <option value="operations" selected>Operations</option>
+                  <option value="triage">Triage</option>
+                </select>
+              </label>
+              <label class="inlineControl">Sort By
+                <select id="sortBySelect">
+                  <option value="priorityDesc" selected>Priority (High → Low)</option>
+                  <option value="priorityAsc">Priority (Low → High)</option>
+                  <option value="newest">Newest reports</option>
+                  <option value="oldest">Oldest reports</option>
+                  <option value="qualityDesc">Data quality (High → Low)</option>
+                  <option value="qualityAsc">Data quality (Low → High)</option>
+                </select>
+              </label>
+              <button id="saveCurrentViewBtn" type="button" class="secondary slim">Save current view</button>
+              <button id="deleteSavedViewBtn" type="button" class="secondary slim">Delete saved view</button>
+            </div>
+            <div class="toolbar saved-view-toolbar saved-view-toolbar--compact">
+              <button id="toggleDensityBtn" type="button" class="secondary slim" aria-pressed="false">Dense mode: Off</button>
+              <button id="autoUiImproverBtn" type="button" class="secondary slim" aria-pressed="false">Auto UI Improver: Off</button>
+            </div>
+            </div>
+            <div class="workspace-toolbar-group">
+              <p class="workspace-toolbar-group__title">Bulk Actions</p>
+            <div class="toolbar selection-toolbar">
+              <label class="inlineControl">Bulk Status
+                <select id="bulkStatusValue">
+                  <option value="Pending">Pending</option>
+                  <option value="Verified">Verified</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Repaired">Repaired</option>
+                </select>
+              </label>
+              <button id="selectVisibleBtn" type="button" class="secondary slim">Select visible</button>
+              <button id="applyBulkStatusBtn" type="button" class="secondary slim">Apply to selected</button>
+              <button id="clearSelectionBtn" type="button" class="secondary slim">Clear selection</button>
+              <p id="selectionSummary" class="small">0 selected</p>
+            </div>
+            </div>
+            </div>
+            <div id="activeFilterChips" class="active-filter-chips" aria-live="polite"></div>
+            <p id="filterSummary" class="small"></p>
+            <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
+            <div class="workspace-view-toggle" role="group" aria-label="Workspace layout">
+              <button id="showCardViewBtn" type="button" class="secondary slim nav-btn is-active">Cards</button>
+            </div>
+            <section id="cardWorkspace" class="card-workspace" aria-label="Card report workspace">
+              <header class="card-workspace__hero">
+                <div>
+                  <h4>Report Management</h4>
+                  <p class="small">Monitor and manage road reports across the Philippines.</p>
+                </div>
+                <div class="card-workspace__toolbar">
+                <label class="inlineControl compact">Severity
+                  <select id="severityQuickFilter">
+                    <option value="all">All Severity</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </label>
+                <label class="inlineControl compact">Status
+                  <select id="statusQuickFilter">
+                    <option value="all">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Verified">Verified</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Repaired">Repaired</option>
+                  </select>
+                </label>
+                </div>
+                <button id="newReportCardBtn" type="button" class="primary slim">＋ New Report</button>
+              </header>
+              <div id="reportCardsGrid" class="report-cards-grid"></div>
+            </section>
+            <p id="tableLoadingState" class="table-loading" hidden>Saving update...</p>
+            <div id="tableWorkspace" class="tableWrap management-table-wrap" hidden aria-hidden="true">
+              <table class="management-table">
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Submission Time</th>
+                    <th>Tracking #</th>
+                    <th>Reporter</th>
+                    <th>Location</th>
+                    <th>Category</th>
+                    <th>Issue Type</th>
+                    <th>Data Quality</th>
+                    <th>Priority</th>
+                    <th>Why Urgent</th>
+                    <th>Verification</th>
+                    <th>Severity</th>
+                    <th>Assigned To</th>
+                    <th>SLA Due</th>
+                    <th>Escalation</th>
+                    <th>Project</th>
+                    <th>Photo</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="reportsBody"></tbody>
+              </table>
+            </div>
+            <div class="paginationBar">
+              <p id="paginationSummary" class="small">Page 1 of 1</p>
+              <div class="paginationControls">
+                <label class="inlineControl compact">Rows
+                  <select id="rowsPerPageSelect">
+                    <option value="15" selected>15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                  </select>
+                </label>
+                <button id="prevPageBtn" type="button" class="secondary slim">Previous</button>
+                <button id="nextPageBtn" type="button" class="secondary slim">Next</button>
+              </div>
+            </div>
+            <p id="reportsFeedback" class="feedback"></p>
+
+          </section>
+        </section>
+      </section>
+
+    </section>
+    </div>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="../shared/data-layer.js?v=20260413a"></script>
+  <script src="admin-data-layer.js?v=20260415a"></script>
+  <script src="admin-ui.js?v=20260420a"></script>
+  <script>
+    window.RoadwatchAdminAuthConfig = {
+      credentials: [
+        {
+          username: "roadwatchph",
+          password: "roadwatchph",
+          role: "Super Admin"
+        }
+      ]
+    };
+  </script>
+  <script src="admin-auth.js?v=20260420a"></script>
+  <script src="admin-home.js?v=20260415a"></script>
+  <script src="admin-workspace.js?v=20260415a"></script>
+  <script src="admin-triage.js?v=20260415a"></script>
+  <script src="admin-theme.js?v=20260421a"></script>
+  <script src="admin.js?v=20260422a"></script>
+</body>
+</html>
