@@ -198,11 +198,13 @@ let activeKanbanTracking = "";
 let autoUiImproverIntervalId = null;
 let isLoadingReports = false;
 let workspacePrefsPersistTimeoutId = null;
+let realtimeSyncIntervalId = null;
 
 const REPORT_ENDPOINTS = adminDataLayer.createReportEndpoints();
 const STATUS_OPTIONS = ["Pending", "Verified", "In Progress", "Repaired"];
 const SESSION_MAX_MS = 8 * 60 * 60 * 1000;
 const STALE_THRESHOLD_MS = 10 * 60 * 1000;
+const REALTIME_SYNC_INTERVAL_MS = 30000;
 
 const adminTheme = window.RoadwatchAdminTheme || {
   constants: {
@@ -287,11 +289,6 @@ async function loadJsonp(endpoint) {
 
 function isLikelyCorsBlockedRequest(endpoint, error) {
   return adminDataLayer.isLikelyCorsBlockedRequest(endpoint, error);
-}
-
-function getCachedLocalReports() {
-  const reports = window.RoadwatchDataLayer?.getLocalReports?.();
-  return Array.isArray(reports) ? reports : [];
 }
 
 function parseReports(payload) {
@@ -746,6 +743,20 @@ function startStaleDataMonitor() {
   staleDataIntervalId = window.setInterval(refreshStaleDataBanner, 60000);
   refreshStaleDataBanner();
   updateSyncMetaStatus();
+}
+
+function stopRealtimeSync() {
+  if (!realtimeSyncIntervalId) return;
+  window.clearInterval(realtimeSyncIntervalId);
+  realtimeSyncIntervalId = null;
+}
+
+function startRealtimeSync() {
+  stopRealtimeSync();
+  realtimeSyncIntervalId = window.setInterval(() => {
+    if (document.hidden) return;
+    loadReports();
+  }, REALTIME_SYNC_INTERVAL_MS);
 }
 
 function formatRelativeAgeFromDate(report) {
@@ -1444,6 +1455,7 @@ function applyAuthUI() {
     document.getElementById("adminPassword").value = "";
     renderAdminIdentity();
     startStaleDataMonitor();
+    startRealtimeSync();
     loadReports();
     if (isAutoUiImproverEnabled()) setAutoUiImproverEnabled(true);
     ensureDashboardContentVisibility();
@@ -1454,6 +1466,7 @@ function applyAuthUI() {
   renderAdminIdentity();
   refreshStaleDataBanner();
   updateSyncMetaStatus();
+  stopRealtimeSync();
   stopAutoUiImprover();
 }
 
@@ -3695,9 +3708,6 @@ async function loadReports() {
   setTableLoadingState(true, "Loading latest reports...");
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
 
-  // Use Google Sheet values as the single source of truth to avoid stale local status mismatches.
-  localStorage.removeItem(ADMIN_STATUS_OVERRIDES_KEY);
-
   try {
     let selectedPayload = null;
     let selectedParsedReports = [];
@@ -3739,27 +3749,6 @@ async function loadReports() {
       .map(applyCaseMetadata)
     );
     if (allReports.length === 0) {
-      const localFallbackReports = dedupeReports(
-        getCachedLocalReports()
-          .map(normalizeReport)
-          .map(applyCaseMetadata)
-      );
-
-      if (localFallbackReports.length > 0) {
-        allReports = localFallbackReports;
-        activeReportsSource = `${sourceLabel} (cached local fallback)`;
-        setSheetSyncStatus(
-          `Connected to ${sourceLabel}, but live response was empty. Showing ${allReports.length} cached local report(s).`,
-          "warn"
-        );
-        updateSyncMetaStatus();
-        refreshStaleDataBanner();
-        applyFiltersAndRender();
-        setFeedback("reportsFeedback", `Showing ${allReports.length} cached local report(s) while waiting for live sheet data.`, true);
-        setTableLoadingState(false);
-        return;
-      }
-
       if (reportsBody) {
         reportsBody.innerHTML = '<tr><td colspan="19">No reports found.</td></tr>';
       }
@@ -3787,26 +3776,14 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s) from ${sourceLabel}.`);
   } catch (error) {
-    const localFallbackReports = dedupeReports(
-      getCachedLocalReports()
-        .map(normalizeReport)
-        .map(applyCaseMetadata)
-    );
-
-    if (localFallbackReports.length > 0) {
-      allReports = localFallbackReports;
-      selectedReports.clear();
-      renderSelectionSummary();
-      currentPage = 1;
-      activeReportsSource = "Local browser cache";
+    if (allReports.length > 0) {
       setSheetSyncStatus(
-        `Google Sheets unreachable. Showing ${allReports.length} cached local report(s) from this browser.`,
+        `Live sync failed. Showing last successful data from ${activeReportsSource || "Google Sheets"}.`,
         "warn"
       );
       updateSyncMetaStatus();
       refreshStaleDataBanner();
-      applyFiltersAndRender();
-      setFeedback("reportsFeedback", `${error.message} Using cached local reports as fallback.`, true);
+      setFeedback("reportsFeedback", `Unable to refresh real-time data: ${error.message}`, true);
       return;
     }
 
@@ -4314,6 +4291,12 @@ document.addEventListener("keydown", (event) => {
     currentPage = Math.max(1, currentPage - 1);
     applyFiltersAndRender();
   }
+});
+
+document.addEventListener("visibilitychange", () => {
+  const isAuthed = readAuthStorage(ADMIN_SESSION_KEY) === "true";
+  if (!isAuthed || document.hidden) return;
+  loadReports();
 });
 
 setDashboardView("overview");
