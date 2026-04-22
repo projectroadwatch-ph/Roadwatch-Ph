@@ -10250,3 +10250,52 @@ body.admin-authenticated .console-topbar--inspiration .console-chip__name {
   font-weight: 500;
   text-transform: lowercase;
 }
+
+/* 2026-04-22: Admin portal header resilience fixes (overflow + responsive controls). */
+body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand {
+  min-width: 0;
+  flex: 1 1 230px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
+  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-search {
+  flex: 1 1 320px;
+  min-width: 220px;
+  margin-left: 0;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-tools {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1200px) {
+  body.admin-authenticated .console-topbar--inspiration .sidebar-toggle-btn {
+    display: inline-flex;
+  }
+
+  body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
+    padding-inline: 14px;
+  }
+}
+
+@media (max-width: 820px) {
+  body.admin-authenticated .console-topbar--inspiration .console-tools {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  body.admin-authenticated .console-topbar--inspiration .console-chip__name {
+    display: none;
+  }
+}
