@@ -1,6 +1,12 @@
 const ADMIN_SESSION_KEY = "roadwatchAdminAuthed";
-const adminDataLayer = window.RoadwatchAdminDataLayer;
-const API_URL = adminDataLayer.apiUrl;
+const adminDataLayer = window.RoadwatchAdminDataLayer || {
+  apiUrl: "",
+  createReportEndpoints: () => [],
+  getStatusWriteEndpoints: () => [],
+  fetchApiPayload: async () => ({}),
+  loadJsonp: async () => ({}),
+  isLikelyCorsBlockedRequest: () => false
+};
 const ADMIN_CASE_META_KEY = "roadwatchAdminCaseMeta";
 const ADMIN_AUDIT_TRAIL_KEY = "roadwatchAdminAuditTrail";
 const ADMIN_CASE_TIMELINE_KEY = "roadwatchAdminCaseTimeline";
@@ -273,6 +279,14 @@ function getStatusWriteEndpoints() {
 
 async function fetchApiPayload(endpoint) {
   return adminDataLayer.fetchApiPayload(endpoint);
+}
+
+async function loadJsonp(endpoint) {
+  return adminDataLayer.loadJsonp(endpoint);
+}
+
+function isLikelyCorsBlockedRequest(endpoint, error) {
+  return adminDataLayer.isLikelyCorsBlockedRequest(endpoint, error);
 }
 
 function parseReports(payload) {
@@ -3373,8 +3387,8 @@ function getAnalyticsFilteredReports(reports) {
 }
 
 function getFilteredReports() {
-  const query = reportSearch.value.trim().toLowerCase();
-  const selectedStatus = statusFilter.value;
+  const query = String(reportSearch?.value || "").trim().toLowerCase();
+  const selectedStatus = String(statusFilter?.value || "all");
   const selectedSeverity = severityQuickFilter?.value || "all";
   const selectedCategory = categoryFilter?.value || "all";
   const selectedBarangay = barangayFilter?.value || "all";
@@ -3637,7 +3651,9 @@ function applyFiltersAndRender() {
 async function loadReports() {
   if (isLoadingReports) return;
   isLoadingReports = true;
-  reportsBody.innerHTML = '<tr><td colspan="19">Loading reports...</td></tr>';
+  if (reportsBody) {
+    reportsBody.innerHTML = '<tr><td colspan="19">Loading reports...</td></tr>';
+  }
   setTableLoadingState(true, "Loading latest reports...");
   setSheetSyncStatus("Checking Google Sheets connection…", "warn");
 
@@ -3650,15 +3666,21 @@ async function loadReports() {
     let sourceLabel = "";
     let lastError = null;
 
+    if (!Array.isArray(REPORT_ENDPOINTS) || REPORT_ENDPOINTS.length === 0) {
+      throw new Error("Admin data source is not configured. Set a valid Apps Script endpoint first.");
+    }
+
     const cacheBust = `cb=${Date.now()}`;
     for (const source of REPORT_ENDPOINTS) {
       try {
-        const separator = source.url.includes("?") ? "&" : "?";
-        const payload = await fetchApiPayload(`${source.url}${separator}action=getReports&${cacheBust}`);
+        const endpointUrl = String(source?.url || "").trim();
+        if (!endpointUrl) continue;
+        const separator = endpointUrl.includes("?") ? "&" : "?";
+        const payload = await fetchApiPayload(`${endpointUrl}${separator}action=getReports&${cacheBust}`);
         const parsedReports = parseReports(payload);
         selectedPayload = payload;
         selectedParsedReports = parsedReports;
-        sourceLabel = source.label;
+        sourceLabel = String(source?.label || "Google Sheets endpoint");
         break;
       } catch (error) {
         lastError = error;
@@ -3679,14 +3701,16 @@ async function loadReports() {
       .map(applyCaseMetadata)
     );
     if (allReports.length === 0) {
-      reportsBody.innerHTML = '<tr><td colspan="19">No reports found.</td></tr>';
+      if (reportsBody) {
+        reportsBody.innerHTML = '<tr><td colspan="19">No reports found.</td></tr>';
+      }
       renderAnalytics([]);
       renderPriorityQueue([]);
       renderSlaQueue([]);
       renderAuditTrail();
       renderCaseTimeline("");
       refreshReportingSection([]);
-      filterSummary.textContent = "No records to filter.";
+      if (filterSummary) filterSummary.textContent = "No records to filter.";
       activeReportsSource = sourceLabel;
       setLastSuccessfulSync(Date.now());
       setSheetSyncStatus(`Connected to ${sourceLabel} • Last sync ${formatSyncTime(Date.now())}.`, "ok");
