@@ -4,7 +4,19 @@
   const API_URL = "https://script.google.com/macros/s/AKfycbxZ7aoLwshceT4N_BCgOmYxkW6IL2Y-w0bF5ArLuOxehNBJl_PW05ze6RbYfB8E4JZ1/exec";
   const LOCAL_REPORTS_KEY = "roadwatchLocalReports";
   const SITE_SETTINGS_KEY = "roadwatchSiteSettings";
-  let localReportsCache = [];
+  let localReportsCache = loadStoredLocalReports();
+
+  function loadStoredLocalReports() {
+    try {
+      const raw = localStorage.getItem(LOCAL_REPORTS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.warn("Unable to read local reports cache", error);
+      return [];
+    }
+  }
 
   function withCacheBust(endpoint) {
     const separator = endpoint.includes("?") ? "&" : "?";
@@ -41,6 +53,11 @@
 
   function saveLocalReports(reports) {
     localReportsCache = Array.isArray(reports) ? [...reports] : [];
+    try {
+      localStorage.setItem(LOCAL_REPORTS_KEY, JSON.stringify(localReportsCache));
+    } catch (error) {
+      console.warn("Unable to persist local reports cache", error);
+    }
   }
 
   globalScope.RoadwatchDataLayer = {
