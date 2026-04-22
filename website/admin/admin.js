@@ -206,6 +206,12 @@ const SESSION_MAX_MS = 8 * 60 * 60 * 1000;
 const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 const REALTIME_SYNC_INTERVAL_MS = 30000;
 
+function setTextIfPresent(elementId, value) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+  element.textContent = value;
+}
+
 const adminTheme = window.RoadwatchAdminTheme || {
   constants: {
     ADMIN_THEME_KEY: "roadwatchAdminTheme",
@@ -3260,18 +3266,18 @@ function renderAnalytics(reports) {
     }
   });
 
-  document.getElementById("totalReportsCount").textContent = counts.total;
-  document.getElementById("pendingReportsCount").textContent = counts.pending;
-  document.getElementById("verifiedReportsCount").textContent = counts.verified;
-  document.getElementById("inProgressReportsCount").textContent = counts.inProgress;
-  document.getElementById("repairedReportsCount").textContent = counts.repaired;
-  document.getElementById("needsVerificationCount").textContent = counts.needsVerification;
-  document.getElementById("flaggedReportsCount").textContent = counts.flagged;
-  document.getElementById("avgQualityScore").textContent = `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`;
+  setTextIfPresent("totalReportsCount", String(counts.total));
+  setTextIfPresent("pendingReportsCount", String(counts.pending));
+  setTextIfPresent("verifiedReportsCount", String(counts.verified));
+  setTextIfPresent("inProgressReportsCount", String(counts.inProgress));
+  setTextIfPresent("repairedReportsCount", String(counts.repaired));
+  setTextIfPresent("needsVerificationCount", String(counts.needsVerification));
+  setTextIfPresent("flaggedReportsCount", String(counts.flagged));
+  setTextIfPresent("avgQualityScore", `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`);
   const avgResponseDays = document.getElementById("avgResponseDays");
   if (avgResponseDays) avgResponseDays.textContent = ageSamples ? totalAgeDays / ageSamples >= 10 ? Math.round(totalAgeDays / ageSamples) : (totalAgeDays / ageSamples).toFixed(1) : "0";
   const highPriorityCount = reports.filter((report) => getPriorityScore(report) >= 70).length;
-  document.getElementById("highPriorityCount").textContent = highPriorityCount;
+  setTextIfPresent("highPriorityCount", String(highPriorityCount));
 
   const snapshotTotal = document.getElementById("snapshotTotalCount");
   const snapshotPending = document.getElementById("snapshotPendingCount");
