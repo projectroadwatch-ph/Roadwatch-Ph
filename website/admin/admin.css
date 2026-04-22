@@ -10133,7 +10133,7 @@ body.admin-authenticated .admin-console-main > .dashboard-view {
   }
 }
 
-/* 2026-04-22: Match the compact top navigation to the approved light inspiration header. */
+/* 2026-04-22: Match the admin portal top bar to the approved dark reference. */
 body.admin-authenticated .sr-only {
   position: absolute;
   width: 1px;
@@ -10146,36 +10146,48 @@ body.admin-authenticated .sr-only {
 }
 
 body.admin-authenticated .console-topbar--inspiration {
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
-  min-height: 62px;
-  border-radius: 18px;
-  background: #f5f6f8;
-  border: 1px solid #e7e9ee;
-  box-shadow: none;
-  gap: 14px;
-  padding: 10px 20px;
+  min-height: 88px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #031e44 0%, #021939 100%);
+  border: 1px solid #123b75;
+  box-shadow: 0 16px 34px rgba(1, 11, 28, 0.45);
+  gap: 18px;
+  padding: 14px 26px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand {
-  min-width: 230px;
-  gap: 12px;
+  min-width: 280px;
+  gap: 14px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: linear-gradient(140deg, #1f6de2 0%, #3a7be9 100%);
-  box-shadow: 0 8px 18px rgba(27, 95, 206, 0.24);
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #1c6df2 0%, #0a56ca 100%);
+  box-shadow: 0 12px 24px rgba(6, 61, 149, 0.38);
+  position: relative;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-logo::before {
+  content: "🛣";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.45rem;
+  filter: saturate(0) brightness(3.6);
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
-  color: #2f3a48;
-  font-size: 1.9rem;
+  color: #edf3ff;
+  font-size: 2.35rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta small {
@@ -10187,35 +10199,35 @@ body.admin-authenticated .console-topbar--inspiration .sidebar-toggle-btn {
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search {
-  max-width: 520px;
-  margin-left: 10px;
-  border-radius: 999px;
-  border: 1px solid #d6dae2;
-  background: #f2f3f5;
-  box-shadow: none;
+  max-width: 620px;
+  margin-left: 4px;
+  border-radius: 24px;
+  border: 1px solid #1b4b88;
+  background: #07264f;
+  box-shadow: inset 0 0 0 1px rgba(23, 84, 158, 0.22);
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search input {
-  min-height: 40px;
-  font-size: 0.97rem;
+  min-height: 52px;
+  font-size: 1.02rem;
   background: transparent;
   border: 0;
-  color: #4d5560;
+  color: #eef4ff;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search input::placeholder {
-  color: #808894;
+  color: #92acd2;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-theme-btn,
 body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid #d9dde5;
-  background: #f9fafb;
-  color: #6c7480;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #1c4a83;
+  background: #0a2d58;
+  color: #dde9ff;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
@@ -10224,31 +10236,41 @@ body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-alert-btn__badge {
-  top: -2px;
-  right: -2px;
+  top: -4px;
+  right: -5px;
+  background: #ff4c63;
+  color: #fff;
+  border-color: #07264f;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-chip {
   border: 0;
   background: transparent;
-  min-height: 36px;
+  min-height: 44px;
   padding-inline: 0;
-  color: #2d3642;
-  gap: 9px;
+  color: #edf3ff;
+  gap: 11px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-chip__avatar {
-  width: 34px;
-  height: 34px;
-  background: #9ea8b6;
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle at 32% 30%, #c8d5ea 0%, #93a9c9 60%, #6d88b0 100%);
   color: transparent;
   box-shadow: none;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-chip__name {
-  font-size: 0.95rem;
+  font-size: 1.65rem;
   font-weight: 500;
   text-transform: lowercase;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-chip::after {
+  content: "▾";
+  font-size: 1.05rem;
+  color: #c8daf8;
+  margin-left: 4px;
 }
 
 /* 2026-04-22: Admin portal header resilience fixes (overflow + responsive controls). */
@@ -10259,18 +10281,18 @@ body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand {
   min-width: 0;
-  flex: 1 1 230px;
+  flex: 0 1 320px;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
-  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  font-size: clamp(1.5rem, 2vw, 2.35rem);
   line-height: 1.05;
   white-space: nowrap;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-search {
-  flex: 1 1 320px;
-  min-width: 220px;
+  flex: 1 1 450px;
+  min-width: 260px;
   margin-left: 0;
 }
 
