@@ -10120,3 +10120,121 @@ body.admin-authenticated .admin-console-main > .console-topbar--compact .console
     margin-left: 0;
   }
 }
+
+/* 2026-04-22: Match the compact top navigation to the approved light inspiration header. */
+body.admin-authenticated .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+body.admin-authenticated .console-topbar--inspiration {
+  padding-top: 12px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__row {
+  min-height: 62px;
+  border-radius: 18px;
+  background: #f5f6f8;
+  border: 1px solid #e7e9ee;
+  box-shadow: none;
+  gap: 14px;
+  padding: 10px 20px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand {
+  min-width: 230px;
+  gap: 12px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #1f6de2 0%, #3a7be9 100%);
+  box-shadow: 0 8px 18px rgba(27, 95, 206, 0.24);
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
+  color: #2f3a48;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta small {
+  display: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .sidebar-toggle-btn {
+  display: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-search {
+  max-width: 520px;
+  margin-left: 10px;
+  border-radius: 999px;
+  border: 1px solid #d6dae2;
+  background: #f2f3f5;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-search input {
+  min-height: 40px;
+  font-size: 0.97rem;
+  background: transparent;
+  border: 0;
+  color: #4d5560;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-search input::placeholder {
+  color: #808894;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-theme-btn,
+body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #d9dde5;
+  background: #f9fafb;
+  color: #6c7480;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-alert-btn {
+  border: 0;
+  background: transparent;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-alert-btn__badge {
+  top: -2px;
+  right: -2px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-chip {
+  border: 0;
+  background: transparent;
+  min-height: 36px;
+  padding-inline: 0;
+  color: #2d3642;
+  gap: 9px;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-chip__avatar {
+  width: 34px;
+  height: 34px;
+  background: #9ea8b6;
+  color: transparent;
+  box-shadow: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-chip__name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-transform: lowercase;
+}

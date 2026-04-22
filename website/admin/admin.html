@@ -88,13 +88,12 @@
 
       <div class="admin-console-main">
       <!-- NOTE: This is the live admin portal header used throughout the admin command center. -->
-      <div class="console-topbar console-topbar--reference console-topbar--compact">
+      <div class="console-topbar console-topbar--reference console-topbar--compact console-topbar--inspiration">
         <div class="console-topbar__row">
           <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
-            <span class="console-topbar__brand-logo material-symbols-rounded" aria-hidden="true">route</span>
+            <span class="console-topbar__brand-logo" aria-hidden="true"></span>
             <div class="console-topbar__brand-meta">
-              <strong>RoadWatch <span>PH</span></strong>
-              <small>Admin Command Center</small>
+              <strong>RoadWatch PH</strong>
             </div>
           </div>
           <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn sidebar-toggle-btn--divider" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
@@ -103,7 +102,7 @@
             <input id="dashboardSearch" type="search" placeholder="Search reports, location..." aria-label="Search dashboard content" title="Shortcut: / to focus search, then use g+w (workspace), g+t (triage), g+o (overview)">
           </label>
           <p id="sessionSummaryBadge" class="console-status-pill console-status-pill--search small topbar-hidden-meta">Last sync: 1 hour ago</p>
-          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme">Theme: Dark</button>
+          <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn topbar-hidden-meta" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
           <div class="console-tools">
             <div class="console-alert-wrap console-alert-wrap--attached">
               <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
@@ -118,7 +117,7 @@
                 <ul id="notificationPanelList" class="notification-panel__list"></ul>
               </div>
             </div>
-            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="material-symbols-rounded" aria-hidden="true">account_circle</span> Admin <span class="material-symbols-rounded" aria-hidden="true">expand_more</span></button>
+            <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span></button>
           </div>
         </div>
       </div>
