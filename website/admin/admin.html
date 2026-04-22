@@ -452,12 +452,6 @@
       </section>
 
       <section id="managementView" class="dashboard-view" hidden>
-        <section class="management-shell-head">
-          <nav class="dashboard-nav management-nav" aria-label="Report management panels">
-            <button id="showWorkspacePaneBtn" type="button" class="secondary nav-btn is-active">Report Workspace</button>
-            <button id="showTriagePaneBtn" type="button" class="secondary nav-btn">Dispatch Board</button>
-          </nav>
-        </section>
         <section class="command-center">
           <aside id="triagePane" class="command-pane command-pane--triage analytics-panel" hidden>
             <div class="row">
@@ -507,9 +501,6 @@
 
           <section id="workspacePane" class="command-pane command-pane--workspace analytics-panel">
             <p id="staleDataBanner" class="small stale-data-banner" hidden>Data may be stale. Please sync now.</p>
-            <div class="workspace-view-toggle" role="group" aria-label="Workspace layout">
-              <button id="showCardViewBtn" type="button" class="secondary slim nav-btn is-active">Cards</button>
-            </div>
             <section id="cardWorkspace" class="card-workspace" aria-label="Card report workspace">
               <header class="card-workspace__hero">
                 <div>
