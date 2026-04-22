@@ -6172,6 +6172,26 @@ body.admin-authenticated .console-search input {
   margin-left: 4px;
 }
 
+/* Guardrail: prevent accidental admin workspace blank state from future overrides. */
+body.admin-authenticated #managementView:not([hidden]) .management-shell-head,
+body.admin-authenticated #managementView:not([hidden]) .management-kpi-grid,
+body.admin-authenticated #managementView:not([hidden]) .workspace-organizer,
+body.admin-authenticated #managementView:not([hidden]) .workspace-toolbar-shell,
+body.admin-authenticated #managementView:not([hidden]) .workspace-view-toggle {
+  visibility: visible !important;
+}
+
+body.admin-authenticated #managementView:not([hidden]) .management-shell-head,
+body.admin-authenticated #managementView:not([hidden]) .management-kpi-grid,
+body.admin-authenticated #managementView:not([hidden]) .workspace-organizer,
+body.admin-authenticated #managementView:not([hidden]) .workspace-toolbar-shell {
+  display: grid !important;
+}
+
+body.admin-authenticated #managementView:not([hidden]) .workspace-view-toggle {
+  display: flex !important;
+}
+
 body.admin-authenticated #managementView .command-pane--workspace > .row.workspace-pane-header > div .small,
 body.admin-authenticated #managementView .workspace-header-badges {
   opacity: 0.82;
