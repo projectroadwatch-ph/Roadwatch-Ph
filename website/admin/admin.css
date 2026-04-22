@@ -4998,11 +4998,14 @@ body.admin-authenticated .severity-critical {
 
 .admin-console-main {
   min-width: 0;
+  margin-left: calc(250px + 16px);
 }
 
 .admin-sidebar {
-  position: sticky;
+  position: fixed;
   top: 12px;
+  left: max(12px, calc((100vw - min(1480px, 99%)) / 2));
+  width: 250px;
   height: calc(100vh - 24px);
   max-height: calc(100vh - 24px);
   min-height: calc(100vh - 24px);
@@ -5118,11 +5121,17 @@ body.admin-authenticated .severity-critical {
     grid-template-columns: 1fr;
   }
 
+  .admin-console-main {
+    margin-left: 0;
+  }
+
   .admin-sidebar {
     position: static;
+    width: auto;
     height: auto;
     max-height: none;
     min-height: 0;
+    left: auto;
     overflow: visible;
   }
 }
