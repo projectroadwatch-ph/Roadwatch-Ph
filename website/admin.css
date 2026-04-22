@@ -10102,3 +10102,14 @@ body.admin-authenticated[data-theme="dark"] .console-topbar__brand-meta small {
     display: none;
   }
 }
+
+/* 2026-04-22: Make header strip span the full main content width from sidebar edge. */
+body.admin-authenticated .admin-console-main > .console-topbar--compact {
+  width: 100%;
+  margin: 0;
+  padding: 10px 0 0;
+}
+
+body.admin-authenticated .admin-console-main > .console-topbar--compact .console-topbar__row {
+  width: 100%;
+}
