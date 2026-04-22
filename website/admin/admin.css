@@ -8768,7 +8768,11 @@ body.admin-authenticated .dashboard-shell {
 
 body.admin-authenticated .console-topbar--compact {
   top: 14px;
+  margin-left: -16px;
+  width: calc(100% + 16px);
   border-radius: 16px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   border: 1px solid var(--glass-border);
   background: linear-gradient(125deg, rgba(6, 25, 45, 0.96), rgba(13, 39, 68, 0.82));
   box-shadow: 0 16px 34px rgba(2, 11, 24, 0.3);
