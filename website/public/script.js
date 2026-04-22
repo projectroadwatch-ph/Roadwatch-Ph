@@ -52,20 +52,12 @@ function buildHomepageUrl() {
   const currentDirectory = currentPathname.endsWith("/")
     ? currentPathname
     : currentPathname.replace(/[^/]+$/, "");
-  const settings = getSiteSettings();
-  const configuredBaseUrl = String(
-    window.ROADWATCH_PUBLIC_BASE_URL
-    || settings.publicBaseUrl
-    || settings.websiteBaseUrl
-    || ""
-  ).trim();
 
   // Use the QR landing alias because this URL stays stable even if homepage
   // routing changes later on.
   const qrLandingPath = "qr.html";
   const defaultBaseUrl = `${currentUrl.origin}${currentDirectory}`;
-  const baseForQr = configuredBaseUrl || defaultBaseUrl;
-  const directHomepageUrl = new URL(qrLandingPath, baseForQr);
+  const directHomepageUrl = new URL(qrLandingPath, defaultBaseUrl);
 
   if (typeof window.appendRoadWatchVersion === "function") {
     return window.appendRoadWatchVersion(directHomepageUrl.toString());
