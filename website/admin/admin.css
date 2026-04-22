@@ -10499,3 +10499,23 @@ body.admin-authenticated .admin-console-main > .console-topbar--inspiration {
     padding: 0 8px 10px 0;
   }
 }
+
+/* 2026-04-22: Scroll recovery fix for admin portal content. */
+html,
+body {
+  overflow-y: auto;
+}
+
+body.admin-authenticated .wrap,
+body.admin-authenticated .dashboard-shell,
+body.admin-authenticated .admin-console-layout,
+body.admin-authenticated .admin-console-main,
+body.admin-authenticated .admin-console-main > .dashboard-view {
+  height: auto;
+  max-height: none;
+}
+
+body.admin-authenticated .admin-console-main,
+body.admin-authenticated .admin-console-main > .dashboard-view {
+  overflow: visible;
+}
