@@ -62,7 +62,7 @@
       <div class="admin-console-layout">
       <aside id="adminSidebarNav" class="admin-sidebar" aria-label="Admin dashboard navigation">
         <div class="admin-sidebar__brand">
-          <span class="admin-sidebar__logo">A</span>
+          <span class="admin-sidebar__logo" aria-hidden="true"><span class="material-symbols-rounded">add_road</span></span>
           <div>
             <strong>RoadWatch <span>PH</span></strong>
           </div>
@@ -90,10 +90,10 @@
       <!-- NOTE: This is the live admin portal header used throughout the admin command center. -->
       <div class="console-topbar console-topbar--reference console-topbar--compact console-topbar--inspiration">
         <div class="console-topbar__row">
-          <div class="console-topbar__section console-topbar__section--left">
+            <div class="console-topbar__section console-topbar__section--left">
             <button id="sidebarToggleBtn" type="button" class="secondary slim sidebar-toggle-btn topbar-utility-hidden" aria-expanded="true" aria-controls="adminSidebarNav" aria-label="Toggle sidebar navigation"><span class="material-symbols-rounded" aria-hidden="true">menu</span></button>
             <div class="console-topbar__brand" aria-label="RoadWatch PH brand">
-              <span class="console-topbar__brand-logo console-topbar__brand-logo--badge" aria-hidden="true">🛣️</span>
+              <span class="console-topbar__brand-logo console-topbar__brand-logo--badge" aria-hidden="true"><span class="material-symbols-rounded">add_road</span></span>
               <div class="console-topbar__brand-meta">
                 <strong>RoadWatch PH</strong>
               </div>
@@ -126,7 +126,7 @@
                   <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
                 </div>
               </div>
-              <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span></button>
+              <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span><span class="material-symbols-rounded console-chip__caret" aria-hidden="true">expand_more</span></button>
             </div>
           </div>
         </div>

@@ -5034,6 +5034,11 @@ body.admin-authenticated .severity-critical {
   border: 1px solid rgba(176, 232, 255, 0.42);
 }
 
+.admin-sidebar__logo .material-symbols-rounded {
+  font-size: 1.2rem;
+  font-variation-settings: "FILL" 1, "wght" 500, "opsz" 24;
+}
+
 .admin-sidebar__brand p {
   margin: 2px 0 0;
   color: #cce9df;
@@ -10250,13 +10255,15 @@ body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-log
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-logo::before {
-  content: "🛣";
+  content: "add_road";
+  font-family: "Material Symbols Rounded";
+  font-variation-settings: "FILL" 1, "wght" 500, "opsz" 24;
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 1.45rem;
-  filter: saturate(0) brightness(3.6);
+  font-size: 1.55rem;
+  color: #eff6ff;
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-topbar__brand-meta strong {
@@ -10388,10 +10395,13 @@ body.admin-authenticated .console-topbar--inspiration .console-chip__name {
 }
 
 body.admin-authenticated .console-topbar--inspiration .console-chip::after {
-  content: "▾";
-  font-size: 1.05rem;
+  content: none;
+}
+
+body.admin-authenticated .console-topbar--inspiration .console-chip__caret {
+  font-size: 1.2rem;
   color: #c8daf8;
-  margin-left: 4px;
+  margin-left: -4px;
 }
 
 /* 2026-04-22: Admin portal header resilience fixes (overflow + responsive controls). */
