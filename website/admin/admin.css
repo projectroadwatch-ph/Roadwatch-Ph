@@ -10535,3 +10535,36 @@ body.admin-authenticated .admin-console-main,
 body.admin-authenticated .admin-console-main > .dashboard-view {
   overflow: visible;
 }
+
+/* 2026-04-22 hotfix v2: ensure main content does not get pushed out of viewport by sidebar offsets. */
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: clamp(220px, 22vw, 250px) minmax(0, 1fr) !important;
+}
+
+body.admin-authenticated .admin-sidebar {
+  position: sticky !important;
+  top: 12px;
+  left: auto !important;
+  width: 100%;
+  max-width: 250px;
+}
+
+body.admin-authenticated .admin-console-main {
+  margin-left: 0 !important;
+  min-width: 0 !important;
+  width: 100%;
+}
+
+@media (max-width: 1120px) {
+  body.admin-authenticated .admin-console-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.admin-authenticated .admin-sidebar {
+    position: static !important;
+    max-width: none;
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+}
