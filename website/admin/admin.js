@@ -2503,7 +2503,7 @@ function renderOverviewQueueTable(reports) {
     const severity = getSeverityLabel(report);
 
     const priority = getPriorityScore(report);
-    const photo = String(report?.photo || "").trim() || "assets/issues/potholes.svg";
+    const photo = String(report?.photo || "").trim() || "../assets/issues/potholes.svg";
 
     return `
       <article class="queueCard">
@@ -3921,7 +3921,7 @@ showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
 newReportCardBtn?.addEventListener("click", () => {
-  window.location.href = "submit.html";
+  window.location.href = "../public/submit.html";
 });
 
 severityQuickFilter?.addEventListener("change", () => {
