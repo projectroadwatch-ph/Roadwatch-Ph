@@ -1254,6 +1254,34 @@ function applyCaseMetadata(report) {
   };
 }
 
+
+function ensureDashboardContentVisibility() {
+  const overviewHidden = overviewView?.hidden !== false;
+  const managementHidden = managementView?.hidden !== false;
+
+  if (overviewHidden && managementHidden) {
+    if (activeDashboardView === "management") {
+      if (managementView) managementView.hidden = false;
+      if (overviewView) overviewView.hidden = true;
+    } else {
+      if (overviewView) overviewView.hidden = false;
+      if (managementView) managementView.hidden = true;
+      activeDashboardView = "overview";
+    }
+  }
+
+  if (activeDashboardView === "management") {
+    const triageHidden = triagePane?.hidden !== false;
+    const workspaceHidden = workspacePane?.hidden !== false;
+    if (triageHidden && workspaceHidden) {
+      if (workspacePane) workspacePane.hidden = false;
+      if (triagePane) triagePane.hidden = true;
+      activeManagementPane = "workspace";
+      updateSidebarNavState("management", "workspace");
+      setBreadcrumbs("management", "workspace");
+    }
+  }
+}
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
   activeDashboardView = activeView;
@@ -1284,6 +1312,7 @@ function setDashboardView(view) {
     window.setTimeout(() => {
       overviewMap?.invalidateSize();
     }, 40);
+    ensureDashboardContentVisibility();
     queuePersistWorkspacePrefs();
     return;
   }
@@ -1299,6 +1328,7 @@ function setDashboardView(view) {
     setBreadcrumbs,
     overviewMap
   });
+  ensureDashboardContentVisibility();
   queuePersistWorkspacePrefs();
 }
 
@@ -1320,6 +1350,7 @@ function setManagementPane(pane) {
     setTableColumnView(activePane === "triage" ? "triage" : "operations");
     updateSidebarNavState("management", activePane);
     setBreadcrumbs("management", activePane);
+    ensureDashboardContentVisibility();
     queuePersistWorkspacePrefs();
     return;
   }
@@ -1333,6 +1364,7 @@ function setManagementPane(pane) {
     updateSidebarNavState,
     setBreadcrumbs
   });
+  ensureDashboardContentVisibility();
   queuePersistWorkspacePrefs();
 }
 
@@ -1409,6 +1441,7 @@ function applyAuthUI() {
     startStaleDataMonitor();
     loadReports();
     if (isAutoUiImproverEnabled()) setAutoUiImproverEnabled(true);
+    ensureDashboardContentVisibility();
     return;
   }
 
