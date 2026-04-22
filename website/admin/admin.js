@@ -289,6 +289,11 @@ function isLikelyCorsBlockedRequest(endpoint, error) {
   return adminDataLayer.isLikelyCorsBlockedRequest(endpoint, error);
 }
 
+function getCachedLocalReports() {
+  const reports = window.RoadwatchDataLayer?.getLocalReports?.();
+  return Array.isArray(reports) ? reports : [];
+}
+
 function parseReports(payload) {
   const toObjectRows = (rows) => {
     if (!Array.isArray(rows) || rows.length === 0) return [];
@@ -3734,6 +3739,27 @@ async function loadReports() {
       .map(applyCaseMetadata)
     );
     if (allReports.length === 0) {
+      const localFallbackReports = dedupeReports(
+        getCachedLocalReports()
+          .map(normalizeReport)
+          .map(applyCaseMetadata)
+      );
+
+      if (localFallbackReports.length > 0) {
+        allReports = localFallbackReports;
+        activeReportsSource = `${sourceLabel} (cached local fallback)`;
+        setSheetSyncStatus(
+          `Connected to ${sourceLabel}, but live response was empty. Showing ${allReports.length} cached local report(s).`,
+          "warn"
+        );
+        updateSyncMetaStatus();
+        refreshStaleDataBanner();
+        applyFiltersAndRender();
+        setFeedback("reportsFeedback", `Showing ${allReports.length} cached local report(s) while waiting for live sheet data.`, true);
+        setTableLoadingState(false);
+        return;
+      }
+
       if (reportsBody) {
         reportsBody.innerHTML = '<tr><td colspan="19">No reports found.</td></tr>';
       }
@@ -3761,6 +3787,29 @@ async function loadReports() {
     applyFiltersAndRender();
     setFeedback("reportsFeedback", `Loaded ${allReports.length} report(s) from ${sourceLabel}.`);
   } catch (error) {
+    const localFallbackReports = dedupeReports(
+      getCachedLocalReports()
+        .map(normalizeReport)
+        .map(applyCaseMetadata)
+    );
+
+    if (localFallbackReports.length > 0) {
+      allReports = localFallbackReports;
+      selectedReports.clear();
+      renderSelectionSummary();
+      currentPage = 1;
+      activeReportsSource = "Local browser cache";
+      setSheetSyncStatus(
+        `Google Sheets unreachable. Showing ${allReports.length} cached local report(s) from this browser.`,
+        "warn"
+      );
+      updateSyncMetaStatus();
+      refreshStaleDataBanner();
+      applyFiltersAndRender();
+      setFeedback("reportsFeedback", `${error.message} Using cached local reports as fallback.`, true);
+      return;
+    }
+
     if (reportsBody) {
       reportsBody.innerHTML = '<tr><td colspan="19">Unable to load reports right now.</td></tr>';
     }
