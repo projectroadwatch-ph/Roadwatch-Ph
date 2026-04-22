@@ -22,6 +22,12 @@ const EMAIL_ADDRESS_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PH_MOBILE_DIGITS_PATTERN = /^09\d{9}$/;
 const PH_MOBILE_E164_PATTERN = /^\+639\d{9}$/;
 const UI_AUTO_FIX_TOAST_MS = 3400;
+const configuredBaseUrl = (
+  typeof window.ROADWATCH_PUBLIC_BASE_URL === "string"
+  && window.ROADWATCH_PUBLIC_BASE_URL.trim()
+)
+  ? window.ROADWATCH_PUBLIC_BASE_URL.trim()
+  : "";
 
 const LEAFLET_SCRIPT_SOURCES = [
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
