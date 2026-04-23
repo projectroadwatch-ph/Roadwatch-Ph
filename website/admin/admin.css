@@ -11430,3 +11430,119 @@ body[data-theme="dark"].admin-authenticated .report-card__actions .card-action-b
 body[data-theme="dark"].admin-authenticated .status-filter-btn:hover {
   background: linear-gradient(130deg, #4a90dc, #3876bb);
 }
+
+/* Government portal visual hardening: restrained palette, calmer surfaces, consistent typography */
+body.admin-authenticated {
+  --accent: #1f4f8a;
+  --accent-strong: #173d69;
+  --text: #f4f7fb;
+  --muted: #d7e0ec;
+  --line: rgba(163, 184, 208, 0.34);
+  background: #0f223a;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body.admin-authenticated .dashboard-shell,
+body.admin-authenticated .console-topbar,
+body.admin-authenticated .dashboard-header,
+body.admin-authenticated .dashboard-nav,
+body.admin-authenticated .panel,
+body.admin-authenticated .analytics-panel,
+body.admin-authenticated .tableWrap,
+body.admin-authenticated .command-pane,
+body.admin-authenticated .management-kpi-card {
+  background: #173150;
+  border-color: rgba(172, 190, 210, 0.34);
+  box-shadow: 0 8px 20px rgba(5, 15, 28, 0.28);
+}
+
+body.admin-authenticated .quick-actions,
+body.admin-authenticated .quick-action-pill,
+body.admin-authenticated .mission-chip,
+body.admin-authenticated .kpi-pill,
+body.admin-authenticated .analyticsCard,
+body.admin-authenticated .snapshot-card {
+  background: #1d3a5c;
+  border-color: rgba(171, 191, 214, 0.34);
+  box-shadow: none;
+}
+
+body.admin-authenticated .quick-action-pill::after {
+  content: "";
+  margin: 0;
+}
+
+body.admin-authenticated .quick-action-pill:hover,
+body.admin-authenticated .nav-btn:hover,
+body.admin-authenticated button:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+body.admin-authenticated .live-indicator .dot {
+  animation: none;
+}
+
+body.admin-authenticated h2,
+body.admin-authenticated h3,
+body.admin-authenticated h4 {
+  font-size: 1.25rem;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+body.admin-authenticated .small,
+body.admin-authenticated label,
+body.admin-authenticated .section-chip,
+body.admin-authenticated .mission-chip__label,
+body.admin-authenticated .analyticsLabel {
+  font-size: 0.92rem;
+}
+
+body.admin-authenticated .nav-btn,
+body.admin-authenticated button,
+body.admin-authenticated input,
+body.admin-authenticated select,
+body.admin-authenticated textarea {
+  font-size: 0.96rem;
+}
+
+body.admin-authenticated .nav-btn,
+body.admin-authenticated button.secondary,
+body.admin-authenticated .quick-action-pill {
+  background: #20456f;
+  border: 1px solid rgba(178, 198, 221, 0.34);
+  color: #eff4fa;
+}
+
+body.admin-authenticated .nav-btn.is-active {
+  background: #2a5789;
+}
+
+body[data-theme="light"].admin-authenticated {
+  background: #e7edf5;
+}
+
+body[data-theme="light"].admin-authenticated .dashboard-shell,
+body[data-theme="light"].admin-authenticated .console-topbar,
+body[data-theme="light"].admin-authenticated .dashboard-header,
+body[data-theme="light"].admin-authenticated .dashboard-nav,
+body[data-theme="light"].admin-authenticated .panel,
+body[data-theme="light"].admin-authenticated .analytics-panel,
+body[data-theme="light"].admin-authenticated .tableWrap,
+body[data-theme="light"].admin-authenticated .command-pane {
+  background: #f7f9fc;
+  border-color: rgba(147, 166, 189, 0.44);
+  box-shadow: 0 6px 16px rgba(19, 41, 71, 0.1);
+}
+
+body[data-theme="light"].admin-authenticated .quick-actions,
+body[data-theme="light"].admin-authenticated .quick-action-pill,
+body[data-theme="light"].admin-authenticated .mission-chip,
+body[data-theme="light"].admin-authenticated .kpi-pill,
+body[data-theme="light"].admin-authenticated .analyticsCard,
+body[data-theme="light"].admin-authenticated .snapshot-card {
+  background: #ffffff;
+  border-color: rgba(156, 175, 198, 0.42);
+}
