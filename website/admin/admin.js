@@ -19,7 +19,16 @@ const ADMIN_SESSION_STARTED_AT_KEY = "roadwatchAdminSessionStartedAt";
 const ADMIN_SERVER_MODE_KEY = "roadwatchAdminServerMode";
 const ADMIN_AUTO_UI_IMPROVER_KEY = "roadwatchAdminAutoUiImprover";
 const ADMIN_WORKSPACE_PREFS_KEY = "roadwatchAdminWorkspacePrefs";
-const adminUi = window.RoadwatchAdminUI;
+const adminUi = window.RoadwatchAdminUI || {
+  drawStatusChart: () => {},
+  getActiveFilterDescriptors: () => [],
+  renderActiveFilterChips: () => {},
+  renderAdminIdentity: () => {},
+  setFeedback: () => {},
+  setSheetSyncStatus: () => {},
+  setTableLoadingState: () => {},
+  syncSearchInputs: () => {}
+};
 const adminAuth = window.RoadwatchAdminAuth;
 const adminHomePage = window.RoadwatchAdminHomePage || {};
 const adminWorkspacePage = window.RoadwatchAdminWorkspacePage || {};
