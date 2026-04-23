@@ -1112,13 +1112,13 @@ th { background: rgba(5, 21, 40, 0.9); position: sticky; top: 0; z-index: 1; }
 }
 
 #verificationQueueList {
-  max-height: 272px;
+  max-height: none;
   overflow-y: auto;
   padding-right: 4px;
 }
 
 #overviewQueueBody {
-  max-height: 372px;
+  max-height: none;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -6493,8 +6493,8 @@ body.admin-authenticated .overview-main-grid--organized .overview-panel--verific
 
 body.admin-authenticated .overview-main-grid--organized .overview-panel--verification .verificationQueueCards {
   flex: 1;
-  min-height: clamp(420px, 52vh, 720px);
-  max-height: clamp(420px, 52vh, 720px);
+  min-height: 0;
+  max-height: none;
   padding-right: 6px;
 }
 

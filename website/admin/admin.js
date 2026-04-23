@@ -2752,7 +2752,7 @@ function renderProjectPortfolio() {
 
 function renderModerationBoard(reports) {
   if (!moderationBoard) return;
-  const queue = reports.filter((report) => getVerificationState(report) !== "Verified" || getSeverityLabel(report) === "Critical").slice(0, 8);
+  const queue = reports.filter((report) => getVerificationState(report) !== "Verified" || getSeverityLabel(report) === "Critical");
   moderationBoard.innerHTML = queue.length ? queue.map((report) => `<li class="priorityItem ${getVerificationState(report) === "Flagged" ? "is-flagged" : ""}"><div><strong>${escapeHtml(report.tracking || "No Tracking #")}</strong><p>${escapeHtml(report.issue || "No issue details")}</p></div><div class="priorityMeta"><span>${escapeHtml(getVerificationState(report))}</span><span>${escapeHtml(getSeverityLabel(report))}</span></div></li>`).join("") : '<li class="priorityItem empty">No moderation backlog at the moment.</li>';
 }
 
