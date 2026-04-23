@@ -10598,7 +10598,7 @@ body.admin-authenticated .dashboard-shell {
 }
 
 body.admin-authenticated .admin-console-layout {
-  grid-template-columns: clamp(220px, 22vw, 250px) minmax(0, 1fr) !important;
+  grid-template-columns: 1fr !important;
   height: 100%;
 }
 
@@ -10615,7 +10615,7 @@ body.admin-authenticated .admin-sidebar {
 body.admin-authenticated .admin-console-main {
   margin-left: calc(clamp(220px, 22vw, 250px) + 16px) !important;
   min-width: 0 !important;
-  width: auto;
+  width: calc(100% - (clamp(220px, 22vw, 250px) + 16px));
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
