@@ -10812,8 +10812,8 @@ body.admin-authenticated .console-topbar__section--right .console-tools {
 body.admin-authenticated .admin-sidebar {
   display: grid;
   grid-template-rows: auto auto auto 1fr auto;
-  gap: 16px;
-  padding: 18px 16px;
+  gap: 12px;
+  padding: 14px 12px;
   border-radius: 22px;
   border: 1px solid rgba(198, 214, 236, 0.72);
   background: linear-gradient(180deg, rgba(243, 247, 253, 0.98), rgba(229, 236, 247, 0.96));
@@ -10823,8 +10823,8 @@ body.admin-authenticated .admin-sidebar {
 body.admin-authenticated .admin-sidebar__brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 2px 0 14px;
+  gap: 10px;
+  padding: 2px 0 10px;
   border-bottom: 1px solid rgba(193, 208, 230, 0.9);
 }
 
@@ -10840,9 +10840,9 @@ body.admin-authenticated .admin-sidebar__brand strong {
 }
 
 body.admin-authenticated .admin-sidebar__logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   color: #eef5ff;
   background: linear-gradient(135deg, #1f5ab1, #4b95eb);
   box-shadow: 0 12px 24px rgba(36, 84, 151, 0.26);
@@ -10856,10 +10856,10 @@ body.admin-authenticated .admin-sidebar__profile-tools {
 
 body.admin-authenticated .admin-sidebar__profile-tools .console-theme-btn,
 body.admin-authenticated .admin-sidebar__profile-tools .console-alert-btn {
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  border-radius: 12px;
   border: 1px solid rgba(189, 205, 229, 0.9);
   background: rgba(247, 251, 255, 0.96);
   color: #214b83;
@@ -10867,24 +10867,24 @@ body.admin-authenticated .admin-sidebar__profile-tools .console-alert-btn {
 
 body.admin-authenticated .admin-sidebar__nav {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 body.admin-authenticated .admin-sidebar__link {
-  min-height: 64px;
-  border-radius: 18px;
+  min-height: 54px;
+  border-radius: 14px;
   border: 1px solid rgba(192, 208, 231, 0.88);
   background: rgba(236, 243, 252, 0.98);
   color: #1f4378;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   justify-content: flex-start;
-  padding: 0 18px;
-  gap: 12px;
+  padding: 0 14px;
+  gap: 10px;
 }
 
 body.admin-authenticated .admin-sidebar__link .material-symbols-rounded {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 body.admin-authenticated .admin-sidebar__link:hover,
@@ -10906,10 +10906,10 @@ body.admin-authenticated .admin-sidebar__sections {
 
 body.admin-authenticated .admin-sidebar__report-total {
   margin-top: 2px;
-  border-radius: 18px;
+  border-radius: 14px;
   border: 1px solid rgba(196, 211, 232, 0.88);
   background: rgba(237, 243, 251, 0.93);
-  padding: 20px;
+  padding: 14px;
 }
 
 body.admin-authenticated .admin-sidebar__report-total p,
@@ -10919,7 +10919,7 @@ body.admin-authenticated .admin-sidebar__report-total small {
 
 body.admin-authenticated .admin-sidebar__report-total strong {
   color: #123f77;
-  font-size: clamp(2.5rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, 3.2vw, 2.6rem);
 }
 
 body.admin-authenticated .admin-sidebar__profile {
@@ -10928,11 +10928,11 @@ body.admin-authenticated .admin-sidebar__profile {
 
 body.admin-authenticated .admin-sidebar__logout {
   width: 100%;
-  min-height: 68px;
-  border-radius: 18px;
+  min-height: 54px;
+  border-radius: 14px;
   border: 0;
   color: #eef5ff;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
   background: linear-gradient(95deg, #1e4f98 0%, #2b63b2 100%);
 }
