@@ -10621,16 +10621,16 @@ body.admin-authenticated .admin-sidebar {
   position: fixed !important;
   top: 12px;
   left: max(12px, calc((100vw - min(1480px, 99%)) / 2));
-  width: clamp(220px, 22vw, 250px);
-  max-width: 250px;
+  width: clamp(196px, 19vw, 224px);
+  max-width: 224px;
   height: calc(100vh - 24px);
   max-height: calc(100vh - 24px);
 }
 
 body.admin-authenticated .admin-console-main {
-  margin-left: calc(clamp(220px, 22vw, 250px) + 16px) !important;
+  margin-left: calc(clamp(196px, 19vw, 224px) + 14px) !important;
   min-width: 0 !important;
-  width: calc(100% - (clamp(220px, 22vw, 250px) + 16px));
+  width: calc(100% - (clamp(196px, 19vw, 224px) + 14px));
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -10812,9 +10812,9 @@ body.admin-authenticated .console-topbar__section--right .console-tools {
 body.admin-authenticated .admin-sidebar {
   display: grid;
   grid-template-rows: auto auto auto 1fr auto;
-  gap: 12px;
-  padding: 14px 12px;
-  border-radius: 22px;
+  gap: 10px;
+  padding: 12px 10px;
+  border-radius: 20px;
   border: 1px solid rgba(198, 214, 236, 0.72);
   background: linear-gradient(180deg, rgba(243, 247, 253, 0.98), rgba(229, 236, 247, 0.96));
   box-shadow: 0 18px 36px rgba(58, 89, 139, 0.2);
@@ -10871,16 +10871,16 @@ body.admin-authenticated .admin-sidebar__nav {
 }
 
 body.admin-authenticated .admin-sidebar__link {
-  min-height: 54px;
-  border-radius: 14px;
+  min-height: 48px;
+  border-radius: 12px;
   border: 1px solid rgba(192, 208, 231, 0.88);
   background: rgba(236, 243, 252, 0.98);
   color: #1f4378;
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   justify-content: flex-start;
-  padding: 0 14px;
-  gap: 10px;
+  padding: 0 12px;
+  gap: 8px;
 }
 
 body.admin-authenticated .admin-sidebar__link .material-symbols-rounded {
@@ -10906,10 +10906,10 @@ body.admin-authenticated .admin-sidebar__sections {
 
 body.admin-authenticated .admin-sidebar__report-total {
   margin-top: 2px;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid rgba(196, 211, 232, 0.88);
   background: rgba(237, 243, 251, 0.93);
-  padding: 14px;
+  padding: 12px;
 }
 
 body.admin-authenticated .admin-sidebar__report-total p,
@@ -10920,7 +10920,7 @@ body.admin-authenticated .admin-sidebar__report-total small {
 
 body.admin-authenticated .admin-sidebar__report-total strong {
   color: #123f77;
-  font-size: clamp(1.75rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.55rem, 2.1vw, 1.95rem);
 }
 
 body.admin-authenticated .admin-sidebar__profile {
@@ -10929,11 +10929,11 @@ body.admin-authenticated .admin-sidebar__profile {
 
 body.admin-authenticated .admin-sidebar__logout {
   width: 100%;
-  min-height: 54px;
-  border-radius: 14px;
+  min-height: 48px;
+  border-radius: 12px;
   border: 0;
   color: #eef5ff;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 700;
   background: linear-gradient(95deg, #1e4f98 0%, #2b63b2 100%);
 }
