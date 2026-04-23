@@ -2681,7 +2681,9 @@ function renderAiRecommendations(reports) {
   const topBarangay = getTopBarangay(reports);
 
   if (aiAutopilotSummary) {
-    aiAutopilotSummary.textContent = `${highRisk.length} high-risk cases and ${overdue.length} overdue reports detected. Autopilot suggests dispatch rebalancing now.`;
+    aiAutopilotSummary.textContent = reports.length
+      ? `${highRisk.length} high-risk cases and ${overdue.length} overdue reports detected. Autopilot suggests dispatch rebalancing now.`
+      : "No active reports yet. Autopilot will generate dispatch recommendations once submissions arrive.";
   }
 
   const recommendations = [
@@ -3347,6 +3349,11 @@ function renderAnalytics(reports) {
   setTextIfPresent("avgQualityScore", `${reports.length ? Math.round(counts.qualityTotal / reports.length) : 0}%`);
   const avgResponseDays = document.getElementById("avgResponseDays");
   if (avgResponseDays) avgResponseDays.textContent = ageSamples ? totalAgeDays / ageSamples >= 10 ? Math.round(totalAgeDays / ageSamples) : (totalAgeDays / ageSamples).toFixed(1) : "0";
+  const criticalOverviewEmptyHint = document.getElementById("criticalOverviewEmptyHint");
+  if (criticalOverviewEmptyHint) {
+    criticalOverviewEmptyHint.hidden = counts.total > 0;
+  }
+
   const highPriorityCount = reports.filter((report) => getPriorityScore(report) >= 70).length;
   setTextIfPresent("highPriorityCount", String(highPriorityCount));
 
