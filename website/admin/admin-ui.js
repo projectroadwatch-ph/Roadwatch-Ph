@@ -131,6 +131,19 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
 
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
+    const isLightTheme = document.body?.dataset?.theme === "light";
+    const chartPalette = isLightTheme
+      ? {
+          axis: "rgba(77, 113, 152, 0.45)",
+          value: "#1f3f69",
+          label: "#2f507b"
+        }
+      : {
+          axis: "rgba(189, 217, 248, 0.2)",
+          value: "#e9f4ff",
+          label: "#bdd9f8"
+        };
+
     const bars = [
       { label: "Pending", value: counts.pending, color: "#63e6be" },
       { label: "Verified", value: counts.verified, color: "#ef4444" },
@@ -150,7 +163,7 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
 
     const hitboxes = [];
 
-    ctx.fillStyle = "rgba(189, 217, 248, 0.2)";
+    ctx.fillStyle = chartPalette.axis;
     ctx.fillRect(padding.left, padding.top + chartHeight, chartWidth, 1);
 
     ctx.font = "600 12px Inter";
@@ -173,10 +186,10 @@ window.RoadwatchAdminUI = (function createRoadwatchAdminUi() {
       ctx.fillStyle = bar.color;
       ctx.fillRect(x, y, barWidth, barHeight);
 
-      ctx.fillStyle = "#e9f4ff";
+      ctx.fillStyle = chartPalette.value;
       ctx.fillText(String(bar.value), x + barWidth / 2, y - 8);
 
-      ctx.fillStyle = "#bdd9f8";
+      ctx.fillStyle = chartPalette.label;
       ctx.fillText(bar.label, x + barWidth / 2, cssHeight - 22);
     });
 

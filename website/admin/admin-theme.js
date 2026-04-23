@@ -2,6 +2,22 @@
   const ADMIN_THEME_KEY = "roadwatchAdminTheme";
   const ADMIN_THEME_ORDER = ["dark", "light"];
   const ADMIN_DARK_QUERY = "(prefers-color-scheme: dark)";
+  const storageRef = {
+    getItem(key) {
+      try {
+        return windowRef.localStorage?.getItem(key);
+      } catch (_error) {
+        return null;
+      }
+    },
+    setItem(key, value) {
+      try {
+        windowRef.localStorage?.setItem(key, value);
+      } catch (_error) {
+        // Ignore storage failures (e.g., private mode).
+      }
+    }
+  };
 
   function applyThemeAttributes(theme) {
     const normalizedTheme = ADMIN_THEME_ORDER.includes(theme) ? theme : "dark";
@@ -20,7 +36,7 @@
   }
 
   function getPreferredTheme() {
-    const storedTheme = String(localStorage.getItem(ADMIN_THEME_KEY) || "").trim();
+    const storedTheme = String(storageRef.getItem(ADMIN_THEME_KEY) || "").trim();
     if (storedTheme === "high-contrast") return "dark";
     if (ADMIN_THEME_ORDER.includes(storedTheme)) return storedTheme;
     return getSystemTheme();
@@ -31,13 +47,14 @@
     const normalizedTheme = applyThemeAttributes(requestedTheme);
 
     if (persist) {
-      localStorage.setItem(ADMIN_THEME_KEY, normalizedTheme);
+      storageRef.setItem(ADMIN_THEME_KEY, normalizedTheme);
     }
 
     if (toggleButton) {
       const nextTheme = normalizedTheme === "dark" ? "light" : "dark";
       const iconName = normalizedTheme === "dark" ? "dark_mode" : "light_mode";
       toggleButton.innerHTML = `<span class="material-symbols-rounded" aria-hidden="true">${iconName}</span><span class="sr-only">Switch to ${nextTheme} theme</span>`;
+      toggleButton.setAttribute("aria-label", `Current theme ${normalizedTheme}. Switch to ${nextTheme} theme.`);
       toggleButton.setAttribute("title", `Current theme: ${normalizedTheme}. Click to switch to ${nextTheme}.`);
     }
 
