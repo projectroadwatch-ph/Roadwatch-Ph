@@ -1374,6 +1374,7 @@ function ensureDashboardContentVisibility() {
 function setDashboardView(view) {
   const activeView = view === "management" ? "management" : "overview";
   activeDashboardView = activeView;
+  setSidebarOverviewExpanded(activeView === "overview");
   updateSessionMetaVisibility(activeView);
   if (showOverviewBtn) showOverviewBtn.setAttribute("aria-selected", String(activeView === "overview"));
   if (showManagementBtn) showManagementBtn.setAttribute("aria-selected", String(activeView === "management"));
@@ -4058,6 +4059,9 @@ statusFilterButtons.forEach((button) => {
 });
 sidebarNavLinks.forEach((link) => {
   link.addEventListener("click", () => {
+    if (link.id === "sidebarOverviewToggle") {
+      return;
+    }
     const targetView = String(link.dataset.navView || "overview");
     const targetPane = String(link.dataset.navPane || "");
     if (targetView === "management") {
@@ -4080,6 +4084,11 @@ sidebarSectionLinks.forEach((link) => {
   });
 });
 sidebarOverviewToggle?.addEventListener("click", () => {
+  if (activeDashboardView !== "overview") {
+    setDashboardView("overview");
+    setSidebarOverviewExpanded(true);
+    return;
+  }
   const isExpanded = sidebarOverviewToggle.getAttribute("aria-expanded") === "true";
   setSidebarOverviewExpanded(!isExpanded);
 });
