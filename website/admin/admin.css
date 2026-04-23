@@ -6724,10 +6724,25 @@ body.admin-authenticated .report-card__actions {
   gap: 10px;
 }
 
+body.admin-authenticated .report-card__actions > * {
+  width: 100%;
+  min-width: 0;
+}
+
 body.admin-authenticated .card-action-btn {
-  min-height: 44px;
+  min-height: 46px;
   font-size: 0.9rem;
   border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+body.admin-authenticated .card-action-btn__icon {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn {
@@ -6743,12 +6758,12 @@ body.admin-authenticated .report-card__actions .card-action-btn--danger {
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
-  min-height: 44px;
+  min-height: 46px;
   border-radius: 10px;
   background: rgba(8, 31, 57, 0.78);
   color: #d7ebff;
   border: 1px solid rgba(165, 213, 255, 0.28);
-  padding: 0 10px;
+  padding: 0 12px;
   font-weight: 700;
 }
 
