@@ -14,7 +14,12 @@
     (function preloadAdminTheme() {
       const key = "roadwatchAdminTheme";
       const darkQuery = "(prefers-color-scheme: dark)";
-      const stored = String(localStorage.getItem(key) || "").trim();
+      let stored = "";
+      try {
+        stored = String(localStorage.getItem(key) || "").trim();
+      } catch (_error) {
+        stored = "";
+      }
       const prefersDark = window.matchMedia?.(darkQuery).matches;
       const theme = stored === "light" || stored === "dark" ? stored : (prefersDark ? "dark" : "light");
       document.documentElement.dataset.theme = theme;
