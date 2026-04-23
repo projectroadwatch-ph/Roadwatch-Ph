@@ -7501,19 +7501,27 @@ body.admin-authenticated .chart-accessibility .small {
   font-weight: 700;
 }
 
+body.admin-authenticated .chart-accessibility__actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
 body.admin-authenticated .chart-accessibility__actions .status-filter-btn {
   position: relative;
   display: inline-flex;
-  flex: 0 0 auto;
+  width: 100%;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   border-radius: 999px;
   border: 1px solid rgba(127, 170, 224, 0.32);
   background: rgba(8, 32, 60, 0.9);
   color: #d4e9ff;
-  min-height: 42px;
-  padding: 0 20px;
+  min-height: 36px;
+  padding: 0 10px;
   font-weight: 700;
+  font-size: 0.92rem;
 }
 
 body.admin-authenticated .chart-accessibility__actions .status-filter-btn::before {
@@ -7746,16 +7754,13 @@ body.admin-authenticated .snapshot-detail-link {
   }
 
   body.admin-authenticated .chart-accessibility__actions {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-bottom: 2px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   body.admin-authenticated .chart-accessibility__actions .status-filter-btn {
-    min-height: 38px;
-    padding: 0 14px;
-    font-size: 0.9rem;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 0.86rem;
   }
 
   body.admin-authenticated .status-chart-summary-list {
