@@ -10834,9 +10834,9 @@ body.admin-authenticated .console-topbar__section--right .console-tools {
 
 /* 2026-04-23: Sidebar visual refresh to match mobile card-style admin navigation reference. */
 body.admin-authenticated .admin-sidebar {
-  display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 10px 8px;
   border-radius: 18px;
   border: 1px solid rgba(198, 214, 236, 0.72);
@@ -10895,7 +10895,8 @@ body.admin-authenticated .admin-sidebar__profile-tools .material-symbols-rounded
 
 body.admin-authenticated .admin-sidebar__nav {
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 2px;
 }
 
 body.admin-authenticated .admin-sidebar__link {
@@ -10936,7 +10937,7 @@ body.admin-authenticated .admin-sidebar__sections {
 }
 
 body.admin-authenticated .admin-sidebar__report-total {
-  margin-top: 2px;
+  margin-top: 0;
   border-radius: 10px;
   border: 1px solid rgba(196, 211, 232, 0.88);
   background: rgba(237, 243, 251, 0.93);
@@ -10971,6 +10972,13 @@ body.admin-authenticated .admin-sidebar__logout {
   font-weight: 700;
   padding: 0 8px;
   background: linear-gradient(95deg, #1e4f98 0%, #2b63b2 100%);
+}
+
+body.admin-authenticated .admin-sidebar__footer {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+  padding-top: 6px;
 }
 
 body.admin-authenticated .admin-sidebar__logout:hover {
