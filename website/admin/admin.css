@@ -1578,12 +1578,14 @@ th { background: rgba(5, 21, 40, 0.9); position: sticky; top: 0; z-index: 1; }
   color: #ffe5a4;
 }
 
-.severity-moderate {
+.severity-moderate,
+.severity-medium {
   background: rgba(79, 195, 247, 0.14);
   color: #bde9ff;
 }
 
-.severity-routine {
+.severity-routine,
+.severity-low {
   background: rgba(99, 230, 190, 0.14);
   color: #9ff2d7;
 }
