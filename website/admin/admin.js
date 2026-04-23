@@ -2039,7 +2039,13 @@ function renderCardWorkspace(reports) {
       const viewBtn = document.createElement("button");
       viewBtn.type = "button";
       viewBtn.className = "secondary slim card-action-btn";
-      viewBtn.textContent = "View";
+      const viewIcon = document.createElement("span");
+      viewIcon.className = "material-symbols-rounded card-action-btn__icon";
+      viewIcon.setAttribute("aria-hidden", "true");
+      viewIcon.textContent = "visibility";
+      const viewLabel = document.createElement("span");
+      viewLabel.textContent = "View";
+      viewBtn.append(viewIcon, viewLabel);
       viewBtn.addEventListener("click", () => openReportFormPreview(report));
 
       const statusControl = statusSelect(effectiveStatus, report.tracking);
@@ -2049,7 +2055,13 @@ function renderCardWorkspace(reports) {
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
       deleteBtn.className = "danger slim card-action-btn card-action-btn--danger";
-      deleteBtn.textContent = "Delete";
+      const deleteIcon = document.createElement("span");
+      deleteIcon.className = "material-symbols-rounded card-action-btn__icon";
+      deleteIcon.setAttribute("aria-hidden", "true");
+      deleteIcon.textContent = "delete";
+      const deleteLabel = document.createElement("span");
+      deleteLabel.textContent = "Delete";
+      deleteBtn.append(deleteIcon, deleteLabel);
       deleteBtn.addEventListener("click", async () => {
         if (!guardPermission("delete", "Your role cannot delete reports.")) return;
         const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
