@@ -94,15 +94,17 @@
           <button type="button" class="admin-sidebar__link is-active" data-nav-view="management" data-nav-pane="workspace"><span class="material-symbols-rounded" aria-hidden="true">assignment</span><span>Case Workspace</span></button>
           <button type="button" class="admin-sidebar__link" data-nav-view="management" data-nav-pane="triage"><span class="material-symbols-rounded" aria-hidden="true">local_shipping</span><span>Dispatch & Routing</span></button>
         </div>
-        <div class="admin-sidebar__report-total">
-          <p>Total Reports</p>
-          <strong id="sidebarTotalReportsCount">0</strong>
-          <small>This month</small>
-        </div>
         <div class="admin-sidebar__profile" aria-label="Admin profile controls">
           <button id="adminIdentityChip" type="button" class="secondary slim console-chip admin-sidebar__identity-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span><span class="material-symbols-rounded console-chip__caret" aria-hidden="true">expand_more</span></button>
         </div>
-        <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
+        <div class="admin-sidebar__footer">
+          <div class="admin-sidebar__report-total">
+            <p>Total Reports</p>
+            <strong id="sidebarTotalReportsCount">0</strong>
+            <small>This month</small>
+          </div>
+          <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
+        </div>
       </aside>
 
       <div class="admin-console-main">

@@ -5201,6 +5201,12 @@ body.admin-authenticated .severity-critical {
   padding-left: 18px;
 }
 
+.admin-sidebar__footer {
+  margin-top: auto;
+  display: grid;
+  gap: 10px;
+}
+
 .sidebar-toggle-btn {
   display: none;
 }
@@ -5376,7 +5382,7 @@ body {
 }
 
 .admin-sidebar__logout {
-  margin-top: auto;
+  margin-top: 0;
   width: 100%;
   border-radius: 10px;
   background: #f1f5f9;
@@ -6668,7 +6674,7 @@ body.admin-authenticated .admin-sidebar__link:hover {
 }
 
 .admin-sidebar__report-total {
-  margin-top: auto;
+  margin-top: 0;
   padding: 14px;
   border-radius: 14px;
   background: rgba(6, 23, 42, 0.55);
