@@ -11233,3 +11233,49 @@ body.admin-authenticated .admin-sidebar__link {
     padding-right: 6px;
   }
 }
+
+/* 2026-04-23 theme fix: improve contrast in light mode verification + SLA cards. */
+body.admin-authenticated:not([data-theme="dark"]) .overview-panel--verification .queueCard,
+body[data-theme="light"].admin-authenticated .overview-panel--verification .queueCard {
+  background: linear-gradient(180deg, #f5f9ff 0%, #e7f1ff 100%);
+  border-color: rgba(101, 146, 200, 0.44);
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .overview-panel--verification .queueCard h4,
+body.admin-authenticated:not([data-theme="dark"]) .overview-panel--verification .queueCard p,
+body[data-theme="light"].admin-authenticated .overview-panel--verification .queueCard h4,
+body[data-theme="light"].admin-authenticated .overview-panel--verification .queueCard p {
+  color: #123e6f;
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .priorityItem,
+body[data-theme="light"].admin-authenticated .priorityItem {
+  background: linear-gradient(180deg, #fff6fb 0%, #fef0f7 100%);
+  border-color: rgba(206, 146, 174, 0.48);
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .priorityMeta,
+body[data-theme="light"].admin-authenticated .priorityMeta {
+  color: #944163;
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .verification-badge.is-pending,
+body[data-theme="light"].admin-authenticated .verification-badge.is-pending {
+  background: rgba(255, 213, 102, 0.22);
+  border-color: rgba(180, 120, 16, 0.4);
+  color: #6f4300;
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .verification-badge.is-verified,
+body[data-theme="light"].admin-authenticated .verification-badge.is-verified {
+  background: rgba(92, 210, 168, 0.2);
+  border-color: rgba(20, 128, 94, 0.36);
+  color: #0c5f49;
+}
+
+body.admin-authenticated:not([data-theme="dark"]) .verification-badge.is-flagged,
+body[data-theme="light"].admin-authenticated .verification-badge.is-flagged {
+  background: rgba(246, 120, 153, 0.18);
+  border-color: rgba(180, 54, 92, 0.36);
+  color: #8a103f;
+}
