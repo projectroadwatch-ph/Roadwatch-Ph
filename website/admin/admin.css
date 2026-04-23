@@ -11339,6 +11339,75 @@ body[data-theme="dark"].admin-authenticated .priorityItem {
   border-color: rgba(141, 195, 252, 0.3);
 }
 
+/* 2026-04-23d: harden dark-theme parity for overview + filter toolbars. */
+body[data-theme="dark"].admin-authenticated .critical-overview-panel--hero,
+body[data-theme="dark"].admin-authenticated .overview-shell .panel,
+body[data-theme="dark"].admin-authenticated .data-analytics-panel,
+body[data-theme="dark"].admin-authenticated .tableWrap,
+body[data-theme="dark"].admin-authenticated .overview-table-wrap,
+body[data-theme="dark"].admin-authenticated .chart-panel,
+body[data-theme="dark"].admin-authenticated .analytics-timeline,
+body[data-theme="dark"].admin-authenticated .pinMap,
+body[data-theme="dark"].admin-authenticated .heatmapWrap {
+  background:
+    radial-gradient(circle at 14% -22%, rgba(102, 165, 236, 0.18), transparent 50%),
+    radial-gradient(circle at 90% 0%, rgba(85, 224, 192, 0.1), transparent 48%),
+    linear-gradient(165deg, rgba(9, 34, 60, 0.95), rgba(6, 23, 42, 0.95));
+  border-color: rgba(137, 192, 251, 0.3);
+  box-shadow: inset 0 1px 0 rgba(192, 223, 255, 0.1), 0 14px 28px rgba(1, 9, 18, 0.5);
+}
+
+body[data-theme="dark"].admin-authenticated .critical-kpi-strip .kpi-pill,
+body[data-theme="dark"].admin-authenticated .snapshot-card,
+body[data-theme="dark"].admin-authenticated .snapshot-detail-card,
+body[data-theme="dark"].admin-authenticated .chart-accessibility,
+body[data-theme="dark"].admin-authenticated .status-chart-summary-list {
+  background: linear-gradient(170deg, rgba(10, 37, 66, 0.94), rgba(7, 26, 46, 0.94));
+  border-color: rgba(135, 191, 248, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+body[data-theme="dark"].admin-authenticated .toolbar,
+body[data-theme="dark"].admin-authenticated .triage-toolbar,
+body[data-theme="dark"].admin-authenticated .bulk-toolbar,
+body[data-theme="dark"].admin-authenticated .selection-toolbar,
+body[data-theme="dark"].admin-authenticated .saved-view-toolbar,
+body[data-theme="dark"].admin-authenticated .data-analytics-filters {
+  background: rgba(7, 26, 47, 0.88);
+  border-color: rgba(126, 182, 241, 0.32);
+}
+
+body[data-theme="dark"].admin-authenticated .analytics-filter-control,
+body[data-theme="dark"].admin-authenticated .inlineControl.compact,
+body[data-theme="dark"].admin-authenticated .inlineControl.compact select,
+body[data-theme="dark"].admin-authenticated .analytics-filter-control select {
+  background: rgba(10, 35, 61, 0.95);
+  border-color: rgba(132, 189, 247, 0.48);
+  color: #e4f1ff;
+}
+
+body[data-theme="dark"].admin-authenticated .critical-overview-empty-hint {
+  border-color: rgba(133, 190, 250, 0.4);
+  background: rgba(10, 38, 66, 0.66);
+  color: #c7e0fb;
+}
+
+body[data-theme="dark"].admin-authenticated .ai-autopilot-bar {
+  background: rgba(10, 37, 64, 0.62);
+  border-color: rgba(130, 186, 244, 0.3);
+}
+
+body[data-theme="dark"].admin-authenticated .critical-overview-panel--hero .small,
+body[data-theme="dark"].admin-authenticated .overview-panel .small,
+body[data-theme="dark"].admin-authenticated .analyticsLabel,
+body[data-theme="dark"].admin-authenticated .snapshot-card__body span,
+body[data-theme="dark"].admin-authenticated .snapshot-card__body small,
+body[data-theme="dark"].admin-authenticated .timelineBarLabel,
+body[data-theme="dark"].admin-authenticated .timelineBarValue,
+body[data-theme="dark"].admin-authenticated .heatRow {
+  color: #b9d4ef;
+}
+
 body[data-theme="dark"].admin-authenticated .report-card h4,
 body[data-theme="dark"].admin-authenticated .report-card__tracking,
 body[data-theme="dark"].admin-authenticated .report-card__quick-meta p,
