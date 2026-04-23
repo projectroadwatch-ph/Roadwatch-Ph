@@ -1959,14 +1959,38 @@ function renderManagementSnapshot(filteredReports) {
   if (sidebarTotalReportsCount) sidebarTotalReportsCount.textContent = String(reports.length);
 }
 
-function setWorkspaceLayoutMode() {
-  workspaceLayoutMode = "cards";
-  if (cardWorkspace) cardWorkspace.hidden = workspaceLayoutMode !== "cards";
-  if (kanbanWorkspace) kanbanWorkspace.hidden = true;
-  if (tableWorkspace) tableWorkspace.hidden = true;
+function setWorkspaceLayoutMode(mode = "cards") {
+  const requestedMode = mode === "table" || mode === "kanban" ? mode : "cards";
+  const canUseKanban = Boolean(kanbanWorkspace);
+  const canUseTable = Boolean(tableWorkspace);
+
+  if (requestedMode === "kanban" && !canUseKanban) {
+    workspaceLayoutMode = canUseTable ? "table" : "cards";
+  } else if (requestedMode === "table" && !canUseTable) {
+    workspaceLayoutMode = canUseKanban ? "kanban" : "cards";
+  } else {
+    workspaceLayoutMode = requestedMode;
+  }
+
+  if (cardWorkspace) {
+    const isCards = workspaceLayoutMode === "cards";
+    cardWorkspace.hidden = !isCards;
+    cardWorkspace.setAttribute("aria-hidden", isCards ? "false" : "true");
+  }
+  if (kanbanWorkspace) {
+    const isKanban = workspaceLayoutMode === "kanban";
+    kanbanWorkspace.hidden = !isKanban;
+    kanbanWorkspace.setAttribute("aria-hidden", isKanban ? "false" : "true");
+  }
+  if (tableWorkspace) {
+    const isTable = workspaceLayoutMode === "table";
+    tableWorkspace.hidden = !isTable;
+    tableWorkspace.setAttribute("aria-hidden", isTable ? "false" : "true");
+  }
+
   showCardViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "cards");
-  showKanbanViewBtn?.classList.remove("is-active");
-  showTableViewBtn?.classList.remove("is-active");
+  showKanbanViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "kanban");
+  showTableViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "table");
   queuePersistWorkspacePrefs();
 }
 
@@ -4135,6 +4159,8 @@ runSmartDispatchBtn?.addEventListener("click", () => {
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
+showKanbanViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("kanban"));
+showTableViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("table"));
 
 severityQuickFilter?.addEventListener("change", () => {
   currentPage = 1;
