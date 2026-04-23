@@ -9620,13 +9620,13 @@ body.admin-authenticated[data-theme="dark"] #overviewAnalyticsPanel .severity-me
 }
 
 #workspacePane .card-workspace {
-  border: 1px solid rgba(131, 191, 255, 0.3);
+  border: 0;
   border-radius: 14px;
   background: linear-gradient(164deg, rgba(10, 38, 67, 0.68), rgba(6, 25, 45, 0.58));
 }
 
 #workspacePane .card-workspace__hero {
-  border-bottom: 1px solid rgba(135, 191, 248, 0.26);
+  border-bottom: 0;
 }
 
 #workspacePane .paginationBar {
