@@ -10581,56 +10581,82 @@ body.admin-authenticated .admin-console-main > .console-topbar--inspiration {
   }
 }
 
-/* 2026-04-22: Scroll recovery fix for admin portal content. */
-html,
-body {
-  overflow-y: auto;
+/* 2026-04-23 sidebar behavior update:
+   keep admin side navigation fixed while only the content panel scrolls (desktop). */
+body.admin-authenticated {
+  overflow: hidden;
 }
 
-body.admin-authenticated .wrap,
-body.admin-authenticated .dashboard-shell,
-body.admin-authenticated .admin-console-layout,
-body.admin-authenticated .admin-console-main,
-body.admin-authenticated .admin-console-main > .dashboard-view {
-  height: auto;
-  max-height: none;
+body.admin-authenticated .wrap {
+  min-height: calc(100vh - 24px);
 }
 
-body.admin-authenticated .admin-console-main,
-body.admin-authenticated .admin-console-main > .dashboard-view {
-  overflow: visible;
+body.admin-authenticated .dashboard-shell {
+  height: calc(100vh - 24px);
+  max-height: calc(100vh - 24px);
+  overflow: hidden;
 }
 
-/* 2026-04-22 hotfix v2: ensure main content does not get pushed out of viewport by sidebar offsets. */
 body.admin-authenticated .admin-console-layout {
   grid-template-columns: clamp(220px, 22vw, 250px) minmax(0, 1fr) !important;
+  height: 100%;
 }
 
 body.admin-authenticated .admin-sidebar {
-  position: sticky !important;
+  position: fixed !important;
   top: 12px;
-  left: auto !important;
-  width: 100%;
+  left: max(12px, calc((100vw - min(1480px, 99%)) / 2));
+  width: clamp(220px, 22vw, 250px);
   max-width: 250px;
+  height: calc(100vh - 24px);
+  max-height: calc(100vh - 24px);
 }
 
 body.admin-authenticated .admin-console-main {
-  margin-left: 0 !important;
+  margin-left: calc(clamp(220px, 22vw, 250px) + 16px) !important;
   min-width: 0 !important;
-  width: 100%;
+  width: auto;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+body.admin-authenticated .admin-console-main > .dashboard-view {
+  min-height: 100%;
 }
 
 @media (max-width: 1120px) {
+  body.admin-authenticated {
+    overflow-y: auto;
+  }
+
+  body.admin-authenticated .dashboard-shell {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
   body.admin-authenticated .admin-console-layout {
     grid-template-columns: 1fr !important;
+    height: auto;
   }
 
   body.admin-authenticated .admin-sidebar {
     position: static !important;
+    left: auto;
     max-width: none;
     width: 100%;
     height: auto;
     max-height: none;
+  }
+
+  body.admin-authenticated .admin-console-main {
+    margin-left: 0 !important;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
   }
 }
 
