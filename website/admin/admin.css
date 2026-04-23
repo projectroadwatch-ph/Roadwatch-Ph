@@ -11179,3 +11179,47 @@ body.admin-authenticated .admin-sidebar__link {
     padding-right: 0;
   }
 }
+
+/* 2026-04-23: Lock desktop sidebar to viewport (top + bottom) and let only content scroll. */
+@media (min-width: 1181px) {
+  body.admin-authenticated {
+    overflow: hidden;
+  }
+
+  body.admin-authenticated .wrap {
+    min-height: 100vh;
+    height: 100vh;
+  }
+
+  body.admin-authenticated #dashboard.dashboard-shell {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+    padding-bottom: 12px;
+  }
+
+  body.admin-authenticated .admin-console-layout {
+    height: 100%;
+    align-items: stretch;
+    grid-template-columns: 228px minmax(0, 1fr);
+  }
+
+  body.admin-authenticated .admin-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100%;
+    max-height: 100%;
+    width: 228px;
+    margin-left: -18px;
+    overflow-y: auto;
+  }
+
+  body.admin-authenticated .admin-console-main {
+    margin-left: 0;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+  }
+}
