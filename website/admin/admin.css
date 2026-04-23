@@ -9634,6 +9634,47 @@ body.admin-authenticated[data-theme="dark"] #overviewAnalyticsPanel .severity-me
   padding-top: 10px;
 }
 
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card {
+  background: linear-gradient(166deg, rgba(8, 32, 56, 0.95), rgba(6, 24, 42, 0.92));
+  border-color: rgba(131, 191, 255, 0.28);
+}
+
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card h4,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__tracking,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__quick-id,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__reporter-name,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__section-title,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__report-id,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__verifier {
+  color: #e7f3ff;
+}
+
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__location,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__date,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__desc,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__quick-meta p,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__reporter-main p,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__reporter-side p,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__split p,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__split span {
+  color: #b8d3ee;
+}
+
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__hero,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__section,
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__reporter {
+  border-color: rgba(131, 191, 255, 0.24);
+  background: rgba(8, 30, 52, 0.48);
+}
+
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__quick-meta {
+  background: rgba(6, 26, 44, 0.8);
+}
+
+body.admin-authenticated[data-theme="dark"] #workspacePane .report-card__photo {
+  background: rgba(4, 21, 37, 0.86);
+}
+
 body.admin-authenticated[data-theme="light"] #workspacePane {
   border-color: rgba(108, 154, 208, 0.34);
   background:
