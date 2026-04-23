@@ -6424,6 +6424,8 @@ body:not(.admin-authenticated) .wrap {
 .login-card--gov .login-home-link,
 .login-card--gov .login-forgot {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
   font-size: clamp(0.82rem, 2.2vw, 0.95rem);
   color: #b7d6fa;
   text-decoration: none;
@@ -6442,7 +6444,20 @@ body:not(.admin-authenticated) .wrap {
   }
 
   .login-card--gov .login-links {
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .login-card--gov .login-home-link,
+  .login-card--gov .login-forgot {
+    font-size: clamp(0.74rem, 2.8vw, 0.88rem);
+    white-space: nowrap;
+  }
+
+  .login-card--gov .login-forgot {
+    margin-left: auto;
   }
 
   .login-gov-footer {
