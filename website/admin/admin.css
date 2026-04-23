@@ -10614,7 +10614,8 @@ body.admin-authenticated .admin-console-main > .console-topbar--inspiration {
 /* 2026-04-23 sidebar behavior update:
    keep admin side navigation fixed while only the content panel scrolls (desktop). */
 body.admin-authenticated {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body.admin-authenticated .wrap {
@@ -10622,38 +10623,40 @@ body.admin-authenticated .wrap {
 }
 
 body.admin-authenticated .dashboard-shell {
-  height: calc(100vh - 24px);
-  max-height: calc(100vh - 24px);
-  overflow: hidden;
+  min-height: calc(100vh - 24px);
+  height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
 body.admin-authenticated .admin-console-layout {
-  grid-template-columns: 1fr !important;
-  height: 100%;
+  grid-template-columns: clamp(206px, 18.5vw, 234px) minmax(0, 1fr) !important;
+  align-items: start;
+  gap: 12px;
+  height: auto;
 }
 
 body.admin-authenticated .admin-sidebar {
-  position: fixed !important;
+  position: sticky !important;
   top: 12px;
-  left: max(12px, calc((100vw - min(1480px, 99%)) / 2));
-  width: clamp(180px, 17vw, 204px);
-  max-width: 204px;
-  height: calc(100vh - 24px);
-  max-height: calc(100vh - 24px);
+  left: auto;
+  width: 100%;
+  max-width: none;
+  height: calc(100vh - 40px);
+  max-height: calc(100vh - 40px);
 }
 
 body.admin-authenticated .admin-console-main {
-  margin-left: calc(clamp(180px, 17vw, 204px) + 14px) !important;
+  margin-left: 0 !important;
   min-width: 0 !important;
-  width: calc(100% - (clamp(180px, 17vw, 204px) + 14px));
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 6px;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  padding-right: 0;
 }
 
 body.admin-authenticated .admin-console-main > .dashboard-view {
-  min-height: 100%;
+  min-height: 0;
 }
 
 @media (max-width: 1120px) {
@@ -10849,7 +10852,7 @@ body.admin-authenticated .admin-sidebar__brand > div:first-of-type {
 
 body.admin-authenticated .admin-sidebar__brand strong {
   color: #173d75;
-  font-size: clamp(0.88rem, 0.9vw, 1rem);
+  font-size: clamp(0.82rem, 0.84vw, 0.95rem);
   font-weight: 800;
   letter-spacing: -0.01em;
 }
@@ -10886,20 +10889,23 @@ body.admin-authenticated .admin-sidebar__nav {
 }
 
 body.admin-authenticated .admin-sidebar__link {
-  min-height: 40px;
+  min-height: 36px;
   border-radius: 10px;
   border: 1px solid rgba(192, 208, 231, 0.88);
   background: rgba(236, 243, 252, 0.98);
   color: #1f4378;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   justify-content: flex-start;
-  padding: 0 10px;
-  gap: 7px;
+  padding: 0 8px;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.admin-authenticated .admin-sidebar__link .material-symbols-rounded {
-  font-size: 1rem;
+  font-size: 0.92rem;
 }
 
 body.admin-authenticated .admin-sidebar__link:hover,
@@ -10924,18 +10930,18 @@ body.admin-authenticated .admin-sidebar__report-total {
   border-radius: 10px;
   border: 1px solid rgba(196, 211, 232, 0.88);
   background: rgba(237, 243, 251, 0.93);
-  padding: 10px;
+  padding: 8px;
 }
 
 body.admin-authenticated .admin-sidebar__report-total p,
 body.admin-authenticated .admin-sidebar__report-total small {
   color: #64799a;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
 }
 
 body.admin-authenticated .admin-sidebar__report-total strong {
   color: #123f77;
-  font-size: clamp(1.28rem, 1.8vw, 1.6rem);
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
 }
 
 body.admin-authenticated .admin-sidebar__profile {
@@ -10944,13 +10950,14 @@ body.admin-authenticated .admin-sidebar__profile {
 
 body.admin-authenticated .admin-sidebar__logout {
   width: 100%;
-  min-height: 38px;
+  min-height: 34px;
+  margin-top: 8px;
   border-radius: 10px;
   border: 0;
   color: #eef5ff;
-  font-size: 0.79rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 0 10px;
+  padding: 0 8px;
   background: linear-gradient(95deg, #1e4f98 0%, #2b63b2 100%);
 }
 
