@@ -10834,7 +10834,7 @@ body.admin-authenticated .admin-sidebar__brand > div:first-of-type {
 
 body.admin-authenticated .admin-sidebar__brand strong {
   color: #173d75;
-  font-size: clamp(1rem, 1.05vw, 1.18rem);
+  font-size: clamp(0.88rem, 0.9vw, 1rem);
   font-weight: 800;
   letter-spacing: -0.01em;
 }
@@ -10877,14 +10877,14 @@ body.admin-authenticated .admin-sidebar__link {
   background: rgba(236, 243, 252, 0.98);
   color: #1f4378;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.88rem;
   justify-content: flex-start;
   padding: 0 14px;
   gap: 10px;
 }
 
 body.admin-authenticated .admin-sidebar__link .material-symbols-rounded {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 body.admin-authenticated .admin-sidebar__link:hover,
@@ -10915,11 +10915,12 @@ body.admin-authenticated .admin-sidebar__report-total {
 body.admin-authenticated .admin-sidebar__report-total p,
 body.admin-authenticated .admin-sidebar__report-total small {
   color: #64799a;
+  font-size: 0.85rem;
 }
 
 body.admin-authenticated .admin-sidebar__report-total strong {
   color: #123f77;
-  font-size: clamp(2rem, 3.2vw, 2.6rem);
+  font-size: clamp(1.75rem, 2.4vw, 2.2rem);
 }
 
 body.admin-authenticated .admin-sidebar__profile {
@@ -10932,7 +10933,7 @@ body.admin-authenticated .admin-sidebar__logout {
   border-radius: 14px;
   border: 0;
   color: #eef5ff;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   background: linear-gradient(95deg, #1e4f98 0%, #2b63b2 100%);
 }
