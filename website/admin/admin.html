@@ -83,6 +83,25 @@
           <strong id="sidebarTotalReportsCount">0</strong>
           <small>This month</small>
         </div>
+        <div class="admin-sidebar__profile" aria-label="Admin profile controls">
+          <button id="adminIdentityChip" type="button" class="secondary slim console-chip admin-sidebar__identity-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span><span class="material-symbols-rounded console-chip__caret" aria-hidden="true">expand_more</span></button>
+          <div class="admin-sidebar__profile-tools">
+            <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
+            <div class="console-alert-wrap console-alert-wrap--attached">
+              <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
+              </button>
+              <div id="notificationPanel" class="notification-panel" hidden>
+                <div class="notification-panel__header">
+                  <strong>Notifications</strong>
+                  <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+                </div>
+                <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
         <button id="logoutBtn" type="button" class="secondary admin-sidebar__logout">Sign out</button>
       </aside>
 
@@ -110,23 +129,6 @@
             <div class="console-topbar__quickstats topbar-utility-hidden" aria-label="Header quick status">
               <span class="console-pill console-pill--live">System Online</span>
               <span class="console-pill">Press <kbd>/</kbd> to search</span>
-            </div>
-            <div class="console-tools">
-              <button id="themeToggleBtn" type="button" class="secondary slim console-theme-btn" aria-label="Toggle dashboard theme"><span class="material-symbols-rounded" aria-hidden="true">dark_mode</span></button>
-              <div class="console-alert-wrap console-alert-wrap--attached">
-                <button id="notificationToggleBtn" type="button" class="secondary slim console-alert-btn" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
-                  <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
-                  <span id="notificationBadge" class="console-alert-btn__badge" aria-hidden="true">0</span>
-                </button>
-                <div id="notificationPanel" class="notification-panel" hidden>
-                  <div class="notification-panel__header">
-                    <strong>Notifications</strong>
-                    <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
-                  </div>
-                  <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
-                </div>
-              </div>
-              <button id="adminIdentityChip" type="button" class="secondary slim console-chip" aria-label="Current signed in admin"><span class="console-chip__avatar" aria-hidden="true"></span><span class="console-chip__name">roadwatchph</span><span class="material-symbols-rounded console-chip__caret" aria-hidden="true">expand_more</span></button>
             </div>
           </div>
         </div>
