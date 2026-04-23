@@ -1512,6 +1512,11 @@ function applyAuthUI() {
     renderAdminIdentity();
     startStaleDataMonitor();
     startRealtimeSync();
+    const preferredView = activeDashboardView === "management" ? "management" : "overview";
+    setDashboardView(preferredView);
+    if (preferredView === "management") {
+      setManagementPane(activeManagementPane === "triage" ? "triage" : "workspace");
+    }
     loadReports();
     if (isAutoUiImproverEnabled()) setAutoUiImproverEnabled(true);
     ensureDashboardContentVisibility();
