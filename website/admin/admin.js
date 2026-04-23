@@ -1532,8 +1532,10 @@ function applyAuthUI() {
 }
 
 function login() {
-  const username = document.getElementById("adminUsername").value.trim();
-  const password = document.getElementById("adminPassword").value.trim();
+  const usernameInput = document.getElementById("adminUsername");
+  const passwordInput = document.getElementById("adminPassword");
+  const username = String(usernameInput?.value || "").trim();
+  const password = String(passwordInput?.value || "");
   const authResult = adminAuth?.verifyCredentials({ username, password }) || {
     ok: false,
     mode: "unconfigured",
@@ -1560,6 +1562,8 @@ function login() {
   }
 
   setFeedback("loginFeedback", authResult.message || "Invalid username or password.", true);
+  passwordInput?.focus();
+  passwordInput?.select();
 }
 
 function logout() {
@@ -3900,6 +3904,16 @@ async function loadReports() {
 
 
 document.getElementById("loginBtn")?.addEventListener("click", login);
+["adminUsername", "adminPassword"].forEach((fieldId) => {
+  document.getElementById(fieldId)?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    login();
+  });
+});
+document.getElementById("forgotPasswordBtn")?.addEventListener("click", () => {
+  setFeedback("loginFeedback", "Please contact your RoadWatch PH system administrator to reset your password.");
+});
 document.getElementById("logoutBtn")?.addEventListener("click", logout);
 document.getElementById("refreshReportsBtn")?.addEventListener("click", loadReports);
 document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {

@@ -15,7 +15,7 @@
 
   function verifyCredentials({ username = "", password = "" } = {}) {
     const normalizedUsername = String(username).trim();
-    const normalizedPassword = String(password).trim();
+    const normalizedPassword = String(password);
     if (!normalizedUsername || !normalizedPassword) {
       return { ok: false, mode: "unconfigured", message: "Enter both username and password." };
     }
