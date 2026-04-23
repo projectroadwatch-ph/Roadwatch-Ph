@@ -157,7 +157,7 @@ const tableWorkspace = document.getElementById("tableWorkspace");
 const reportCardsGrid = document.getElementById("reportCardsGrid");
 const severityQuickFilter = document.getElementById("severityQuickFilter");
 const statusQuickFilter = document.getElementById("statusQuickFilter");
-const newReportCardBtn = document.getElementById("newReportCardBtn");
+const dateQuickFilter = document.getElementById("dateQuickFilter");
 const kanbanPending = document.getElementById("kanbanPending");
 const kanbanVerified = document.getElementById("kanbanVerified");
 const kanbanInProgress = document.getElementById("kanbanInProgress");
@@ -1118,8 +1118,8 @@ function getSeverityLabel(report) {
   const score = getPriorityScore(report);
   if (score >= 85) return "Critical";
   if (score >= 65) return "High";
-  if (score >= 40) return "Moderate";
-  return "Routine";
+  if (score >= 40) return "Medium";
+  return "Low";
 }
 
 function getRootCause(report) {
@@ -3512,6 +3512,7 @@ function getFilteredReports() {
   const selectedCategory = categoryFilter?.value || "all";
   const selectedBarangay = barangayFilter?.value || "all";
   const selectedQuality = qualityFilter?.value || "all";
+  const selectedDateRange = dateQuickFilter?.value || "all";
   const selectedPreset = triagePreset?.value || "all";
   const thresholdDays = getUrgencyThresholdDays();
   const now = Date.now();
@@ -3531,6 +3532,15 @@ function getFilteredReports() {
     const qualityScore = getDataQualityScore(report);
     const qualityPass = selectedQuality === "all" || getQualityBand(qualityScore) === selectedQuality;
     if (!qualityPass) return false;
+    if (selectedDateRange !== "all") {
+      const reportDate = parseReportDate(report);
+      if (!reportDate) return false;
+      const ageDays = Math.floor((now - reportDate.getTime()) / 86400000);
+      if (selectedDateRange === "today" && ageDays !== 0) return false;
+      if (selectedDateRange === "last7" && (ageDays < 0 || ageDays > 6)) return false;
+      if (selectedDateRange === "last30" && (ageDays < 0 || ageDays > 29)) return false;
+      if (selectedDateRange === "older30" && ageDays <= 30) return false;
+    }
 
     if (selectedPreset !== "all") {
       const verificationState = getVerificationState(report);
@@ -3892,6 +3902,7 @@ document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
   if (statusFilter) statusFilter.value = "all";
   if (statusQuickFilter) statusQuickFilter.value = "all";
   if (severityQuickFilter) severityQuickFilter.value = "all";
+  if (dateQuickFilter) dateQuickFilter.value = "all";
   if (categoryFilter) categoryFilter.value = "all";
   if (barangayFilter) barangayFilter.value = "all";
   if (qualityFilter) qualityFilter.value = "all";
@@ -4072,9 +4083,6 @@ runSmartDispatchBtn?.addEventListener("click", () => {
 showTriagePaneBtn?.addEventListener("click", () => setManagementPane("triage"));
 showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspace"));
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
-newReportCardBtn?.addEventListener("click", () => {
-  window.location.href = "../public/submit.html";
-});
 
 severityQuickFilter?.addEventListener("change", () => {
   applyFiltersAndRender();
@@ -4082,6 +4090,9 @@ severityQuickFilter?.addEventListener("change", () => {
 
 statusQuickFilter?.addEventListener("change", () => {
   if (statusFilter) statusFilter.value = statusQuickFilter.value;
+  applyFiltersAndRender();
+});
+dateQuickFilter?.addEventListener("change", () => {
   applyFiltersAndRender();
 });
 applyBulkStatusBtn?.addEventListener("click", () => {

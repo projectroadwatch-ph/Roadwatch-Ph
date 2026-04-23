@@ -526,8 +526,16 @@
                     <option value="Repaired">Repaired</option>
                   </select>
                 </label>
+                <label class="inlineControl compact">Date
+                  <select id="dateQuickFilter">
+                    <option value="all">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="last7">Last 7 Days</option>
+                    <option value="last30">Last 30 Days</option>
+                    <option value="older30">Older than 30 Days</option>
+                  </select>
+                </label>
                 </div>
-                <button id="newReportCardBtn" type="button" class="primary slim">＋ New Report</button>
               </header>
               <div id="reportCardsGrid" class="report-cards-grid"></div>
             </section>
