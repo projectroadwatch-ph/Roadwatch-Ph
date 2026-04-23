@@ -75,9 +75,9 @@ function buildHomepageUrl() {
     ? currentPathname
     : currentPathname.replace(/[^/]+$/, "");
 
-  // Use the QR landing alias because this URL stays stable even if homepage
-  // routing changes later on.
-  const qrLandingPath = "qr.html";
+  // Point QR scans straight to the public homepage entry to avoid extra
+  // redirects that can trigger scanner/browser errors on some devices.
+  const homepageEntryPath = "index.html?page=home";
   const defaultBaseUrl = `${currentUrl.origin}${currentDirectory}`;
   let baseForQr = configuredBaseUrl || defaultBaseUrl;
 
@@ -104,7 +104,7 @@ function buildHomepageUrl() {
     }
   }
 
-  const directHomepageUrl = new URL(qrLandingPath, baseForQr);
+  const directHomepageUrl = new URL(homepageEntryPath, baseForQr);
 
   if (typeof window.appendRoadWatchVersion === "function") {
     return window.appendRoadWatchVersion(directHomepageUrl.toString());
