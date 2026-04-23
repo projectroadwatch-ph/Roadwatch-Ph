@@ -557,6 +557,8 @@ function clearFilterByKey(key) {
       break;
     case "status":
       if (statusFilter) statusFilter.value = "all";
+      if (statusQuickFilter) statusQuickFilter.value = "all";
+      statusFilterButtons.forEach((button) => button.classList.remove("is-active"));
       break;
     case "category":
       if (categoryFilter) categoryFilter.value = "all";
@@ -620,6 +622,12 @@ function applySavedViewConfig(config) {
   if (reportSearch) reportSearch.value = String(config.reportSearch || "");
   syncSearchInputs("workspace");
   if (statusFilter) statusFilter.value = config.statusFilter || "all";
+  if (statusQuickFilter) statusQuickFilter.value = statusFilter?.value || "all";
+  statusFilterButtons.forEach((button) => {
+    const buttonStatus = String(button.dataset.statusFilter || "").trim();
+    const isActive = (statusFilter?.value || "all") !== "all" && buttonStatus === statusFilter?.value;
+    button.classList.toggle("is-active", isActive);
+  });
   if (categoryFilter) categoryFilter.value = config.categoryFilter || "all";
   if (barangayFilter) barangayFilter.value = config.barangayFilter || "all";
   if (qualityFilter) qualityFilter.value = config.qualityFilter || "all";
@@ -4120,14 +4128,17 @@ showWorkspacePaneBtn?.addEventListener("click", () => setManagementPane("workspa
 showCardViewBtn?.addEventListener("click", () => setWorkspaceLayoutMode("cards"));
 
 severityQuickFilter?.addEventListener("change", () => {
+  currentPage = 1;
   applyFiltersAndRender();
 });
 
 statusQuickFilter?.addEventListener("change", () => {
   if (statusFilter) statusFilter.value = statusQuickFilter.value;
+  currentPage = 1;
   applyFiltersAndRender();
 });
 dateQuickFilter?.addEventListener("change", () => {
+  currentPage = 1;
   applyFiltersAndRender();
 });
 applyBulkStatusBtn?.addEventListener("click", () => {
@@ -4450,7 +4461,7 @@ if (readAuthStorage(ADMIN_SESSION_KEY) === "true" && isAutoUiImproverEnabled()) 
   setAutoUiImproverEnabled(true);
 }
 renderSavedViews();
-setTableColumnView("operations");
+setTableColumnView(activeColumnView || "operations");
 renderAdminIdentity();
 applyRoleUiVisibility();
 renderNotificationPanel();
