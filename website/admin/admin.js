@@ -1961,10 +1961,19 @@ function renderManagementSnapshot(filteredReports) {
 
 function setWorkspaceLayoutMode() {
   workspaceLayoutMode = "cards";
-  if (cardWorkspace) cardWorkspace.hidden = workspaceLayoutMode !== "cards";
-  if (kanbanWorkspace) kanbanWorkspace.hidden = true;
-  if (tableWorkspace) tableWorkspace.hidden = true;
-  showCardViewBtn?.classList.toggle("is-active", workspaceLayoutMode === "cards");
+  if (cardWorkspace) {
+    cardWorkspace.hidden = false;
+    cardWorkspace.setAttribute("aria-hidden", "false");
+  }
+  if (kanbanWorkspace) {
+    kanbanWorkspace.hidden = true;
+    kanbanWorkspace.setAttribute("aria-hidden", "true");
+  }
+  if (tableWorkspace) {
+    tableWorkspace.hidden = true;
+    tableWorkspace.setAttribute("aria-hidden", "true");
+  }
+  showCardViewBtn?.classList.toggle("is-active", true);
   showKanbanViewBtn?.classList.remove("is-active");
   showTableViewBtn?.classList.remove("is-active");
   queuePersistWorkspacePrefs();
