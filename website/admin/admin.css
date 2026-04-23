@@ -11113,3 +11113,69 @@ body.admin-authenticated .overview-panel .inlineControl.compact select {
     max-height: none;
   }
 }
+
+/* 2026-04-23 final pass: maximize usable width and relax cramped dashboard density. */
+body.admin-authenticated .wrap {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body.admin-authenticated #dashboard.dashboard-shell {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  margin: 0;
+  min-height: 100vh;
+  padding: 18px 18px 28px;
+}
+
+body.admin-authenticated .admin-console-layout {
+  grid-template-columns: 228px minmax(0, 1fr);
+  gap: 18px;
+}
+
+body.admin-authenticated .admin-sidebar {
+  width: 228px;
+  border-radius: 0 18px 18px 0;
+  margin-left: -18px;
+  padding: 16px 12px 14px;
+}
+
+body.admin-authenticated .admin-console-main {
+  margin-left: 228px;
+  padding-right: 6px;
+}
+
+body.admin-authenticated .critical-overview-panel--hero,
+body.admin-authenticated .overview-shell .panel {
+  border-radius: 18px;
+}
+
+body.admin-authenticated .critical-kpi-strip .kpi-pill {
+  min-height: 120px;
+}
+
+body.admin-authenticated .admin-sidebar__link {
+  min-height: 40px;
+  font-size: 0.79rem;
+}
+
+@media (max-width: 1180px) {
+  body.admin-authenticated #dashboard.dashboard-shell {
+    padding: 14px 12px 22px;
+  }
+
+  body.admin-authenticated .admin-sidebar {
+    margin-left: 0;
+    border-radius: 14px;
+    width: 100%;
+  }
+
+  body.admin-authenticated .admin-console-main {
+    margin-left: 0;
+    padding-right: 0;
+  }
+}
