@@ -10573,3 +10573,94 @@ body.admin-authenticated .admin-console-main {
     max-height: none;
   }
 }
+
+/* 2026-04-23 theme parity fix: ensure admin dashboard surfaces + text follow selected light/dark theme. */
+body[data-theme="light"].admin-authenticated {
+  --text: #16314f;
+  --muted: #4f6783;
+  --line: rgba(92, 132, 186, 0.3);
+  background: radial-gradient(circle at 12% 8%, #f4f8ff 0%, #dce9fb 45%, #c6daf5 100%);
+}
+
+body[data-theme="light"].admin-authenticated .dashboard-shell {
+  background: linear-gradient(160deg, rgba(245, 250, 255, 0.98), rgba(225, 236, 252, 0.95));
+  border-color: rgba(120, 161, 214, 0.36);
+  box-shadow: 0 18px 36px rgba(38, 81, 138, 0.14);
+}
+
+body[data-theme="light"].admin-authenticated .console-topbar,
+body[data-theme="light"].admin-authenticated .dashboard-header,
+body[data-theme="light"].admin-authenticated .dashboard-nav,
+body[data-theme="light"].admin-authenticated .overview-shell .panel,
+body[data-theme="light"].admin-authenticated .critical-overview-panel--hero,
+body[data-theme="light"].admin-authenticated .data-analytics-panel,
+body[data-theme="light"].admin-authenticated #actionsPane.workspace-actions,
+body[data-theme="light"].admin-authenticated .command-pane,
+body[data-theme="light"].admin-authenticated .tableWrap,
+body[data-theme="light"].admin-authenticated .kanban-board,
+body[data-theme="light"].admin-authenticated .kanban-drawer,
+body[data-theme="light"].admin-authenticated .notification-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(234, 243, 255, 0.96));
+  border-color: rgba(117, 160, 215, 0.32);
+  box-shadow: 0 10px 24px rgba(54, 97, 151, 0.1);
+}
+
+body[data-theme="light"].admin-authenticated,
+body[data-theme="light"].admin-authenticated .panel,
+body[data-theme="light"].admin-authenticated .small,
+body[data-theme="light"].admin-authenticated label,
+body[data-theme="light"].admin-authenticated th,
+body[data-theme="light"].admin-authenticated td,
+body[data-theme="light"].admin-authenticated .queueCard p,
+body[data-theme="light"].admin-authenticated .priorityItem p,
+body[data-theme="light"].admin-authenticated .timelineBarLabel,
+body[data-theme="light"].admin-authenticated .timelineBarValue,
+body[data-theme="light"].admin-authenticated .analyticsLabel,
+body[data-theme="light"].admin-authenticated .section-chip,
+body[data-theme="light"].admin-authenticated .snapshot-card span,
+body[data-theme="light"].admin-authenticated .inlineControl.compact,
+body[data-theme="light"].admin-authenticated .admin-sidebar,
+body[data-theme="light"].admin-authenticated .admin-sidebar * {
+  color: #1f4168;
+}
+
+body[data-theme="light"].admin-authenticated .analyticsCard strong,
+body[data-theme="light"].admin-authenticated .kpi-pill strong,
+body[data-theme="light"].admin-authenticated .snapshot-card strong,
+body[data-theme="light"].admin-authenticated .severity-card strong,
+body[data-theme="light"].admin-authenticated h2,
+body[data-theme="light"].admin-authenticated h3,
+body[data-theme="light"].admin-authenticated h4 {
+  color: #12365a;
+}
+
+body[data-theme="light"].admin-authenticated input,
+body[data-theme="light"].admin-authenticated select,
+body[data-theme="light"].admin-authenticated textarea {
+  background: rgba(247, 251, 255, 0.95);
+  color: #173b61;
+  border-color: rgba(126, 164, 212, 0.48);
+}
+
+body[data-theme="light"].admin-authenticated input::placeholder,
+body[data-theme="light"].admin-authenticated textarea::placeholder {
+  color: #5f7f9f;
+}
+
+body[data-theme="dark"].admin-authenticated .admin-sidebar,
+body[data-theme="dark"].admin-authenticated .admin-sidebar * {
+  color: #d6e9ff;
+}
+
+body[data-theme="dark"].admin-authenticated input,
+body[data-theme="dark"].admin-authenticated select,
+body[data-theme="dark"].admin-authenticated textarea,
+body[data-theme="dark"].admin-authenticated .inlineControl select,
+body[data-theme="dark"].admin-authenticated .inlineControl input {
+  color: #d7e9ff;
+}
+
+body[data-theme="dark"].admin-authenticated input::placeholder,
+body[data-theme="dark"].admin-authenticated textarea::placeholder {
+  color: #9ab8dc;
+}
