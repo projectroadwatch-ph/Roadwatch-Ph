@@ -2006,6 +2006,7 @@ function renderCardWorkspace(reports) {
     const card = document.createElement("article");
     card.className = "report-card";
     const tracking = String(report.tracking || "").trim();
+    const hasTracking = Boolean(tracking);
     const effectiveStatus = normalizeStatus(report.status);
     const severity = getSeverityLabel(report);
     const dateLabel = report.dateTime ? escapeHtml(String(report.dateTime).split(",")[0]) : "Not available";
@@ -2046,7 +2047,7 @@ function renderCardWorkspace(reports) {
           <p>📞 ${escapeHtml(reporterPhone)}</p>
         </div>
         <div class="report-card__reporter-side">
-          <p>Status: <strong>${escapeHtml(verifiedLabel)}</strong></p>
+          <p>Status: <strong>${escapeHtml(effectiveStatus)}</strong></p>
           <p>Road Quality: <strong>${escapeHtml(qualityScore)}</strong></p>
         </div>
       </section>
@@ -2102,6 +2103,10 @@ function renderCardWorkspace(reports) {
       const statusControl = statusSelect(effectiveStatus, report.tracking);
       statusControl.classList.add("card-action-select");
       statusControl.setAttribute("aria-label", `Update status for report ${tracking || "N/A"}`);
+      if (!hasTracking) {
+        statusControl.disabled = true;
+        statusControl.title = "Tracking number required to change status.";
+      }
 
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
@@ -2113,13 +2118,27 @@ function renderCardWorkspace(reports) {
       const deleteLabel = document.createElement("span");
       deleteLabel.textContent = "Delete";
       deleteBtn.append(deleteIcon, deleteLabel);
+      if (!hasTracking) {
+        deleteBtn.disabled = true;
+        deleteBtn.title = "Tracking number required to delete report.";
+      }
       deleteBtn.addEventListener("click", async () => {
         if (!guardPermission("delete", "Your role cannot delete reports.")) return;
+        if (!hasTracking) {
+          setFeedback("reportsFeedback", "Tracking number is required to delete this report.", true);
+          return;
+        }
         const confirmed = window.confirm(`Delete report ${report.tracking}? This cannot be undone.`);
         if (!confirmed) return;
         try {
           await deleteReport(report.tracking);
           allReports = allReports.filter((item) => String(item.tracking) !== String(report.tracking));
+          selectedReports.delete(tracking);
+          flaggedReports.delete(tracking);
+          removeStatusOverride(tracking);
+          if (activeKanbanTracking === tracking) activeKanbanTracking = "";
+          addAuditEntry("Report Deleted", report.tracking, "Deleted from report card workspace");
+          addTimelineEntry(report.tracking, "Report Deleted", "Deleted from report card workspace");
           setFeedback("reportsFeedback", `Deleted ${report.tracking}.`);
           applyFiltersAndRender();
         } catch (error) {
@@ -2136,6 +2155,10 @@ function renderCardWorkspace(reports) {
       const assignLabel = document.createElement("span");
       assignLabel.textContent = "Assign Team";
       assignBtn.append(assignIcon, assignLabel);
+      if (!hasTracking) {
+        assignBtn.disabled = true;
+        assignBtn.title = "Tracking number required to assign personnel.";
+      }
       assignBtn.addEventListener("click", () => quickAssignPersonnel(report));
 
       actions.append(viewBtn, statusControl, assignBtn, deleteBtn);
