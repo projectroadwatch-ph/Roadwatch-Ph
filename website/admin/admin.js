@@ -2126,7 +2126,19 @@ function renderCardWorkspace(reports) {
           setFeedback("reportsFeedback", error.message || "Unable to delete report.", true);
         }
       });
-      actions.append(viewBtn, statusControl, deleteBtn);
+      const assignBtn = document.createElement("button");
+      assignBtn.type = "button";
+      assignBtn.className = "secondary slim card-action-btn card-action-btn--assign";
+      const assignIcon = document.createElement("span");
+      assignIcon.className = "material-symbols-rounded card-action-btn__icon";
+      assignIcon.setAttribute("aria-hidden", "true");
+      assignIcon.textContent = "person_add";
+      const assignLabel = document.createElement("span");
+      assignLabel.textContent = "Assign Personnel";
+      assignBtn.append(assignIcon, assignLabel);
+      assignBtn.addEventListener("click", () => quickAssignPersonnel(report));
+
+      actions.append(viewBtn, statusControl, assignBtn, deleteBtn);
     }
     reportCardsGrid.appendChild(card);
   });
@@ -2590,6 +2602,34 @@ function focusTimeline(tracking) {
   if (!key || !timelineTrackingSelect) return;
   timelineTrackingSelect.value = key;
   renderCaseTimeline(key);
+}
+
+function quickAssignPersonnel(report) {
+  const tracking = String(report?.tracking || "").trim();
+  if (!tracking) {
+    setFeedback("reportsFeedback", "Unable to assign personnel: missing tracking number.", true);
+    return;
+  }
+  if (!guardPermission("assign", "Your role cannot update assignment metadata.")) return;
+
+  const currentAssignee = String(report?.assignedTo || "").trim();
+  const assigneeInput = window.prompt(
+    `Assign personnel for ${tracking} (name or team):`,
+    currentAssignee && currentAssignee !== "Unassigned" ? currentAssignee : ""
+  );
+  if (assigneeInput === null) return;
+
+  const assignedTo = String(assigneeInput || "").trim() || "Unassigned";
+  const dueAt = String(report?.dueAt || "").trim();
+  updateCaseMeta(tracking, { assignedTo, dueAt });
+  allReports = allReports.map((item) =>
+    String(item?.tracking || "").trim() === tracking ? { ...item, assignedTo, dueAt } : item
+  );
+  addAuditEntry("Case Assignment Updated", tracking, `${assignedTo}${dueAt ? ` • Due ${dueAt}` : ""}`);
+  addTimelineEntry(tracking, "Assignment Updated", `${assignedTo}${dueAt ? ` • Due ${dueAt}` : ""}`);
+  setFeedback("reportsFeedback", `Assigned ${tracking} to ${assignedTo}.`);
+  focusTimeline(tracking);
+  applyFiltersAndRender();
 }
 
 function renderAuditTrail() {
