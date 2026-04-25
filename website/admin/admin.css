@@ -6775,6 +6775,13 @@ body.admin-authenticated .card-action-btn {
   text-align: center;
 }
 
+body.admin-authenticated .report-card__actions .card-action-btn,
+body.admin-authenticated .report-card__actions .card-action-select {
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
 body.admin-authenticated .card-action-btn__icon {
   font-size: 0.9rem;
   line-height: 1;
@@ -6808,6 +6815,8 @@ body.admin-authenticated .report-card__actions .card-action-select {
   padding: 0 10px;
   font-size: 0.82rem;
   font-weight: 700;
+  font-family: inherit;
+  line-height: 1.15;
 }
 
 @media (min-width: 1180px) {
