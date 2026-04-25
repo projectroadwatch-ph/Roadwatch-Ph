@@ -2371,7 +2371,41 @@ function copyTrackingNumber() {
     return;
   }
 
-  navigator.clipboard.writeText(trackingNumber)
+  const writeUsingClipboardApi = () => {
+    if (!navigator?.clipboard || typeof navigator.clipboard.writeText !== "function") {
+      return Promise.reject(new Error("Clipboard API not available"));
+    }
+    return navigator.clipboard.writeText(trackingNumber);
+  };
+
+  const writeUsingLegacyFallback = () => {
+    const tempInput = document.createElement("input");
+    tempInput.type = "text";
+    tempInput.value = trackingNumber;
+    tempInput.setAttribute("readonly", "true");
+    tempInput.style.position = "fixed";
+    tempInput.style.top = "-9999px";
+    tempInput.style.left = "-9999px";
+    document.body.appendChild(tempInput);
+    tempInput.focus();
+    tempInput.select();
+
+    let didCopy = false;
+    try {
+      didCopy = document.execCommand("copy");
+    } finally {
+      tempInput.remove();
+    }
+
+    if (!didCopy) {
+      throw new Error("Legacy clipboard copy failed");
+    }
+  };
+
+  writeUsingClipboardApi()
+    .catch(() => {
+      writeUsingLegacyFallback();
+    })
     .then(() => {
       if (copyFeedback) copyFeedback.innerText = "Reference number copied.";
     })
