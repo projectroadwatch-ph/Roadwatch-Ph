@@ -6751,7 +6751,7 @@ body.admin-authenticated .report-card__hero {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -6786,6 +6786,12 @@ body.admin-authenticated .report-card__actions .card-action-btn--danger {
   background: #ff5d5d;
   color: #fff;
   border: 0;
+}
+
+body.admin-authenticated .report-card__actions .card-action-btn--assign {
+  background: linear-gradient(135deg, rgba(31, 116, 211, 0.92), rgba(22, 90, 182, 0.96));
+  color: #ffffff;
+  border: 1px solid rgba(169, 215, 255, 0.38);
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
