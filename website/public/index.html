@@ -348,6 +348,22 @@
     </div>
 
 
+    <section class="card reports-map-card track-status-map" aria-labelledby="reportsMapHeading">
+      <div class="report-stats-head">
+        <p class="stats-eyebrow">Public Geospatial Report Visualization</p>
+        <h3 id="reportsMapHeading">Interactive Road Damage Map</h3>
+        <p class="report-stats-subtitle">View report markers in real time and quickly identify affected areas by status color.</p>
+      </div>
+
+      <div class="reports-map-legend" aria-label="Map marker legend">
+        <span><i class="legend-dot red"></i> 🔴 Red – Reported</span>
+        <span><i class="legend-dot yellow"></i> 🟡 Yellow – Repairing</span>
+        <span><i class="legend-dot green"></i> 🟢 Green – Fixed</span>
+      </div>
+
+      <div id="citizenReportsMap" class="citizen-reports-map" role="img" aria-label="Map of reported road issues"></div>
+    </section>
+
     <div class="card track-report-card" aria-labelledby="trackReportHeading">
       <p class="journey-eyebrow">Track Report Status</p>
       <h3 id="trackReportHeading">Search by Tracking Number</h3>
@@ -376,22 +392,6 @@
           <tbody id="trackingResultBody"></tbody>
         </table>
       </div>
-
-      <section class="card reports-map-card track-status-map" aria-labelledby="reportsMapHeading">
-        <div class="report-stats-head">
-          <p class="stats-eyebrow">Citizen Report Locations</p>
-          <h3 id="reportsMapHeading">Road-Damaged Map</h3>
-          <p class="report-stats-subtitle">See all reported road concerns with live status colors linked to admin updates.</p>
-        </div>
-
-        <div class="reports-map-legend" aria-label="Map marker legend">
-          <span><i class="legend-dot red"></i> 🔴 Red – Reported (When status is verified)</span>
-          <span><i class="legend-dot yellow"></i> 🟡 Yellow – Being repaired (When status is in progress)</span>
-          <span><i class="legend-dot green"></i> 🟢 Green – Fixed (when status is repaired)</span>
-        </div>
-
-        <div id="citizenReportsMap" class="citizen-reports-map" role="img" aria-label="Map of reported road issues"></div>
-      </section>
     </div>
   </div>
 </section>
