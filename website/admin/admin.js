@@ -852,23 +852,48 @@ function updateSessionMetaVisibility(view = activeDashboardView) {
 function buildDashboardNotifications() {
   const queue = getNotificationQueue().slice(0, 8);
   if (queue.length > 0) {
-    return queue.map((item) => ({
-      text: `${item.tracking || "Unknown"} · ${item.message || "Citizen update queued."}`,
-      severity: "info"
-    }));
+    return queue.map((item) => {
+      const tracking = String(item.tracking || "Unknown report");
+      const template = String(item.template || "update").replace(/[-_]+/g, " ").trim();
+      const message = String(item.message || "Citizen update queued.").trim();
+      const createdAt = item.createdAt ? new Date(item.createdAt) : null;
+      const timestamp = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+        : "Recent";
+
+      return {
+        title: `Report ${tracking}`,
+        message,
+        meta: `${template || "Update"} • ${timestamp}`,
+        severity: "info",
+        isEmptyState: false
+      };
+    });
   }
   return [
-    { text: "No unread notifications right now.", severity: "info" }
+    {
+      title: "All caught up",
+      message: "No unread notifications right now.",
+      meta: "New activity will appear here",
+      severity: "info",
+      isEmptyState: true
+    }
   ];
 }
 
 function renderNotificationPanel() {
   const notifications = buildDashboardNotifications();
   if (notificationBadge) {
-    notificationBadge.textContent = String(Math.max(0, notifications.length - (notifications[0]?.text?.includes("No unread") ? 1 : 0)));
+    notificationBadge.textContent = String(Math.max(0, notifications.filter((item) => !item.isEmptyState).length));
   }
   if (!notificationPanelList) return;
-  notificationPanelList.innerHTML = notifications.map((item) => `<li class="notification-item" data-severity="${item.severity}">${item.text}</li>`).join("");
+  notificationPanelList.innerHTML = notifications.map((item) => `
+    <li class="notification-item" data-severity="${escapeHtml(item.severity)}" data-empty-state="${item.isEmptyState ? "true" : "false"}">
+      <strong class="notification-item__title">${escapeHtml(item.title || "Notification")}</strong>
+      <p class="notification-item__message">${escapeHtml(item.message || "")}</p>
+      <span class="notification-item__meta">${escapeHtml(item.meta || "")}</span>
+    </li>
+  `).join("");
 }
 
 function setNotificationPanelOpen(isOpen) {
