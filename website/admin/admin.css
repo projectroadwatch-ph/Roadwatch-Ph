@@ -6886,7 +6886,7 @@ body.admin-authenticated .report-card__section {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
