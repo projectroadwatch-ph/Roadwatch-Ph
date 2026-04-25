@@ -530,7 +530,7 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-section {
+body > section {
   display: none;
   padding:
     28px
@@ -550,7 +550,7 @@ section {
 }
 
 
-section.active {
+body > section.active {
   display: block;
   animation: sectionFadeIn 0.45s ease;
 }
