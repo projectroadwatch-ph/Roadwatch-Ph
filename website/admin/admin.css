@@ -6751,7 +6751,7 @@ body.admin-authenticated .report-card__hero {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -6761,14 +6761,18 @@ body.admin-authenticated .report-card__actions > * {
 }
 
 body.admin-authenticated .card-action-btn {
-  min-height: 46px;
+  min-height: 44px;
   font-size: 0.9rem;
+  font-weight: 700;
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 12px;
+  padding: 0 14px;
+  line-height: 1.2;
+  white-space: normal;
+  text-align: center;
 }
 
 body.admin-authenticated .card-action-btn__icon {
@@ -6777,31 +6781,38 @@ body.admin-authenticated .card-action-btn__icon {
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn {
-  background: rgba(8, 31, 57, 0.78);
-  color: #d7ebff;
-  border: 1px solid rgba(165, 213, 255, 0.28);
+  background: linear-gradient(135deg, #2f6fb7, #245a9d);
+  color: #f4f9ff;
+  border: 1px solid #1d4d89;
+  box-shadow: 0 6px 14px rgba(15, 56, 104, 0.25);
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn--danger {
-  background: #ff5d5d;
+  background: linear-gradient(135deg, #e7515e, #c83745);
   color: #fff;
-  border: 0;
+  border: 1px solid rgba(119, 12, 27, 0.35);
 }
 
 body.admin-authenticated .report-card__actions .card-action-btn--assign {
-  background: linear-gradient(135deg, rgba(31, 116, 211, 0.92), rgba(22, 90, 182, 0.96));
+  background: linear-gradient(135deg, #1f74d3, #165ab6);
   color: #ffffff;
-  border: 1px solid rgba(169, 215, 255, 0.38);
+  border: 1px solid rgba(169, 215, 255, 0.46);
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
-  min-height: 46px;
+  min-height: 44px;
   border-radius: 10px;
-  background: rgba(8, 31, 57, 0.78);
-  color: #d7ebff;
-  border: 1px solid rgba(165, 213, 255, 0.28);
-  padding: 0 12px;
+  background: linear-gradient(135deg, #2f6fb7, #245a9d);
+  color: #f4f9ff;
+  border: 1px solid #1d4d89;
+  padding: 0 14px;
   font-weight: 700;
+}
+
+@media (min-width: 1180px) {
+  body.admin-authenticated .report-card__actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 body.admin-authenticated .severity-moderate,
