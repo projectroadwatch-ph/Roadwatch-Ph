@@ -6751,7 +6751,7 @@ body.admin-authenticated .report-card__hero {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 10px;
 }
 
@@ -6823,12 +6823,6 @@ body.admin-authenticated .report-card__actions .card-action-select {
   font-weight: 700;
   font-family: inherit;
   line-height: 1.15;
-}
-
-@media (min-width: 1180px) {
-  body.admin-authenticated .report-card__actions {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 body.admin-authenticated .severity-moderate,
