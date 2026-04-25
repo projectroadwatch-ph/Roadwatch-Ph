@@ -2134,7 +2134,7 @@ function renderCardWorkspace(reports) {
       assignIcon.setAttribute("aria-hidden", "true");
       assignIcon.textContent = "person_add";
       const assignLabel = document.createElement("span");
-      assignLabel.textContent = "Assign Personnel";
+      assignLabel.textContent = "Assign Team";
       assignBtn.append(assignIcon, assignLabel);
       assignBtn.addEventListener("click", () => quickAssignPersonnel(report));
 
@@ -2614,7 +2614,7 @@ function quickAssignPersonnel(report) {
 
   const currentAssignee = String(report?.assignedTo || "").trim();
   const assigneeInput = window.prompt(
-    `Assign personnel for ${tracking} (name or team):`,
+    `Assign team or personnel for ${tracking}:`,
     currentAssignee && currentAssignee !== "Unassigned" ? currentAssignee : ""
   );
   if (assigneeInput === null) return;
