@@ -15,7 +15,7 @@ window.ROADWATCH_ADMIN_SIDEBAR_TEMPLATE = `
         <div id="notificationPanel" class="notification-panel" hidden>
           <div class="notification-panel__header">
             <strong>Notifications</strong>
-            <button id="markAllReadBtn" type="button" class="secondary slim">Mark all read</button>
+            <button id="markAllReadBtn" type="button" class="secondary slim notification-panel__mark-read">Mark all read</button>
           </div>
           <ul id="notificationPanelList" class="notification-panel__list" aria-live="polite"></ul>
         </div>
