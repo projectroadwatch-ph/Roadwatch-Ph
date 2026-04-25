@@ -6761,22 +6761,22 @@ body.admin-authenticated .report-card__actions > * {
 }
 
 body.admin-authenticated .card-action-btn {
-  min-height: 44px;
-  font-size: 0.9rem;
+  min-height: 38px;
+  font-size: 0.82rem;
   font-weight: 700;
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0 14px;
-  line-height: 1.2;
-  white-space: normal;
+  gap: 6px;
+  padding: 0 10px;
+  line-height: 1.15;
+  white-space: nowrap;
   text-align: center;
 }
 
 body.admin-authenticated .card-action-btn__icon {
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1;
 }
 
@@ -6800,12 +6800,13 @@ body.admin-authenticated .report-card__actions .card-action-btn--assign {
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
-  min-height: 44px;
+  min-height: 38px;
   border-radius: 10px;
   background: linear-gradient(135deg, #2f6fb7, #245a9d);
   color: #f4f9ff;
   border: 1px solid #1d4d89;
-  padding: 0 14px;
+  padding: 0 10px;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
@@ -6876,7 +6877,7 @@ body.admin-authenticated .report-card__section {
 }
 
 body.admin-authenticated .report-card__actions {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 body.admin-authenticated .report-card__actions .card-action-select {
