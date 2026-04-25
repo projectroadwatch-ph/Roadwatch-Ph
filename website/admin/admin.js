@@ -602,6 +602,94 @@ function saveSavedViews(views) {
   localStorage.setItem(ADMIN_SAVED_VIEWS_KEY, JSON.stringify((views || []).slice(0, 12)));
 }
 
+function showTextEntryDialog({
+  title = "Enter details",
+  message = "",
+  initialValue = "",
+  placeholder = "",
+  confirmText = "Save",
+  cancelText = "Cancel"
+} = {}) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "admin-text-dialog-backdrop";
+
+    const dialog = document.createElement("section");
+    dialog.className = "admin-text-dialog";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-labelledby", "adminTextDialogTitle");
+
+    const titleElement = document.createElement("h3");
+    titleElement.id = "adminTextDialogTitle";
+    titleElement.textContent = String(title || "Enter details");
+
+    const messageElement = document.createElement("p");
+    messageElement.textContent = String(message || "");
+    messageElement.className = "admin-text-dialog__message";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "admin-text-dialog__input";
+    input.value = String(initialValue || "");
+    input.placeholder = String(placeholder || "");
+    input.maxLength = 96;
+    input.autocomplete = "off";
+
+    const actions = document.createElement("div");
+    actions.className = "admin-text-dialog__actions";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.className = "secondary";
+    cancelBtn.textContent = String(cancelText || "Cancel");
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.textContent = String(confirmText || "Save");
+
+    actions.append(cancelBtn, confirmBtn);
+    dialog.append(titleElement, messageElement, input, actions);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    const cleanup = () => {
+      document.removeEventListener("keydown", handleDocumentKeydown);
+      overlay.remove();
+    };
+
+    const submit = () => {
+      const value = String(input.value || "").trim();
+      cleanup();
+      resolve(value);
+    };
+
+    const cancel = () => {
+      cleanup();
+      resolve(null);
+    };
+
+    const handleDocumentKeydown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        cancel();
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        submit();
+      }
+    };
+
+    cancelBtn.addEventListener("click", cancel);
+    confirmBtn.addEventListener("click", submit);
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) cancel();
+    });
+    document.addEventListener("keydown", handleDocumentKeydown);
+
+    window.requestAnimationFrame(() => input.focus());
+  });
+}
+
 function buildCurrentViewConfig() {
   return {
     reportSearch: reportSearch?.value || "",
@@ -648,9 +736,14 @@ function renderSavedViews() {
   if (views.some((view) => view.id === previous)) savedViewSelect.value = previous;
 }
 
-function saveCurrentView() {
+async function saveCurrentView() {
   if (!guardPermission("publish", "Your role cannot save personal workspace views.")) return;
-  const name = window.prompt("Name this saved view:", "");
+  const name = await showTextEntryDialog({
+    title: "Save current workspace view",
+    message: "Give this view a name so you can quickly return to these filters and layout settings.",
+    placeholder: "e.g., Urgent verification lane",
+    confirmText: "Save View"
+  });
   const trimmedName = String(name || "").trim();
   if (!trimmedName) return;
 
@@ -2627,7 +2720,7 @@ function focusTimeline(tracking) {
   renderCaseTimeline(key);
 }
 
-function quickAssignPersonnel(report) {
+async function quickAssignPersonnel(report) {
   const tracking = String(report?.tracking || "").trim();
   if (!tracking) {
     setFeedback("reportsFeedback", "Unable to assign personnel: missing tracking number.", true);
@@ -2636,10 +2729,13 @@ function quickAssignPersonnel(report) {
   if (!guardPermission("assign", "Your role cannot update assignment metadata.")) return;
 
   const currentAssignee = String(report?.assignedTo || "").trim();
-  const assigneeInput = window.prompt(
-    `Assign team or personnel for ${tracking}:`,
-    currentAssignee && currentAssignee !== "Unassigned" ? currentAssignee : ""
-  );
+  const assigneeInput = await showTextEntryDialog({
+    title: "Assign team or personnel",
+    message: `Tracking #${tracking}`,
+    initialValue: currentAssignee && currentAssignee !== "Unassigned" ? currentAssignee : "",
+    placeholder: "e.g., Field Team B / Engr. Santos",
+    confirmText: "Assign"
+  });
   if (assigneeInput === null) return;
 
   const assignedTo = String(assigneeInput || "").trim() || "Unassigned";
