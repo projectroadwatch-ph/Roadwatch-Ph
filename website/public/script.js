@@ -837,7 +837,7 @@ function setActiveSidebarButton(page) {
 
 // Show specific page/section
 function showPage(page) {
-  document.querySelectorAll("section").forEach((sec) => sec.classList.remove("active"));
+  document.querySelectorAll("body > section").forEach((sec) => sec.classList.remove("active"));
   const selectedPage = document.getElementById(page);
   if (!selectedPage) return;
 
@@ -915,7 +915,7 @@ function ensureAriaStateConsistency() {
 }
 
 function ensureActivePageConsistency() {
-  const sections = Array.from(document.querySelectorAll("section"));
+  const sections = Array.from(document.querySelectorAll("body > section"));
   if (sections.length === 0) return false;
 
   const activeSection = sections.find((section) => section.classList.contains("active"));
