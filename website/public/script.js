@@ -1524,10 +1524,9 @@ function createStatusMapIcon(color) {
 
 function getMarkerConfigForStatus(status) {
   const normalized = normalizeStatus(status).toLowerCase();
-  if (normalized === "verified") return { color: "#ef4444", label: "Reported (Verified)" };
-  if (normalized === "in progress") return { color: "#facc15", label: "Being Repaired" };
   if (normalized === "repaired") return { color: "#22c55e", label: "Fixed" };
-  return { color: "#60a5fa", label: "Pending" };
+  if (normalized === "in progress") return { color: "#facc15", label: "Repairing" };
+  return { color: "#ef4444", label: "Reported" };
 }
 
 async function renderCitizenReportsMap(reports) {
