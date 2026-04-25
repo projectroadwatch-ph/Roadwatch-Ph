@@ -4,17 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071b31">
-  <meta http-equiv="refresh" content="0; url=website/index.html">
+  <meta http-equiv="refresh" content="0; url=website/index.html?rwv=20260425b">
   <title>RoadWatch PH website</title>
   <script>
     (function () {
       var query = window.location.search || "";
       var hash = window.location.hash || "";
-      window.location.replace("website/index.html" + query + hash);
+      var params = new URLSearchParams(query);
+      params.set("rwv", "20260425b");
+      window.location.replace("website/index.html?" + params.toString() + hash);
     })();
   </script>
 </head>
 <body>
-  <p>Redirecting... <a href="website/index.html">Continue</a></p>
+  <p>Redirecting... <a href="website/index.html?rwv=20260425b">Continue</a></p>
 </body>
 </html>

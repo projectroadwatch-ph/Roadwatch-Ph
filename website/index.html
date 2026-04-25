@@ -1,16 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RoadWatch PH</title>
+  <meta http-equiv="refresh" content="0; url=public/index.html?rwv=20260425b">
   <script>
     const query = window.location.search || "";
     const hash = window.location.hash || "";
-    window.location.replace(`public/index.html${query}${hash}`);
+    const params = new URLSearchParams(query);
+    params.set("rwv", "20260425b");
+    window.location.replace(`public/index.html?${params.toString()}${hash}`);
   </script>
 </head>
 <body>
-  <p>Redirecting to RoadWatch PH... <a href="public/index.html">Continue</a></p>
+  <p>Redirecting to RoadWatch PH... <a href="public/index.html?rwv=20260425b">Continue</a></p>
 </body>
 </html>
