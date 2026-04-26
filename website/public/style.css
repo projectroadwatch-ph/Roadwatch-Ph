@@ -727,6 +727,19 @@ body > section.active {
   color: #d9efff;
   font-size: 1.02rem;
   line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.announce-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(74, 151, 255, 0.2);
+  font-size: 1rem;
 }
 
 
@@ -851,6 +864,78 @@ body > section.active {
   border: 1px solid rgba(145, 205, 255, 0.35);
   color: #dff1ff;
   font-weight: 700;
+}
+
+.step-visual {
+  margin: 4px 0 10px;
+  width: 100%;
+  max-width: 128px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  border: 1px solid rgba(142, 201, 255, 0.4);
+  background: linear-gradient(160deg, rgba(20, 62, 103, 0.68), rgba(9, 30, 55, 0.85));
+  display: grid;
+  place-items: center;
+}
+
+.step-visual span {
+  display: block;
+  width: 72%;
+  height: 72%;
+}
+
+.qr-visual span {
+  background:
+    repeating-linear-gradient(90deg, #fff 0 6px, #111 6px 12px),
+    repeating-linear-gradient(180deg, #111 0 6px, #fff 6px 12px);
+  border: 4px solid #dceeff;
+  box-shadow: inset 0 0 0 3px #0f2742;
+}
+
+.pin-visual span {
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: radial-gradient(circle at 58% 35%, #ff9f99 0 15%, #ff6258 35%, #e24545 76%);
+  position: relative;
+}
+
+.pin-visual span::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  top: 26px;
+  left: 26px;
+  background: #f4fbff;
+}
+
+.track-visual span {
+  border-radius: 10px;
+  border: 2px solid rgba(175, 220, 255, 0.45);
+  background: linear-gradient(180deg, rgba(18, 56, 90, 0.8), rgba(10, 34, 58, 0.9));
+  position: relative;
+}
+
+.track-visual span::before,
+.track-visual span::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  border-radius: 6px;
+}
+
+.track-visual span::before {
+  top: 20px;
+  height: 8px;
+  background: rgba(208, 232, 255, 0.88);
+}
+
+.track-visual span::after {
+  bottom: 15px;
+  height: 8px;
+  background: linear-gradient(90deg, #3cd38b, #89f3bb);
 }
 
 .quick-step-card strong {
