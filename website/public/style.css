@@ -656,8 +656,8 @@ body > section.active {
   text-align: left;
   margin-bottom: 24px;
   background:
-    linear-gradient(110deg, rgba(4, 20, 42, 0.92) 0%, rgba(4, 21, 45, 0.84) 42%, rgba(3, 16, 37, 0.92) 100%),
-    radial-gradient(circle at 72% 28%, rgba(45, 144, 255, 0.3), transparent 38%);
+    radial-gradient(circle at 82% 18%, rgba(63, 149, 255, 0.22), transparent 36%),
+    linear-gradient(112deg, rgba(4, 20, 42, 0.95) 0%, rgba(5, 26, 52, 0.9) 52%, rgba(3, 16, 37, 0.95) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -778,15 +778,15 @@ body > section.active {
 }
 
 .hero-primary-cta {
-  border: 1px solid rgba(140, 215, 255, 0.55);
-  background: linear-gradient(145deg, #2894ff, #1f78ed);
+  border: 1px solid rgba(140, 215, 255, 0.7);
+  background: linear-gradient(145deg, #2392ff, #1f6fff);
   color: #eff8ff;
   box-shadow: 0 10px 24px rgba(16, 95, 201, 0.38);
 }
 
 .hero-secondary-cta {
   border: 1px solid rgba(155, 210, 255, 0.42);
-  background: rgba(7, 33, 58, 0.7);
+  background: rgba(7, 33, 58, 0.88);
   color: #e6f5ff;
 }
 
@@ -844,10 +844,15 @@ body > section.active {
   border-radius: 16px;
   border: 1px solid rgba(155, 206, 255, 0.25);
   background: rgba(10, 35, 58, 0.48);
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 4px;
 }
 
 .quick-step-card p {
-  margin: 0 0 6px;
+  margin: 0;
   width: 28px;
   height: 28px;
   display: grid;
@@ -857,18 +862,21 @@ body > section.active {
   border: 1px solid rgba(145, 205, 255, 0.35);
   color: #dff1ff;
   font-weight: 700;
+  grid-row: 1;
+  grid-column: 1;
 }
 
 .step-visual {
-  margin: 4px 0 10px;
-  width: 100%;
-  max-width: 128px;
+  margin: 0;
+  width: 86px;
   aspect-ratio: 1 / 1;
   border-radius: 16px;
   border: 1px solid rgba(142, 201, 255, 0.4);
   background: linear-gradient(160deg, rgba(20, 62, 103, 0.68), rgba(9, 30, 55, 0.85));
   display: grid;
   place-items: center;
+  grid-row: 1 / span 2;
+  grid-column: 2;
 }
 
 .step-visual span {
@@ -934,12 +942,16 @@ body > section.active {
 .quick-step-card strong {
   display: block;
   color: #e9f4ff;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  grid-column: 3;
+  align-self: end;
 }
 
 .quick-step-card small {
   color: #b6cde8;
   line-height: 1.45;
+  grid-column: 3;
+  align-self: start;
 }
 
 .hero-impact-strip {
@@ -955,11 +967,21 @@ body > section.active {
   border: 1px solid rgba(157, 220, 255, 0.25);
   background: rgba(9, 39, 67, 0.6);
   text-align: left;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
 }
 
 .metric-icon {
-  margin: 0 0 8px;
-  font-size: 1.35rem;
+  margin: 2px 0 0;
+  font-size: 1.1rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(99, 179, 255, 0.17);
+  border: 1px solid rgba(166, 219, 255, 0.35);
 }
 
 .hero-impact-card p {
@@ -968,6 +990,7 @@ body > section.active {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #9fd8ff;
+  grid-column: 2;
 }
 
 .hero-impact-card strong {
@@ -975,6 +998,7 @@ body > section.active {
   margin-top: 6px;
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   color: #f4fbff;
+  grid-column: 2;
 }
 
 .hero-impact-card small {
@@ -982,6 +1006,22 @@ body > section.active {
   margin-top: 4px;
   color: #c9e9ff;
   line-height: 1.4;
+  grid-column: 2;
+}
+
+.hero-impact-card:nth-child(2) .metric-icon {
+  background: rgba(83, 219, 171, 0.17);
+  border-color: rgba(149, 242, 201, 0.38);
+}
+
+.hero-impact-card:nth-child(3) .metric-icon {
+  background: rgba(183, 127, 255, 0.2);
+  border-color: rgba(211, 175, 255, 0.4);
+}
+
+.hero-impact-card:nth-child(4) .metric-icon {
+  background: rgba(255, 184, 88, 0.2);
+  border-color: rgba(255, 213, 152, 0.42);
 }
 
 .hero-qr-wrap {
@@ -1046,8 +1086,8 @@ body > section.active {
   border-radius: 20px;
   border: 1px solid rgba(135, 204, 255, 0.22);
   background:
-    radial-gradient(circle at 55% 44%, rgba(47, 166, 255, 0.55), rgba(47, 166, 255, 0.04) 25%, transparent 47%),
-    radial-gradient(circle at 10% 6%, rgba(154, 208, 255, 0.2), transparent 26%),
+    linear-gradient(95deg, rgba(5, 24, 50, 0.55) 0%, rgba(5, 24, 50, 0.05) 38%),
+    url("../assets/uploads/security-illustration.png") center / cover no-repeat,
     linear-gradient(180deg, #08224b 0%, #05193a 50%, #04132f 100%);
   position: relative;
   overflow: hidden;
@@ -1071,7 +1111,7 @@ body > section.active {
   inset: auto 0 0;
   height: 46%;
   background:
-    linear-gradient(138deg, transparent 31%, rgba(255, 255, 255, 0.5) 33%, transparent 36%),
+    linear-gradient(138deg, transparent 31%, rgba(255, 255, 255, 0.33) 33%, transparent 36%),
     linear-gradient(180deg, rgba(7, 25, 49, 0), rgba(7, 25, 49, 0.8));
   pointer-events: none;
 }
