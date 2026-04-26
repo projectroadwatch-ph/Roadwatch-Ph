@@ -648,8 +648,8 @@ body > section.active {
 
 .highlighted-hero {
   margin-bottom: 24px;
-  border: 1px solid rgba(128, 199, 255, 0.45);
-  box-shadow: 0 0 0 1px rgba(102, 178, 255, 0.25), 0 30px 80px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(128, 199, 255, 0.52);
+  box-shadow: 0 0 0 1px rgba(102, 178, 255, 0.28), 0 34px 90px rgba(0, 0, 0, 0.52);
 }
 
 .hero-card {
@@ -676,7 +676,12 @@ body > section.active {
 }
 
 .hero-card::after {
-  content: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(146, 214, 255, 0.14);
+  pointer-events: none;
 }
 
 .hero-tag {
@@ -714,9 +719,9 @@ body > section.active {
   margin: 16px 0 0;
   max-width: 100%;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(143, 210, 255, 0.35);
-  background: rgba(8, 36, 66, 0.56);
+  background: rgba(8, 36, 66, 0.62);
   color: #d9efff;
   font-size: 1.02rem;
   line-height: 1.5;
@@ -768,6 +773,10 @@ body > section.active {
 
 .hero-primary-cta,
 .hero-secondary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border-radius: 14px;
   padding: 14px 22px;
   font-weight: 700;
@@ -836,6 +845,7 @@ body > section.active {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: relative;
 }
 
 .quick-step-card {
@@ -849,6 +859,18 @@ body > section.active {
   align-items: center;
   column-gap: 12px;
   row-gap: 4px;
+  position: relative;
+}
+
+.quick-step-card:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 52%;
+  right: -11px;
+  width: 22px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(113, 182, 255, 0.8) 0 6px, transparent 6px 11px);
+  pointer-events: none;
 }
 
 .quick-step-card p {
@@ -963,9 +985,9 @@ body > section.active {
 
 .hero-impact-card {
   padding: 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(157, 220, 255, 0.25);
-  background: rgba(9, 39, 67, 0.6);
+  border-radius: 18px;
+  border: 1px solid rgba(157, 220, 255, 0.3);
+  background: linear-gradient(165deg, rgba(12, 46, 78, 0.72), rgba(8, 33, 59, 0.64));
   text-align: left;
   display: grid;
   grid-template-columns: auto 1fr;
@@ -999,6 +1021,7 @@ body > section.active {
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   color: #f4fbff;
   grid-column: 2;
+  line-height: 1.05;
 }
 
 .hero-impact-card small {
@@ -1084,13 +1107,14 @@ body > section.active {
 .hero-scene-art {
   min-height: 330px;
   border-radius: 20px;
-  border: 1px solid rgba(135, 204, 255, 0.22);
+  border: 1px solid rgba(135, 204, 255, 0.28);
   background:
     linear-gradient(95deg, rgba(5, 24, 50, 0.55) 0%, rgba(5, 24, 50, 0.05) 38%),
     url("../assets/uploads/security-illustration.png") center / cover no-repeat,
     linear-gradient(180deg, #08224b 0%, #05193a 50%, #04132f 100%);
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(165, 221, 255, 0.12);
 }
 
 .hero-scene-art::before {
@@ -1161,7 +1185,7 @@ body > section.active {
   height: 145px;
   border-radius: 52% 52% 40% 40% / 40% 40% 62% 62%;
   border: 4px solid rgba(110, 223, 255, 0.95);
-  box-shadow: 0 0 0 8px rgba(74, 160, 255, 0.18), 0 0 55px rgba(63, 172, 255, 0.66);
+  box-shadow: 0 0 0 8px rgba(74, 160, 255, 0.22), 0 0 70px rgba(63, 172, 255, 0.78);
   background: radial-gradient(circle at 42% 25%, rgba(53, 162, 255, 0.55), rgba(8, 43, 92, 0.98));
   display: grid;
   place-items: center;
@@ -1195,6 +1219,12 @@ body > section.active {
   font-size: 2.2rem;
   font-weight: 800;
   text-shadow: 0 0 24px rgba(110, 219, 255, 0.95);
+}
+
+@media (max-width: 980px) {
+  .quick-step-card:not(:last-child)::after {
+    display: none;
+  }
 }
 
 .hero-quick-start-title {
