@@ -615,7 +615,7 @@ body > section.active {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 1180px;
+  max-width: 1360px;
   margin: 0 auto;
 }
 
