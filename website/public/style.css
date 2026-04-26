@@ -782,14 +782,6 @@ body > section.active {
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
   font-size: 1.02rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.btn-icon {
-  font-size: 1rem;
-  opacity: 0.95;
 }
 
 .hero-primary-cta {
@@ -973,63 +965,8 @@ body > section.active {
 }
 
 .metric-icon {
-  margin: 0 0 10px;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(190, 223, 255, 0.3);
-  display: grid;
-  place-items: center;
-  position: relative;
-}
-
-.metric-icon::after {
-  content: "";
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 2px solid #b4dcff;
-}
-
-.icon-report {
-  background: rgba(57, 133, 238, 0.24);
-}
-
-.icon-check {
-  background: rgba(66, 196, 144, 0.2);
-}
-
-.icon-check::after {
-  width: 16px;
-  height: 10px;
-  border: 0;
-  border-left: 3px solid #65e1a8;
-  border-bottom: 3px solid #65e1a8;
-  transform: rotate(-45deg);
-}
-
-.icon-time {
-  background: rgba(162, 109, 239, 0.2);
-}
-
-.icon-time::after {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  border: 2px solid #bf97ff;
-  box-shadow: inset 4px -4px 0 -3px #bf97ff;
-}
-
-.icon-pin {
-  background: rgba(217, 162, 63, 0.18);
-}
-
-.icon-pin::after {
-  width: 15px;
-  height: 20px;
-  border-radius: 50% 50% 50% 0;
-  border: 2px solid #f2bf64;
-  transform: rotate(-45deg);
+  margin: 0 0 8px;
+  font-size: 1.35rem;
 }
 
 .hero-impact-card p {
@@ -1123,37 +1060,14 @@ body > section.active {
   overflow: hidden;
 }
 
-.hero-skyline {
-  position: absolute;
-  inset: 16% 0 auto;
-  height: 32%;
-  background:
-    linear-gradient(180deg, rgba(25, 72, 123, 0.3), rgba(11, 39, 70, 0.76)),
-    repeating-linear-gradient(90deg, rgba(7, 28, 53, 0.9) 0 24px, rgba(16, 52, 87, 0.82) 24px 34px);
-  mask: linear-gradient(180deg, transparent 0 30%, #000 31%);
-  opacity: 0.85;
-}
-
-.hero-road {
-  position: absolute;
-  inset: auto 12% 0;
-  height: 48%;
-  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
-  background: linear-gradient(180deg, rgba(31, 63, 97, 0.22), rgba(4, 16, 35, 0.95));
-}
-
-.hero-road::after {
+.hero-scene-art::before {
   content: "";
   position: absolute;
-  left: 49%;
-  top: 16%;
-  bottom: 10%;
-  width: 2%;
-  background: repeating-linear-gradient(
-    180deg,
-    rgba(240, 248, 255, 0.92) 0 14px,
-    transparent 14px 24px
-  );
+  inset: auto 0 0;
+  height: 36%;
+  background:
+    linear-gradient(140deg, transparent 24%, rgba(255, 255, 255, 0.55) 26%, transparent 29%),
+    linear-gradient(180deg, rgba(7, 25, 49, 0), rgba(7, 25, 49, 0.8));
 }
 
 .hero-shield-glow {
