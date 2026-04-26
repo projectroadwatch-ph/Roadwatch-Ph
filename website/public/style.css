@@ -1039,7 +1039,7 @@ body > section.active {
 .hero-intro-grid {
   display: grid;
   gap: 20px;
-  grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 1.05fr);
   align-items: center;
 }
 
@@ -1049,13 +1049,12 @@ body > section.active {
 }
 
 .hero-scene-art {
-  min-height: 280px;
+  min-height: 330px;
   border-radius: 20px;
   border: 1px solid rgba(135, 204, 255, 0.25);
   background:
-    linear-gradient(180deg, rgba(6, 25, 53, 0.2), rgba(5, 18, 40, 0.8)),
-    radial-gradient(circle at 56% 37%, rgba(41, 137, 255, 0.46), transparent 28%),
-    linear-gradient(180deg, #10325d 0%, #0a2347 48%, #061730 100%);
+    radial-gradient(circle at 55% 42%, rgba(45, 145, 255, 0.42), transparent 22%),
+    linear-gradient(180deg, #102e5c 0%, #0a2448 48%, #071934 100%);
   position: relative;
   overflow: hidden;
 }
@@ -1064,28 +1063,70 @@ body > section.active {
   content: "";
   position: absolute;
   inset: auto 0 0;
-  height: 36%;
+  height: 42%;
   background:
-    linear-gradient(140deg, transparent 24%, rgba(255, 255, 255, 0.55) 26%, transparent 29%),
+    linear-gradient(138deg, transparent 31%, rgba(255, 255, 255, 0.5) 33%, transparent 36%),
     linear-gradient(180deg, rgba(7, 25, 49, 0), rgba(7, 25, 49, 0.8));
 }
 
-.hero-shield-glow {
-  width: 92px;
-  height: 92px;
-  border-radius: 26px;
+.hero-skyline {
+  position: absolute;
+  inset: auto 0 18% 0;
+  height: 38%;
+  background:
+    radial-gradient(circle at 14% 100%, rgba(34, 90, 144, 0.85), rgba(34, 90, 144, 0) 30%),
+    radial-gradient(circle at 86% 100%, rgba(27, 73, 125, 0.8), rgba(27, 73, 125, 0) 34%),
+    repeating-linear-gradient(90deg,
+      rgba(15, 43, 77, 0.8) 0 18px,
+      rgba(12, 33, 61, 0.86) 18px 31px);
+  clip-path: polygon(0 100%, 0 48%, 8% 52%, 12% 35%, 17% 55%, 23% 44%, 29% 58%, 36% 38%, 43% 52%, 50% 32%, 58% 56%, 66% 36%, 74% 58%, 82% 42%, 90% 54%, 95% 36%, 100% 52%, 100% 100%);
+  opacity: 0.95;
+}
+
+.hero-road {
+  position: absolute;
+  inset: 45% 8% 0 8%;
+  background:
+    linear-gradient(180deg, rgba(7, 24, 49, 0.28), rgba(6, 18, 34, 0.95)),
+    radial-gradient(140% 100% at 52% -8%, rgba(58, 142, 238, 0.4), transparent 55%);
+  clip-path: polygon(46% 0%, 58% 0%, 88% 100%, 14% 100%);
+}
+
+.hero-road::before {
+  content: "";
+  position: absolute;
+  inset: 9% 46% 8% 46%;
+  border-radius: 999px;
+  background: repeating-linear-gradient(180deg, rgba(232, 245, 255, 0.94) 0 20px, transparent 20px 38px);
+  transform: perspective(220px) rotateX(25deg);
+}
+
+.hero-shield-badge {
+  width: 124px;
+  height: 145px;
+  border-radius: 52% 52% 40% 40% / 40% 40% 62% 62%;
+  border: 4px solid rgba(110, 223, 255, 0.95);
+  box-shadow: 0 0 0 8px rgba(74, 160, 255, 0.18), 0 0 55px rgba(63, 172, 255, 0.66);
+  background: radial-gradient(circle at 42% 25%, rgba(53, 162, 255, 0.55), rgba(8, 43, 92, 0.98));
   display: grid;
   place-items: center;
-  color: #d6f4ff;
-  font-size: 2rem;
-  font-weight: 700;
-  border: 2px solid rgba(153, 230, 255, 0.9);
-  box-shadow: 0 0 0 9px rgba(95, 192, 255, 0.15), 0 0 38px rgba(84, 192, 255, 0.55);
-  background: radial-gradient(circle at 35% 30%, #1f84ff, #0f3a72);
   position: absolute;
-  top: 28%;
+  top: 24%;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.hero-shield-core {
+  width: 72px;
+  height: 82px;
+  border-radius: 50% 50% 38% 38% / 38% 38% 62% 62%;
+  border: 2px solid rgba(155, 241, 255, 0.9);
+  display: grid;
+  place-items: center;
+  color: #caf2ff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-shadow: 0 0 24px rgba(110, 219, 255, 0.95);
 }
 
 .hero-quick-start-title {
