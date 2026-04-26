@@ -614,7 +614,9 @@ body > section.active {
 #home.active {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  max-width: 1180px;
+  margin: 0 auto;
 }
 
 #home.active > * {
@@ -631,18 +633,17 @@ body > section.active {
 .card,
 .hero-card {
   background: var(--panel);
-  border: 1px solid rgba(169, 208, 255, 0.2);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(169, 208, 255, 0.16);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
   border-radius: 22px;
   padding: clamp(18px, 2.5vw, 28px);
-  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  transition: box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
 .card:hover,
 .hero-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(166, 220, 255, 0.45);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52);
+  border-color: rgba(166, 220, 255, 0.34);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.4);
 }
 
 .highlighted-hero {
@@ -664,26 +665,18 @@ body > section.active {
 .hero-card::before {
   content: "";
   position: absolute;
-  width: 32%;
-  height: 180%;
-  top: -40%;
-  left: -42%;
-  background: linear-gradient(115deg, transparent 0%, rgba(173, 229, 255, 0.18) 48%, transparent 100%);
+  width: 42%;
+  height: 150%;
+  top: -24%;
+  left: -38%;
+  background: linear-gradient(115deg, transparent 0%, rgba(173, 229, 255, 0.1) 48%, transparent 100%);
   transform: rotate(8deg);
-  animation: heroSweep 7s linear infinite;
+  animation: heroSweep 13s linear infinite;
   pointer-events: none;
 }
 
 .hero-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    -65deg,
-    rgba(255, 255, 255, 0.03) 0 12px,
-    transparent 12px 24px
-  );
-  pointer-events: none;
+  content: none;
 }
 
 .hero-tag {
