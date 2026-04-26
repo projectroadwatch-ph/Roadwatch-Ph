@@ -655,8 +655,8 @@ body > section.active {
   text-align: left;
   margin-bottom: 24px;
   background:
-    linear-gradient(110deg, rgba(5, 24, 47, 0.92) 0%, rgba(6, 25, 51, 0.9) 44%, rgba(4, 20, 42, 0.95) 100%),
-    radial-gradient(circle at 72% 28%, rgba(45, 144, 255, 0.32), transparent 38%);
+    linear-gradient(110deg, rgba(4, 20, 42, 0.92) 0%, rgba(4, 21, 45, 0.84) 42%, rgba(3, 16, 37, 0.92) 100%),
+    radial-gradient(circle at 72% 28%, rgba(45, 144, 255, 0.3), transparent 38%);
   position: relative;
   overflow: hidden;
 }
@@ -1051,10 +1051,11 @@ body > section.active {
 .hero-scene-art {
   min-height: 330px;
   border-radius: 20px;
-  border: 1px solid rgba(135, 204, 255, 0.25);
+  border: 1px solid rgba(135, 204, 255, 0.22);
   background:
-    radial-gradient(circle at 55% 42%, rgba(45, 145, 255, 0.42), transparent 22%),
-    linear-gradient(180deg, #102e5c 0%, #0a2448 48%, #071934 100%);
+    radial-gradient(circle at 55% 44%, rgba(47, 166, 255, 0.55), rgba(47, 166, 255, 0.04) 25%, transparent 47%),
+    radial-gradient(circle at 10% 6%, rgba(154, 208, 255, 0.2), transparent 26%),
+    linear-gradient(180deg, #08224b 0%, #05193a 50%, #04132f 100%);
   position: relative;
   overflow: hidden;
 }
@@ -1062,17 +1063,30 @@ body > section.active {
 .hero-scene-art::before {
   content: "";
   position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 2px) 4% 10% / 80px 80px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.45) 0 1px, transparent 2px) 38% 40% / 110px 110px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1px, transparent 2px) 70% 15% / 90px 90px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.hero-scene-art::after {
+  content: "";
+  position: absolute;
   inset: auto 0 0;
-  height: 42%;
+  height: 46%;
   background:
     linear-gradient(138deg, transparent 31%, rgba(255, 255, 255, 0.5) 33%, transparent 36%),
     linear-gradient(180deg, rgba(7, 25, 49, 0), rgba(7, 25, 49, 0.8));
+  pointer-events: none;
 }
 
 .hero-skyline {
   position: absolute;
-  inset: auto 0 18% 0;
-  height: 38%;
+  inset: auto 0 16% 0;
+  height: 40%;
   background:
     radial-gradient(circle at 14% 100%, rgba(34, 90, 144, 0.85), rgba(34, 90, 144, 0) 30%),
     radial-gradient(circle at 86% 100%, rgba(27, 73, 125, 0.8), rgba(27, 73, 125, 0) 34%),
@@ -1085,11 +1099,12 @@ body > section.active {
 
 .hero-road {
   position: absolute;
-  inset: 45% 8% 0 8%;
+  inset: 50% 6% 0 6%;
   background:
-    linear-gradient(180deg, rgba(7, 24, 49, 0.28), rgba(6, 18, 34, 0.95)),
-    radial-gradient(140% 100% at 52% -8%, rgba(58, 142, 238, 0.4), transparent 55%);
-  clip-path: polygon(46% 0%, 58% 0%, 88% 100%, 14% 100%);
+    linear-gradient(180deg, rgba(7, 24, 49, 0.12), rgba(4, 13, 28, 0.96)),
+    radial-gradient(120% 100% at 52% -8%, rgba(91, 189, 255, 0.28), transparent 50%);
+  clip-path: polygon(46% 0%, 59% 0%, 99% 100%, 2% 100%);
+  border-radius: 0 0 22px 22px;
 }
 
 .hero-road::before {
@@ -1099,6 +1114,13 @@ body > section.active {
   border-radius: 999px;
   background: repeating-linear-gradient(180deg, rgba(232, 245, 255, 0.94) 0 20px, transparent 20px 38px);
   transform: perspective(220px) rotateX(25deg);
+}
+
+.hero-road::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(104, 201, 255, 0.12), transparent 28% 72%, rgba(104, 201, 255, 0.12));
 }
 
 .hero-shield-badge {
@@ -1114,6 +1136,19 @@ body > section.active {
   top: 24%;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.hero-shield-badge::before {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 999px;
+  border: 2px solid rgba(78, 179, 255, 0.2);
+  box-shadow:
+    0 0 0 70px rgba(78, 179, 255, 0.1),
+    0 0 0 140px rgba(78, 179, 255, 0.08);
+  z-index: -1;
 }
 
 .hero-shield-core {
