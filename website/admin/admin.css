@@ -6420,11 +6420,10 @@ body:not(.admin-authenticated) .wrap {
 
 .login-card--gov .login-links {
   margin-top: 6px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .login-card--gov .login-home-link,
@@ -6435,6 +6434,20 @@ body:not(.admin-authenticated) .wrap {
   font-size: clamp(0.82rem, 2.2vw, 0.95rem);
   color: #b7d6fa;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.login-card--gov .login-home-link {
+  justify-self: start;
+}
+
+.login-card--gov .login-forgot {
+  justify-self: end;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 @media (max-width: 560px) {
@@ -6450,20 +6463,14 @@ body:not(.admin-authenticated) .wrap {
   }
 
   .login-card--gov .login-links {
-    justify-content: space-between;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    flex-wrap: nowrap;
     gap: 8px;
   }
 
   .login-card--gov .login-home-link,
   .login-card--gov .login-forgot {
     font-size: clamp(0.74rem, 2.8vw, 0.88rem);
-    white-space: nowrap;
-  }
-
-  .login-card--gov .login-forgot {
-    margin-left: auto;
   }
 
   .login-gov-footer {
