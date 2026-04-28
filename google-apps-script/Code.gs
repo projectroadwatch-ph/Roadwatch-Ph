@@ -290,7 +290,7 @@ function sendSubmissionReceiptEmail_(row, appendResult) {
   ].join('\n');
 
   try {
-    MailApp.sendEmail(recipientEmail, subject, body);
+    sendEmailWithFallback_(recipientEmail, subject, body);
     return { sent: true, error: '' };
   } catch (error) {
     return {
@@ -298,6 +298,34 @@ function sendSubmissionReceiptEmail_(row, appendResult) {
       error: error && error.message ? String(error.message) : 'Unable to send receipt email.'
     };
   }
+}
+
+function sendEmailWithFallback_(recipientEmail, subject, body) {
+  const mailErrorMessages = [];
+
+  try {
+    MailApp.sendEmail(recipientEmail, subject, body);
+    return;
+  } catch (mailError) {
+    if (mailError && mailError.message) {
+      mailErrorMessages.push('MailApp: ' + String(mailError.message));
+    } else {
+      mailErrorMessages.push('MailApp: Unknown sending error.');
+    }
+  }
+
+  try {
+    GmailApp.sendEmail(recipientEmail, subject, body);
+    return;
+  } catch (gmailError) {
+    if (gmailError && gmailError.message) {
+      mailErrorMessages.push('GmailApp: ' + String(gmailError.message));
+    } else {
+      mailErrorMessages.push('GmailApp: Unknown sending error.');
+    }
+  }
+
+  throw new Error(mailErrorMessages.join(' | '));
 }
 
 function buildRecipientName_(row) {
